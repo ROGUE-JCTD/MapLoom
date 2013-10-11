@@ -1,0 +1,13 @@
+<div>
+    <ul class="list-group">
+		<li class="list-group-item add" ng-click="clickCallback({{add}})" ng-repeat="add in addList">
+			<span class="glyphicon glyphicon-plus-sign"/>  '{{add.feature}}' to {{add.layer}}
+		</li>
+		<li class="list-group-item modify" ng-click="clickCallback({{modify}})" ng-repeat="modify in modifyList">
+			<span class="glyphicon glyphicon-edit"/>  '{{modify.feature}}' in {{modify.layer}}
+		</li>
+		<li class="list-group-item delete" ng-click="clickCallback({{delete}})" ng-repeat="delete in deleteList">
+			<span class="glyphicon glyphicon-minus-sign"/>  '{{delete.feature}}' from {{delete.layer}}
+		</li>
+	</ul>
+</div>

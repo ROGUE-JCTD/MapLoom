@@ -1,0 +1,157 @@
+.loom-notification-poster {
+	position:absolute;
+	z-index:1000;
+	left:325px;
+}
+
+html, body {
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+	margin  : 0;
+	padding : 0;
+	height  : 100%;
+	/* width   : 100%; */
+}
+
+#pulldown {
+	position: absolute;
+	left: 0;
+	width: 320px;
+	z-index: 1000;
+	top: 0px;
+}
+
+#pulldown .panel {
+	margin: 0;
+	border: 0;
+	font-weight: normal;
+	overflow: visible;
+	background-color:#97B3CD;
+}
+
+.panel-body {
+	padding: 0px 15px;
+}
+
+#pulldown-content .panel-heading {
+	background-color: #155481;
+	color: #fff;
+	display: block;
+	text-decoration: none;
+	border-bottom: 1px solid #80a0b0;
+}
+
+#pulldown-content {
+	max-height: 80%;
+	overflow: hidden;
+}
+
+#pulldown-shadow {
+	.box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
+}
+
+.notification-panel-heading {
+    background-color: #4977A3 !important;
+}
+
+#map {
+    min-height:100%;
+	height: 100%;
+	width: 100%;
+}
+
+.panel {
+	margin: 0;
+	border: 0;
+	font-weight: normal;
+	/*overflow: visible;*/
+	background-color:#97B3CD;
+}
+
+.modal-header {
+	color: #fff;
+	background-color:#155481;
+	border-bottom: 1px solid #80a0b0;
+}
+.modal-footer {
+	background-color:#97B3CD;
+	border-top: 1px solid #80a0b0;
+	margin-top: 0;
+}
+.modal-body {
+	background-color:#97B3CD;
+}
+
+.panel-group .panel-heading + .panel-collapse .panel-body{
+	border-top: 1px solid #80a0b0;
+	border-bottom: 1px solid #155481;
+}
+.close {
+	color:#fff;
+}
+.flat {
+	border-radius: 0px;
+}
+
+hr {
+	border-top: 1px solid #80a0b0;	
+}
+
+.rotate-45deg    {  
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -o-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+}
+
+/* Overwriting these because the default rounded corners didn't look quite right */
+.panel-heading, .flat-top {
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+}
+
+#layerPanel a.accordion-toggle { 
+	display: inline-block;
+}
+
+.badge {
+    background-color:#AA0000;
+    color:#FFF;
+    font-size: 14px;
+    padding:5px 10px;
+    border-radius: 20px;
+}
+
+#pulldown-content .badge {
+    position: relative;
+    top: -2px;
+}
+
+.layerSpan {
+}
+
+.list-group {
+    margin-bottom:0px;
+}
+
+.list-group-item {
+	background-color:#97B3CD;
+	border: 1px solid #80a0b0;
+}
+
+.notification-text {
+    margin: 0px 0px 0px 0px;
+}
+
+.notification-panel-heading {
+    font-weight:900;
+}
+
+.notification-panel-heading.read {
+    font-weight:100;
+}
+
+/*.notification-content.in {
+	max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
+}*/
