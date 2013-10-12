@@ -5,6 +5,7 @@
     'loom_update_notification',
     'loom_diff',
     'loom_diff_controller'
+//    'loom_featureinfo'
   ]);
 
 }());

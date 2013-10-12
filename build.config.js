@@ -69,7 +69,10 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
-      'vendor/openlayers/ol.js'
+//      'vendor/openlayers/ol.js',
+//      'vendor/openlayers/ol-simple.js',
+//      'vendor/openlayers/ol-min.js'
+      'vendor/openlayers/ol-whitespace.js'
     ],
     css: [
       'vendor/openlayers/ol.css'
