@@ -22,7 +22,7 @@ module.exports = {
   app_files: {
     js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
     jsunit: [ 'src/**/*.spec.js' ],
-    
+
     coffee: [ 'src/**/*.coffee', '!src/**/*.spec.coffee' ],
     coffeeunit: [ 'src/**/*.spec.coffee' ],
 
@@ -69,13 +69,13 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
-//      'vendor/openlayers/ol.js',
-//      'vendor/openlayers/ol-simple.js',
-//      'vendor/openlayers/ol-min.js'
-      'vendor/openlayers/ol-whitespace.js'
+//      'vendor/ol3/ol.js',
+//      'vendor/ol3/ol-simple.js',
+//      'vendor/ol3/ol-min.js'
+      'vendor/ol3/ol-whitespace.js'
     ],
     css: [
-      'vendor/openlayers/ol.css'
+      'vendor/ol3/ol.css'
     ],
     assets: [
     ],

@@ -72,13 +72,6 @@ function createMap() {
 
       new ol.layer.Tile({
         source: new ol.source.TileWMS({
-          url: 'http://demo.opengeo.org/geoserver/wms',
-          params: {'LAYERS': 'ne:ne'}
-        })
-      }),
-
-      new ol.layer.Tile({
-        source: new ol.source.TileWMS({
           url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
           params: {'LAYERS': 'geonode:canchas_de_futbol'}
         })
