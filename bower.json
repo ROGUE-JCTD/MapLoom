@@ -1,14 +1,7 @@
 {
   "name": "MapLoom",
   "version": "0.0.1",
-  "devDependencies": {
-    "bootstrap": "3.0.0",
-    "angular": "1.2.0-rc.2",
-    "angular-mocks": "1.2.0-rc.2",
-    "angular-bootstrap": "0.6.0",
-    "angular-ui-router": "0.2.0",
-    "jquery": "~2.0.3"
-  },
+  "devDependencies": {},
   "dependencies": {
     "bootstrap": "3.0.0",
     "angular": "1.2.0-rc.2",
@@ -16,6 +9,11 @@
     "angular-bootstrap": "0.6.0",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
-    "ol3": "./ol3"
+    "ol3": "./ol3",
+    "closure-library": "*",
+    "angular-translate": "1.1.0"
+  },
+  "resolutions": {
+    "angular": "1.2.0-rc.2"
   }
 }

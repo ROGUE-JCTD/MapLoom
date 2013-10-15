@@ -3,14 +3,17 @@ angular.module('ngBoilerplate', [
   'templates-common',
   'loom',
   'ui.bootstrap',
-  'ui.router'
+  'ui.router',
+  'pascalprecht.translate',
+  'loom_translations_en',
+  'loom_translations_es'
 ])
 
 .run(function run() {
   console.log('---- app.js.run');
 })
 
-.controller('AppCtrl', function AppCtrl($scope, $location) {
+.controller('AppCtrl', function AppCtrl($scope, $location, $translate) {
       console.log('---- ngBoilerplate.controller.');
 
       $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
@@ -18,6 +21,8 @@ angular.module('ngBoilerplate', [
           $scope.pageTitle = toState.data.pageTitle + ' | ngBoilerplate';
         }
       });
+
+      $translate.uses('es');
 
       var map = createMap();
 
@@ -57,6 +62,10 @@ angular.module('ngBoilerplate', [
         });
       });
 
+})
+
+.config(function($translateProvider) {
+  $translateProvider.uses('en');
 });
 
 

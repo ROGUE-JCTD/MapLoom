@@ -69,6 +69,9 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/angular-translate/angular-translate.js',
+      'vendor/closure-library/closure/goog/base.js',
+      'vendor/closure-library/closure/goog/deps.js',
 //      'vendor/ol3/ol.js',
 //      'vendor/ol3/ol-simple.js',
 //      'vendor/ol3/ol-min.js'
