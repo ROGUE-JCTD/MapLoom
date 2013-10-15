@@ -1,5 +1,5 @@
 (function() {
- var module = angular.module('loom_notification_poster_directive', []);
+  var module = angular.module('loom_notification_poster_directive', []);
 
   module.directive('loomNotificationPoster',
       function($rootScope, notificationService, diffService) {

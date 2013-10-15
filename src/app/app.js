@@ -7,8 +7,8 @@ angular.module('ngBoilerplate', [
 ])
 
 .run(function run() {
-  console.log('---- app.js.run');
-})
+      console.log('---- app.js.run');
+    })
 
 .controller('AppCtrl', function AppCtrl($scope, $location) {
       console.log('---- ngBoilerplate.controller.');
@@ -46,7 +46,7 @@ angular.module('ngBoilerplate', [
           layers: layers,
           success: function(featureInfoByLayer) {
             console.log('map.getFeatureInfo.success', featureInfoByLayer);
-            document.getElementById('info').innerHTML = featureInfoByLayer.join('');
+            //document.getElementById('info').innerHTML = featureInfoByLayer.join('');
 
             console.log('---- featureInfoByLayer: ', featureInfoByLayer);
           },
@@ -57,7 +57,7 @@ angular.module('ngBoilerplate', [
         });
       });
 
-});
+    });
 
 
 function createMap() {
