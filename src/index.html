@@ -26,6 +26,10 @@
                             <em id="MapName">New Map</em>
                         </span>
                         <span class="loom-notification-badge pull-right"></span>
+                        <!-- Temporary Button, will be removed very soon -->
+                        <a id="MergeButton" class="btn btn-xs btn-default" href="#addLayerWindow" data-toggle="modal">
+                            <i class="glyphicon glyphicon-resize-small"></i>
+                        </a>
                     </div>
                 </div>
                 <div id="pulldown-content" class="panel-group in">
@@ -52,6 +56,12 @@
         <div class="loom-notifications" notification-title="Notifications" notification-empty-text="No notifications..."></div>
         <div class="loom-notification-poster"></div>
     </div>
+
+    <div loom-modal id="addLayerWindow" modal-title="Add Layers">
+        <div loom-addlayers id="add-layers">
+        </div>
+    </div>
+
     <script type="text/javascript">
         var map = new ol.Map({
             target: 'map',
