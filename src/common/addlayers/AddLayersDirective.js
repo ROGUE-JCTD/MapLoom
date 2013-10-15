@@ -3,16 +3,14 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function($location) {
+      function($location, $rootScope) {
         return {
-          scope: {
-
-          },
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope) {
             var parser = new ol.parser.ogc.WMSCapabilities();
             // TODO: Add variable for ip to append onto url.
             var url = '/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0';
+            console.log(scope);
             scope.addLayers = function() {
               var length = scope.layers.length;
               for (var index = 0; index < length; index += 1) {
@@ -24,7 +22,7 @@
                       params: {'LAYERS': layer.name}
                     })
                   });
-                  map.addLayer(newLayer);
+                  scope.map.addLayer(newLayer);
                   layer.add = false;
                   layer.added = true;
                 }

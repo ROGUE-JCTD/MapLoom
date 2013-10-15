@@ -16,6 +16,6 @@
     "angular-bootstrap": "0.6.0",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
-    "openlayers": "./openlayers"
+    "ol3": "./ol3"
   }
 }

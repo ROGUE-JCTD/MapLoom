@@ -1,80 +1,75 @@
 <!DOCTYPE html>
 <html ng-app="ngBoilerplate" ng-controller="AppCtrl">
-  <head>
+<head>
     <title ng-bind="pageTitle"></title>
 
     <!-- social media tags -->
-    <meta property="og:title" content="ngBoilerplate" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://bit.ly/ngBoilerplate" />
-    <meta property="og:image" content="https://a248.e.akamai.net/assets.github.com/images/modules/logos_page/Octocat.png?1366128846" />
-    <meta property="og:description" content="Non-Trivial AngularJS Made Easy: Everything you need to kickstart AngularJS projects: a best-practice directory structure, an intelligent build system, and the best web design libraries around.">
+    <meta property="og:title" content="ngBoilerplate"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="http://bit.ly/ngBoilerplate"/>
+    <meta property="og:image"
+          content="https://a248.e.akamai.net/assets.github.com/images/modules/logos_page/Octocat.png?1366128846"/>
+    <meta property="og:description"
+          content="Non-Trivial AngularJS Made Easy: Everything you need to kickstart AngularJS projects: a best-practice directory structure, an intelligent build system, and the best web design libraries around.">
 
     <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
-    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>"/>
+    <% }); %>
 
     <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
-    <script type="text/javascript" src="<%= file %>"></script><% }); %>
-  </head>
-  <body>
-    <div id="map" class="map">
-        <div id="pulldown">
-            <div id="pulldown-shadow">
-                <div class="panel flat" id="MapTitle">
-                    <div class="panel-heading">
+    <script type="text/javascript" src="<%= file %>"></script>
+    <% }); %>
+</head>
+<body>
+<div id="map" class="map">
+    <div id="pulldown">
+        <div id="pulldown-shadow">
+            <div class="panel flat" id="MapTitle">
+                <div class="panel-heading">
                         <span style="font-weight: 100; font-size: 20px;">
                             <em id="MapName">New Map</em>
                         </span>
+                    <span class="loom-notification-badge pull-right"></span>
+                    <!-- Temporary Button, will be removed very soon -->
+                    <a id="MergeButton" class="btn btn-xs btn-default" href="#addLayerWindow" data-toggle="modal">
+                        <i class="glyphicon glyphicon-resize-small"></i>
+                    </a>
+                </div>
+            </div>
+            <div id="pulldown-content" class="panel-group in">
+                <div class="panel">
+                    <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                         data-target="#notificationPanel">
+                        <span>Notifications</span>
                         <span class="loom-notification-badge pull-right"></span>
-                        <!-- Temporary Button, will be removed very soon -->
-                        <a id="MergeButton" class="btn btn-xs btn-default" href="#addLayerWindow" data-toggle="modal">
-                            <i class="glyphicon glyphicon-resize-small"></i>
-                        </a>
+                    </div>
+                    <div id="notificationPanel" notification-empty-text="No notifications..."
+                         class="loom-notifications">
                     </div>
                 </div>
-                <div id="pulldown-content" class="panel-group in">
-                    <div class="panel">
-                        <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content" data-target="#notificationPanel">
-                            <span>Notifications</span>
-                            <span class="loom-notification-badge pull-right"></span>
+                <div ng-controller="LoomDiffController">
+                    <div class="panel" ng-if="hasDifferences">
+                        <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                             data-target="#diffPanel">
+                            <span>Differences</span>
                         </div>
-                        <div id="notificationPanel" notification-empty-text="No notifications..." class="loom-notifications">
-                        </div>
-                    </div>
-                    <div ng-controller="LoomDiffController">
-                        <div class="panel" ng-if="hasDifferences">
-                            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content" data-target="#diffPanel">
-                                <span>Differences</span>
-                            </div>
-                            <div id="diffPanel" class="loom-diff-panel panel-collapse collapse">Diffs go here.</div>
-                        </div>
+                        <div id="diffPanel" class="loom-diff-panel panel-collapse collapse">Diffs go here.</div>
                     </div>
                 </div>
             </div>
-            <button type="button" data-toggle="collapse" data-target="#pulldown-content" class="toggle btn btn-default flat-top">Toggle Menu</button>
         </div>
-        <div class="loom-notifications" notification-title="Notifications" notification-empty-text="No notifications..."></div>
-        <div class="loom-notification-poster"></div>
+        <button type="button" data-toggle="collapse" data-target="#pulldown-content"
+                class="toggle btn btn-default flat-top">Toggle Menu
+        </button>
     </div>
+    <div class="loom-notifications" notification-title="Notifications"
+         notification-empty-text="No notifications..."></div>
+    <div class="loom-notification-poster"></div>
+</div>
 
-    <div loom-modal id="addLayerWindow" modal-title="Add Layers">
-        <div loom-addlayers id="add-layers">
-        </div>
+<div loom-modal id="addLayerWindow" modal-title="Add Layers">
+    <div loom-addlayers id="add-layers">
     </div>
-
-    <script type="text/javascript">
-        var map = new ol.Map({
-            target: 'map',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.MapQuestOpenAerial()
-                })
-            ],
-            view: new ol.View2D({
-                center: ol.proj.transform([37.41, 8.82], 'EPSG:4326', 'EPSG:3857'),
-                zoom: 4
-            })
-        });
-    </script>
-  </body>
+</div>
+</body>
 </html>
