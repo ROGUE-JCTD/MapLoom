@@ -21,7 +21,7 @@
                       params: {'LAYERS': layer.name}
                     })
                   });
-                  map.addLayer(newLayer);
+                  scope.map.addLayer(newLayer);
                   layer.add = false;
                   layer.added = true;
                 }
