@@ -72,9 +72,8 @@ module.exports = {
       'vendor/angular-translate/angular-translate.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
-//      'vendor/ol3/ol.js',
+//      'vendor/ol3/ol.js'
 //      'vendor/ol3/ol-simple.js',
-//      'vendor/ol3/ol-min.js'
       'vendor/ol3/ol-whitespace.js'
     ],
     css: [

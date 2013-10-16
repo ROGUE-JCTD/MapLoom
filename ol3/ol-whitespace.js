@@ -642,7 +642,7 @@ goog.addDependency("../src/ol/layer/vectorlayerrenderintent.js", ["ol.layer.Vect
 goog.addDependency("../src/ol/map.js", ["ol.Map", "ol.MapProperty", "ol.RendererHint", "ol.RendererHints"], ["goog.Uri.QueryData", "goog.array", "goog.asserts", "goog.async.AnimationDelay", "goog.async.nextTick", "goog.debug.Console", "goog.dom", "goog.dom.TagName", "goog.dom.ViewportSizeMonitor", "goog.events", "goog.events.BrowserEvent", "goog.events.Event", "goog.events.EventType", "goog.events.KeyHandler", "goog.events.KeyHandler.EventType", "goog.events.MouseWheelHandler", "goog.events.MouseWheelHandler.EventType", 
 "goog.log", "goog.log.Level", "goog.object", "goog.style", "goog.vec.Mat4", "ol.BrowserFeature", "ol.Collection", "ol.FrameState", "ol.IView", "ol.MapBrowserEvent", "ol.MapBrowserEvent.EventType", "ol.MapBrowserEventHandler", "ol.MapEvent", "ol.MapEventType", "ol.Object", "ol.ObjectEventType", "ol.Pixel", "ol.PostRenderFunction", "ol.PreRenderFunction", "ol.Size", "ol.Tile", "ol.TileQueue", "ol.View", "ol.View2D", "ol.ViewHint", "ol.control", "ol.extent", "ol.interaction", "ol.layer.Base", "ol.layer.Group", 
 "ol.proj", "ol.proj.common", "ol.renderer.Map", "ol.renderer.canvas", "ol.renderer.canvas.Map", "ol.renderer.dom", "ol.renderer.dom.Map", "ol.renderer.webgl", "ol.renderer.webgl.Map", "ol.structs.PriorityQueue", "ol.vec.Mat4"]);
-goog.addDependency("../src/ol/mapbrowserevent.js", ["ol.MapBrowserEvent", "ol.MapBrowserEvent.EventType", "ol.MapBrowserEventHandler"], ["goog.array", "goog.events", "goog.events.BrowserEvent", "goog.events.EventTarget", "goog.events.EventType", "goog.style", "ol.BrowserFeature", "ol.Coordinate", "ol.FrameState", "ol.MapEvent", "ol.Pixel"]);
+goog.addDependency("../src/ol/mapbrowserevent.js", ["ol.MapBrowserEvent", "ol.MapBrowserEvent.EventType", "ol.MapBrowserEventHandler"], ["goog.array", "goog.events", "goog.events.BrowserEvent", "goog.events.EventTarget", "goog.events.EventType", "ol.BrowserFeature", "ol.Coordinate", "ol.FrameState", "ol.MapEvent", "ol.Pixel"]);
 goog.addDependency("../src/ol/mapevent.js", ["ol.MapEvent", "ol.MapEventType"], ["goog.events.Event", "ol.FrameState"]);
 goog.addDependency("../src/ol/math.js", ["ol.math"], ["goog.asserts"]);
 goog.addDependency("../src/ol/object.js", ["ol.Object", "ol.ObjectEventType"], ["goog.array", "goog.events", "goog.events.EventTarget", "goog.object"]);
@@ -16656,7 +16656,6 @@ goog.require("goog.events");
 goog.require("goog.events.BrowserEvent");
 goog.require("goog.events.EventTarget");
 goog.require("goog.events.EventType");
-goog.require("goog.style");
 goog.require("ol.BrowserFeature");
 goog.require("ol.Coordinate");
 goog.require("ol.FrameState");
@@ -16671,14 +16670,13 @@ ol.MapBrowserEvent = function(type, map, browserEvent, opt_frameState) {
 goog.inherits(ol.MapBrowserEvent, ol.MapEvent);
 ol.MapBrowserEvent.prototype.getCoordinate = function() {
   if(goog.isNull(this.coordinate_)) {
-    this.coordinate_ = this.map.getCoordinateFromPixel(this.getPixel())
+    this.coordinate_ = this.map.getEventCoordinate(this.browserEvent.getBrowserEvent())
   }
   return this.coordinate_
 };
 ol.MapBrowserEvent.prototype.getPixel = function() {
   if(goog.isNull(this.pixel_)) {
-    var eventPosition = goog.style.getRelativePosition(this.browserEvent, this.map.getViewport());
-    this.pixel_ = [eventPosition.x, eventPosition.y]
+    this.pixel_ = this.map.getEventPixel(this.browserEvent.getBrowserEvent())
   }
   return this.pixel_
 };
@@ -17441,8 +17439,8 @@ ol.interaction.Drag = function() {
   this.dragging_ = false;
   this.startX = 0;
   this.startY = 0;
-  this.offsetX = 0;
-  this.offsetY = 0;
+  this.deltaX = 0;
+  this.deltaY = 0;
   this.startCenter = null;
   this.startCoordinate = null
 };
@@ -22799,7 +22797,10 @@ ol.renderer.canvas.Vector.prototype.renderFeatures = function(features, symboliz
   return deferred
 };
 ol.renderer.canvas.Vector.prototype.renderLineStringFeatures_ = function(features, symbolizer) {
-  var context = this.context_, i, ii, feature, id, currentSize, geometry, components, j, jj, line, k, kk, vec, strokeSize;
+  var context = this.context_, i, ii, feature, id, currentSize, geometry, components, j, jj, coordinates, coordinate, k, kk, strokeSize;
+  var vec = [NaN, NaN, 0];
+  var pixel = [NaN, NaN];
+  var lastPixel = [NaN, NaN];
   context.globalAlpha = symbolizer.opacity;
   context.strokeStyle = symbolizer.color;
   context.lineWidth = symbolizer.width;
@@ -22825,14 +22826,24 @@ ol.renderer.canvas.Vector.prototype.renderLineStringFeatures_ = function(feature
       components = geometry.getComponents()
     }
     for(j = 0, jj = components.length;j < jj;++j) {
-      line = components[j];
-      for(k = 0, kk = line.getCount();k < kk;++k) {
-        vec = [line.get(k, 0), line.get(k, 1), 0];
+      coordinates = components[j].getCoordinates();
+      for(k = 0, kk = coordinates.length;k < kk;++k) {
+        coordinate = coordinates[k];
+        vec[0] = coordinate[0];
+        vec[1] = coordinate[1];
         goog.vec.Mat4.multVec3(this.transform_, vec, vec);
         if(k === 0) {
+          lastPixel[0] = NaN;
+          lastPixel[1] = NaN;
           context.moveTo(vec[0], vec[1])
         }else {
-          context.lineTo(vec[0], vec[1])
+          pixel[0] = Math.round(vec[0]);
+          pixel[1] = Math.round(vec[1]);
+          if(pixel[0] !== lastPixel[0] || pixel[1] !== lastPixel[1]) {
+            context.lineTo(vec[0], vec[1]);
+            lastPixel[0] = pixel[0];
+            lastPixel[1] = pixel[1]
+          }
         }
       }
     }
@@ -22936,7 +22947,10 @@ ol.renderer.canvas.Vector.prototype.renderText_ = function(features, text, texts
   }
 };
 ol.renderer.canvas.Vector.prototype.renderPolygonFeatures_ = function(features, symbolizer) {
-  var context = this.context_, strokeColor = symbolizer.strokeColor, strokeWidth = symbolizer.strokeWidth, strokeOpacity = symbolizer.strokeOpacity, fillColor = symbolizer.fillColor, fillOpacity = symbolizer.fillOpacity, globalAlpha, i, ii, geometry, components, j, jj, poly, rings, numRings, ring, k, kk, vec, feature;
+  var context = this.context_, strokeColor = symbolizer.strokeColor, strokeWidth = symbolizer.strokeWidth, strokeOpacity = symbolizer.strokeOpacity, fillColor = symbolizer.fillColor, fillOpacity = symbolizer.fillOpacity, globalAlpha, i, ii, geometry, components, j, jj, poly, rings, numRings, coordinates, coordinate, k, kk, feature;
+  var vec = [NaN, NaN, 0];
+  var pixel = [NaN, NaN];
+  var lastPixel = [NaN, NaN];
   if(strokeColor) {
     context.strokeStyle = strokeColor;
     if(strokeWidth) {
@@ -22966,14 +22980,24 @@ ol.renderer.canvas.Vector.prototype.renderPolygonFeatures_ = function(features, 
       rings = poly.getRings();
       numRings = rings.length;
       if(numRings > 0) {
-        ring = rings[0];
-        for(k = 0, kk = ring.getCount();k < kk;++k) {
-          vec = [ring.get(k, 0), ring.get(k, 1), 0];
+        coordinates = rings[0].getCoordinates();
+        for(k = 0, kk = coordinates.length;k < kk;++k) {
+          coordinate = coordinates[k];
+          vec[0] = coordinate[0];
+          vec[1] = coordinate[1];
           goog.vec.Mat4.multVec3(this.transform_, vec, vec);
           if(k === 0) {
+            lastPixel[0] = NaN;
+            lastPixel[1] = NaN;
             context.moveTo(vec[0], vec[1])
           }else {
-            context.lineTo(vec[0], vec[1])
+            pixel[0] = Math.round(vec[0]);
+            pixel[1] = Math.round(vec[1]);
+            if(pixel[0] !== lastPixel[0] || pixel[1] !== lastPixel[1]) {
+              context.lineTo(vec[0], vec[1]);
+              lastPixel[0] = pixel[0];
+              lastPixel[1] = pixel[1]
+            }
           }
         }
         if(fillColor && strokeColor) {
@@ -26068,6 +26092,13 @@ ol.Map.prototype.disposeInternal = function() {
 };
 ol.Map.prototype.freezeRendering = function() {
   ++this.freezeRenderingCount_
+};
+ol.Map.prototype.getEventCoordinate = function(event) {
+  return this.getCoordinateFromPixel(this.getEventPixel(event))
+};
+ol.Map.prototype.getEventPixel = function(event) {
+  var eventPosition = goog.style.getRelativePosition(event, this.viewport_);
+  return[eventPosition.x, eventPosition.y]
 };
 ol.Map.prototype.getRenderer = function() {
   return this.renderer_
