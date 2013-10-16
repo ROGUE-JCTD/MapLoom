@@ -99,8 +99,12 @@
         new ol.control.MousePosition({
           projection: 'EPSG:4326',
           target: map,
-          coordinateFormat: ol.coordinate.createStringXY(4)
-        })
+          coordinateFormat: ol.coordinate.toStringHDMS
+        }),
+        new ol.control.ScaleLine({className: 'metric-scale-line ol-scale-line',
+          units: ol.control.ScaleLineUnits.METRIC}),
+        new ol.control.ScaleLine({className: 'imperial-scale-line ol-scale-line',
+          units: ol.control.ScaleLineUnits.IMPERIAL})
       ]),
       interactions: ol.interaction.defaults().extend([
         new ol.interaction.DragRotate()
@@ -112,7 +116,6 @@
         zoom: 14
       })
     });
-
 
     // Defines default vector style
     ol.style.setDefault(new ol.style.Style({
