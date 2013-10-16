@@ -23,7 +23,7 @@
       }
     });
 
-    $translate.uses('es');
+    $translate.uses('en');
 
     var map = createMap();
 
