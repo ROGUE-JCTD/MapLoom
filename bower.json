@@ -11,7 +11,8 @@
     "jquery": "~2.0.3",
     "ol3": "./ol3",
     "closure-library": "*",
-    "angular-translate": "1.1.0"
+    "angular-translate": "1.1.0",
+    "jquery-sortable": "~0.9.11"
   },
   "resolutions": {
     "angular": "1.2.0-rc.2"
