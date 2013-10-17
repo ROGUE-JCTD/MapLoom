@@ -1,4 +1,5 @@
-<div id="layerpanel-group" class="panel-group loom-arrangeable" arrangeable-handle="div.layer-heading" arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer">
+<div id="layerpanel-group" class="panel-group loom-arrangeable" arrangeable-handle="div.layer-heading"
+    arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer" arrangeable-placeholder='<div class="placeholder list-group-item"></div>'>
   <div class="panel" ng-repeat="layer in layers = map.getLayers().getArray() | reverse">
     <div class="panel-heading layer-heading" data-toggle="collapse"
          data-parent="#layerpanel-group" data-target="#{{layer.get('label')}}">
