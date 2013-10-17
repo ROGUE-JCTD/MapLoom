@@ -31,10 +31,6 @@
                         </span>
           <span class="loom-notification-badge pull-right"></span>
         </div>
-        <!-- Temporary Button, will be removed very soon -->
-        <div id="MergeButton" class="btn btn-xs btn-default" data-target="#addLayerWindow" data-toggle="modal">
-          <i class="glyphicon glyphicon-resize-small"></i>
-        </div>
       </div>
       <div id="pulldown-content" class="panel-group in">
         <div class="panel">
@@ -43,7 +39,21 @@
             <span>Notifications</span>
             <span class="loom-notification-badge pull-right"></span>
           </div>
-          <div id="notificationPanel" notification-empty-text="No notifications..." class="loom-notifications">
+          <div id="notificationPanel" notification-empty-text="No notifications..."
+               class="loom-notifications">
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+               data-target="#layerManagerPanel">
+            <span>Map Layers</span>
+          </div>
+          <div id="layerManagerPanel" class="panel-collapse collapse">
+            <div class="loom-layers"></div>
+            <div class="panel-heading layer-heading" data-target="#addLayerDialog" data-toggle="modal">
+              <i class="glyphicon glyphicon-plus-sign"></i>
+              Add Layer
+            </div>
           </div>
         </div>
         <div ng-controller="LoomDiffController">
@@ -63,7 +73,7 @@
   </div>
   <div class="loom-notification-poster"></div>
 </div>
-<div loom-modal id="addLayerWindow" modal-title="Add Layers">
+<div loom-modal id="addLayerDialog" modal-title="Add Layers">
   <div loom-addlayers id="add-layers">
   </div>
 </div>

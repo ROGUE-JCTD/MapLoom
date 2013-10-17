@@ -16,6 +16,7 @@
                 var layer = scope.layers[index];
                 if (layer.add) {
                   var newLayer = new ol.layer.Tile({
+                    label: layer.title,
                     source: new ol.source.TileWMS({
                       url: 'http://' + $location.host() + '/geoserver/wms',
                       params: {'LAYERS': layer.name}
@@ -42,11 +43,20 @@
                     scope.layers[index].added = false;
                   }
                 });
-
-                console.log('scope.layers', scope.layers);
               }
             };
             xhr.send();
+
+            var layerRemoved = function(event, layer) {
+              for (var index = 0; index < scope.layers.length; index++) {
+                if (scope.layers[index].title === layer.get('label')) {
+                  scope.layers[index].added = false;
+                  return;
+                }
+              }
+            };
+
+            scope.$on('layerRemoved', layerRemoved);
           }
         };
       }

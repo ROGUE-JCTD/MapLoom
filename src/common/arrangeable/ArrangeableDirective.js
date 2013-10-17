@@ -6,6 +6,7 @@
       restrict: 'C',
       link: function(scope, element, attrs) { // Unused: attrs
         $(function() {
+          var startIndex = -1;
           var config = {
             // set item relative to cursor position
             onDragStart: function($item, container, _super) {
@@ -13,7 +14,7 @@
               var width = $item.outerWidth();
               var offset = $item.offset(),
                   pointer = container.rootGroup.pointer;
-
+              startIndex = $item.index();
               adjustment = {
                 left: pointer.left - offset.left,
                 top: pointer.top - offset.top
@@ -31,17 +32,21 @@
                 left: position.left - adjustment.left,
                 top: position.top - adjustment.top
               });
+            },
+            onDrop: function($item, container, _super) {
+              scope.$eval(attrs.arrangeableCallback)(startIndex, $item.index());
+              _super($item);
             }
           };
 
-          if (attrs.arrangeablehandle) {
-            config.handle = attrs.arrangeablehandle;
+          if (attrs.arrangeableHandle) {
+            config.handle = attrs.arrangeableHandle;
           }
-          if (attrs.arrangeableitemselector) {
-            config.itemSelector = attrs.arrangeableitemselector;
+          if (attrs.arrangeableItemSelector) {
+            config.itemSelector = attrs.arrangeableItemSelector;
           }
-          if (attrs.arrangeableplaceholder) {
-            config.placeholder = attrs.arrangeableplaceholder;
+          if (attrs.arrangeablePlaceholder) {
+            config.placeholder = attrs.arrangeablePlaceholder;
           }
 
           element.sortable(config);

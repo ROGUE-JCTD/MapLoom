@@ -51,7 +51,7 @@
         layers: layers,
         success: function(featureInfoByLayer) {
           console.log('map.getFeatureInfo.success', featureInfoByLayer);
-          document.getElementById('info').innerHTML = featureInfoByLayer.join('');
+          // document.getElementById('info').innerHTML = featureInfoByLayer.join('');
 
           console.log('---- featureInfoByLayer: ', featureInfoByLayer);
         },
@@ -71,10 +71,21 @@
   module.directive('stopEvent', function() {
     return {
       link: function(scope, element, attr) {
-        element.bind(attr.stopEvent, function(e) {
+        var events = attr.stopEvent.split(' ');
+        var stopFunction = function(e) {
           e.stopPropagation();
-        });
+        };
+        for (var i = 0; i < events.length; i++) {
+          var event = events[i];
+          element.bind(event, stopFunction);
+        }
       }
+    };
+  });
+
+  module.filter('reverse', function() {
+    return function(items) {
+      return items.slice().reverse();
     };
   });
 
@@ -85,10 +96,12 @@
       layers: [
 
         new ol.layer.Tile({
+          label: 'OpenStreetMap',
           source: new ol.source.OSM()
         }),
 
         new ol.layer.Tile({
+          label: 'canchas_de_futbol',
           source: new ol.source.TileWMS({
             url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
             params: {'LAYERS': 'geonode:canchas_de_futbol'}
@@ -96,6 +109,7 @@
         }),
 
         new ol.layer.Tile({
+          label: 'centros_medicos',
           source: new ol.source.TileWMS({
             url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
             params: {'LAYERS': 'geonode:centros_medicos'}

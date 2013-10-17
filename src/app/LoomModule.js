@@ -7,7 +7,7 @@
     'loom_diff_controller',
     'loom_modal',
     'loom_addlayers',
-    'loom_arrangeable'
+    'loom_arrangeable',
+    'loom_layers'
   ]);
-
 }());

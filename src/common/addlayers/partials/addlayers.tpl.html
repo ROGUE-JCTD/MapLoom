@@ -12,11 +12,11 @@
     <hr>
     <div class="form-group">
       <ul id="layerList" class="list-group">
-        <li ng-repeat="layer in layers | filter:{added:'false'} | filter:filterLayers" id="{{layer.name}}"
+        <li ng-repeat="layer in layers | filter:{added:'false'} | filter:filterLayers"
             class="list-group-item">
           <div class="row">
             <div class="col-xs-2">
-              <div class="checkButton btn btn-xs btn-default" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
+              <div class="checkButton btn btn-xs" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
                    btn-checkbox-false="false">
                 <i class="glyphicon" ng-class="{'glyphicon-unchecked': !layer.add, 'glyphicon-check': layer.add}"></i>
               </div>
