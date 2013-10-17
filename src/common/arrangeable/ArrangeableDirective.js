@@ -4,7 +4,6 @@
   module.directive('loomArrangeable', function() {
     return {
       restrict: 'C',
-      replace: false,
       link: function(scope, element, attrs) { // Unused: attrs
         $(function() {
           var config = {

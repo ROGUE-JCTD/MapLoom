@@ -68,6 +68,15 @@
     $translateProvider.uses('en');
   });
 
+  module.directive('stopEvent', function() {
+    return {
+      link: function(scope, element, attr) {
+        element.bind(attr.stopEvent, function(e) {
+          e.stopPropagation();
+        });
+      }
+    };
+  });
 
   function createMap() {
     console.log('---- app.js createMap');
