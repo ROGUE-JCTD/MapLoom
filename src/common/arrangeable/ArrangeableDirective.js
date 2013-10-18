@@ -36,7 +36,8 @@
             onDrop: function($item, container, _super) {
               scope.$eval(attrs.arrangeableCallback)(startIndex, $item.index());
               _super($item);
-            }
+            },
+            distance: 5
           };
 
           if (attrs.arrangeableHandle) {
@@ -47,6 +48,9 @@
           }
           if (attrs.arrangeablePlaceholder) {
             config.placeholder = attrs.arrangeablePlaceholder;
+          }
+          if (attrs.arrangeableDragDistance) {
+            config.distance = attrs.arrangeableDragDistance;
           }
 
           element.sortable(config);

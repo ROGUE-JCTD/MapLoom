@@ -8,6 +8,7 @@
     'loom_modal',
     'loom_addlayers',
     'loom_arrangeable',
-    'loom_layers'
+    'loom_layers',
+    'loom_utils'
   ]);
 }());

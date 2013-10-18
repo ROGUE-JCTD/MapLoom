@@ -1,0 +1,40 @@
+.loom-button-variant(@color-active; @color-inactive; @background-active; @background-inactive) {
+  color: @color-inactive;
+  background-color: @background-inactive;
+  border-color: darken(@background-inactive, 12%);
+
+  &:hover {
+    background-color: @background-inactive;
+    border-color: darken(@background-inactive, 12%)
+  }
+
+  &:focus,
+  &:active,
+  &.active,
+  .open .dropdown-toggle & {
+    color: @color-active;
+    background-color: @background-active;
+    border-color: darken(@background-active, 12%);
+  }
+  &:active,
+  &.active,
+  .open .dropdown-toggle & {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      background-color: @background-inactive;
+      border-color: darken(@background-inactive, 12%)
+    }
+  }
+}
+
+.loom-check-button {
+  .loom-button-variant(#FFF, #000, #155481, #FFF);
+}
