@@ -10,6 +10,7 @@
     'loom_addlayers',
     'loom_arrangeable',
     'loom_layers',
-    'loom_utils'
+    'loom_utils',
+    'loom_geogit'
   ]);
 }());
