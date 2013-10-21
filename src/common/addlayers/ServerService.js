@@ -10,6 +10,9 @@
     this.$get = function($rootScope, $location) {
       rootScope = $rootScope;
       servers.push({type: 'WMS', name: 'Local Geoserver', url: ('http://' + $location.host() + '/geoserver/wms')});
+      servers.push({type: 'fakeType', name: 'OpenStreetMap', url: 'fakeURL',
+        layers: [{title: 'OpenStreetMap', added: true }, {title: 'MapQuestImagery', added: false},
+          {title: 'MapQuestOSM', added: false}]});
       return this;
     };
 

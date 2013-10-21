@@ -76,23 +76,8 @@
 
         new ol.layer.Tile({
           label: 'OpenStreetMap',
+          metadata: {serverId: 1},
           source: new ol.source.OSM()
-        }),
-
-        new ol.layer.Tile({
-          label: 'canchas_de_futbol',
-          source: new ol.source.TileWMS({
-            url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
-            params: {'LAYERS': 'geonode:canchas_de_futbol'}
-          })
-        }),
-
-        new ol.layer.Tile({
-          label: 'centros_medicos',
-          source: new ol.source.TileWMS({
-            url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
-            params: {'LAYERS': 'geonode:centros_medicos'}
-          })
         })
       ],
       controls: ol.control.defaults().extend([
