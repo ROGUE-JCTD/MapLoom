@@ -1,5 +1,6 @@
 (function() {
   angular.module('loom', [
+    'loom_map',
     'loom_notifications',
     'loom_notification_poster',
     'loom_update_notification',
