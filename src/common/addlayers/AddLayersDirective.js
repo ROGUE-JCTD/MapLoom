@@ -50,9 +50,9 @@
                   if (layer.add) {
                     var newLayer = new ol.layer.Tile({
                       label: layer.title,
+                      metadata: {serverId: scope.currentServerIndex},
                       source: new ol.source.TileWMS({
                         url: scope.serverService.getServer(scope.currentServerIndex).url,
-                        metadata: {serverId: scope.currentServerIndex},
                         params: {'LAYERS': layer.name}
                       })
                     });
