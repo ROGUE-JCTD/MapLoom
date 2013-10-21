@@ -9,7 +9,6 @@
           link: function(scope) {
             scope.serverService = serverService;
             scope.currentServerIndex = 0;
-            console.log(serverService);
 
             scope.addLayers = function() {
               var layers = scope.serverService.getLayers(scope.currentServerIndex);

@@ -1,13 +1,13 @@
 <div class="modal-body">
   <form class="form-horizontal col-md-12">
     <div class="form-group">
-      <div class="btn-group">
-        <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            {{serverService.getServer(currentServerIndex).name}}
-            <span class="caret"></span>
+      <div class="btn-group custom-width-100">
+        <div class="btn-group custom-width-88">
+          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
+            <span class="pull-left"> {{serverService.getServer(currentServerIndex).name}} </span>
+            <span class="caret right-and-center"></span>
           </button>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu server-list col-md-12">
             <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="selectServer($index)">{{server.name}}</a></li>
             <li class="divider"></li>
             <li><a data-target="#add-server-dialog" data-toggle="modal">Add New Server</a></li>
