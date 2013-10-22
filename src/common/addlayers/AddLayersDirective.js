@@ -3,7 +3,7 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function(serverService) {
+      function(serverService, mapService) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope) {
@@ -19,7 +19,7 @@
                     metadata: {serverId: scope.currentServerIndex},
                     source: new ol.source.OSM()
                   });
-                  scope.map.addLayer(osmLayer);
+                  mapService.map.addLayer(osmLayer);
                   layers[0].add = false;
                   layers[0].added = true;
                 }
@@ -29,7 +29,7 @@
                     metadata: {serverId: scope.currentServerIndex},
                     source: new ol.source.MapQuestOpenAerial()
                   });
-                  scope.map.addLayer(imageryLayer);
+                  mapService.map.addLayer(imageryLayer);
                   layers[1].add = false;
                   layers[1].added = true;
                 }
@@ -39,7 +39,7 @@
                     metadata: {serverId: scope.currentServerIndex},
                     source: new ol.source.MapQuestOSM()
                   });
-                  scope.map.addLayer(mapquestLayer);
+                  mapService.map.addLayer(mapquestLayer);
                   layers[2].add = false;
                   layers[2].added = true;
                 }
@@ -56,7 +56,7 @@
                         params: {'LAYERS': layer.name}
                       })
                     });
-                    scope.map.addLayer(newLayer);
+                    mapService.map.addLayer(newLayer);
                     layer.add = false;
                     layer.added = true;
                   }

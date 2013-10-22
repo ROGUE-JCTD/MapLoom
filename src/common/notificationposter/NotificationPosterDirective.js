@@ -2,7 +2,7 @@
   var module = angular.module('loom_notification_poster_directive', []);
 
   module.directive('loomNotificationPoster',
-      function($rootScope, notificationService, diffService) {
+      function($rootScope, notificationService, diffService, mapService) {
         return{
           restrict: 'C',
           replace: true,
@@ -14,10 +14,16 @@
               '      class="btn btn-default">Perform Diff</button>' +
               '    <button type="button" ng-click="clearDiff()"' +
               '      class="btn btn-default">Clear Diff</button>' +
+              '    <button type="button" ng-click="mapService.zoomToExtent()"' +
+              '      class="btn btn-default">Zoom to World Extent</button>' +
+              '    <button type="button" ng-click="mapService.activateDragZoom()"' +
+              '      class="btn btn-default">Drag Zoom</button>' +
               '  </div>' +
               '</div>',
           // The linking function will add behavior to the template
           link: function(scope) { //Unused: element, attrs
+            scope.mapService = mapService;
+
             function addNotification() {
               notificationService.addNotification({
                 text: '1 Added, 3 Modified, 1 Deleted',

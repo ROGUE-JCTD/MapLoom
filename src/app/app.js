@@ -14,7 +14,7 @@
     console.log('---- app.js.run');
   });
 
-  module.controller('AppCtrl', function AppCtrl($scope, $location, $translate) {
+  module.controller('AppCtrl', function AppCtrl($scope, $location, $translate, mapService) {
     console.log('---- ngBoilerplate.controller.');
 
     $scope.$on('$stateChangeSuccess', function(event, toState) { // Unused params: toParams, fromState, fromParams
@@ -25,13 +25,7 @@
 
     $translate.uses('en');
 
-    var map = createMap();
-
-
-    // The main controller creates the OpenLayers map object. The map object
-    // is central, as most directives/components need a reference to it.
-    $scope.map = map;
-
+    var map = mapService.createMap();
 
     //TODO: move this to featureInfo module
     map.on('click', function(evt) {
@@ -67,99 +61,5 @@
   module.config(function($translateProvider) {
     $translateProvider.uses('en');
   });
-
-  function createMap() {
-    console.log('---- app.js createMap');
-
-    var map = new ol.Map({
-      layers: [
-
-        new ol.layer.Tile({
-          label: 'OpenStreetMap',
-          metadata: {serverId: 1},
-          source: new ol.source.OSM()
-        })
-      ],
-      controls: ol.control.defaults().extend([
-        new ol.control.FullScreen(),
-        new ol.control.ZoomSlider(),
-        new ol.control.MousePosition({
-          projection: 'EPSG:4326',
-          target: map,
-          coordinateFormat: ol.coordinate.toStringHDMS
-        }),
-        new ol.control.ScaleLine({className: 'metric-scale-line ol-scale-line',
-          units: ol.control.ScaleLineUnits.METRIC}),
-        new ol.control.ScaleLine({className: 'imperial-scale-line ol-scale-line',
-          units: ol.control.ScaleLineUnits.IMPERIAL})
-      ]),
-      interactions: ol.interaction.defaults().extend([
-        new ol.interaction.DragRotate()
-      ]),
-      renderer: ol.RendererHint.CANVAS,
-      target: 'map',
-      view: new ol.View2D({
-        center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
-        zoom: 14
-      })
-    });
-
-    // Defines default vector style
-    ol.style.setDefault(new ol.style.Style({
-      rules: [
-        new ol.style.Rule({
-          filter: 'renderintent("selected")',
-          symbolizers: [
-            new ol.style.Fill({
-              color: '#ff0000',
-              opacity: 1
-            }),
-            new ol.style.Stroke({
-              color: '#000000',
-              opacity: 1,
-              width: 2
-            }),
-            new ol.style.Shape({
-              size: 10,
-              fill: new ol.style.Fill({
-                color: '#ff0000',
-                opacity: 1
-              }),
-              stroke: new ol.style.Stroke({
-                color: '#000000',
-                opacity: 1,
-                width: 2
-              })
-            })
-          ]
-        })
-      ],
-      symbolizers: [
-        new ol.style.Fill({
-          color: '#ffff00',
-          opacity: 0.8
-        }),
-        new ol.style.Stroke({
-          color: '#ff8000',
-          opacity: 0.8,
-          width: 3
-        }),
-        new ol.style.Shape({
-          size: 10,
-          fill: new ol.style.Fill({
-            color: '#ffff00',
-            opacity: 0.8
-          }),
-          stroke: new ol.style.Stroke({
-            color: '#ff8000',
-            opacity: 0.8,
-            width: 3
-          })
-        })
-      ]
-    }));
-
-    return map;
-  }
 }());
 
