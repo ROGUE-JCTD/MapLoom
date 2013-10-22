@@ -4,12 +4,21 @@
   // Private Variables
   var repos = [];
   var nextRepoId = 0;
-  var q, http;
+
+  // services
+  var q, http, rootScope;
 
   var issueRequest = function(URL, deferredResponse) {
     http.jsonp(URL).then(function(response) {
       if (!goog.isDef(response.data.response.success) || response.data.response.success === true) {
-        deferredResponse.resolve(response.data.response);
+        // Check for merge conflicts
+        if (goog.isDef(response.data.response.Merge) && goog.isDef(response.data.response.Merge.conflicts)) {
+          // Handle Merge Conflicts
+          rootScope.$broadcast('geogit-merge-conflicts', response.data.response.Merge);
+          deferredResponse.reject('CONFLICTS');
+        } else {
+          deferredResponse.resolve(response.data.response);
+        }
       } else {
         deferredResponse.reject(response.data.response.error);
       }
@@ -21,9 +30,10 @@
   };
 
   module.provider('geogitService', function() {
-    this.$get = function($q, $http) {
+    this.$get = function($q, $http, $rootScope) {
       q = $q;
       http = $http;
+      rootScope = $rootScope;
       repos.push(
           new GeoGitRepo('http://geoserver.rogue.lmnsolutions.com/geoserver/geogit/geonode:tegu_op_repo', 'master')
       );
@@ -36,25 +46,7 @@
 
       service.command(repoId, 'beginTransaction').then(function(response) {
         if (response.success === true) {
-          var transaction = {
-            command: function(command, options) {
-              if (!goog.isDefAndNotNull(options)) {
-                options = {};
-              }
-              options.transactionId = response.Transaction.ID;
-              return service.command(repoId, command, options);
-            },
-            finalize: function() {
-              return service.command(repoId, 'endTransaction',
-                  {'transactionId': response.Transaction.ID}
-              );
-            },
-            abort: function() {
-              return service.command(repoId, 'endTransaction',
-                  {'transactionId': response.Transaction.ID, 'cancel': true}
-              );
-            }
-          };
+          var transaction = new GeoGitTransaction(service.command, repoId, response.Transaction);
           deferredResponse.resolve(transaction);
         } else {
           deferredResponse.reject(response.error);
@@ -76,7 +68,13 @@
         if (goog.isDefAndNotNull(options)) {
           for (var property in options) {
             if (property !== null && options.hasOwnProperty(property)) {
-              var trimmed = property.substring(0, property.indexOf('_'));
+              var underscore = property.indexOf('_');
+              var trimmed;
+              if (underscore > 0) {
+                trimmed = property.substring(0, property.indexOf('_'));
+              } else {
+                trimmed = property;
+              }
               if (goog.isArray(options[property])) {
                 for (var i = 0; i < options[property].length; i++) {
                   var element = options[property][i];

@@ -3,6 +3,28 @@ var GeoGitRepo = function(_url, _branch) {
   this.branch = _branch;
 };
 
+var GeoGitTransaction = function(_commandFunction, _repoId, _TransactionParams) {
+  this.command = function(command, options) {
+    if (!goog.isDefAndNotNull(options)) {
+      options = {};
+    }
+    options.transactionId = _TransactionParams.ID;
+    return _commandFunction(_repoId, command, options);
+  };
+
+  this.finalize = function() {
+    return _commandFunction(_repoId, 'endTransaction',
+        {'transactionId': _TransactionParams.ID}
+    );
+  };
+
+  this.abort = function() {
+    return _commandFunction(_repoId, 'endTransaction',
+        {'transactionId': _TransactionParams.ID, 'cancel': true}
+    );
+  };
+};
+
 ////////////////////////////////////////////
 // Geogit Command Options
 //
