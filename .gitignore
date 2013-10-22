@@ -5,3 +5,4 @@ bin/
 node_modules/
 vendor/
 .idea
+ZZZIGNORE_*.js

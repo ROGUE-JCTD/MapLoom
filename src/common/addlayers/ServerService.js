@@ -1,3 +1,6 @@
+var SERVER_SERVICE_USE_PORT = false;
+var SERVER_SERVICE_USE_PROXY = true;
+
 (function() {
   var module = angular.module('loom_server_service', []);
 
@@ -9,10 +12,26 @@
   module.provider('serverService', function() {
     this.$get = function($rootScope, $location) {
       rootScope = $rootScope;
-      servers.push({type: 'WMS', name: 'Local Geoserver', url: ('http://' + $location.host() + '/geoserver/wms')});
-      servers.push({type: 'fakeType', name: 'OpenStreetMap', url: 'fakeURL',
-        layers: [{title: 'OpenStreetMap', added: true }, {title: 'MapQuestImagery', added: false},
-          {title: 'MapQuestOSM', added: false}]});
+      servers.push({
+        type: 'WMS',
+        name: 'Local Geoserver',
+        url: ('http://' + $location.host() + (SERVER_SERVICE_USE_PORT ? ':' + $location.port() : '') + '/geoserver/wms')
+      });
+      servers.push({
+        type: 'fakeType',
+        name: 'OpenStreetMap',
+        url: 'fakeURL',
+        layers: [{
+          title: 'OpenStreetMap',
+          added: true
+        }, {
+          title: 'MapQuestImagery',
+          added: false
+        }, {
+          title: 'MapQuestOSM',
+          added: false
+        }]
+      });
       return this;
     };
 
@@ -34,8 +53,10 @@
 
       if (!goog.isDefAndNotNull(server.layers)) {
         var parser = new ol.parser.ogc.WMSCapabilities();
-        var url = '/proxy/?url=' +
-            encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities');
+        var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
+        if (SERVER_SERVICE_USE_PROXY) {
+          url = '/proxy/?url=' + encodeURIComponent(url);
+        }
 
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
