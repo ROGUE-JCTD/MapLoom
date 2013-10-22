@@ -2,7 +2,6 @@
   var module = angular.module('loom_geogit_service', []);
 
   // Private Variables
-  var repos = [];
   var nextRepoId = 0;
 
   // services
@@ -30,11 +29,14 @@
   };
 
   module.provider('geogitService', function() {
+    // public variables
+    this.repos = [];
+
     this.$get = function($q, $http, $rootScope) {
       q = $q;
       http = $http;
       rootScope = $rootScope;
-      repos.push(
+      this.addRepo(
           new GeoGitRepo('http://geoserver.rogue.lmnsolutions.com/geoserver/geogit/geonode:tegu_op_repo', 'master')
       );
       return this;
@@ -62,7 +64,7 @@
 
     this.command = function(repoId, command, options) {
       var deferredResponse = q.defer();
-      var repo = repos[repoId];
+      var repo = this.repos[repoId];
       if (goog.isDefAndNotNull(repo)) {
         var URL = repo.url + '/' + command + '?output_format=JSON&callback=JSON_CALLBACK';
         if (goog.isDefAndNotNull(options)) {
@@ -91,14 +93,10 @@
       return deferredResponse.promise;
     };
 
-    this.getRepos = function() {
-      return repos;
-    };
-
     this.addRepo = function(repo) {
       repo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
-      repos.push(repo);
+      this.repos.push(repo);
     };
   });
 
