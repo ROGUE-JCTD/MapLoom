@@ -34,8 +34,8 @@
 
       if (!goog.isDefAndNotNull(server.layers)) {
         var parser = new ol.parser.ogc.WMSCapabilities();
-
-        var url = '/proxy?url=' + encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0');
+        var url = '/proxy/?url=' +
+            encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities');
 
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
@@ -45,7 +45,7 @@
          */
         xhr.onload = function() {
           if (xhr.status == 200) {
-            server.layers = parser.read(xhr.responseXML).capability.layers;
+            server.layers = parser.read(xhr.response).capability.layers;
             for (var index = 0; index < server.layers.length; index += 1) {
               server.layers[index].added = false;
             }
@@ -64,7 +64,8 @@
       if (goog.isDefAndNotNull(server.layers)) {
         var parser = new ol.parser.ogc.WMSCapabilities();
 
-        var url = '/proxy?url=' + encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0');
+        var url = '/proxy/?url=' +
+            encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities');
 
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);

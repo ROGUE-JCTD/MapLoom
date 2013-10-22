@@ -9,6 +9,8 @@
           link: function(scope) {
             scope.serverService = serverService;
             scope.type = 'WMS';
+            scope.name = 'Server';
+            scope.url = 'http://url/wms';
           }
         };
       }
