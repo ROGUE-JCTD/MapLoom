@@ -3,7 +3,7 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function(serverService, mapService) {
+      function(serverService, mapService, geogitService) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope) {
@@ -48,14 +48,17 @@
                 for (var index = 0; index < length; index += 1) {
                   var layer = layers[index];
                   if (layer.add) {
+                    var urlIndex = scope.serverService.getServer(scope.currentServerIndex).url.lastIndexOf('/');
+                    var url = scope.serverService.getServer(scope.currentServerIndex).url.slice(0, urlIndex);
                     var newLayer = new ol.layer.Tile({
                       label: layer.title,
-                      metadata: {serverId: scope.currentServerIndex},
+                      metadata: {serverId: scope.currentServerIndex, url: url},
                       source: new ol.source.TileWMS({
                         url: scope.serverService.getServer(scope.currentServerIndex).url,
                         params: {'LAYERS': layer.name}
                       })
                     });
+                    geogitService.isGeoGit(newLayer);
                     mapService.map.addLayer(newLayer);
                     layer.add = false;
                     layer.added = true;
