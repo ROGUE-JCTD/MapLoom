@@ -56,14 +56,12 @@
             </div>
           </div>
         </div>
-        <div ng-controller="LoomDiffController">
-          <div class="panel" ng-if="hasDifferences">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#diff-panel">
-              <span>Differences</span>
-            </div>
-            <div id="diff-panel" class="loom-diff-panel panel-collapse collapse">Diffs go here.</div>
+        <div class="panel" ng-class="{'hidden': !hasDifferences}" ng-controller="LoomDiffController">
+          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+               data-target="#diff-panel">
+            <span>Differences</span>
           </div>
+          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse">Diffs go here.</div>
         </div>
       </div>
     </div>

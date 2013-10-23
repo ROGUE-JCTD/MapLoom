@@ -1,5 +1,8 @@
-<div>
+<div class="difflist">
   <ul class="list-group">
+    <li class="list-group-item conflict" ng-click="clickCallback({{conflict}})" ng-repeat="conflict in conflictList">
+      <span class="glyphicon glyphicon-warning-sign"/> '{{conflict.feature}}' in {{conflict.layer}}
+    </li>
     <li class="list-group-item add" ng-click="clickCallback({{add}})" ng-repeat="add in addList">
       <span class="glyphicon glyphicon-plus-sign"/> '{{add.feature}}' to {{add.layer}}
     </li>

@@ -1,9 +1,34 @@
-.add {
+.difflist li {
+  cursor: help;
+}
+
+.difflist .glyphicon {
+  font-size: large;
+  position: relative;
+  left: -5px;
+  top: 3px;
+}
+
+.add .glyphicon {
   color: #008800;
 }
-.modify {
+
+.modify .glyphicon {
   color: #666600;
 }
-.delete {
+
+.delete .glyphicon {
   color: #880000;
+}
+
+.conflict .glyphicon {
+  color: #aa5a12;
+}
+
+.conflict {
+  font-weight: 900;
+}
+
+.conflict.selected {
+  box-shadow: inset 0px 0px 15px 0px #FFFFFF;
 }

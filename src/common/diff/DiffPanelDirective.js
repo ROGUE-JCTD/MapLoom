@@ -7,9 +7,24 @@
       replace: true,
       templateUrl: 'diff/partial/diffpanel.tpl.html',
       link: function(scope) { // Unused: element, attrs
-        scope.adds = diffService.getAdds();
-        scope.modifies = diffService.getModifies();
-        scope.deletes = diffService.getDeletes();
+        scope.adds = diffService.adds;
+        scope.modifies = diffService.modifies;
+        scope.deletes = diffService.deletes;
+        scope.conflicts = diffService.conflicts;
+        scope.diffService = diffService;
+
+        scope.$watch('diffService.adds', function() {
+          scope.adds = diffService.adds;
+        });
+        scope.$watch('diffService.modifies', function() {
+          scope.modifies = diffService.modifies;
+        });
+        scope.$watch('diffService.deletes', function() {
+          scope.deletes = diffService.deletes;
+        });
+        scope.$watch('diffService.conflicts', function() {
+          scope.conflicts = diffService.conflicts;
+        });
       }
     };
   });
