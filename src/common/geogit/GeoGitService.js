@@ -7,6 +7,8 @@
   // services
   var q, http, rootScope;
 
+  var service_ = null;
+
   var issueRequest = function(URL, deferredResponse) {
     http.jsonp(URL).then(function(response) {
       if (!goog.isDef(response.data.response.success) || response.data.response.success === true) {
@@ -33,22 +35,19 @@
     this.repos = [];
 
     this.$get = function($q, $http, $rootScope) {
+      service_ = this;
       q = $q;
       http = $http;
       rootScope = $rootScope;
-      this.addRepo(
-          new GeoGitRepo('http://geoserver.rogue.lmnsolutions.com/geoserver/geogit/geonode:tegu_op_repo', 'master')
-      );
-      return this;
+      return service_;
     };
 
     this.beginTransaction = function(repoId) {
       var deferredResponse = q.defer();
-      var service = this;
 
-      service.command(repoId, 'beginTransaction').then(function(response) {
+      service_.command(repoId, 'beginTransaction').then(function(response) {
         if (response.success === true) {
-          var transaction = new GeoGitTransaction(service.command, repoId, response.Transaction);
+          var transaction = new GeoGitTransaction(service_.command, repoId, response.Transaction);
           deferredResponse.resolve(transaction);
         } else {
           deferredResponse.reject(response.error);
@@ -64,7 +63,7 @@
 
     this.command = function(repoId, command, options) {
       var deferredResponse = q.defer();
-      var repo = this.repos[repoId];
+      var repo = service_.repos[repoId];
       if (goog.isDefAndNotNull(repo)) {
         var URL = repo.url + '/' + command + '?output_format=JSON&callback=JSON_CALLBACK';
         if (goog.isDefAndNotNull(options)) {
@@ -96,11 +95,11 @@
     this.addRepo = function(repo) {
       repo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
-      this.repos.push(repo);
+      service_.repos[repo.id] = repo;
       return repo.id;
     };
 
-    this.parseFeatureType = function(featureType) {
+    this.parseWorkspaceRoute = function(featureType) {
       if (featureType) {
         var split = featureType.split(':');
         if (split.length === 1) {
@@ -116,11 +115,13 @@
       return null;
     };
 
-    this.isLayerGroup = function(layer) {
+    this.isNotLayerGroup = function(layer) {
       var featureType = layer.getSource().getParams().LAYERS;
       var url = layer.get('metadata').url + '/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=DescribeLayer&layers=' +
           featureType;
-      url = '/proxy/?url=' + encodeURIComponent(url);
+      if (SERVER_SERVICE_USE_PROXY) {
+        url = '/proxy/?url=' + encodeURIComponent(url);
+      }
 
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
@@ -135,16 +136,14 @@
         }
       }, function(reject) {
         deferredResponse.reject(reject);
-      }, function(update) {
-        deferredResponse.update(update);
       });
       return deferredResponse.promise;
     };
 
-    this.getLayer = function(layer) {
+    this.getDataStoreName = function(layer) {
       var featureType = layer.getSource().getParams().LAYERS;
 
-      var parsedFeatureType = this.parseFeatureType(featureType);
+      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/layers/' + featureType + '.json';
 
@@ -153,8 +152,8 @@
 
         var resourceUrl = response.data.layer.resource.href;
 
-        var datastoreStartIndex = resourceUrl.indexOf(parsedFeatureType.workspace + '/datastores');
-        datastoreStartIndex = datastoreStartIndex + parsedFeatureType.workspace.length + 12;
+        var datastoreStartIndex = resourceUrl.indexOf(workspaceRoute.workspace + '/datastores');
+        datastoreStartIndex = datastoreStartIndex + workspaceRoute.workspace.length + 12;
 
         var datastoreEnd = resourceUrl.substr(datastoreStartIndex);
         var datastoreEndIndex = datastoreEnd.indexOf('/');
@@ -162,8 +161,6 @@
         deferredResponse.resolve(datastore);
       }, function(reject) {
         deferredResponse.reject(reject);
-      }, function(update) {
-        deferredResponse.update(update);
       });
       return deferredResponse.promise;
     };
@@ -171,9 +168,9 @@
     this.getDataStore = function(layer, name) {
       var featureType = layer.getSource().getParams().LAYERS;
 
-      var parsedFeatureType = this.parseFeatureType(featureType);
+      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
-      var url = layer.get('metadata').url + '/rest/workspaces/' + parsedFeatureType.workspace + '/datastores/' + name +
+      var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' + name +
           '.json';
 
       var deferredResponse = q.defer();
@@ -186,8 +183,6 @@
         deferredResponse.reject('Something went wrong when getting the datastore.');
       }, function(reject) {
         deferredResponse.reject(reject);
-      }, function(update) {
-        deferredResponse.update(update);
       });
       return deferredResponse.promise;
     };
@@ -195,23 +190,17 @@
     this.getFeatureType = function(layer, dataStore) {
       var featureType = layer.getSource().getParams().LAYERS;
 
-      var parsedFeatureType = this.parseFeatureType(featureType);
+      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
-      var url = layer.get('metadata').url + '/rest/workspaces/' + parsedFeatureType.workspace + '/datastores/' +
-          dataStore.name + '/featuretypes/' + parsedFeatureType.typeName + '.json';
+      var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' +
+          dataStore.name + '/featuretypes/' + workspaceRoute.typeName + '.json';
 
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
-        var metadata = layer.get('metadata');
-        metadata.projection = response.data.featureType.srs;
-        metadata.isGeoGit = true;
-        metadata.geogitStore = dataStore.name;
-        metadata.nativeName = response.data.featureType.nativeName;
+        response.data.featureType.workspace = workspaceRoute.workspace;
         deferredResponse.resolve(response.data.featureType);
       }, function(reject) {
         deferredResponse.reject(reject);
-      }, function(update) {
-        deferredResponse.update(update);
       });
       return deferredResponse.promise;
     };
@@ -219,33 +208,35 @@
     this.isGeoGit = function(layer) {
       if (goog.isDefAndNotNull(layer)) {
         console.log(layer);
-        if (!goog.isDefAndNotNull(layer.get('metadata').isGeoGit)) {
-          // First check to see if this is a layer group
-          var geogitService = this;
-          var promise = this.isLayerGroup(layer);
-          promise.then(function(resolved) {
+        var metadata = layer.get('metadata');
+        if (!goog.isDefAndNotNull(metadata.isGeoGit)) {
+          // First check to see if this is not a layer group
+          service_.isNotLayerGroup(layer).then(function() {
             // Then get the layer information from the server for the datastore name
-            console.log('resolved', resolved);
-            promise = geogitService.getLayer(layer);
-            promise.then(function(resolved) {
+            console.log('not a layer group');
+            service_.getDataStoreName(layer).then(function(dataStoreName) {
               // Then get the datastore to determine if it is a geogit datastore or not
-              console.log('resolved', resolved);
-              promise = geogitService.getDataStore(layer, resolved);
-              promise.then(function(resolved) {
+              console.log('resolved', dataStoreName);
+              service_.getDataStore(layer, dataStoreName).then(function(dataStore) {
                 // Finally get the needed information stored on the layer and create the repo object
-                console.log('resolved', resolved);
-                if (resolved.type === 'GeoGIT') {
-                  promise = geogitService.getFeatureType(layer, resolved);
-                  promise.then(function(resolved) {
-                    console.log('resolved', resolved);
-                    var id = geogitService.addRepo({url: layer.get('metadata').url});
-                    layer.get('metadata').repoId = id;
+                console.log('resolved', dataStore);
+                if (dataStore.type === 'GeoGIT') {
+                  service_.getFeatureType(layer, dataStore).then(function(featureType) {
+                    console.log('resolved', featureType);
+                    var id = service_.addRepo(
+                        new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name));
+                    metadata.projection = featureType.srs;
+                    metadata.isGeoGit = true;
+                    metadata.workspace = featureType.workspace;
+                    metadata.geogitStore = dataStore.name;
+                    metadata.nativeName = featureType.nativeName;
+                    metadata.repoId = id;
                     console.log(layer);
                   }, function(rejected) {
                     console.log('rejected', rejected);
                   });
                 } else {
-                  layer.get('metadata').isGeoGit = false;
+                  metadata.isGeoGit = false;
                 }
               }, function(rejected) {
                 console.log('rejected', rejected);
