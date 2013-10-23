@@ -11,3 +11,71 @@
 .modal-body {
     background-color:#97B3CD;
 }
+
+.modal {
+  display: inline-block;
+  width: auto;
+}
+
+.modal.custom {
+  display: none;
+}
+
+.loom-dialog {
+  width: 26%;
+  position: absolute;
+  left: 37%;
+  top: 30%;
+  .box-shadow(0px 0px 12px rgba(0, 0, 0, 0.35));
+}
+
+.loom-dialog.dialog-default {
+  .modal-header {
+    color: #fff;
+    background-color: #155481;
+    borders: none;
+  }
+  .modal-footer {
+    background-color: #97B3CD;
+    border-top: 1px solid #155481;
+    margin-top: 0;
+    padding: 5px 5px 5px 5px;
+  }
+  .modal-body {
+    background-color: #97B3CD;
+  }
+}
+
+.loom-dialog.dialog-warning {
+  .modal-header {
+    color: #fff;
+    background-color: #632f13;
+    bordes: none;
+  }
+  .modal-footer {
+    background-color: #e8d0c8;
+    border-top: 1px solid #632f13;
+    margin-top: 0;
+    padding: 5px 5px 5px 5px;
+  }
+  .modal-body {
+    background-color: #e8d0c8;
+  }
+}
+
+.loom-dialog.dialog-error {
+  .modal-header {
+    color: #fff;
+    background-color: #440000;
+    borders: none;
+  }
+  .modal-footer {
+    background-color: #ded9d9;
+    border-top: 1px solid #440000;
+    margin-top: 0;
+    padding: 5px 5px 5px 5px;
+  }
+  .modal-body {
+    background-color: #ded9d9;
+  }
+}

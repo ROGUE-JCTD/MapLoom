@@ -2,7 +2,7 @@
   var module = angular.module('loom_notification_poster_directive', []);
 
   module.directive('loomNotificationPoster',
-      function($rootScope, notificationService, diffService, mapService) {
+      function($rootScope, notificationService, diffService, mapService, dialogService, $timeout) {
         return{
           restrict: 'C',
           replace: true,
@@ -18,6 +18,8 @@
               '      class="btn btn-default">Zoom to World Extent</button>' +
               '    <button type="button" ng-click="mapService.activateDragZoom()"' +
               '      class="btn btn-default">Drag Zoom</button>' +
+              '    <button type="button" ng-click="addModal()"' +
+              '      class="btn btn-default">Modal</button>' +
               '  </div>' +
               '</div>',
           // The linking function will add behavior to the template
@@ -63,10 +65,36 @@
             scope.performDiff = performDiff;
 
             function clearDiff() {
+              console.log('clear');
               diffService.clearDiff();
             }
 
             scope.clearDiff = clearDiff;
+
+            scope.addModal = function() {
+              // The dialog service works through promises, the promise will tell you what button
+              // was pushed.
+              dialogService.open('My Title', 'This is the message of the dialog.',
+                  ['OK', 'Cancel'], false).then(function(button) {
+                switch (button) {
+                  case 'OK':
+                    console.log('OK was clicked!');
+                    break;
+                  case 'Cancel':
+                    console.log('Cancel was clicked!');
+                    break;
+                }
+              });
+
+              $timeout(function() {
+                // Don't do this, it makes it unclosable! (no buttons and no close button)
+                dialogService.warn('WARNING', 'This is a warning message.', null, false);
+              },2000);
+
+              $timeout(function() {
+                dialogService.error('ERROR', 'This is an error message.');
+              }, 4000);
+            };
           }
         };
       });

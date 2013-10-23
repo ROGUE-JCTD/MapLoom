@@ -5,7 +5,7 @@
   var nextRepoId = 0;
 
   // services
-  var q, http, rootScope;
+  var q, http, rootScope, dialogService_;
 
   var service_ = null;
 
@@ -34,11 +34,12 @@
     // public variables
     this.repos = [];
 
-    this.$get = function($q, $http, $rootScope) {
+    this.$get = function($q, $http, $rootScope, dialogService) {
       service_ = this;
       q = $q;
       http = $http;
       rootScope = $rootScope;
+      dialogService_ = dialogService;
       rootScope.$on('layerRemoved', service_.removeRepo);
       return service_;
     };
@@ -239,19 +240,21 @@
                     metadata.nativeName = featureType.nativeName;
                     metadata.repoId = id;
                   }, function(rejected) {
-                    alert(rejected.toString());
+                    dialogService_.error(
+                        'Error', 'Unable to get feature type of GeoGit data store. (' + rejected.status + ')');
                   });
                 } else {
                   metadata.isGeoGit = false;
                 }
               }, function(rejected) {
-                alert(rejected.toString());
+                dialogService_.error('Error', 'Unable to get the data store. (' + rejected.status + ')');
               });
             }, function(rejected) {
-              alert(rejected.toString());
+              dialogService_.error('Error', 'Unable to determine the data store name. (' + rejected.status + ')');
             });
           }, function(rejected) {
-            alert(rejected.toString());
+            dialogService_.error(
+                'Error', 'Unable to determine if the layer was a layer group. (' + rejected.status + ')');
           });
         }
       }
