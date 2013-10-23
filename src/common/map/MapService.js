@@ -5,10 +5,10 @@
 
   module.provider('mapService', function() {
     this.$get = function() {
+      // create map on init so that other components can use map on their init
+      this.map = this.createMap();
       return this;
     };
-
-    this.map = null;
 
     this.activateDragZoom = function() {
       //first we need to get access to the map's drag zoom interaction, if there is one
@@ -38,8 +38,21 @@
       view.fitExtent(extent, this.map.getSize());
     };
 
+    this.getFeatureLayers = function() {
+      var layers = [];
+
+      //TODO: do a better job at removing all layers except those that have a feature type.
+      this.map.getLayers().forEach(function(layer) {
+        if (!(layer.source_ instanceof ol.source.OSM)) {
+          layers.push(layer);
+        }
+      });
+
+      return layers;
+    };
+
     this.createMap = function() {
-      this.map = new ol.Map({
+      var map = new ol.Map({
         layers: [
 
           new ol.layer.Tile({
@@ -47,6 +60,46 @@
             metadata: {serverId: 1},
             source: new ol.source.OSM()
           })
+
+          /*
+          //NOTE: TODO: do not commit
+          new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+              url: 'http://192.168.10.217/geoserver/wms',
+              //url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
+              params: {
+                //'LAYERS': {'geonode:incidentes_copeco', 'geonode:canchas_de_futbol'}
+                'LAYERS': 'geonode:canchas_de_futbol'
+              },
+              getFeatureInfoOptions: {
+                'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
+                'params': {
+                  'INFO_FORMAT': 'application/json',
+                  'FEATURE_COUNT': 50
+                }
+              }
+            })
+          }),
+
+          new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+              url: 'http://192.168.10.217/geoserver/wms',
+              //url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
+              params: {
+                //'LAYERS': 'geonode:incidentes_copeco'
+                'LAYERS': 'geonode:incidentes_copeco'
+              },
+              getFeatureInfoOptions: {
+                'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
+                'params': {
+                  'INFO_FORMAT': 'application/json',
+                  'FEATURE_COUNT': 50
+                }
+              }
+            })
+          })
+          */
+
         ],
         controls: ol.control.defaults().extend([
           new ol.control.FullScreen(),
@@ -126,7 +179,7 @@
         ]
       }));
 
-      this.map.on('dragend', function() {
+      map.on('dragend', function() {
         if (dragZoomActive === false) {
           return;
         }
@@ -146,7 +199,7 @@
         dragZoomActive = false;
       });
 
-      return this.map;
+      return map;
     };
   });
 }());

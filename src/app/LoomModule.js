@@ -10,9 +10,10 @@
     'loom_addlayers',
     'loom_arrangeable',
     'loom_layers',
-    'loom_utils',
     'loom_geogit',
     'loom_pulldown',
-    'loom_pulldown_controller'
+    'loom_pulldown_controller',
+    'loom_feature_info_box',
+    'loom_utils'
   ]);
 }());

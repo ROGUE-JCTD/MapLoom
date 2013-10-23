@@ -1,0 +1,89 @@
+.feature-info-box-popup {
+  display: block;
+  position: absolute;
+  background-color: white;
+  -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 1px 4px rgba(240, 30, 34, 0.73));
+  padding-top: 0px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  white-space:nowrap;
+  text-overflow: ellipsis;
+}
+.feature-info-box-popup:after, .feature-info-box-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.feature-info-box-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+.feature-info-box-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+
+#feature-info-box-button-group {
+  padding-top: 5px;
+}
+
+.feature-list-info-box {
+  max-height: 150px;
+  min-width: 50px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.list-group-item-info-box {
+  .list-group-item;
+
+  background-color: rgba(251, 247, 255, 0.32);
+  font: bold 11px "Helvetica Neue","Helvetica",Arial;
+  color: rgba(100, 100, 100, 0.96);
+  padding: 4px 4px 4px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-box-attribute {
+  display: block;
+  width: 190px;
+  margin: 0;
+  padding: 0;
+  font: bold 11px "Helvetica Neue","Helvetica",Arial;
+  color: rgba(140, 140, 140, 0.96);
+  word-wrap: break-word;
+}
+
+.info-box-attribute-value {
+  display: block;
+  width: 190px;
+  max-width: 190px;
+  margin: 0;
+  padding: 0 0 7px;
+  font: normal 12px "Helvetica",Arial;
+  color: #333333;
+  word-wrap: break-word;
+}
+
+.button-group-info-box {
+  border-top: 1px solid #E5E5E5;
+}
+
+#feature-info-box-bottom {
+  border-top:1px solid #E5E5E5;
+}

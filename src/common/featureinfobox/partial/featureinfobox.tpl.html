@@ -1,0 +1,40 @@
+<div>
+  <div class="row">
+    <div ng-if="featureInfoBoxService.getPreviousState() != ''" class="btn btn-sm pull-left">
+      <i class="glyphicon glyphicon-chevron-left" ng-click="featureInfoBoxService.showPreviousState()"></i>
+    </div>
+    <div class="btn btn-sm pull-right">
+      <i class="glyphicon glyphicon-remove" ng-click="featureInfoBoxService.hide()"></i>
+    </div>
+  </div>
+  <div class="animate-switch-container">
+    <div ng-if="featureInfoBoxService.getState() == 'layers'">
+      <ul class="list-group feature-list-info-box">
+        <li ng-repeat="layerInfo in featureInfoBoxService.getSelectedItem()" class="list-group-item-info-box" ng-click="featureInfoBoxService.show(layerInfo)">
+          <div>{{layerInfo.layer.source_.params_.LAYERS}}</div>
+        </li>
+      </ul>
+    </div>
+    <div ng-if="featureInfoBoxService.getState() == 'layer'">
+      <ul class="list-group feature-list-info-box">
+        <li ng-repeat="feature in featureInfoBoxService.getSelectedItem().features" class="list-group-item-info-box" ng-click="featureInfoBoxService.show(feature)">
+          <div>{{feature.id}}</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div ng-if="featureInfoBoxService.getState() == 'feature'">
+    <div class="feature-list-info-box">
+      <span ng-repeat="(key, value) in featureInfoBoxService.getSelectedItem().properties" class="">
+        <span class="info-box-attribute">{{key}}</span>
+        <span class="info-box-attribute-value">{{value}}</span>
+      </span>
+    </div>
+    <div id="feature-info-box-bottom">
+      <div id="feature-info-box-button-group" class="btn-group pull-right">
+        <button type="button" data-toggle="tooltip" title="Edit attributes" class="btn btn-sm btn-default glyphicon glyphicon-list"></button>
+        <button type="button" data-toggle="tooltip" title="Edit geometry" class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
+        <button type="button" data-toggle="tooltip" title="Delete" class="btn btn-sm btn-default glyphicon glyphicon-trash"></button>
+      </div>
+  </div>
+</div>

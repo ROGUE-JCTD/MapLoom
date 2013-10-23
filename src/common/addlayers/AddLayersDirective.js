@@ -55,7 +55,14 @@
                       metadata: {serverId: scope.currentServerIndex, url: url},
                       source: new ol.source.TileWMS({
                         url: scope.serverService.getServer(scope.currentServerIndex).url,
-                        params: {'LAYERS': layer.name}
+                        params: {'LAYERS': layer.name},
+                        getFeatureInfoOptions: {
+                          'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
+                          'params': {
+                            'INFO_FORMAT': 'application/json',
+                            'FEATURE_COUNT': 50
+                          }
+                        }
                       })
                     });
                     geogitService.isGeoGit(newLayer);
