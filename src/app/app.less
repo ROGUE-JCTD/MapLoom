@@ -4,6 +4,18 @@
 	left:325px;
 }
 
+.map-shadow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 500;
+  opacity: 0.2;
+  box-shadow: inset 0px 0px 80px 0px #000000;
+  pointer-events: none;
+}
+
 html, body {
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
 	margin  : 0;
@@ -50,7 +62,16 @@ html, body {
 }
 
 #pulldown-shadow {
-	.box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
+  position: relative;
+  z-index: 1000;
+	.box-shadow(0px 0px 20px rgba(0, 0, 0, 0.4));
+}
+
+.toggle-menu {
+  .box-shadow(0px 0px 20px rgba(0, 0, 0, 0.4));
+  z-index: 0;
+  position:relative;
+  top: -1px;
 }
 
 .ellipsis {
@@ -144,10 +165,10 @@ html, body {
 }
 
 hr {
-	border-top: 1px solid #80a0b0;	
+	border-top: 1px solid #80a0b0;
 }
 
-.rotate-45deg    {  
+.rotate-45deg    {
     -webkit-transform:rotate(45deg);
     -moz-transform:rotate(45deg);
     -o-transform:rotate(45deg);
@@ -197,9 +218,3 @@ hr {
 .notification-panel-heading.read {
     font-weight:100;
 }
-
-/*.notification-content.in {
-	max-height: 400px;
-    overflow: hidden;
-    overflow-y: auto;
-}*/

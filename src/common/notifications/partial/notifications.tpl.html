@@ -11,7 +11,7 @@
                     <span>
                         <p id="notification-text-{{notification.id}}" class="notification-text">
                           {{notification.text}}</p>
-                        <div ng-click="removeNotification({{notification.id}})" id="close-button-{{notification.id}}"
+                        <div stop-event='click' ng-click="removeNotification({{notification.id}})" id="close-button-{{notification.id}}"
                              class="glyphicon glyphicon-remove-circle close-notification"></div>
                     </span>
         </div>

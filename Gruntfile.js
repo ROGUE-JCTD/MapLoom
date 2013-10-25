@@ -544,7 +544,7 @@ module.exports = function ( grunt ) {
        */
       less: {
         files: [ 'src/**/*.less' ],
-        tasks: [ 'recess:build' ]
+        tasks: [ 'recess:build', 'concat:build_css' ]
       },
 
       /**

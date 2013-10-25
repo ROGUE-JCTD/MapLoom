@@ -11,7 +11,9 @@
         scope.modifies = diffService.modifies;
         scope.deletes = diffService.deletes;
         scope.conflicts = diffService.conflicts;
+        scope.merges = diffService.merges;
         scope.diffService = diffService;
+
 
         scope.$watch('diffService.adds', function() {
           scope.adds = diffService.adds;
@@ -21,6 +23,9 @@
         });
         scope.$watch('diffService.deletes', function() {
           scope.deletes = diffService.deletes;
+        });
+        scope.$watch('diffService.merges', function() {
+          scope.merges = diffService.merges;
         });
         scope.$watch('diffService.conflicts', function() {
           scope.conflicts = diffService.conflicts;

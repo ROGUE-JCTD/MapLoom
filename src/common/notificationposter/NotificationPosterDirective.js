@@ -2,7 +2,7 @@
   var module = angular.module('loom_notification_poster_directive', []);
 
   module.directive('loomNotificationPoster',
-      function($rootScope, notificationService, diffService, mapService, dialogService, $timeout) {
+      function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService) {
         return{
           restrict: 'C',
           replace: true,
@@ -59,14 +59,16 @@
             scope.addNotification = addNotification;
 
             function performDiff() {
+              diffService.setTitle('Merge Results (1 Conflict Remaining)');
               diffService.performDiff('repo', 'from', 'to');
+              pulldownService.conflictsMode();
             }
 
             scope.performDiff = performDiff;
 
             function clearDiff() {
-              console.log('clear');
               diffService.clearDiff();
+              pulldownService.defaultMode();
             }
 
             scope.clearDiff = clearDiff;

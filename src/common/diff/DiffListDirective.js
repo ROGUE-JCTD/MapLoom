@@ -10,7 +10,8 @@
         addList: '=',
         modifyList: '=',
         deleteList: '=',
-        conflictList: '='
+        conflictList: '=',
+        mergeList: '='
       }
     };
   });

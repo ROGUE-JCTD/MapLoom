@@ -2,6 +2,10 @@
   <ul class="list-group">
     <li class="list-group-item conflict" ng-click="clickCallback({{conflict}})" ng-repeat="conflict in conflictList">
       <span class="glyphicon glyphicon-warning-sign"/> '{{conflict.feature}}' in {{conflict.layer}}
+      <span class="badge conflict-badge">CONFLICT</span>
+    </li>
+    <li class="list-group-item merged" ng-click="clickCallback({{merged}})" ng-repeat="merged in mergeList">
+      <span class="glyphicon glyphicon-random"/> '{{merged.feature}}' in {{merged.layer}}
     </li>
     <li class="list-group-item add" ng-click="clickCallback({{add}})" ng-repeat="add in addList">
       <span class="glyphicon glyphicon-plus-sign"/> '{{add.feature}}' to {{add.layer}}

@@ -21,34 +21,36 @@
   <% }); %>
 </head>
 <body>
+
 <div id="map" class="map">
-  <div id="pulldown">
+  <div class="map-shadow"></div>
+  <div id="pulldown" ng-controller="LoomPulldownController">
     <div id="pulldown-shadow">
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
                         <span style="font-weight: 100; font-size: 20px;">
                             <em id="map-name" translate="new_map">New Map</em>
                         </span>
-          <span class="loom-notification-badge pull-right"></span>
+          <span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>
         </div>
       </div>
       <div id="pulldown-content" class="panel-group in">
-        <div class="panel">
+        <div class="panel" ng-class="{'hidden': !notificationsPanel}">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#notification-panel">
             <span>Notifications</span>
             <span class="loom-notification-badge pull-right"></span>
           </div>
           <div id="notification-panel" notification-empty-text="No notifications..."
-               class="loom-notifications">
+               class="pulldown-panel loom-notifications">
           </div>
         </div>
-        <div class="panel">
+        <div class="panel" ng-class="{'hidden': !layersPanel}">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#layer-manager-panel">
             <span>Map Layers</span>
           </div>
-          <div id="layer-manager-panel" class="panel-collapse collapse">
+          <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
             <div class="loom-layers"></div>
             <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal">
               <i class="glyphicon glyphicon-plus-sign"></i>
@@ -56,17 +58,17 @@
             </div>
           </div>
         </div>
-        <div class="panel" ng-class="{'hidden': !hasDifferences}" ng-controller="LoomDiffController">
+        <div class="panel" ng-class="{'hidden': !diffPanel}" ng-controller="LoomDiffController">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#diff-panel">
-            <span>Differences</span>
+            <span>{{title}}</span>
           </div>
-          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse">Diffs go here.</div>
+          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
         </div>
       </div>
     </div>
     <button type="button" data-toggle="collapse" data-target="#pulldown-content"
-            class="toggle btn btn-default flat-top">Toggle Menu
+            class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
     </button>
   </div>
   <div class="loom-notification-poster"></div>

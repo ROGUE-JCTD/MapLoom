@@ -1,7 +1,3 @@
-.difflist li {
-  cursor: help;
-}
-
 .difflist .glyphicon {
   font-size: large;
   position: relative;
@@ -21,12 +17,22 @@
   color: #880000;
 }
 
+.merged .glyphicon {
+  color: #224b66;
+}
+
 .conflict .glyphicon {
   color: #aa5a12;
 }
 
 .conflict {
   font-weight: 900;
+  .badge.conflict-badge {
+    top: 3px !important;
+    font-size: 9px;
+    background-color: #9B1212;
+    letter-spacing: 1px;
+  }
 }
 
 .conflict.selected {
