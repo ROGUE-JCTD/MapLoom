@@ -21,16 +21,20 @@ var SERVER_SERVICE_USE_PROXY = true;
         type: 'fakeType',
         name: 'OpenStreetMap',
         url: 'fakeURL',
-        layers: [{
-          title: 'OpenStreetMap',
-          added: true
-        }, {
-          title: 'MapQuestImagery',
-          added: false
-        }, {
-          title: 'MapQuestOSM',
-          added: false
-        }]
+        layers: [
+          {
+            title: 'OpenStreetMap',
+            added: true
+          },
+          {
+            title: 'MapQuestImagery',
+            added: false
+          },
+          {
+            title: 'MapQuestOSM',
+            added: false
+          }
+        ]
       });
       return this;
     };
@@ -66,11 +70,15 @@ var SERVER_SERVICE_USE_PROXY = true;
          */
         xhr.onload = function() {
           if (xhr.status == 200) {
-            server.layers = parser.read(xhr.response).capability.layers;
-            for (var index = 0; index < server.layers.length; index += 1) {
-              server.layers[index].added = false;
+            var response = parser.read(xhr.response);
+            if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
+              server.layers = response.capability.layers;
+
+              for (var index = 0; index < server.layers.length; index += 1) {
+                server.layers[index].added = false;
+              }
+              rootScope.$broadcast('layers-loaded');
             }
-            rootScope.$broadcast('layers-loaded');
           } else {
             alert('Failed to get capabilities: ' + xhr.status.toString() + ' ' + xhr.statusText);
           }
@@ -96,27 +104,30 @@ var SERVER_SERVICE_USE_PROXY = true;
          */
         xhr.onload = function() {
           if (xhr.status == 200) {
-            var serverLayers = [];
-            var index;
-            for (index = 0; index < server.layers.length; index += 1) {
-              if (server.layers[index].added) {
-                serverLayers.push(server.layers[index]);
-              }
-            }
-            var layers = parser.read(xhr.responseXML).capability.layers;
-            for (index = 0; index < layers.length; index += 1) {
-              for (var subIndex = 0; subIndex < serverLayers.length; subIndex += 1) {
-                if (serverLayers[subIndex].title === layers[index].title) {
-                  layers[index].added = true;
-                  break;
+            var response = parser.read(xhr.responseXML);
+            if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
+              var serverLayers = [];
+              var index;
+              for (index = 0; index < server.layers.length; index += 1) {
+                if (server.layers[index].added) {
+                  serverLayers.push(server.layers[index]);
                 }
               }
-              if (!goog.isDefAndNotNull(layers[index].added)) {
-                layers[index].added = false;
+              var layers = response.capability.layers;
+              for (index = 0; index < layers.length; index += 1) {
+                for (var subIndex = 0; subIndex < serverLayers.length; subIndex += 1) {
+                  if (serverLayers[subIndex].title === layers[index].title) {
+                    layers[index].added = true;
+                    break;
+                  }
+                }
+                if (!goog.isDefAndNotNull(layers[index].added)) {
+                  layers[index].added = false;
+                }
               }
+              server.layers = layers;
+              rootScope.$broadcast('layers-loaded');
             }
-            server.layers = layers;
-            rootScope.$broadcast('layers-loaded');
           } else {
             alert('Failed to get capabilities: ' + xhr.status.toString() + ' ' + xhr.statusText);
           }

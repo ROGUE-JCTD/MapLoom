@@ -2,6 +2,8 @@ var GeoGitRepo = function(_url, _branch, _name) {
   this.url = _url;
   this.branch = _branch;
   this.name = _name;
+  this.branches = [];
+  this.remotes = [];
   this.isEqual = function(repo) {
     return this.url === repo.url && this.branch === repo.branch && this.name === repo.name;
   };

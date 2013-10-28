@@ -32,7 +32,8 @@
 
   module.provider('geogitService', function() {
     // public variables
-    this.repos = [];
+    this.repos = {};
+    this.numRepos = 0;
 
     this.$get = function($q, $http, $rootScope, dialogService) {
       service_ = this;
@@ -108,6 +109,59 @@
       newRepo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
       service_.repos[newRepo.id] = newRepo;
+      service_.numRepos++;
+
+      var remoteOptions = new GeoGitRemoteOptions();
+      remoteOptions.list = true;
+      service_.command(newRepo.id, 'remote', remoteOptions).then(function(response) {
+        if (response.success === true) {
+          if (goog.isDefAndNotNull(response.Remote)) {
+            if (goog.isDefAndNotNull(response.Remote.length)) {
+              for (var index = 0; index < response.Remote.length; index++) {
+                newRepo.remotes.push(response.Remote[index]);
+              }
+            } else {
+              newRepo.remotes.push({name: response.Remote.name, branches: []});
+            }
+          }
+        }
+      });
+      var branchOptions = new GeoGitBranchOptions();
+      branchOptions.list = true;
+      branchOptions.remotes = true;
+      service_.command(newRepo.id, 'branch', branchOptions).then(function(response) {
+        if (response.success === true) {
+          var index;
+          var remoteIndex;
+          console.log(response);
+          if (goog.isDefAndNotNull(response.Local.Branch)) {
+            if (goog.isDefAndNotNull(response.Local.Branch.length)) {
+              for (index = 0; index < response.Local.Branch.length; index++) {
+                newRepo.branches.push(response.Local.Branch[index].name);
+              }
+            } else {
+              newRepo.branches.push(response.Local.Branch.name);
+            }
+          }
+          if (goog.isDefAndNotNull(response.Remote.Branch)) {
+            if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
+              for (index = 0; index < response.Remote.Branch.length; index++) {
+                for (remoteIndex = 0; remoteIndex < newRepo.remotes.length; remoteIndex++) {
+                  if (newRepo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
+                    newRepo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
+                  }
+                }
+              }
+            } else {
+              for (remoteIndex = 0; remoteIndex < newRepo.remotes.length; remoteIndex++) {
+                if (newRepo.remotes[remoteIndex].name === response.Remote.Branch.remoteName) {
+                  newRepo.remotes[remoteIndex].branches.push(response.Remote.Branch.name);
+                }
+              }
+            }
+          }
+        }
+      });
       rootScope.$broadcast('repoAdded', newRepo);
       return newRepo.id;
     };
@@ -117,8 +171,9 @@
       var repo = service_.repos[repoId];
       repo.refCount--;
       if (repo.refCount <= 0) {
+        delete service_.repos[repoId];
+        service_.numRepos--;
         rootScope.$broadcast('repoRemoved', repo);
-        service_.repos.splice(repoId, 1);
       }
     };
 
