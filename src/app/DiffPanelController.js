@@ -4,8 +4,8 @@
   module.controller('LoomDiffController',
       function($scope, diffService) {
         function assignScopeVariables() {
-          $scope.hasDifferences = diffService.hasDifferences();
           $scope.title = diffService.title;
+          $scope.diffService = diffService;
         }
 
         function updateScopeVariables() {
@@ -20,7 +20,6 @@
 
         assignScopeVariables();
 
-        $scope.$on('diff_performed', updateScopeVariables);
-        $scope.$on('diff_cleared', updateScopeVariables);
+        $scope.$watch('diffService.title', updateScopeVariables);
       });
 })();
