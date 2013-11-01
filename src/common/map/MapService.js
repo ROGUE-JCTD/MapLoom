@@ -38,6 +38,10 @@
         extent = view.getProjection().getExtent();
       }
 
+      var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
+      var pan = ol.animation.pan({source: map.getView().getCenter()});
+      map.beforeRender(pan, zoom);
+
       view.fitExtent(extent, map.getSize());
     };
 

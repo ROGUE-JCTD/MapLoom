@@ -23,6 +23,8 @@
       }
     });
 
+    $scope.mapService = mapService;
+
     $translate.uses('en');
 
   });

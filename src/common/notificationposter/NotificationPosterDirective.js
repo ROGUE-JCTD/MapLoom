@@ -14,8 +14,6 @@
               '      class="btn btn-default">Perform Diff</button>' +
               '    <button type="button" ng-click="clearDiff()"' +
               '      class="btn btn-default">Clear Diff</button>' +
-              '    <button type="button" ng-click="mapService.zoomToExtent()"' +
-              '      class="btn btn-default">Zoom to World Extent</button>' +
               '    <button type="button" ng-click="mapService.activateDragZoom()"' +
               '      class="btn btn-default">Drag Zoom</button>' +
               '    <button type="button" ng-click="addModal()"' +
