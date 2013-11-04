@@ -1,0 +1,86 @@
+.difflist {
+  .glyphicon {
+    font-size: large;
+    position: relative;
+    left: -5px;
+    top: 3px;
+  }
+
+  .add .glyphicon {
+    color: #008800;
+  }
+
+  .modify .glyphicon {
+    color: #666600;
+  }
+
+  .delete .glyphicon {
+    color: #880000;
+  }
+
+  .merged .glyphicon {
+    color: #224b66;
+  }
+
+  .conflict .glyphicon {
+    color: #aa5a12;
+  }
+
+  .conflict {
+    font-weight: 900;
+    .badge.conflict-badge {
+      top: 3px !important;
+      font-size: 9px;
+      background-color: #9B1212;
+      letter-spacing: 1px;
+    }
+    .badge.resolved-badge {
+      top: 3px !important;
+      font-size: 9px;
+      background-color: #0a520c;
+      letter-spacing: 1px;
+    }
+  }
+
+  .conflict.selected {
+    box-shadow: inset 0px 0px 15px 0px #FFFFFF;
+  }
+}
+
+.merge-button-wrap {
+  width: 46%;
+  margin: 5px;
+  display: inline-block;
+}
+
+.merge-button {
+  width: 100%;
+  margin: 0px;
+}
+
+.loom-feature-diff .modal-body {
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.loom-feature-panel {
+  width: 230px;
+  background-color: #90adc7;
+  border: 1px solid #88a3bd;
+  display: inline-block;
+
+  .preview-map {
+    width: 220px;
+    height: 220px;
+    background-color: #88a3bd;
+    border: 1px solid #86a2bc;
+    margin-top: 5px;
+  }
+}
+
+.panel-separator {
+  width: 32px;
+  background-color: #90adc7;
+  border: 1px solid #88a3bd;
+  display: inline-block;
+}

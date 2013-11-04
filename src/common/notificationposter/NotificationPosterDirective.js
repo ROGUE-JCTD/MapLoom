@@ -34,24 +34,17 @@
                 repos: [
                   {
                     name: 'geogit_repo',
-                    layers: [
-                      {
-                        name: 'layer1',
-                        adds: [],
-                        modifies: ['feature3'],
-                        deletes: ['feature5']
-                      },
-                      {
-                        name: 'layer2',
-                        adds: ['feature6'],
-                        modifies: ['feature2', 'feature4'],
-                        deletes: []
-                      }
+                    features: [
+                      {change: 'MODIFIED', geometry: 'blah', id: 'layer1/feature3'},
+                      {change: 'REMOVED', geometry: 'blah', id: 'layer1/feature5'},
+                      {change: 'MODIFIED', geometry: 'blah', id: 'layer2/feature2'},
+                      {change: 'MODIFIED', geometry: 'blah', id: 'layer2/feature4'},
+                      {change: 'ADDED', geometry: 'blah', id: 'layer2/feature6'}
                     ]
                   }
                 ],
                 callback: function(feature) {
-                  alert(feature.feature + ' was clicked!');
+                  console.log(feature.feature + ' was clicked!');
                 }
               });
             }
@@ -59,7 +52,7 @@
             scope.addNotification = addNotification;
 
             function performDiff() {
-              diffService.setTitle('Merge Results (1 Conflict Remaining)');
+              diffService.setTitle('Merge Results');
               diffService.performDiff('repo', 'from', 'to');
               pulldownService.conflictsMode();
             }

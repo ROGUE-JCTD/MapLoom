@@ -22,44 +22,49 @@
             var adds = [];
             var modifies = [];
             var deletes = [];
+            var merges = [];
+            var conflicts = [];
 
             var i, j, k;
             for (i = 0; i < repos.length; i += 1) {
-              var layers = repos[i].layers;
-              for (j = 0; j < layers.length; j += 1) {
-                var layer = layers[j];
-                if (layer.adds) {
-                  for (k = 0; k < layer.adds.length; k += 1) {
-                    adds.push({
-                      repo: repos[i].name,
-                      layer: layer.name,
-                      feature: layer.adds[k]
-                    });
+              var features = repos[i].features;
+              if (goog.isDefAndNotNull(features)) {
+                scope.noFeatures = false;
+                for (j = 0; j < features.length; j += 1) {
+                  var splitFeature = features[j].id.split('/');
+                  var feature = {
+                    repo: repos[i].name,
+                    layer: splitFeature[0],
+                    feature: splitFeature[1]
+                  };
+                  switch (features[j].change) {
+                    case 'ADDED':
+                      adds.push(feature);
+                      break;
+                    case 'MODIFIED':
+                      modifies.push(feature);
+                      break;
+                    case 'REMOVED':
+                      deletes.push(feature);
+                      break;
+                    case 'MERGED':
+                      merges.push(feature);
+                      break;
+                    case 'CONFLICT':
+                      conflicts.push(feature);
+                      break;
                   }
                 }
-                if (layer.modifies) {
-                  for (k = 0; k < layer.modifies.length; k += 1) {
-                    modifies.push({
-                      repo: repos[i].name,
-                      layer: layer.name,
-                      feature: layer.modifies[k]
-                    });
-                  }
-                }
-                if (layer.deletes) {
-                  for (k = 0; k < layer.deletes.length; k += 1) {
-                    deletes.push({
-                      repo: repos[i].name,
-                      layer: layer.name,
-                      feature: layer.deletes[k]
-                    });
-                  }
-                }
+              } else {
+                scope.noFeatures = true;
+                scope.message = scope.notification.emptyMessage;
               }
             }
             scope.adds = adds;
             scope.modifies = modifies;
             scope.deletes = deletes;
+            scope.merges = merges;
+            scope.conflicts = conflicts;
           }
         };
       });

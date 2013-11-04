@@ -35,7 +35,7 @@
         </div>
       </div>
       <div id="pulldown-content" class="panel-group in">
-        <div class="panel" ng-class="{'hidden': !notificationsPanel}">
+        <div class="panel" ng-show="notificationsPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#notification-panel">
             <span>Notifications</span>
@@ -45,7 +45,7 @@
                class="pulldown-panel loom-notifications">
           </div>
         </div>
-        <div class="panel" ng-class="{'hidden': !layersPanel}">
+        <div class="panel" ng-show="layersPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#layer-manager-panel">
             <span>Map Layers</span>
@@ -58,17 +58,18 @@
             </div>
           </div>
         </div>
-        <div class="panel" ng-class="{'hidden': !diffPanel}" ng-controller="LoomDiffController">
+        <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#diff-panel">
             <span>{{title}}</span>
+            <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
           </div>
           <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
         </div>
-        <div class="panel" ng-class="{'hidden': !syncPanel}">
+        <div class="panel" ng-show="syncPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#syncronization-panel">
-            <span>Syncronization</span>
+            <span>Synchronization</span>
 
             <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
                  class="glyphicon glyphicon-cog pull-right"></div>
@@ -95,7 +96,7 @@
   <div loom-add-server id="add-server">
   </div>
 </div>
-<div loom-modal id="mergeWindow" modal-title="Merge">
+<div loom-modal id="mergeWindow" modal-title="Merge" close-button="false">
   <div loom-merge id="merge">
   </div>
 </div>
@@ -105,6 +106,10 @@
 </div>
 <div loom-modal id="configWindow" modal-title="Config">
   <div loom-syncconfig id="sync-config">
+  </div>
+</div>
+<div loom-modal id="feature-diff-dialog" ng-controller="LoomFeatureDiffController" modal-title="{{title}}">
+  <div class="loom-feature-diff" id="feature-diff">
   </div>
 </div>
 <div loom-feature-info-box id="info-box" ng-show="featureInfoBoxService.getSelectedItem()"

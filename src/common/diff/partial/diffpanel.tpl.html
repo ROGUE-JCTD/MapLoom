@@ -1,4 +1,16 @@
 <div>
+  <div ng-if="mergeButtons">
+    <div class="merge-button-wrap" tooltip-placement="top" tooltip="Cancel the merge">
+      <button class="merge-button btn btn-default" type="button" ng-click="cancel()">
+        Cancel
+      </button>
+    </div>
+    <div class="merge-button-wrap" tooltip-placement="top" tooltip="{{conflictsText}}">
+      <button class="merge-button btn btn-default" ng-class="{disabled:numConflicts>0}" type="button" ng-click="done()">
+        Done
+      </button>
+    </div
+  </div>
   <div class="loom-diff-list" add-list="adds" modify-list="modifies" delete-list="deletes" conflict-list="conflicts"
-       merge-list="merges"/>
+       merge-list="merges" click-callback="featureClicked"/>
 </div>

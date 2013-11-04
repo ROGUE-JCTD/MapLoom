@@ -1,0 +1,14 @@
+<div class="modal-body" align="center">
+  <div ng-if="leftPanel" class="loom-feature-panel" feature="left" mapid="0" map="leftMap" oldcommit="ancestor" newcommit="ours"
+       repoid="repoId"></div>
+  <div ng-if="leftSeparator" class="panel-separator">o</div>
+  <div ng-if="mergePanel" class="loom-feature-panel" feature="merged" mapid="1" map="mergeMap" oldcommit="ancestor" newcommit="ours"
+       repoid="repoId"></div>
+  <div ng-if="rightSeparator" class="panel-separator">o</div>
+  <div ng-if="rightPanel" class="loom-feature-panel" feature="right" mapid="2" map="rightMap" oldcommit="ancestor" newcommit="theirs"
+       repoid="repoId"></div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+</div>

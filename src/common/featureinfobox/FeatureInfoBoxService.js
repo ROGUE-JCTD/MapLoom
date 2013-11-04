@@ -235,7 +235,7 @@
 
           // since setMode changes variables in service potentially used by directives,
           // trigger any watches so that they can update
-          rootScope_.$digest();
+          rootScope_.$broadcast('feature-info-click');
         },
         error: function() {
           console.log('====[ ERROR: loomFeatureInfoBox.map.getFeatureInfo.error');

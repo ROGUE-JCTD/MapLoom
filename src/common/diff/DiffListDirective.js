@@ -11,7 +11,8 @@
         modifyList: '=',
         deleteList: '=',
         conflictList: '=',
-        mergeList: '='
+        mergeList: '=',
+        clickCallback: '='
       }
     };
   });

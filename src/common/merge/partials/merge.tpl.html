@@ -1,4 +1,15 @@
 <div class="modal-body">
+  <div id="loading" class="hidden">
+    <div class="loading">
+      <!-- We make this div spin -->
+      <div class="spinner">
+        <!-- Mask of the quarter of circle -->
+        <div class="mask">
+          <!-- Inner masked circle -->
+          <div class="maskedCircle"></div>
+        </div>
+      </div>
+    </div></div>
   <form class="form-horizontal">
     <div class="form-group">
       <div class="col-md-4">
@@ -7,24 +18,20 @@
         </select>
       </div>
       <div class="col-md-3" ng-class="{'hidden': !selectedRepoId}">
-        <select class="form-control" ng-model="sourceBranch">
-          <option ng-repeat="branch in geogitService.repos[selectedRepoId].branches" value="{{branch}}">{{branch}}
-          </option>
+        <select class="form-control" ng-model="sourceBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches">
         </select>
       </div>
       <div class="col-md-2" ng-class="{'hidden': !selectedRepoId}">
         <p class="form-control-static text-center">into</p>
       </div>
       <div class="col-md-3" ng-class="{'hidden': !selectedRepoId}">
-        <select class="form-control" ng-model="destinationBranch">
-          <option ng-repeat="branch in geogitService.repos[selectedRepoId].branches" value="{{branch}}">{{branch}}
-          </option>
+        <select class="form-control" ng-model="destinationBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches | filter:listFilter(sourceBranch)">
         </select>
       </div>
     </div>
   </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-  <button type="button" class="btn btn-primary">Merge</button>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-class="{'disabled':!mergePossible()}" ng-click="onMerge()">Merge</button>
+  </div>
 </div>

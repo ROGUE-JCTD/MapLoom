@@ -1,19 +1,20 @@
 <div class="difflist">
   <ul class="list-group">
-    <li class="list-group-item conflict" ng-click="clickCallback({{conflict}})" ng-repeat="conflict in conflictList">
+    <li class="list-group-item conflict" ng-click="clickCallback(conflict,'conflict')" ng-repeat="conflict in conflictList">
       <span class="glyphicon glyphicon-warning-sign"/> '{{conflict.feature}}' in {{conflict.layer}}
-      <span class="badge conflict-badge">CONFLICT</span>
+      <span ng-if="!conflict.resolved" class="badge conflict-badge">CONFLICT</span>
+      <span ng-if="conflict.resolved" class="badge resolved-badge">FIXED</span>
     </li>
-    <li class="list-group-item merged" ng-click="clickCallback({{merged}})" ng-repeat="merged in mergeList">
+    <li class="list-group-item merged" ng-click="clickCallback(merged,'merge')" ng-repeat="merged in mergeList">
       <span class="glyphicon glyphicon-random"/> '{{merged.feature}}' in {{merged.layer}}
     </li>
-    <li class="list-group-item add" ng-click="clickCallback({{add}})" ng-repeat="add in addList">
+    <li class="list-group-item add" ng-click="clickCallback(add,'add')" ng-repeat="add in addList">
       <span class="glyphicon glyphicon-plus-sign"/> '{{add.feature}}' to {{add.layer}}
     </li>
-    <li class="list-group-item modify" ng-click="clickCallback({{modify}})" ng-repeat="modify in modifyList">
+    <li class="list-group-item modify" ng-click="clickCallback(modify,'modify')" ng-repeat="modify in modifyList">
       <span class="glyphicon glyphicon-edit"/> '{{modify.feature}}' in {{modify.layer}}
     </li>
-    <li class="list-group-item delete" ng-click="clickCallback({{delete}})" ng-repeat="delete in deleteList">
+    <li class="list-group-item delete" ng-click="clickCallback(delete,'delete')" ng-repeat="delete in deleteList">
       <span class="glyphicon glyphicon-minus-sign"/> '{{delete.feature}}' from {{delete.layer}}
     </li>
   </ul>

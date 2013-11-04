@@ -28,14 +28,17 @@
       dragZoomActive = true;
     };
 
-    this.zoomToExtent = function(extent) {
-      var view = this.map.getView().getView2D();
+    this.zoomToExtent = function(extent, map) {
+      if (!goog.isDefAndNotNull(map)) {
+        map = this.map;
+      }
+      var view = map.getView().getView2D();
 
       if (extent === undefined) {
         extent = view.getProjection().getExtent();
       }
 
-      view.fitExtent(extent, this.map.getSize());
+      view.fitExtent(extent, map.getSize());
     };
 
     this.getFeatureLayers = function() {
@@ -116,7 +119,7 @@
         interactions: ol.interaction.defaults().extend([
           new ol.interaction.DragRotate()
         ]),
-        renderer: ol.RendererHint.CANVAS,
+        renderer: ol.RendererHint.DOM,
         target: 'map',
         view: new ol.View2D({
           center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),

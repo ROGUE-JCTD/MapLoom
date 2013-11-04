@@ -7,29 +7,31 @@
       replace: true,
       templateUrl: 'diff/partial/diffpanel.tpl.html',
       link: function(scope) { // Unused: element, attrs
-        scope.adds = diffService.adds;
-        scope.modifies = diffService.modifies;
-        scope.deletes = diffService.deletes;
-        scope.conflicts = diffService.conflicts;
-        scope.merges = diffService.merges;
-        scope.diffService = diffService;
-
-
-        scope.$watch('diffService.adds', function() {
+        function updateVariables() {
           scope.adds = diffService.adds;
-        });
-        scope.$watch('diffService.modifies', function() {
           scope.modifies = diffService.modifies;
-        });
-        scope.$watch('diffService.deletes', function() {
           scope.deletes = diffService.deletes;
-        });
-        scope.$watch('diffService.merges', function() {
-          scope.merges = diffService.merges;
-        });
-        scope.$watch('diffService.conflicts', function() {
           scope.conflicts = diffService.conflicts;
-        });
+          scope.merges = diffService.merges;
+          scope.diffService = diffService;
+          scope.featureClicked = diffService.clickCallback;
+          scope.mergeButtons = true;
+          scope.conflictsText = 'Complete the merge';
+          if (scope.numConflicts === 1) {
+            scope.conflictsText = '1 conflict remains';
+          } else if (scope.numConflicts > 1) {
+            scope.conflictsText = scope.numConflicts + ' conflicts remain';
+          }
+        }
+
+        updateVariables();
+
+        scope.$watch('diffService.adds', updateVariables, true);
+        scope.$watch('diffService.modifies', updateVariables, true);
+        scope.$watch('diffService.deletes', updateVariables, true);
+        scope.$watch('diffService.merges', updateVariables, true);
+        scope.$watch('diffService.conflicts', updateVariables, true);
+        scope.$watch('diffService.clickCallback', updateVariables);
       }
     };
   });

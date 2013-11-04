@@ -1,4 +1,11 @@
 <div class="notification-description panel-collapse collapse">
-  <div class="loom-diff-list" add-list="adds" modify-list="modifies" delete-list="deletes"
-       click-callback="notification.callback"></div>
+  <div ng-if="noFeatures">
+    <ul class="list-group">
+      <li class="list-group-item">
+        {{message}}
+      </li>
+    </ul>
+  </div>
+  <div ng-if="!noFeatures" class="loom-diff-list" add-list="adds" modify-list="modifies" delete-list="deletes"
+       merge-list="merges" conflict-list="conflicts" click-callback="notification.callback"></div>
 </div>

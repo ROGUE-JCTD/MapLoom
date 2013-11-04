@@ -1,23 +1,22 @@
-.loom-arrangeable body.dragging, body.dragging * {
-  cursor: move !important;
-}
-
-.loom-arrangeable .dragged {
-  position: absolute;
-  opacity: 0.5;
-  z-index: 2000;
-}
-
-.loom-arrangeable .placeholder {
-  position: relative;
-  height: 42px;
-  box-shadow: inset 0 10px 10px -10px #000000,
-              inset 0 -10px 10px -10px #000000;
-  background-color: rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.loom-arrangeable .placeholder:before {
-  position: absolute;
-  display: none;
+.loom-arrangeable {
+  body.dragging, body.dragging * {
+    cursor: move !important;
+  }
+  .dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+  }
+  .placeholder {
+    position: relative;
+    height: 42px;
+    box-shadow: inset 0 10px 10px -10px #000000,
+                inset 0 -10px 10px -10px #000000;
+    background-color: rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .placeholder:before {
+    position: absolute;
+    display: none;
+  }
 }

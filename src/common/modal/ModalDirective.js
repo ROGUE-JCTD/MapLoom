@@ -8,9 +8,17 @@
           replace: true,
           transclude: true,
           scope: {
-            title: '@modalTitle'
+            title: '@modalTitle',
+            closeButton: '@closeButton'
           },
-          templateUrl: 'modal/partials/modal.tpl.html'
+          templateUrl: 'modal/partials/modal.tpl.html',
+          link: function(scope, element, attrs) {
+            attrs.$observe('closeButton', function(val) {
+              if (!angular.isDefined(val)) {
+                scope.closeButton = true;
+              }
+            });
+          }
         };
       }
   );

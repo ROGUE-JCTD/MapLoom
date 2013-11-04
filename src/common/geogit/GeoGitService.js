@@ -15,8 +15,7 @@
         // Check for merge conflicts
         if (goog.isDef(response.data.response.Merge) && goog.isDef(response.data.response.Merge.conflicts)) {
           // Handle Merge Conflicts
-          rootScope.$broadcast('geogit-merge-conflicts', response.data.response.Merge);
-          deferredResponse.reject('CONFLICTS');
+          deferredResponse.reject(response.data.response.Merge);
         } else {
           deferredResponse.resolve(response.data.response);
         }
@@ -133,7 +132,6 @@
       var remoteOptions = new GeoGitRemoteOptions();
       remoteOptions.list = true;
       service_.command(repo.id, 'remote', remoteOptions).then(function(response) {
-        console.log('remotes: ', response);
         if (response.success === true) {
           if (goog.isDefAndNotNull(response.Remote)) {
             if (goog.isDefAndNotNull(response.Remote.length)) {
@@ -150,7 +148,6 @@
           branchOptions.list = true;
           branchOptions.remotes = true;
           service_.command(repo.id, 'branch', branchOptions).then(function(response) {
-            console.log('branch: ', response);
             if (response.success === true) {
               var index;
               var remoteIndex;

@@ -93,8 +93,11 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (goog.isDefAndNotNull(server.layers)) {
         var parser = new ol.parser.ogc.WMSCapabilities();
 
-        var url = '/proxy/?url=' +
-            encodeURIComponent(server.url + '?SERVICE=WMS&REQUEST=GetCapabilities');
+        var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
+        if (SERVER_SERVICE_USE_PROXY) {
+          url = '/proxy/?url=' + encodeURIComponent(url);
+        }
+
 
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
