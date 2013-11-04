@@ -16,6 +16,12 @@
     };
   });
 
+  module.controller('modalToggle', function($scope) {
+    $scope.toggleModal = function(id) {
+      $(id).modal('toggle');
+    };
+  });
+
   module.filter('reverse', function() {
     return function(items) {
       if (goog.isDefAndNotNull(items)) {

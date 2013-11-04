@@ -15,6 +15,7 @@
     'loom_pulldown_controller',
     'loom_feature_info_box',
     'loom_utils',
-    'loom_merge'
+    'loom_merge',
+    'loom_sync'
   ]);
 }());

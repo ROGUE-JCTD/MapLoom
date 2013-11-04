@@ -32,8 +32,7 @@
 
   module.provider('geogitService', function() {
     // public variables
-    this.repos = {};
-    this.numRepos = 0;
+    this.repos = [];
 
     this.$get = function($q, $http, $rootScope, dialogService) {
       service_ = this;
@@ -41,8 +40,17 @@
       http = $http;
       rootScope = $rootScope;
       dialogService_ = dialogService;
-      rootScope.$on('layerRemoved', service_.removeRepo);
+      rootScope.$on('layerRemoved', service_.removedLayer);
       return service_;
+    };
+
+    this.getRepoById = function(repoId) {
+      for (var index = 0; index < service_.repos.length; index++) {
+        if (service_.repos[index].id == repoId) {
+          return service_.repos[index];
+        }
+      }
+      return null;
     };
 
     this.beginTransaction = function(repoId) {
@@ -66,7 +74,7 @@
 
     this.command = function(repoId, command, options) {
       var deferredResponse = q.defer();
-      var repo = service_.repos[repoId];
+      var repo = service_.getRepoById(repoId);
       if (goog.isDefAndNotNull(repo)) {
         var URL = repo.url + '/' + command + '?output_format=JSON&callback=JSON_CALLBACK';
         if (goog.isDefAndNotNull(options)) {
@@ -96,83 +104,119 @@
     };
 
     this.addRepo = function(newRepo) {
-      for (var repoId in service_.repos) {
-        if (service_.repos.hasOwnProperty(repoId)) {
-          var repo = service_.repos[repoId];
-          if (repo.isEqual(newRepo)) {
-            repo.refCount++;
-            return repo.id;
-          }
+      var result = q.defer();
+      for (var index = 0; index < service_.repos.length; index++) {
+        var repo = service_.repos[index];
+        if (repo.isEqual(newRepo)) {
+          repo.refCount++;
+          result.resolve(repo.id);
+          return result.promise;
         }
       }
       newRepo.refCount = 1;
       newRepo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
-      service_.repos[newRepo.id] = newRepo;
-      service_.numRepos++;
+      service_.repos.push(newRepo);
 
+      service_.loadRemotesAndBranches(newRepo, result);
+
+      return result.promise;
+    };
+
+    this.loadRemotesAndBranches = function(repo, result) {
+      if (repo.remotes.length > 0) {
+        goog.array.clear(repo.remotes);
+      }
+      if (repo.branches.length > 0) {
+        goog.array.clear(repo.branches);
+      }
       var remoteOptions = new GeoGitRemoteOptions();
       remoteOptions.list = true;
-      service_.command(newRepo.id, 'remote', remoteOptions).then(function(response) {
+      service_.command(repo.id, 'remote', remoteOptions).then(function(response) {
+        console.log('remotes: ', response);
         if (response.success === true) {
           if (goog.isDefAndNotNull(response.Remote)) {
             if (goog.isDefAndNotNull(response.Remote.length)) {
               for (var index = 0; index < response.Remote.length; index++) {
-                newRepo.remotes.push(response.Remote[index]);
+                repo.remotes.push({name: response.Remote[index].name, branches: []});
+                repo.remotes[index].id = index;
               }
             } else {
-              newRepo.remotes.push({name: response.Remote.name, branches: []});
+              repo.remotes.push({name: response.Remote.name, branches: []});
+              repo.remotes[0].id = 0;
             }
           }
-        }
-      });
-      var branchOptions = new GeoGitBranchOptions();
-      branchOptions.list = true;
-      branchOptions.remotes = true;
-      service_.command(newRepo.id, 'branch', branchOptions).then(function(response) {
-        if (response.success === true) {
-          var index;
-          var remoteIndex;
-          console.log(response);
-          if (goog.isDefAndNotNull(response.Local.Branch)) {
-            if (goog.isDefAndNotNull(response.Local.Branch.length)) {
-              for (index = 0; index < response.Local.Branch.length; index++) {
-                newRepo.branches.push(response.Local.Branch[index].name);
+          var branchOptions = new GeoGitBranchOptions();
+          branchOptions.list = true;
+          branchOptions.remotes = true;
+          service_.command(repo.id, 'branch', branchOptions).then(function(response) {
+            console.log('branch: ', response);
+            if (response.success === true) {
+              var index;
+              var remoteIndex;
+              if (goog.isDefAndNotNull(response.Local.Branch)) {
+                if (goog.isDefAndNotNull(response.Local.Branch.length)) {
+                  for (index = 0; index < response.Local.Branch.length; index++) {
+                    repo.branches.push(response.Local.Branch[index].name);
+                  }
+                } else {
+                  repo.branches.push(response.Local.Branch.name);
+                }
+              } else {
+                service_.removeRepo(repo.id);
+                result.reject(null);
+                return;
               }
-            } else {
-              newRepo.branches.push(response.Local.Branch.name);
-            }
-          }
-          if (goog.isDefAndNotNull(response.Remote.Branch)) {
-            if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
-              for (index = 0; index < response.Remote.Branch.length; index++) {
-                for (remoteIndex = 0; remoteIndex < newRepo.remotes.length; remoteIndex++) {
-                  if (newRepo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
-                    newRepo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
+              if (goog.isDefAndNotNull(response.Remote.Branch)) {
+                if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
+                  for (index = 0; index < response.Remote.Branch.length; index++) {
+                    for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
+                      if (repo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
+                        repo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
+                      }
+                    }
+                  }
+                } else {
+                  for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
+                    if (repo.remotes[remoteIndex].name === response.Remote.Branch.remoteName) {
+                      repo.remotes[remoteIndex].branches.push(response.Remote.Branch.name);
+                    }
                   }
                 }
               }
+              rootScope.$broadcast('repoAdded', repo);
+              result.resolve(repo.id);
             } else {
-              for (remoteIndex = 0; remoteIndex < newRepo.remotes.length; remoteIndex++) {
-                if (newRepo.remotes[remoteIndex].name === response.Remote.Branch.remoteName) {
-                  newRepo.remotes[remoteIndex].branches.push(response.Remote.Branch.name);
-                }
-              }
+              service_.removeRepo(repo.id);
+              result.reject(null);
             }
-          }
+          });
+        }
+        else {
+          service_.removeRepo(repo.id);
+          result.reject(null);
         }
       });
-      rootScope.$broadcast('repoAdded', newRepo);
-      return newRepo.id;
     };
 
-    this.removeRepo = function(event, removedLayer) {
+    this.removeRepo = function(id) {
+      var index = -1, i;
+      for (i = 0; i < service_.repos.length; i = i + 1) {
+        if (service_.repos[i].id === id) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        service_.repos.splice(index, 1);
+      }
+    };
+
+    this.removedLayer = function(event, removedLayer) {
       var repoId = removedLayer.get('metadata').repoId;
-      var repo = service_.repos[repoId];
+      var repo = service_.getRepoById(repoId);
       repo.refCount--;
       if (repo.refCount <= 0) {
-        delete service_.repos[repoId];
-        service_.numRepos--;
+        service_.removeRepo(repoId);
         rootScope.$broadcast('repoRemoved', repo);
       }
     };
@@ -285,15 +329,17 @@
                   service_.getFeatureType(layer, dataStore).then(function(featureType) {
                     var repoName = dataStore.connectionParameters.entry[0].$;
                     repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
-                    var id = service_.addRepo(
+                    var promise = service_.addRepo(
                         new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name,
                             dataStore.connectionParameters.entry[1].$, repoName));
+                    promise.then(function(id) {
+                      metadata.repoId = id;
+                    });
                     metadata.projection = featureType.srs;
                     metadata.isGeoGit = true;
                     metadata.workspace = featureType.workspace;
                     metadata.geogitStore = dataStore.name;
                     metadata.nativeName = featureType.nativeName;
-                    metadata.repoId = id;
                   }, function(rejected) {
                     dialogService_.error(
                         'Error', 'Unable to get feature type of GeoGit data store. (' + rejected.status + ')');

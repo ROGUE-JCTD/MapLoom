@@ -69,17 +69,12 @@
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#syncronization-panel">
             <span>Syncronization</span>
-          </div>
-          <div class="panel-body">
-            <div id="syncronization-panel" class="panel-collapse collapse">
-              <br>
 
-              <div id="MergeButton" class="btn btn-sm btn-default btn-block" data-target="#mergeWindow"
-                   data-toggle="modal">
-                <i class="glyphicon glyphicon-resize-small"></i>
-                Local Merge
-              </div>
-            </div>
+            <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
+                 class="glyphicon glyphicon-cog pull-right"></div>
+          </div>
+          <div id="syncronization-panel" class="panel-collapse collapse">
+            <div class="loom-synclinks"></div>
           </div>
         </div>
       </div>
@@ -102,6 +97,14 @@
 </div>
 <div loom-modal id="mergeWindow" modal-title="Merge">
   <div loom-merge id="merge">
+  </div>
+</div>
+<div loom-modal id="addSyncWindow" modal-title="Add Sync">
+  <div loom-addsync id="add-sync">
+  </div>
+</div>
+<div loom-modal id="configWindow" modal-title="Config">
+  <div loom-syncconfig id="sync-config">
   </div>
 </div>
 <div loom-feature-info-box id="info-box" ng-show="featureInfoBoxService.getSelectedItem()"

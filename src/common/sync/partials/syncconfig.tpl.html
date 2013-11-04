@@ -1,0 +1,68 @@
+<div class="modal-body">
+  <form name="remoteform" class="form-horizontal">
+    <div class="form-group">
+      <div class="col-md-2">
+        <label>Repo: </label>
+      </div>
+      <div class="col-md-10">
+        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.repos">
+        </select>
+      </div>
+    </div>
+    <div class="form-group" ng-class="{'hidden': !selectedRepo}">
+      <div class="col-md-2">
+        <label>Remote: </label>
+      </div>
+      <div class="col-md-5">
+        <div class="btn-group custom-width-100">
+          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
+            <span class="pull-left"> {{selectedText}} </span>
+            <span class="caret right-and-center"></span>
+          </button>
+          <ul class="dropdown-menu server-list col-md-12">
+            <li ng-repeat="remote in selectedRepo.remotes"><a ng-click="selectRemote(remote)">{{remote.name}}</a></li>
+            <li class="divider"></li>
+            <li><a ng-click="selectRemote(null)">Add Remote</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <button type="button" ng-class="{'hidden': selectedRemote, 'disabled': !remoteform.$valid}" class="btn btn-default" ng-click="addRemote(remoteName, remoteURL, remoteUsername, remotePassword)" >Add</button>
+        <button type="button" ng-class="{'hidden': !selectedRemote}" class="btn btn-danger" ng-click="removeRemote(selectedRemote)">Remove</button>
+      </div>
+    </div>
+    <div class="form-group" ng-class="{'hidden': !selectedRepo || selectedRemote, 'has-error': !remoteform.remotename.$valid}">
+      <div class="col-md-2">
+        <label class="control-label">Name: </label>
+      </div>
+      <div class="col-md-10">
+        <input name="remotename" ng-model="remoteName" ng-minlength="1" type="text" class="form-control" placeholder="Name" required>
+      </div>
+    </div>
+    <div class="form-group" ng-class="{'hidden': !selectedRepo || selectedRemote, 'has-error': !remoteform.remoteurl.$valid}">
+      <div class="col-md-2">
+        <label class="control-label">URL: </label>
+      </div>
+      <div class="col-md-10">
+        <input name="remoteurl" ng-model="remoteURL" type="url" class="form-control" placeholder="http://url/geoserver/geogit/workspace:datastore" required>
+      </div>
+    </div>
+    <div class="form-group" ng-class="{'hidden': !selectedRepo || selectedRemote}">
+      <div class="col-md-2">
+        <label class="control-label">Username: </label>
+      </div>
+      <div class="col-md-4">
+        <input id="remoteUsername" type="text" class="form-control" placeholder="Username">
+      </div>
+      <div class="col-md-2">
+        <label class="control-label">Password: </label>
+      </div>
+      <div class="col-md-4">
+        <input id="remotePassword" type="password" class="form-control" placeholder="Password">
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+</div>

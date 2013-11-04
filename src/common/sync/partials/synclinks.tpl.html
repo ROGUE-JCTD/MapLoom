@@ -1,0 +1,39 @@
+<div class="row" id="SyncRow">
+  <ul id="SyncList" class="list-group col-md-12">
+    <li id="buttonRow" class="list-group-item col-md-12">
+      <div class="btn-group btn-group-justified">
+        <a id="AddSyncButton" class="btn sync-list-button" data-target="#addSyncWindow"
+           data-toggle="modal">
+          <i class="glyphicon glyphicon-plus-sign"></i>
+          Add Sync
+        </a>
+        <a id="MergeButton" class="btn sync-list-button" data-target="#mergeWindow"
+           data-toggle="modal">
+          <i class="glyphicon glyphicon-resize-small"></i>
+          Merge
+        </a>
+      </div>
+    </li>
+    <li ng-repeat="link in syncService.getLinks()" class="list-group-item" ng-controller="modalToggle"
+        ng-click="syncService.loadLink($index)">
+      <div class="row">
+        <div class="col-md-9 ellipsis">{{link.name}}</div>
+        <div class="col-md-3">
+          <div class="btn-group pull-right" stop-event="click">
+            <button data-toggle="button" class="btn btn-xs btn-default">
+              <i class="glyphicon glyphicon-sort"></i>
+            </button>
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li class="dropdown-header">Synchronize</li>
+              <li><a>Single</a></li>
+              <li><a>Continuous</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
