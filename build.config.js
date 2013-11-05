@@ -73,17 +73,32 @@ module.exports = {
       'vendor/angular-translate/angular-translate.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
-//      'vendor/ol3/ol.js'
-//      'vendor/ol3/ol-simple.js',
-      'vendor/ol3/ol-whitespace.js'
+      //'vendor/ol3/ol.js'
+      //'vendor/ol3/ol-simple.js',
+      'vendor/ol3/ol-whitespace.js',
+
+      //-- files for image gallery
+      'vendor/blueimp-gallery/js/blueimp-gallery.js',
+      'vendor/blueimp-gallery/js/blueimp-gallery-fullscreen.js',
+      'vendor/blueimp-gallery/js/blueimp-gallery-indicator.js',
+      'vendor/blueimp-gallery/js/blueimp-helper.js',
+      'vendor/blueimp-gallery/js/jquery-blueimp-gallery.js',
+      'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js'
     ],
     css: [
-      'vendor/ol3/ol.css'
+      'vendor/ol3/ol.css',
+
+      //-- files for image gallery
+      'vendor/blueimp-gallery/css/blueimp-gallery.css',
+      'vendor/blueimp-gallery/css/blueimp-gallery-indicator.css',
+      'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css'
     ],
     assets: [
+      'vendor/blueimp-gallery/img/*',
+      'vendor/blueimp-bootstrap-image-gallery/img/*'
     ],
     fonts: [
       'vendor/bootstrap/fonts/*'
     ]
-  },
+  }
 };

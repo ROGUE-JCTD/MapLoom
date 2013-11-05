@@ -9,32 +9,48 @@
   </div>
   <div class="animate-switch-container">
     <div ng-if="featureInfoBoxService.getState() == 'layers'">
-      <ul class="list-group feature-list-info-box">
+      <ul class="list-group layers-info-box">
         <li ng-repeat="layerInfo in featureInfoBoxService.getSelectedItem()" class="list-group-item-info-box" ng-click="featureInfoBoxService.show(layerInfo)">
           <div>{{layerInfo.layer.source_.params_.LAYERS}}</div>
         </li>
       </ul>
     </div>
     <div ng-if="featureInfoBoxService.getState() == 'layer'">
-      <ul class="list-group feature-list-info-box">
+      <ul class="list-group layers-info-box">
         <li ng-repeat="feature in featureInfoBoxService.getSelectedItem().features" class="list-group-item-info-box" ng-click="featureInfoBoxService.show(feature)">
           <div>{{feature.id}}</div>
         </li>
       </ul>
     </div>
   </div>
+
   <div ng-if="featureInfoBoxService.getState() == 'feature'">
-    <div class="feature-list-info-box">
-      <span ng-repeat="(key, value) in featureInfoBoxService.getSelectedItem().properties" class="">
-        <span class="info-box-attribute">{{key}}</span>
-        <span class="info-box-attribute-value">{{value}}</span>
+    <div ng-if="featureInfoBoxService.getSelectedItemPics()" style="margin-bottom: 10px;width: 190px; height: 142px; overflow: hidden;">
+      <carousel id="feature-info-box-carousel" interval="2000" style="top: 10px;">
+        <slide ng-repeat="pic in featureInfoBoxService.getSelectedItemPics()">
+          <img ng-src="{{pic}}" style="margin: auto" ng-click="featureInfoBoxService.showPics($index)">
+        </slide>
+      </carousel>
+    </div>
+
+    <div class="feature-info-box">
+      <span ng-if="featureInfoBoxService.getSelectedItem().geometry.type == 'Point'" class="">
+        <span class="info-box-attribute">Location ( lon, lat )</span>
+        <span class="info-box-attribute-value">({{featureInfoBoxService.getSelectedItem().geometry.coordinates[0]}},{{featureInfoBoxService.getSelectedItem().geometry.coordinates[1]}})</span>
+      </span>
+      <span ng-repeat="prop in featureInfoBoxService.getSelectedItemProperties()" class="">
+        <span class="info-box-attribute">{{prop[0]}}</span>
+        <span class="info-box-attribute-value">{{prop[1]}}</span>
       </span>
     </div>
+
     <div id="feature-info-box-bottom">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
+        <button type="button" data-toggle="tooltip" title="Show Pics" class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>
         <button type="button" data-toggle="tooltip" title="Edit attributes" class="btn btn-sm btn-default glyphicon glyphicon-list"></button>
         <button type="button" data-toggle="tooltip" title="Edit geometry" class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
         <button type="button" data-toggle="tooltip" title="Delete" class="btn btn-sm btn-default glyphicon glyphicon-trash"></button>
       </div>
+    </div>
   </div>
 </div>

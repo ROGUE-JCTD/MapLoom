@@ -7,6 +7,8 @@
   var rootScope_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
+  var selectedItemPics_ = null;
+  var selectedItemProperties_ = null;
   var featureInfoPerLayer_ = [];
   var containerInstance_ = null;
   var overlay_ = null;
@@ -39,12 +41,22 @@
       return selectedItem_;
     };
 
+    this.getSelectedItemPics = function() {
+      return selectedItemPics_;
+    };
+
+    this.getSelectedItemProperties = function() {
+      return selectedItemProperties_;
+    };
+
     this.getPosition = function() {
       return position_;
     };
 
     this.hide = function() {
       selectedItem_ = null;
+      selectedItemPics_ = null;
+      selectedItemProperties_ = null;
       state_ = null;
       featureInfoPerLayer_ = [];
     };
@@ -60,6 +72,8 @@
       if (!goog.isDefAndNotNull(item)) {
         return false;
       }
+
+      var selectedItemOld = selectedItem_;
 
       var type = getItemType(item);
 
@@ -119,6 +133,52 @@
             return this.name + ': ' + this.message;
           }
         });
+      }
+
+      //---- if selected item changed
+      if (selectedItem_ !== selectedItemOld) {
+
+        // -- update the selectedItemPics_
+        var pics = null;
+
+        if (getItemType(selectedItem_) === 'feature' &&
+            goog.isDefAndNotNull(selectedItem_) &&
+            goog.isDefAndNotNull(selectedItem_.properties) &&
+            goog.isDefAndNotNull(selectedItem_.properties.fotos)) {
+
+          pics = JSON.parse(selectedItem_.properties.fotos);
+
+          if (goog.isDefAndNotNull(pics) &&
+              pics.length === 0) {
+            pics = null;
+          }
+        }
+
+        selectedItemPics_ = pics;
+
+        if (selectedItemPics_ !== null) {
+          goog.array.forEach(selectedItemPics_, function(item, index) {
+            selectedItemPics_[index] = '/file-service/' + item;
+          });
+
+          //console.log('selectedItemPics_: ', selectedItemPics_);
+        }
+
+
+        // -- update the selectedItemProperties_
+        var props = null;
+
+        if (getItemType(selectedItem_) === 'feature') {
+          props = [];
+          goog.object.forEach(selectedItem_.properties, function(v, k) {
+            if (k !== 'fotos' && k !== 'photos') {
+              props.push([k, v]);
+            }
+          });
+        }
+
+        selectedItemProperties_ = props;
+        //console.log('---- selectedItemProperties_: ', selectedItemProperties_);
       }
 
       if (goog.isDefAndNotNull(position)) {
@@ -191,6 +251,24 @@
 
       return '';
     };
+
+    this.showPics = function(activeIndex) {
+      if (goog.isDefAndNotNull(selectedItemPics_)) {
+        // use the gallery controls
+        $('#blueimp-gallery').toggleClass('blueimp-gallery-controls', true);
+
+        var options = {
+          useBootstrapModal: false
+        };
+
+        if (goog.isDefAndNotNull(activeIndex)) {
+          options.index = activeIndex;
+        }
+
+        blueimp.Gallery(selectedItemPics_, options);
+      }
+    };
+
   });
 
   //-- Private functions
@@ -255,12 +333,14 @@
   function getItemType(item) {
     var type = '';
 
-    if (item.properties) {
-      type = 'feature';
-    } else if (item.features) {
-      type = 'layer';
-    } else if (item.length && item[0].features) {
-      type = 'layers';
+    if (goog.isDefAndNotNull(item)) {
+      if (item.properties) {
+        type = 'feature';
+      } else if (item.features) {
+        type = 'layer';
+      } else if (item.length && item[0].features) {
+        type = 'layers';
+      }
     }
 
     return type;

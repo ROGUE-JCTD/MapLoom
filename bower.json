@@ -12,7 +12,8 @@
     "ol3": "./ol3",
     "closure-library": "*",
     "angular-translate": "1.1.0",
-    "jquery-sortable": "~0.9.11"
+    "jquery-sortable": "~0.9.11",
+    "blueimp-bootstrap-image-gallery": "3.0.1"
   },
   "resolutions": {
     "angular": "1.2.0-rc.2"

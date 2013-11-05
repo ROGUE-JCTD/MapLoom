@@ -12,6 +12,7 @@
           templateUrl: 'featureinfobox/partial/featureinfobox.tpl.html',
           link: function(scope, element, attrs) {
             scope.featureInfoBoxService = featureInfoBoxService;
+
             scope.$on('feature-info-click', function() {
               scope.$apply(function() {
                 scope.featureInfoBoxService = featureInfoBoxService;
@@ -22,4 +23,3 @@
       }
   );
 })();
-

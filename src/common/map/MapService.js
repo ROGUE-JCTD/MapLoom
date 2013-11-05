@@ -68,11 +68,12 @@
             source: new ol.source.OSM()
           })
 
-          /*
           //NOTE: TODO: do not commit
+          /*
+          ,
           new ol.layer.Tile({
             source: new ol.source.TileWMS({
-              url: 'http://192.168.10.217/geoserver/wms',
+              url: 'http://192.168.10.102/geoserver/wms',
               //url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
               params: {
                 //'LAYERS': {'geonode:incidentes_copeco', 'geonode:canchas_de_futbol'}
@@ -90,7 +91,7 @@
 
           new ol.layer.Tile({
             source: new ol.source.TileWMS({
-              url: 'http://192.168.10.217/geoserver/wms',
+              url: 'http://192.168.10.102/geoserver/wms',
               //url: 'http://geoserver.rogue.lmnsolutions.com/geoserver/wms',
               params: {
                 //'LAYERS': 'geonode:incidentes_copeco'
@@ -106,7 +107,6 @@
             })
           })
           */
-
         ],
         controls: ol.control.defaults().extend([
           new ol.control.FullScreen(),

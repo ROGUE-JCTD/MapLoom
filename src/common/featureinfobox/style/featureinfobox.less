@@ -42,11 +42,19 @@
   padding-top: 5px;
 }
 
-.feature-list-info-box {
+.layers-info-box {
+  max-height: 150px;
+  min-width: 50px;
+  overflow: hidden;
+  //overflow-y: auto;
+}
+
+.feature-info-box {
   max-height: 150px;
   min-width: 50px;
   overflow: hidden;
   overflow-y: auto;
+  white-space: normal;
 }
 
 .list-group-item-info-box {
@@ -77,6 +85,7 @@
   padding: 0 0 7px;
   font: normal 12px "Helvetica",Arial;
   color: #333333;
+  white-space: normal;
   word-wrap: break-word;
 }
 
@@ -86,4 +95,39 @@
 
 #feature-info-box-bottom {
   border-top:1px solid #E5E5E5;
+}
+
+#feature-info-box-carousel>.carousel-indicators {
+  top: 5px;
+  bottom: initial;
+}
+
+
+//-------- image gallary corrections:  --------
+
+#blueimp-gallery>.modal {
+  position: relative;
+}
+
+.blueimp-gallery > .slides > .slide-loading {
+  background: url(loading.gif) center no-repeat;
+}
+
+.blueimp-gallery > .slides > .slide-error {
+  background: url(error.png) center no-repeat;
+}
+
+.blueimp-gallery > .play-pause {
+  background: url(play-pause.png) 0 0 no-repeat;
+}
+
+body:last-child .blueimp-gallery > .slides > .slide-error {
+  background-image: url(error.svg);
+}
+body:last-child .blueimp-gallery > .play-pause {
+  background-image: url(play-pause.svg);
+}
+
+.blueimp-gallery .modal-body .video-loading a {
+  background: url(loading.gif) center no-repeat;
 }
