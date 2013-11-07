@@ -8,13 +8,16 @@
           templateUrl: 'sync/partials/syncconfig.tpl.html',
           link: function(scope) {
             scope.geogitService = geogitService;
-            scope.selectedRepo = null;
-            scope.selectedRemote = null;
-            scope.selectedText = '*New Remote';
-            scope.remoteName = null;
-            scope.remoteURL = null;
-            scope.remoteUsername = '';
-            scope.remotePassword = '';
+            var reset = function() {
+              scope.selectedRepo = null;
+              scope.selectedRemote = null;
+              scope.selectedText = '*New Remote';
+              scope.remoteName = null;
+              scope.remoteURL = null;
+              scope.remoteUsername = '';
+              scope.remotePassword = '';
+            };
+            reset();
             scope.selectRemote = function(remote) {
               if (remote === null) {
                 scope.selectedText = '*New Remote';
@@ -41,7 +44,21 @@
               }
               var result = $q.defer();
               geogitService.command(scope.selectedRepo.id, 'remote', options).then(function() {
-                geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
+                var fetchOptions = new GeoGitFetchOptions();
+                fetchOptions.remote = name;
+                geogitService.command(scope.selectedRepo.id, 'fetch', fetchOptions).then(function() {
+                  geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
+                  result.promise.then(function(repo) {
+                    for (var index = 0; index < repo.remotes.length; index++) {
+                      if (repo.remotes[index].name === name) {
+                        repo.remotes[index].active = true;
+                        scope.$broadcast('remoteAdded', repo);
+                      }
+                    }
+                  });
+                }, function() {
+                  geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
+                });
               });
             };
             scope.removeRemote = function(remote) {
@@ -54,15 +71,6 @@
                 scope.selectedRemote = null;
                 scope.selectedText = '*New Remote';
               });
-            };
-            var reset = function() {
-              scope.selectedRepo = null;
-              scope.selectedRemote = null;
-              scope.selectedText = '*New Remote';
-              scope.remoteName = null;
-              scope.remoteURL = null;
-              scope.remoteUsername = '';
-              scope.remotePassword = '';
             };
 
             scope.$on('repoRemoved', reset);

@@ -17,14 +17,14 @@
           <option ng-repeat="repo in geogitService.repos" value="{{repo.id}}" ng-selected="">{{repo.name}}</option>
         </select>
       </div>
-      <div class="col-md-3" ng-class="{'hidden': !selectedRepoId}">
+      <div class="col-md-3" ng-hide="!selectedRepoId">
         <select class="form-control" ng-model="sourceBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches">
         </select>
       </div>
-      <div class="col-md-2" ng-class="{'hidden': !selectedRepoId}">
+      <div class="col-md-2" ng-hide="!selectedRepoId">
         <p class="form-control-static text-center">into</p>
       </div>
-      <div class="col-md-3" ng-class="{'hidden': !selectedRepoId}">
+      <div class="col-md-3" ng-hide="!selectedRepoId">
         <select class="form-control" ng-model="destinationBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches | filter:listFilter(sourceBranch)">
         </select>
       </div>

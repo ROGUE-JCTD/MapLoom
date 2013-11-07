@@ -132,67 +132,48 @@
       var remoteOptions = new GeoGitRemoteOptions();
       remoteOptions.list = true;
       service_.command(repo.id, 'remote', remoteOptions).then(function(response) {
-        if (response.success === true) {
-          if (goog.isDefAndNotNull(response.Remote)) {
-            if (goog.isDefAndNotNull(response.Remote.length)) {
-              for (var index = 0; index < response.Remote.length; index++) {
-                repo.remotes.push({name: response.Remote[index].name, branches: []});
-                repo.remotes[index].id = index;
-              }
-            } else {
-              repo.remotes.push({name: response.Remote.name, branches: []});
-              repo.remotes[0].id = 0;
-            }
-          }
-          var branchOptions = new GeoGitBranchOptions();
-          branchOptions.list = true;
-          branchOptions.remotes = true;
-          service_.command(repo.id, 'branch', branchOptions).then(function(response) {
-            if (response.success === true) {
-              var index;
-              var remoteIndex;
-              if (goog.isDefAndNotNull(response.Local.Branch)) {
-                if (goog.isDefAndNotNull(response.Local.Branch.length)) {
-                  for (index = 0; index < response.Local.Branch.length; index++) {
-                    repo.branches.push(response.Local.Branch[index].name);
-                  }
-                } else {
-                  repo.branches.push(response.Local.Branch.name);
-                }
-              } else {
-                service_.removeRepo(repo.id);
-                result.reject(null);
-                return;
-              }
-              if (goog.isDefAndNotNull(response.Remote.Branch)) {
-                if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
-                  for (index = 0; index < response.Remote.Branch.length; index++) {
-                    for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
-                      if (repo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
-                        repo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
-                      }
-                    }
-                  }
-                } else {
-                  for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
-                    if (repo.remotes[remoteIndex].name === response.Remote.Branch.remoteName) {
-                      repo.remotes[remoteIndex].branches.push(response.Remote.Branch.name);
-                    }
-                  }
-                }
-              }
-              rootScope.$broadcast('repoAdded', repo);
-              result.resolve(repo.id);
-            } else {
-              service_.removeRepo(repo.id);
-              result.reject(null);
-            }
+        if (goog.isDefAndNotNull(response.Remote)) {
+          var remoteId = 0;
+          forEachArrayish(response.Remote, function(remote) {
+            repo.remotes.push({name: remote.name, branches: [], id: remoteId, active: false});
+            remoteId++;
           });
         }
-        else {
+        var branchOptions = new GeoGitBranchOptions();
+        branchOptions.list = true;
+        branchOptions.remotes = true;
+        service_.command(repo.id, 'branch', branchOptions).then(function(response) {
+          var index;
+          var remoteIndex;
+          if (goog.isDefAndNotNull(response.Local.Branch)) {
+            forEachArrayish(response.Local.Branch, function(branch) {repo.branches.push(branch.name);});
+          } else {
+            service_.removeRepo(repo.id);
+            result.reject(null);
+            return;
+          }
+          if (goog.isDefAndNotNull(response.Remote.Branch)) {
+            if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
+              for (index = 0; index < response.Remote.Branch.length; index++) {
+                if (response.Remote.Branch[index].name === 'HEAD') {
+                  continue;
+                }
+                for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
+                  if (repo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
+                    repo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
+                  }
+                }
+              }
+            }
+          }
+          result.resolve(repo);
+        }, function() {
           service_.removeRepo(repo.id);
           result.reject(null);
-        }
+        });
+      }, function() {
+        service_.removeRepo(repo.id);
+        result.reject(null);
       });
     };
 
@@ -209,12 +190,14 @@
     };
 
     this.removedLayer = function(event, removedLayer) {
-      var repoId = removedLayer.get('metadata').repoId;
-      var repo = service_.getRepoById(repoId);
-      repo.refCount--;
-      if (repo.refCount <= 0) {
-        service_.removeRepo(repoId);
-        rootScope.$broadcast('repoRemoved', repo);
+      if (removedLayer.get('metadata').isGeoGit) {
+        var repoId = removedLayer.get('metadata').repoId;
+        var repo = service_.getRepoById(repoId);
+        repo.refCount--;
+        if (repo.refCount <= 0) {
+          service_.removeRepo(repoId);
+          rootScope.$broadcast('repoRemoved', repo);
+        }
       }
     };
 
@@ -329,8 +312,9 @@
                     var promise = service_.addRepo(
                         new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name,
                             dataStore.connectionParameters.entry[1].$, repoName));
-                    promise.then(function(id) {
-                      metadata.repoId = id;
+                    promise.then(function(repo) {
+                      rootScope.$broadcast('repoAdded', repo);
+                      metadata.repoId = repo.id;
                     });
                     metadata.projection = featureType.srs;
                     metadata.isGeoGit = true;

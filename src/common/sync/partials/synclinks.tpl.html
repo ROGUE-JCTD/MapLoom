@@ -17,21 +17,26 @@
     <li ng-repeat="link in syncService.getLinks()" class="list-group-item" ng-controller="modalToggle"
         ng-click="syncService.loadLink($index)">
       <div class="row">
-        <div class="col-md-9 ellipsis">{{link.name}}</div>
-        <div class="col-md-3">
-          <div class="btn-group pull-right" stop-event="click">
-            <button data-toggle="button" class="btn btn-xs btn-default">
+        <div class="col-md-8 ellipsis">{{link.name}}</div>
+        <div class="col-md-4">
+          <div class="btn-group pull-left" stop-event="click">
+            <button ng-hide="link.continuous" ng-click="singleSync(link)" data-toggle="button" class="btn btn-xs btn-default">
               <i class="glyphicon glyphicon-sort"></i>
             </button>
-            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+            <div ng-show="link.continuous" ng-click="syncService.toggleAutoSync(link)" stop-event="click mousedown"
+                 class="btn btn-xs btn-default auto-sync-button" ng-class="{'sync-on': link.isSyncing}">
+              <i class="glyphicon glyphicon-retweet"></i>
+            </div>
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle" ng-class="{'disabled': link.isSyncing}" data-toggle="dropdown">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
               <li class="dropdown-header">Synchronize</li>
-              <li><a>Single</a></li>
-              <li><a>Continuous</a></li>
+              <li><a ng-click="link.setContinuous(false)"><i ng-hide="link.continuous" class="glyphicon glyphicon-check pull-right"></i> Single</a></li>
+              <li><a ng-click="link.setContinuous(true)"><i ng-show="link.continuous" class="glyphicon glyphicon-check pull-right"></i> Continuous</a></li>
             </ul>
           </div>
+          <i ng-class="{'remote-up': link.getIsActive()}" class="glyphicon glyphicon-certificate remote pull-right"></i>
         </div>
       </div>
     </li>
