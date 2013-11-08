@@ -4,18 +4,6 @@
 	left:325px;
 }
 
-.map-shadow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 500;
-  opacity: 0.2;
-  box-shadow: inset 0px 0px 80px 0px #000000;
-  pointer-events: none;
-}
-
 html, body {
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
 	margin  : 0;
@@ -78,61 +66,8 @@ html, body {
   top: -1px;
 }
 
-.ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .notification-panel-heading {
     background-color: #4977A3 !important;
-}
-
-#map {
-    min-height:100%;
-	height: 100%;
-	width: 100%;
-}
-
-#map .ol-zoom {
-  position: absolute;
-  right: 8px;
-  top: 38px;
-  left: auto;
-}
-#map .ol-zoom-out {
-  top: 30px;
-  margin-top: 202px;
-}
-
-#map .ol-zoomslider {
-  position: absolute;
-  background-color: transparent;
-  top: 62px;
-  left: auto;
-  right: 11px;
-  width: 24px;
-}
-#map .ol-zoomslider-thumb {
-  position: absolute;
-  border-radius: 2px;
-  left: auto;
-  width: 24px;
-  height: 12px;
-}
-#map .ol-mouse-position {
-  position: absolute;
-  left: 5px;
-  right: auto;
-  top: auto;
-  bottom: 0px;
-  z-index: 1000;
-}
-#map .metric-scale-line {
-  bottom: 24px !important;
-}
-#map .imperial-scale-line {
-  bottom: 48px !important;
 }
 
 .panel {
@@ -156,13 +91,6 @@ html, body {
 
 hr {
 	border-top: 1px solid #80a0b0;
-}
-
-.rotate-45deg    {
-    -webkit-transform:rotate(45deg);
-    -moz-transform:rotate(45deg);
-    -o-transform:rotate(45deg);
-    -ms-transform:rotate(45deg);
 }
 
 /* Overwriting these because the default rounded corners didn't look quite right */
@@ -209,18 +137,42 @@ hr {
     font-weight:100;
 }
 
-#zoom-to-world {
-  position: absolute;
-  right: 10px;
-  left: auto;
-  top: 295px;
-  height: 22px;
-  width: 22px;
-  color: white;
-  background: rgba(0,60,136,0.5);
-  z-index: 600;
-  .glyphicon {
-    padding-left: 4px;
-    padding-top: 2px;
-  }
+ul {
+  margin: 0;
+}
+
+.btn .caret {
+  margin-top: 0px;
+  vertical-align: middle;
+}
+
+.dropdown-menu .divider {
+  border-bottom: none;
+}
+
+.btn-group li {
+  border-bottom: none;
+  text-transform: none;
+  margin: 0;
+}
+
+.btn-group li a {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+label {
+  cursor: default;
+}
+
+a {
+  color: #FFFFFF;
+}
+
+.form-horizontal .control-label {
+  float: none;
+  width: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }

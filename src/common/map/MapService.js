@@ -123,7 +123,7 @@
         interactions: ol.interaction.defaults().extend([
           new ol.interaction.DragRotate()
         ]),
-        renderer: ol.RendererHint.DOM,
+        renderer: ol.RendererHint.CANVAS,
         target: 'map',
         view: new ol.View2D({
           center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
