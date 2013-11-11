@@ -1,8 +1,6 @@
 <div class="loom-dialog {{type}}" ng-style="{'margin-left':{{modalOffset}},'margin-top':{{modalOffset}}}">
   <div class="modal-header">
-    <button ng-if="closeButton" type="button" class="close" ng-click="$close()">
-      <i class="glyphicon glyphicon-remove"></i>
-    </button>
+    <i ng-if="closeButton" ng-click="$close()" class="close glyphicon glyphicon-remove"></i>
     <h4 class="modal-title">{{dialogTitle}}</h4>
   </div>
   <div class="modal-body">

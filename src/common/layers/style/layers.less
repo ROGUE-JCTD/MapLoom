@@ -1,14 +1,14 @@
 .layer-row {
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 .layer-heading {
-  background-color: #4977A3 !important;
+  background-color: @layerHeaderColor !important;
   padding: 5px 15px;
 }
 
 .layer-title {
-  color: #fff !important;
+  color: white !important;
   text-decoration: none !important;
   width: 87%;
   float: left;
@@ -16,8 +16,8 @@
 }
 
 .layer-visible-button.layer-visible {
-  background-color: #155481;
-  color: #fff;
+  background-color: @layerVisibleColor;
+  color: white;
 }
 
 #layerpanel-group .placeholder {
@@ -25,6 +25,6 @@
 }
 
 .remove-layer-button {
-  background-color: #b7b2b2;
-  color: #000000;
+  background-color: @removeLayerColor;
+  color: black;
 }

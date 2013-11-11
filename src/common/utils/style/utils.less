@@ -36,18 +36,15 @@
 }
 
 .loom-check-button {
-  .loom-button-variant(#FFF, #000, #155481, #FFF);
-}
-
-.rotate-45deg    {
-  -webkit-transform:rotate(45deg);
-  -moz-transform:rotate(45deg);
-  -o-transform:rotate(45deg);
-  -ms-transform:rotate(45deg);
+  .loom-button-variant(white, black, @checkButtonColor, white);
 }
 
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.z-index(@level; @offset: 0) {
+  z-index: ((1000 * @level) + (@offset * 10));
 }

@@ -1,25 +1,25 @@
-.modal-header {
-    color: #fff;
-    background-color:#155481;
-    border-bottom: 0px;
-}
-.modal-footer {
-    background-color:#97B3CD;
-    border-top: 1px solid #80a0b0;
-    margin-top: 0;
-    .box-shadow(none);
-}
-.modal-body {
-    background-color:#97B3CD;
-  max-height: 100%;
-  overflow-y: visible;
-}
-
 .modal {
   display: inline-block;
   width: auto;
   background-color: transparent;
   margin-left: 0;
+  .z-index(@dialogLevel);
+  .modal-header {
+    color: white;
+    background-color:@defaultModalHeaderColor;
+    border-bottom: 0;
+  }
+  .modal-footer {
+    background-color:@defaultModalPanelColor;
+    border-top: 1px solid darken(@defaultModalPanelColor, 5%);
+    margin-top: 0;
+    .box-shadow(none);
+  }
+  .modal-body {
+    background-color:@defaultModalPanelColor;
+    max-height: 100%;
+    overflow-y: visible;
+  }
 }
 
 .modal.custom {
@@ -31,56 +31,35 @@
   position: absolute;
   left: 37%;
   top: 30%;
-  .box-shadow(0px 0px 12px rgba(0, 0, 0, 0.35));
+  .box-shadow(0 0 12px rgba(0, 0, 0, 0.35));
+}
+
+// Make less parametric mixin for the dialogs
+.dialog-mixin (@header-color, @background-color) {
+  .modal-header {
+    color: white;
+    border: none;
+    background-color: @header-color;
+  }
+  .modal-footer {
+    margin-top: 0;
+    padding: 5px 5px 5px 5px;
+    background-color: @background-color;
+    border-top: 1px solid darken(@background-color, 5%);
+  }
+  .modal-body {
+    background-color: @background-color;
+  }
 }
 
 .loom-dialog.dialog-default {
-  .modal-header {
-    color: #fff;
-    background-color: #155481;
-    borders: none;
-  }
-  .modal-footer {
-    background-color: #97B3CD;
-    border-top: 1px solid #155481;
-    margin-top: 0;
-    padding: 5px 5px 5px 5px;
-  }
-  .modal-body {
-    background-color: #97B3CD;
-  }
+  .dialog-mixin(@defaultModalHeaderColor, @defaultModalPanelColor);
 }
 
 .loom-dialog.dialog-warning {
-  .modal-header {
-    color: #fff;
-    background-color: #632f13;
-    bordes: none;
-  }
-  .modal-footer {
-    background-color: #e8d0c8;
-    border-top: 1px solid #632f13;
-    margin-top: 0;
-    padding: 5px 5px 5px 5px;
-  }
-  .modal-body {
-    background-color: #e8d0c8;
-  }
+  .dialog-mixin(@warningHeaderColor, @warningPanelColor);
 }
 
 .loom-dialog.dialog-error {
-  .modal-header {
-    color: #fff;
-    background-color: #440000;
-    borders: none;
-  }
-  .modal-footer {
-    background-color: #ded9d9;
-    border-top: 1px solid #440000;
-    margin-top: 0;
-    padding: 5px 5px 5px 5px;
-  }
-  .modal-body {
-    background-color: #ded9d9;
-  }
+  .dialog-mixin(@errorHeaderColor, @errorPanelColor)
 }

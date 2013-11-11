@@ -313,8 +313,12 @@
                         new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name,
                             dataStore.connectionParameters.entry[1].$, repoName));
                     promise.then(function(repo) {
-                      rootScope.$broadcast('repoAdded', repo);
-                      metadata.repoId = repo.id;
+                      if (goog.isDef(repo.id)) {
+                        rootScope.$broadcast('repoAdded', repo);
+                        metadata.repoId = repo.id;
+                      } else {
+                        metadata.repoId = repo;
+                      }
                     });
                     metadata.projection = featureType.srs;
                     metadata.isGeoGit = true;

@@ -1,10 +1,10 @@
 .loom-notification-poster {
 	position:absolute;
-	z-index:1000;
+	.z-index(@menuLevel);
 	left:325px;
 }
 
-html, body {
+body {
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
 	margin  : 0;
 	padding : 0;
@@ -16,8 +16,8 @@ html, body {
 	position: absolute;
 	left: 0;
 	width: 320px;
-	z-index: 1000;
-	top: 0px;
+    .z-index(@menuLevel);
+	top: 0;
 }
 
 #pulldown .panel {
@@ -25,19 +25,19 @@ html, body {
 	border: 0;
 	font-weight: normal;
 	overflow: visible;
-	background-color:#97B3CD;
+	background-color:@mainPanelColor;
 }
 
 .panel-body {
-	padding: 0px 15px;
+	padding: 0 15px;
 }
 
 #pulldown-content .panel-heading {
-	background-color: #155481;
-	color: #fff;
+	background-color: @mainHeaderColor;
+	color: white;
 	display: block;
 	text-decoration: none;
-	border-top: 1px solid #80a0b0;
+	border-top: 1px solid darken(@mainPanelColor, 5%);
 }
 
 #pulldown-content {
@@ -55,19 +55,19 @@ html, body {
 
 #pulldown-shadow {
   position: relative;
-  z-index: 1000;
-	.box-shadow(0px 0px 20px rgba(0, 0, 0, 0.4));
+  .z-index(@menuLevel);
+	.box-shadow(0 0 20px rgba(0, 0, 0, 0.4));
 }
 
 .toggle-menu {
-  .box-shadow(0px 0px 20px rgba(0, 0, 0, 0.4));
-  z-index: 0;
+  .box-shadow(0 0 20px rgba(0, 0, 0, 0.4));
+  .z-index(@mapLevel);
   position:relative;
   top: -1px;
 }
 
 .notification-panel-heading {
-    background-color: #4977A3 !important;
+    background-color: @notificationHeaderColor !important;
 }
 
 .panel {
@@ -75,28 +75,28 @@ html, body {
 	border: 0;
 	font-weight: normal;
 	/*overflow: visible;*/
-	background-color:#97B3CD;
+	background-color:@mainPanelColor;
 }
 
 .panel-group .panel-heading + .panel-collapse .panel-body{
-	border-top: 1px solid #80a0b0;
+	border-top: 1px solid darken(@mainPanelColor, 5%);
 
 }
 .close {
-	color:#fff;
+	color:white;
 }
 .flat {
-	border-radius: 0px;
+	border-radius: 0;
 }
 
 hr {
-	border-top: 1px solid #80a0b0;
+	border-top: 1px solid darken(@mainPanelColor, 5%);
 }
 
 /* Overwriting these because the default rounded corners didn't look quite right */
 .panel-heading, .flat-top {
-	border-top-left-radius: 0px;
-	border-top-right-radius: 0px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }
 
 #layer-panel a.accordion-toggle {
@@ -104,8 +104,8 @@ hr {
 }
 
 .badge {
-    background-color: #aa5a12;
-    color:#FFF;
+    background-color: @badgeColor;
+    color:white;
     font-size: 14px;
     padding:5px 10px;
     border-radius: 20px;
@@ -117,16 +117,16 @@ hr {
 }
 
 .list-group {
-    margin-bottom:0px;
+    margin-bottom:0;
 }
 
 .list-group-item {
-	background-color:#97B3CD;
-	border: 1px solid #80a0b0;
+	background-color:@mainListItemColor;
+	border: 1px solid darken(@mainListItemColor, 5%);
 }
 
 .notification-text {
-    margin: 0px 0px 0px 0px;
+    margin: 0;
 }
 
 .notification-panel-heading {
@@ -139,10 +139,12 @@ hr {
 
 ul {
   margin: 0;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .btn .caret {
-  margin-top: 0px;
+  margin-top: 0;
   vertical-align: middle;
 }
 
@@ -157,9 +159,7 @@ ul {
 }
 
 .btn-group li a {
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 label {
@@ -167,7 +167,7 @@ label {
 }
 
 a {
-  color: #FFFFFF;
+  color: white;
 }
 
 .form-horizontal .control-label {

@@ -2,47 +2,45 @@
   min-height:100%;
   height: 100%;
   width: 100%;
-}
-
-#map .ol-zoom {
-  position: absolute;
-  right: 8px;
-  top: 38px;
-  left: auto;
-}
-#map .ol-zoom-out {
-  top: 30px;
-  margin-top: 202px;
-}
-
-#map .ol-zoomslider {
-  position: absolute;
-  background-color: transparent;
-  top: 62px;
-  left: auto;
-  right: 11px;
-  width: 24px;
-}
-#map .ol-zoomslider-thumb {
-  position: absolute;
-  border-radius: 2px;
-  left: auto;
-  width: 24px;
-  height: 12px;
-}
-#map .ol-mouse-position {
-  position: absolute;
-  left: 5px;
-  right: auto;
-  top: auto;
-  bottom: 0px;
-  z-index: 1000;
-}
-#map .metric-scale-line {
-  bottom: 24px !important;
-}
-#map .imperial-scale-line {
-  bottom: 48px !important;
+  .ol-zoom {
+    position: absolute;
+    right: 8px;
+    top: 38px;
+    left: auto;
+  }
+  .ol-zoom-out {
+    top: 30px;
+    margin-top: 202px;
+  }
+  .ol-zoomslider {
+    position: absolute;
+    background-color: transparent;
+    top: 62px;
+    left: auto;
+    right: 11px;
+    width: 24px;
+  }
+  .ol-zoomslider-thumb {
+    position: absolute;
+    border-radius: 2px;
+    left: auto;
+    width: 24px;
+    height: 12px;
+  }
+  .ol-mouse-position {
+    position: absolute;
+    left: 5px;
+    right: auto;
+    top: auto;
+    bottom: 0;
+    .z-index(@mapLevel);;
+  }
+  .metric-scale-line {
+    bottom: 24px !important;
+  }
+  .imperial-scale-line {
+    bottom: 48px !important;
+  }
 }
 
 .map-shadow {
@@ -51,9 +49,9 @@
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 500;
+  .z-index(@mapLevel);
   opacity: 0.2;
-  box-shadow: inset 0px 0px 80px 0px #000000;
+  box-shadow: inset 0 0 80px 0 black;
   pointer-events: none;
 }
 
@@ -65,8 +63,8 @@
   height: 22px;
   width: 22px;
   color: white;
-  background: rgba(0,60,136,0.5);
-  z-index: 600;
+  background: @zoomToExtentColor;
+  .z-index(@mapLevel);
   .glyphicon {
     padding-left: 4px;
     padding-top: 2px;

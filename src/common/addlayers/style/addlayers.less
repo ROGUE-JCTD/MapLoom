@@ -1,12 +1,13 @@
 #layer-list {
   max-height: 300px;
-  overflow: hidden;
-  overflow-y: auto;
+  .list-group-item {
+    background-color:@addLayerListColor;
+    color: white;
+  }
 }
 
-#layer-list .list-group-item {
-  background-color:#4977A3;
-  color: #ffffff;
+#server-list {
+  max-height: 200px;
 }
 
 .custom-width-100 {
@@ -15,12 +16,6 @@
 
 .custom-width-88 {
   width: 88%;
-}
-
-.server-list {
-  max-height: 200px;
-  overflow: hidden;
-  overflow-y: auto;
 }
 
 .right-and-center {

@@ -1,25 +1,23 @@
 #SyncList {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   padding-left: 15px;
-}
-
-#SyncList .list-group-item .row{
-  padding: 0px !important;
+  .list-group-item {
+    background-color: @syncListColor;
+    color: white;
+    .row{
+      padding: 0 !important;
+    }
+  }
 }
 
 #buttonRow {
-  padding: 0px !important;
-}
-
-#SyncList .list-group-item {
-  background-color: #678BAD;
-  color: #fff;
+  padding: 0 !important;
 }
 
 .sync-list-button {
-  .loom-button-variant(#FFF, #FFF, #4977A3, #4977A3);
+  .loom-button-variant(white, white, @syncListButtonColor, @syncListButtonColor);
   border: 1px solid #80a0b0 !important;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .auto-sync-button {
@@ -28,14 +26,14 @@
   border-bottom-right-radius: 0 !important;
 }
 .auto-sync-button.sync-on {
-  background-color: #155481;
-  color: #fff;
+  background-color: @mainHeaderColor;
+  color: white;
 }
 
 .remote {
-  color: #FF0000;
+  color: @remoteDownColor;
 }
 
 .remote-up {
-  color: #00FF00;
+  color: @remoteUpColor;
 }

@@ -7,7 +7,7 @@
             <span class="pull-left"> {{serverService.getServer(currentServerIndex).name}} </span>
             <span class="caret right-and-center"></span>
           </button>
-          <ul class="dropdown-menu server-list col-md-12">
+          <ul id="server-list" class="dropdown-menu col-md-12">
             <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="selectServer($index)">{{server.name}}</a></li>
             <li class="divider"></li>
             <li><a data-target="#add-server-dialog" data-toggle="modal">Add New Server</a></li>
