@@ -1,7 +1,8 @@
 (function() {
   var module = angular.module('loom_legend_directive', []);
 
-  var legendOpen = false;
+  var legendOpen = true;
+  //var panelWidth = 0;
 
   module.directive('loomLegend',
       function($rootScope, mapService, serverService) {
@@ -15,16 +16,19 @@
             scope.serverService = serverService;
             scope.expandLegend = function() {
               if (legendOpen === false) {
-                //check to see if there is any content in the legend and expand it if there is
                 if (angular.element('.legend-item').length > 0) {
+                  angular.element('#legend-container')[0].style.visibility = 'visible';
                   angular.element('#legend-panel').collapse('show');
-                  element[0].style.width = '250px';
                   legendOpen = true;
                 }
               } else {
                 angular.element('#legend-panel').collapse('hide');
-                element[0].style.width = '90px';
                 legendOpen = false;
+
+                //the timeout is so the transition will finish before hiding the div
+                setTimeout(function() {
+                  angular.element('#legend-container')[0].style.visibility = 'hidden';
+                }, 350);
               }
             };
           }

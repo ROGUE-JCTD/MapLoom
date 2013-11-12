@@ -1,4 +1,4 @@
-.loom-legend {
+#legend-container {
   position: absolute;
   right: 50px;
   left: auto;
@@ -6,20 +6,21 @@
   .z-index(@mapLevel);
   background-color: @legendColor !important;
   color: @legendFontColor;
-  width: 90px;
+  width: auto;
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 5px;
-  transition: width .35s;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.legend-panel-body {
+  background-color: transparent !important;
 }
 
 .legend-item {
   padding-left: 20px;
   padding-right: 5px;
-}
-
-.legend-panel-body {
-  background-color: transparent !important;
 }
 .legend-item-header {
   background-color: @legendHeaderColor !important;
@@ -28,4 +29,20 @@
   padding-top: 0;
   margin-bottom: 5px;
   margin-top: 5px;
+  width: auto;
+}
+
+#legend-btn-border {
+  top: 325px;
+}
+#legend-btn {
+  height: 22px;
+  width: 22px;
+  color: @legendButtonImageColor;
+  background: @legendButtonColor;
+  border-radius: 4px;
+  .glyphicon {
+    padding-left: 3px;
+    padding-top: 2px;
+  }
 }
