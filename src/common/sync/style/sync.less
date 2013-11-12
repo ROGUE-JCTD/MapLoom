@@ -3,7 +3,7 @@
   padding-left: 15px;
   .list-group-item {
     background-color: @syncListColor;
-    color: white;
+    color: @syncListFontColor;
     .row{
       padding: 0 !important;
     }
@@ -15,8 +15,8 @@
 }
 
 .sync-list-button {
-  .loom-button-variant(white, white, @syncListButtonColor, @syncListButtonColor);
-  border: 1px solid #80a0b0 !important;
+  .loom-button-variant(@syncListButtonFontColor, @syncListButtonFontColor, @syncListButtonColor, @syncListButtonColor);
+  border: 1px solid lighten(@syncListColor, 10%) !important;
   border-radius: 0;
 }
 
@@ -26,8 +26,8 @@
   border-bottom-right-radius: 0 !important;
 }
 .auto-sync-button.sync-on {
-  background-color: @mainHeaderColor;
-  color: white;
+  background-color: @syncOnColor;
+  color: @syncOnImageColor;
 }
 
 .remote {

@@ -5,7 +5,7 @@
   margin-left: 0;
   .z-index(@dialogLevel);
   .modal-header {
-    color: white;
+    color: @modalHeaderFontColor;
     background-color:@defaultModalHeaderColor;
     border-bottom: 0;
   }
@@ -35,9 +35,9 @@
 }
 
 // Make less parametric mixin for the dialogs
-.dialog-mixin (@header-color, @background-color) {
+.dialog-mixin (@header-color, @background-color, @font-color: white) {
   .modal-header {
-    color: white;
+    color: @font-color;
     border: none;
     background-color: @header-color;
   }
