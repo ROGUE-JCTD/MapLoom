@@ -6,6 +6,8 @@
   var diffService_ = null;
   var pulldownService_ = null;
   var service_ = null;
+  var mapService_ = null;
+  var dialogService_ = null;
 
   module.provider('conflictService', function() {
     this.features = null;
@@ -14,28 +16,64 @@
     this.ancestor = null;
     this.repoId = null;
     this.currentFeature = null;
+    this.ourName = null;
+    this.theirName = null;
+    this.transaction = null;
 
-    this.$get = function($rootScope, $location, diffService, pulldownService, featureDiffService) {
+    this.$get = function($rootScope, $location, diffService, pulldownService,
+                         featureDiffService, mapService, dialogService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
       featureDiffService_ = featureDiffService;
+      mapService_ = mapService;
+      dialogService_ = dialogService;
       service_ = this;
       return this;
     };
 
-    this.selectFeature = function(index) {
-      currentFeature = this.features[index];
+    this.abort = function() {
+      if (goog.isDefAndNotNull(this.transaction)) {
+        this.transaction.abort();
+        this.transaction = null;
+      }
+      this.features = null;
+      this.ours = null;
+      this.ancestor = null;
+      this.repoId = null;
+      this.currentFeature = null;
+      this.ourName = null;
+      this.theirName = null;
     };
 
-    this.resolveConflict = function(index) {
-      currentFeature.resolved = true;
+    this.selectFeature = function(index) {
+      this.currentFeature = this.features[index];
+    };
+
+    this.resolveConflict = function(ours) {
+      this.currentFeature.resolved = true;
+      this.currentFeature.ours = ours;
+      diffService_.resolveFeature(this.currentFeature);
     };
 
     this.beginResolution = function() {
       diffService_.setTitle('Merge Results');
       diffService_.clickCallback = featureClicked;
-      diffService_.populate(service_.features);
+      diffService_.populate(service_.features, null, service_.ourName, service_.theirName);
       pulldownService_.conflictsMode();
+    };
+
+    this.commit = function() {
+      var conflicts = [];
+      var i;
+      for (i = 0; i < service_.features.length; i++) {
+        var feature = service_.features[i];
+        if (feature.change === 'CONFLICT') {
+          conflicts.push(feature);
+        }
+      }
+
+      var conflictsInError = 0;
+      commitInternal(conflicts, conflictsInError);
     };
   });
 
@@ -43,15 +81,97 @@
     var fid = feature.layer + '/' + feature.feature;
     for (var i = 0; i < service_.features.length; i++) {
       if (fid === service_.features[i].id) {
-        featureDiffService_.setFeature(service_.features[i]);
-        featureDiffService_.ours = service_.ours;
-        featureDiffService_.theirs = service_.theirs;
-        featureDiffService_.ancestor = service_.ancestor;
-        featureDiffService_.repoId = service_.repoId;
+        featureDiffService_.setFeature(
+            service_.features[i], service_.ours, service_.theirs, service_.ancestor, service_.repoId);
         $('#feature-diff-dialog').modal('show');
-        service_.currentFeature = i;
+        service_.currentFeature = service_.features[i];
         break;
       }
     }
+  }
+
+  function commitInternal(conflictList, conflictsInError) {
+    var conflict = conflictList.pop();
+    var checkoutOptions = new GeoGitCheckoutOptions();
+    checkoutOptions.path = conflict.id;
+    if (conflict.ours) {
+      checkoutOptions.ours = true;
+    } else {
+      checkoutOptions.theirs = true;
+    }
+    service_.transaction.command('checkout', checkoutOptions).then(function() {
+      var addOptions = new GeoGitAddOptions();
+      addOptions.path = conflict.id;
+      service_.transaction.command('add', addOptions).then(function(addResponse) {
+        // add successful
+        console.log('Conflict successfully added: ', conflict);
+        if (conflictList.length === 0) {
+          if (conflictsInError === 0) {
+            var commitOptions = new GeoGitCommitOptions();
+            commitOptions.all = true;
+            commitOptions.message = 'Resolved some conflicts.';
+            service_.transaction.command('commit', commitOptions).then(function(commitResponse) {
+              // commit successful
+              console.log('Merge committed successfully: ', commitResponse);
+              service_.transaction.finalize().then(function(transactionResponse) {
+                // transaction complete
+                diffService_.clearDiff();
+                service_.transaction = null;
+                service_.abort();
+                pulldownService_.defaultMode();
+                mapService_.dumpTileCache();
+                console.log('Transaction completed successfully!', transactionResponse);
+              }, function(endTransactionFailure) {
+                if (goog.isObject(endTransactionFailure) &&
+                    goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
+                  handleConflicts(endTransactionFailure);
+                } else {
+                  transaction.abort();
+                  console.log('EndTransaction failure: ', endTransactionFailure);
+                }
+              });
+            }, function(reject) {
+              // couldn't commit
+              console.log('Failed to commit merge: ', reject);
+            });
+          } else {
+            // couldn't resolve all conflicts
+            console.log(conflictsInError + ' conflicts could not be resolved.');
+          }
+        } else {
+          commitInternal(conflictList, conflictsInError);
+        }
+      }, function(reject) {
+        commitInternal(conflictList, conflictsInError + 1);
+        console.log('Failed to add resolved conflicts to the tree: ', reject);
+      });
+    }, function(reject) {
+      commitInternal(conflictList, conflictsInError + 1);
+      console.log('Failed to checkout conflicted feature: ', reject);
+    });
+  }
+
+  function handleConflicts(mergeFailure) {
+    var myDialog = dialogService_.warn('Merge Conflicts',
+        'Some conflicts were encountered when committing the transaction,' +
+            ' would you like to resolve these or abort the merge?',
+        ['Abort', 'Resolve Conflicts'], false);
+
+    myDialog.then(function(button) {
+      switch (button) {
+        case 'Abort':
+          service_.transaction.abort();
+          break;
+        case 'Resolve Conflicts':
+          service_.ourName = 'Transaction';
+          service_.theirName = 'Repository';
+          service_.ours = mergeFailure.ours;
+          service_.theirs = mergeFailure.theirs;
+          service_.ancestor = mergeFailure.ancestor;
+          service_.features = mergeFailure.Feature;
+          service_.beginResolution();
+          break;
+      }
+    });
   }
 }());

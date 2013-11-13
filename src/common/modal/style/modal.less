@@ -1,9 +1,14 @@
+.modal-backdrop {
+  .z-index(@dialogLevel);
+}
+
 .modal {
   display: inline-block;
   width: auto;
   background-color: transparent;
   margin-left: 0;
-  .z-index(@dialogLevel);
+  overflow: hidden;
+  .z-index(@dialogLevel,1);
   .modal-header {
     color: @modalHeaderFontColor;
     background-color:@defaultModalHeaderColor;

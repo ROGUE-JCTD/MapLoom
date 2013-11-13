@@ -6,6 +6,7 @@
     'loom_feature_diff_directive',
     'loom_feature_diff_service',
     'loom_feature_diff_controller',
-    'loom_feature_panel_directive'
+    'loom_feature_panel_directive',
+    'loom_panel_separator_directive'
   ]);
 }());

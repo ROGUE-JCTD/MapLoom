@@ -1,7 +1,7 @@
 (function() {
   var module = angular.module('loom_diff_panel_directive', []);
 
-  module.directive('loomDiffPanel', function($rootScope, diffService) {
+  module.directive('loomDiffPanel', function($rootScope, diffService, conflictService, pulldownService, dialogService) {
     return {
       restrict: 'C',
       replace: true,
@@ -32,6 +32,34 @@
         scope.$watch('diffService.merges', updateVariables, true);
         scope.$watch('diffService.conflicts', updateVariables, true);
         scope.$watch('diffService.clickCallback', updateVariables);
+
+        scope.cancel = function() {
+          dialogService.warn('Cancel Merge', 'Are you sure you want to cancel the merge process?',
+              ['Yes', 'No'], false).then(function(button) {
+            switch (button) {
+              case 'Yes':
+                diffService.clearDiff();
+                conflictService.abort();
+                pulldownService.defaultMode();
+                break;
+              case 'No':
+                break;
+            }
+          });
+        };
+
+        scope.done = function() {
+          dialogService.open('Commit Merge', 'Are you sure you want to finalize and commit the merge?',
+              ['Yes', 'No'], false).then(function(button) {
+            switch (button) {
+              case 'Yes':
+                conflictService.commit();
+                break;
+              case 'No':
+                break;
+            }
+          });
+        };
       }
     };
   });

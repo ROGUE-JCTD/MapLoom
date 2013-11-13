@@ -28,7 +28,25 @@
       dragZoomActive = true;
     };
 
-    this.zoomToExtent = function(extent, map) {
+    this.dumpTileCache = function() {
+      var layers = this.getFeatureLayers();
+      forEachArrayish(layers, function(layer) {
+        if (goog.isDefAndNotNull(layer.getTileSource)) {
+          var tileSource = layer.getTileSource();
+          if (goog.isDefAndNotNull(tileSource)) {
+            if (goog.isDefAndNotNull(tileSource.updateParams)) {
+              tileSource.updateParams({_dc: new Date().getTime()});
+            }
+          }
+        }
+      });
+      this.map.render();
+    };
+
+    this.zoomToExtent = function(extent, animate, map) {
+      if (!goog.isDefAndNotNull(animate)) {
+        animate = true;
+      }
       if (!goog.isDefAndNotNull(map)) {
         map = this.map;
       }
@@ -38,9 +56,11 @@
         extent = view.getProjection().getExtent();
       }
 
-      var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
-      var pan = ol.animation.pan({source: map.getView().getCenter()});
-      map.beforeRender(pan, zoom);
+      if (animate) {
+        var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
+        var pan = ol.animation.pan({source: map.getView().getCenter()});
+        map.beforeRender(pan, zoom);
+      }
 
       view.fitExtent(extent, map.getSize());
     };

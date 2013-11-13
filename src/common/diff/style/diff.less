@@ -63,24 +63,108 @@
   overflow-y: auto;
 }
 
-.loom-feature-panel {
-  width: 230px;
-  background-color: @featurePanelColor;
-  border: 1px solid darken(@featurePanelColor, 5%);
-  display: inline-block;
+.panelContainer {
+  display: table;
+  border-spacing:3px;
 
-  .preview-map {
-    width: 220px;
-    height: 220px;
-    background-color: darken(@featurePanelColor, 5%);
-    border: 1px solid darken(@featurePanelColor, 10%);
-    margin-top: 5px;
+  .panelRow {
+    display: table-row;
+
+    .loom-feature-panel {
+      width: 230px;
+      background-color: @featurePanelColor;
+      border: 1px solid darken(@featurePanelColor, 5%);
+      display: table-cell;
+      position: relative;
+      vertical-align: top;
+
+      .feature-panel {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      .map-loading {
+        position: absolute;
+        width: 222px;
+        height: 222px;
+        left: 3px;
+        z-index: 5000;
+        background-color: #90adc7;
+        border: 1px solid #88a3bd;
+      }
+
+      .preview-map {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        background-color: darken(@featurePanelColor, 5%);
+        border: 1px solid darken(@featurePanelColor, 10%);
+      }
+
+      .info-box-attribute-value {
+        height: 15px !important;
+        border-radius: 5px;
+        border: 1px solid #90adc7;
+        color: #000000;
+      }
+
+      .attr-modified {
+        background-color: #A6BD9F;
+        border: 1px solid #81977c;
+      }
+
+      .attr-added {
+        background-color: #73BD9F;
+        border: 1px solid #549c7f;
+      }
+
+      .attr-removed {
+        background-color: #A68A9F;
+        border: 1px solid #8d7186;
+      }
+
+      .info-box-attribute {
+        color: #000000;
+        height: 15px !important;
+      }
+    }
+
+    .loom-panel-separator {
+      width: 32px;
+      background-color: @featurePanelColor;
+      border: 1px solid darken(@featurePanelColor, 5%);
+      display: table-cell;
+
+      &.hoverable {
+        &:hover {
+          background-color: #b4d3ed;
+        }
+      }
+
+      .arrow-inactive {
+        opacity: 0.15;
+      }
+
+      .map-arrow {
+        position: relative;
+        height: 220px;
+        margin-top: 5px;
+        vertical-align: center;
+
+        .map-arrow-inner {
+          position: absolute;
+          top: 45%;
+          left: 8px;
+        }
+      }
+
+      .attribute-arrow {
+        height: 30px;
+        vertical-align: center;
+        .attribute-arrow-inner {
+          top: 10px;
+        }
+      }
+    }
   }
-}
-
-.panel-separator {
-  width: 32px;
-  background-color: @featurePanelColor;
-  border: 1px solid darken(@featurePanelColor, 5%);
-  display: inline-block;
 }

@@ -1,14 +1,23 @@
 <div class="modal-body" align="center">
-  <div ng-if="leftPanel" class="loom-feature-panel" feature="left" mapid="0" map="leftMap" oldcommit="ancestor" newcommit="ours"
-       repoid="repoId"></div>
-  <div ng-if="leftSeparator" class="panel-separator">o</div>
-  <div ng-if="mergePanel" class="loom-feature-panel" feature="merged" mapid="1" map="mergeMap" oldcommit="ancestor" newcommit="ours"
-       repoid="repoId"></div>
-  <div ng-if="rightSeparator" class="panel-separator">o</div>
-  <div ng-if="rightPanel" class="loom-feature-panel" feature="right" mapid="2" map="rightMap" oldcommit="ancestor" newcommit="theirs"
-       repoid="repoId"></div>
+
+  <div class="panelContainer">
+    <div class="panelRow">
+      <div ng-if="leftPanel" class="loom-feature-panel" mapid="0" panel="featureDiffService.left"
+           panel-title="leftTitle"></div>
+      <div ng-if="leftSeparator" class="loom-panel-separator" icon="glyphicon-chevron-right"
+           hover="editable" clickfunction="leftSeparatorClick"
+           panel="featureDiffService.left"></div>
+      <div ng-if="mergePanel" class="loom-feature-panel" mapid="1" panel="featureDiffService.merged"
+           panel-title="mergedTitle"></div>
+      <div ng-if="rightSeparator" class="loom-panel-separator" icon="glyphicon-chevron-left"
+           hover="editable" clickfunction="rightSeparatorClick"
+           panel="featureDiffService.right"></div>
+      <div ng-if="rightPanel" class="loom-feature-panel" mapid="2" panel="featureDiffService.right"
+           panel-title="rightTitle"></div>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-  <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+  <button ng-if="editable" type="button" class="btn btn-primary" ng-click="save()">Save</button>
 </div>

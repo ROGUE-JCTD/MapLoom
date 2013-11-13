@@ -76,9 +76,10 @@
       var repo = service_.getRepoById(repoId);
       if (goog.isDefAndNotNull(repo)) {
         var URL = repo.url + '/' + command + '?output_format=JSON&callback=JSON_CALLBACK';
+        URL += '&_dc=' + new Date().getTime(); // Disable caching of responses.
         if (goog.isDefAndNotNull(options)) {
           for (var property in options) {
-            if (property !== null && options.hasOwnProperty(property)) {
+            if (property !== null && options.hasOwnProperty(property) && options[property] !== null) {
               var underscore = property.indexOf('_');
               var trimmed;
               if (underscore > 0) {

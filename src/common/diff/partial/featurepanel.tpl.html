@@ -1,5 +1,25 @@
-<div>
+<div class="feature-panel">
+  {{title}}
+  <div id="loading-{{mapid}}" class="map-loading">
+    <div class="loading">
+      <!-- We make this div spin -->
+      <div class="spinner">
+        <!-- Mask of the quarter of circle -->
+        <div class="mask">
+          <!-- Inner masked circle -->
+          <div class="maskedCircle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
-  {{mapId}}
-  {{feature.id}}
+  <span ng-repeat="attribute in panel.attributes" class="">
+    <span class="info-box-attribute">{{attribute.attributename}}</span>
+    <span class="info-box-attribute-value"
+          ng-class="{
+                      'attr-added': attribute.changetype == 'ADDED',
+                      'attr-modified': attribute.changetype == 'MODIFIED',
+                      'attr-removed' : attribute.chantetype == 'REMOVED'
+                    }">{{attribute.newvalue ? attribute.newvalue : (attribute.oldvalue ? attribute.oldvalue : '&nbsp;')}}</span>
+  </span>
 </div>

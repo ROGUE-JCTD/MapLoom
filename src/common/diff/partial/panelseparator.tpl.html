@@ -1,0 +1,12 @@
+<div ng-click="clickfunction()">
+  &nbsp;
+  <div class="map-arrow">
+    <span class="map-arrow-inner glyphicon {{icon}}" ng-class="{'arrow-inactive':!geometryChanged}"/>
+  </div>
+  <div id="preview-map-{{mapid}}" class="preview-map map"></div>
+  <span ng-repeat="attribute in arrows" class="">
+    <div class="attribute-arrow">
+      <span class="attribute-arrow-inner glyphicon {{icon}}" ng-class="{'arrow-inactive':!attribute.active}"/>
+    </div>
+  </span>
+</div>
