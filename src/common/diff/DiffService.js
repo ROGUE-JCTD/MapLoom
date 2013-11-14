@@ -113,6 +113,7 @@
       service_.oldName = oldName;
       service_.newName = newName;
       difflayer_.clear();
+      mapService_.map.removeLayer(difflayer_);
       mapService_.map.addLayer(difflayer_);
       if (goog.isDefAndNotNull(_changeList) && goog.isArray(_changeList)) {
         goog.array.forEach(_changeList, function(change) {

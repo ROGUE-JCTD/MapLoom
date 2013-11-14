@@ -6,12 +6,14 @@
   var rootScope_ = null;
   var mapService_ = null;
   var geogitService_ = null;
+  var dialogService_ = null;
 
   var ours_ = null;
   var theirs_ = null;
   var ancestor_ = null;
   var repoId_ = null;
   var diffsNeeded_ = null;
+  var diffsInError_ = 0;
 
   var FeaturePanel = function() {
     this.map = null;
@@ -61,11 +63,12 @@
     this.merged = new FeaturePanel();
     this.change = null;
 
-    this.$get = function($rootScope, mapService, geogitService) {
+    this.$get = function($rootScope, mapService, geogitService, dialogService) {
       service_ = this;
       rootScope_ = $rootScope;
       mapService_ = mapService;
       geogitService_ = geogitService;
+      dialogService_ = dialogService;
       var createMap = function(panel) {
         panel.map = new ol.Map({
           renderer: ol.RendererHint.CANVAS,
@@ -131,6 +134,7 @@
       service_.left.replaceLayers(layers);
       service_.right.replaceLayers(layers);
       service_.merged.replaceLayers(layers);
+      diffsInError_ = 0;
       switch (feature.change) {
         case 'ADDED':
           diffsNeeded_ = 1;
@@ -222,17 +226,28 @@
         panel.bounds = newBounds;
         diffsNeeded_ -= 1;
         if (diffsNeeded_ === 0) {
-          if (feature.change == 'CONFLICT') {
-            if (goog.isDefAndNotNull(feature.ours) && feature.ours === false) {
-              service_.choose(service_.right);
-            } else {
-              service_.choose(service_.left);
+          if (diffsInError_ > 0) {
+            dialogService_.error('Error',
+                'Unable to retrieve all the differences for the layer.  Check network connection and try again.');
+          } else {
+            if (feature.change == 'CONFLICT') {
+              if (goog.isDefAndNotNull(feature.ours) && feature.ours === false) {
+                service_.choose(service_.right);
+              } else {
+                service_.choose(service_.left);
+              }
             }
+            rootScope_.$broadcast('feature-diff-performed');
           }
-          rootScope_.$broadcast('feature-diff-performed');
         }
       }, function(reject) {
-        console.log(reject);
+        diffsNeeded_ -= 1;
+        diffsInError_ += 1;
+        if (diffsNeeded_ === 0) {
+          dialogService_.error('Error',
+              'Unable to retrieve all the differences for the layer.  Check network connection and try again.');
+        }
+        console.log('Feature diff failed: ', panel, reject);
       });
     };
   });
