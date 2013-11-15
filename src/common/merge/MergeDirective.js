@@ -60,6 +60,7 @@
                         dialogService.error('Error',
                             'An unknown error occurred when finalizing the transaction.  Please try again.');
                         transaction.abort();
+                        scope.cancel();
                         console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                       }
                     });
@@ -70,6 +71,7 @@
                       dialogService.error('Error',
                           'An unknown error occurred when performing the merge.  Please try again.');
                       transaction.abort();
+                      scope.cancel();
                       console.log('ERROR: Merge failure: ', mergeOptions, mergeFailure);
                     }
                   });
@@ -77,12 +79,14 @@
                   dialogService.error('Error',
                       'An unknown error occurred when checking out the destination branch.  Please try again.');
                   transaction.abort();
+                  scope.cancel();
                   console.log('ERROR: Checkout failure: ', checkoutOptions, checkoutFailure);
                 });
               }, function(beginTransactionFailure) {
                 dialogService.error('Error',
                     'An unknown error occurred creating the transaction.  Please try again.');
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
+                scope.cancel();
               });
             };
 

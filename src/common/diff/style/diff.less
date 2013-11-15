@@ -108,6 +108,17 @@
         color: #000000;
       }
 
+      .attr-none {
+        width: 98%;
+        background-color: @featurePanelColor;
+        border: 1px solid darken(@featurePanelColor, 5%);
+        cursor: auto;
+
+        &[disabled] {
+          cursor: default;
+        }
+      }
+
       .attr-modified {
         background-color: #A6BD9F;
         border: 1px solid #81977c;
@@ -136,33 +147,38 @@
       display: table-cell;
 
       &.hoverable {
-        &:hover {
+        cursor: pointer;
+        .attribute-arrow-inner:hover {
           background-color: #b4d3ed;
         }
       }
 
       .arrow-inactive {
-        opacity: 0.15;
+        color: mix(@featurePanelColor, #000000, 95%);
+      }
+
+      .attribute-arrow {
+        height: 49px;
+        vertical-align: center;
+        .attribute-arrow-inner {
+          top: 18px;
+          padding: 5px;
+          padding-bottom: 8px;
+          border-radius: 5px;
+          border: 1px solid darken(@featurePanelColor, 5%);
+          background-color: lighten(@featurePanelColor, 7%);
+        }
       }
 
       .map-arrow {
         position: relative;
         height: 220px;
         margin-top: 5px;
-        vertical-align: center;
 
         .map-arrow-inner {
           position: absolute;
           top: 45%;
-          left: 8px;
-        }
-      }
-
-      .attribute-arrow {
-        height: 30px;
-        vertical-align: center;
-        .attribute-arrow-inner {
-          top: 10px;
+          left: 2px;
         }
       }
     }

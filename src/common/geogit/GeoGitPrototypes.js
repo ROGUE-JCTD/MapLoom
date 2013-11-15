@@ -84,6 +84,11 @@ var GeoGitRemoveOptions = function() {
   this.recursive = null;
 };
 
+var GeoGitResolveConflictOptions = function() {
+  this.path = null;
+  this.objectid = null;
+};
+
 var GeoGitVersionOptions = function() {
 };
 

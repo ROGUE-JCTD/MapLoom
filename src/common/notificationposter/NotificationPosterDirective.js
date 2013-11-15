@@ -6,6 +6,7 @@
         return{
           restrict: 'C',
           replace: true,
+          scope: true,
           template: '<div class="panel flat">' +
               '  <div class="btn-group">' +
               '    <button type="button" ng-click="addNotification()"' +

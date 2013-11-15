@@ -14,6 +14,7 @@
   var repoId_ = null;
   var diffsNeeded_ = null;
   var diffsInError_ = 0;
+  var crs_ = null;
 
   var FeaturePanel = function() {
     this.map = null;
@@ -22,14 +23,14 @@
     this.bounds = null;
     this.active = false;
     this.geometry = null;
-    this.olGeometry = null;
+    this.olFeature = null;
 
     this.clearFeature = function() {
       this.attributes = [];
       this.bounds = null;
       this.active = false;
       this.geometry = null;
-      this.olGeometry = null;
+      this.olFeature = null;
       this.featureLayer.clear();
     };
 
@@ -111,13 +112,73 @@
       service_.merged.clearFeature();
     };
 
-    this.choose = function(panel) {
+    this.chooseGeometry = function(panel) {
       this.merged.geometry = panel.geometry;
-      this.merged.attributes = panel.attributes;
       this.merged.bounds = panel.bounds;
-      this.merged.olGeometry = panel.olGeometry;
-      this.merged.replaceLayers(panel.map.getLayers());
-      this.merged.map.removeLayer(this.merged.featureLayer);
+      this.merged.olFeature.setGeometry(panel.olFeature.getGeometry());
+      this.merged.olFeature.set('MapLoomChange', panel.olFeature.get('MapLoomChange'));
+      rootScope_.$broadcast('merge-feature-modified');
+    };
+
+    this.chooseAttribute = function(index, panel) {
+      this.merged.attributes[index] = $.extend(true, {}, panel.attributes[index]);
+    };
+
+    this.choose = function(panel) {
+      for (var i = 0; i < panel.attributes.length; i++) {
+        this.chooseAttribute(i, panel);
+      }
+      this.chooseGeometry(panel);
+    };
+
+    this.attributesEqual = function(attr1, attr2) {
+      return attr1.attributename == attr2.attributename &&
+          attr1.changetype == attr2.changetype &&
+          attr1.newvalue == attr2.newvalue &&
+          attr1.oldvalue == attr2.oldvalue;
+    };
+
+    this.updateChangeType = function(attribute) {
+      if (goog.isDefAndNotNull(attribute.oldvalue)) {
+        if (goog.isDefAndNotNull(attribute.newvalue)) {
+          if (attribute.oldvalue !== attribute.newvalue) {
+            attribute.changetype = 'MODIFIED';
+          } else {
+            attribute.changetype = 'NO_CHANGE';
+          }
+        } else {
+          attribute.changetype = 'REMOVED';
+        }
+      } else {
+        if (goog.isDefAndNotNull(attribute.newvalue)) {
+          attribute.changetype = 'ADDED';
+        } else {
+          attribute.changetype = 'NO_CHANGE';
+        }
+      }
+    };
+
+    this.getMerges = function() {
+      var merges = {};
+      if (service_.merged.geometry == service_.left.geometry) {
+        merges[service_.merged.geometry.attributename] = '__OURS__';
+      } else if (service_.merged.geometry == service_.right.geometry) {
+        merges[service_.merged.geometry.attributename] = '__THEIRS__';
+      } else {
+        merges[service_.merged.geometry.attributename] = service_.merged.geometry;
+      }
+
+      for (var i = 0; i < service_.merged.attributes.length; i++) {
+        if (service_.attributesEqual(service_.merged.attributes[i], service_.left.attributes[i])) {
+          merges[service_.merged.attributes[i].attributename] = '__OURS__';
+        } else if (service_.attributesEqual(service_.merged.attributes[i], service_.right.attributes[i])) {
+          merges[service_.merged.attributes[i].attributename] = '__THEIRS__';
+        } else {
+          merges[service_.merged.attributes[i].attributename] = service_.merged.attributes[i].newvalue;
+        }
+      }
+
+      return merges;
     };
 
     this.setFeature = function(feature, ours, theirs, ancestor, repoId) {
@@ -134,6 +195,38 @@
       service_.left.replaceLayers(layers);
       service_.right.replaceLayers(layers);
       service_.merged.replaceLayers(layers);
+
+      crs_ = goog.isDefAndNotNull(feature.crs) ? feature.crs : null;
+      var repoName = geogitService_.getRepoById(repoId_).name;
+      mapService_.map.getLayers().forEach(function(layer) {
+        var metadata = layer.get('metadata');
+        if (goog.isDefAndNotNull(metadata)) {
+          if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
+            var splitFeature = feature.id.split('/');
+            if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+              if (goog.isDefAndNotNull(metadata.projection)) {
+                crs_ = metadata.projection;
+              }
+            }
+          }
+        }
+      });
+
+      var geom = ol.parser.WKT.read(feature.geometry);
+      if (goog.isDefAndNotNull(crs_)) {
+        var transform = ol.proj.getTransform(crs_, mapService_.map.getView().getView2D().getProjection());
+        geom.transform(transform);
+      }
+      var newBounds = geom.getBounds();
+      var x = newBounds[2] - newBounds[0];
+      var y = newBounds[3] - newBounds[1];
+      x *= 0.5;
+      y *= 0.5;
+      newBounds[0] -= x;
+      newBounds[2] += x;
+      newBounds[1] -= y;
+      newBounds[3] += y;
+
       diffsInError_ = 0;
       switch (feature.change) {
         case 'ADDED':
@@ -152,6 +245,10 @@
         case 'CONFLICT':
           diffsNeeded_ = 2;
           service_.merged.active = true;
+          service_.merged.olFeature = new ol.Feature();
+          service_.merged.olFeature.set('MapLoomChange', feature.change);
+          service_.merged.olFeature.setGeometry(geom);
+          service_.merged.featureLayer.addFeatures([service_.merged.olFeature]);
           service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
           service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
           break;
@@ -162,18 +259,6 @@
           service_.performFeatureDiff(feature, ours_, ancestor_, service_.merged);
           break;
       }
-      var geom = ol.parser.WKT.read(feature.geometry);
-      var transform = ol.proj.getTransform('EPSG:4326', mapService_.map.getView().getView2D().getProjection());
-      geom.transform(transform);
-      var newBounds = geom.getBounds();
-      var x = newBounds[2] - newBounds[0];
-      var y = newBounds[3] - newBounds[1];
-      x *= 0.5;
-      y *= 0.5;
-      newBounds[0] -= x;
-      newBounds[2] += x;
-      newBounds[1] -= y;
-      newBounds[3] += y;
       mapService_.zoomToExtent(newBounds);
       service_.title = feature.id;
       rootScope_.$broadcast('feature-diff-feature-set');
@@ -189,6 +274,9 @@
       geogitService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
         forEachArrayish(response.diff, function(item) {
           if (item.geometry !== true) {
+            if (!goog.isDefAndNotNull(item.newvalue)) {
+              item.newvalue = item.oldvalue;
+            }
             panel.attributes.push(item);
           } else {
             panel.geometry = item;
@@ -205,15 +293,21 @@
           return 0;
         });
 
-        var geom = ol.parser.WKT.read(
-            goog.isDefAndNotNull(panel.geometry.newvalue) ? panel.geometry.newvalue : panel.geometry.oldvalue);
-        var transform = ol.proj.getTransform('EPSG:4326', panel.map.getView().getView2D().getProjection());
-        geom.transform(transform);
+        var geom = ol.parser.WKT.read(panel.getGeometry());
+
+        var localCrs = crs_;
+        if (goog.isDefAndNotNull(panel.geometry.crs)) {
+          localCrs = panel.geometry.crs;
+        }
+        if (goog.isDefAndNotNull(localCrs)) {
+          var transform = ol.proj.getTransform(localCrs, panel.map.getView().getView2D().getProjection());
+          geom.transform(transform);
+        }
         var olFeature = new ol.Feature();
-        olFeature.set('change', panel.geometry.changetype);
+        olFeature.set('MapLoomChange', panel.geometry.changetype);
         olFeature.setGeometry(geom);
         panel.featureLayer.addFeatures([olFeature]);
-        panel.olGeometry = geom;
+        panel.olFeature = olFeature;
         var newBounds = geom.getBounds();
         var x = newBounds[2] - newBounds[0];
         var y = newBounds[3] - newBounds[1];
@@ -231,8 +325,27 @@
                 'Unable to retrieve all the differences for the layer.  Check network connection and try again.');
           } else {
             if (feature.change == 'CONFLICT') {
-              if (goog.isDefAndNotNull(feature.ours) && feature.ours === false) {
-                service_.choose(service_.right);
+              service_.merged.attributes = $.extend(true, [], service_.left.attributes);
+              if (goog.isDefAndNotNull(feature.merges)) {
+                var geomattributename = panel.geometry.attributename;
+                var geomMergeValue = feature.merges[geomattributename];
+                if (geomMergeValue === '__OURS__') {
+                  service_.chooseGeometry(service_.left);
+                } else if (geomMergeValue === '__THEIRS__') {
+                  service_.chooseGeometry(service_.right);
+                }
+                for (var i = 0; i < service_.merged.attributes.length; i++) {
+                  var attributename = service_.merged.attributes[i].attributename;
+                  var mergeValue = feature.merges[attributename];
+                  if (mergeValue === '__OURS__') {
+                    // 'ours' is default and already picked.
+                  } else if (mergeValue === '__THEIRS__') {
+                    service_.chooseAttribute(i, service_.right);
+                  } else {
+                    service_.merged.attributes[i].newvalue = mergeValue;
+                    service_.updateChangeType(service_.merged.attributes[i]);
+                  }
+                }
               } else {
                 service_.choose(service_.left);
               }
@@ -259,7 +372,7 @@
       }),
       style: new ol.style.Style({rules: [
         new ol.style.Rule({
-          filter: 'change == "ADDED"',
+          filter: 'MapLoomChange == "ADDED"',
           symbolizers: [
             new ol.style.Fill({
               color: '#00FF00',
@@ -271,7 +384,7 @@
           ]
         }),
         new ol.style.Rule({
-          filter: 'change == "REMOVED"',
+          filter: 'MapLoomChange == "REMOVED"',
           symbolizers: [
             new ol.style.Fill({
               color: '#FF0000',
@@ -283,7 +396,7 @@
           ]
         }),
         new ol.style.Rule({
-          filter: 'change == "MODIFIED"',
+          filter: 'MapLoomChange == "MODIFIED"',
           symbolizers: [
             new ol.style.Fill({
               color: '#FFFF00',
@@ -295,7 +408,7 @@
           ]
         }),
         new ol.style.Rule({
-          filter: 'change == "NO_CHANGE"',
+          filter: 'MapLoomChange == "NO_CHANGE"',
           symbolizers: [
             new ol.style.Fill({
               color: '#FFFFFF',

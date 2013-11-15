@@ -15,11 +15,11 @@
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
   <span ng-repeat="attribute in panel.attributes" class="">
     <span class="info-box-attribute">{{attribute.attributename}}</span>
-    <span class="info-box-attribute-value"
-          ng-class="{
+    <input ng-model="attribute.newvalue" type="text" class="form-control attr-none" ng-disabled="!isMergePanel" placeholder=""
+           ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
                       'attr-removed' : attribute.chantetype == 'REMOVED'
-                    }">{{attribute.newvalue ? attribute.newvalue : (attribute.oldvalue ? attribute.oldvalue : '&nbsp;')}}</span>
+                    }">
   </span>
 </div>

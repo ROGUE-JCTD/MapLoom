@@ -67,22 +67,6 @@
               element.closest('.modal-dialog').css('width', width);
             }
 
-            scope.leftSeparatorClick = function() {
-              if (featureDiffService.change === 'CONFLICT') {
-                featureDiffService.choose(featureDiffService.left);
-                scope.ours = true;
-              }
-              scope.$broadcast('update-merge-feature');
-            };
-
-            scope.rightSeparatorClick = function() {
-              if (featureDiffService.change === 'CONFLICT') {
-                featureDiffService.choose(featureDiffService.right);
-                scope.ours = false;
-              }
-              scope.$broadcast('update-merge-feature');
-            };
-
             scope.cancel = function() {
               featureDiffService.clear();
               scope.leftPanel = false;
@@ -90,24 +74,19 @@
               scope.mergePanel = false;
               scope.leftSeparator = false;
               scope.rightSeparator = false;
-              scope.ours = null;
               element.closest('.modal').modal('hide');
             };
 
             scope.save = function() {
-              if (!goog.isDefAndNotNull(scope.ours)) {
-                scope.ours = true;
-              }
-              featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olGeometry);
+              featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
               featureDiffService.feature.olFeature.set('change', 'MERGED');
-              conflictService.resolveConflict(scope.ours);
+              conflictService.resolveConflict(featureDiffService.getMerges());
               featureDiffService.clear();
               scope.leftPanel = false;
               scope.rightPanel = false;
               scope.mergePanel = false;
               scope.leftSeparator = false;
               scope.rightSeparator = false;
-              scope.ours = null;
               element.closest('.modal').modal('hide');
             };
 

@@ -8,6 +8,7 @@
   var service_ = null;
   var mapService_ = null;
   var dialogService_ = null;
+  var geogitService_ = null;
 
   module.provider('conflictService', function() {
     this.features = null;
@@ -21,12 +22,13 @@
     this.transaction = null;
 
     this.$get = function($rootScope, $location, diffService, pulldownService,
-                         featureDiffService, mapService, dialogService) {
+                         featureDiffService, mapService, dialogService, geogitService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
       featureDiffService_ = featureDiffService;
       mapService_ = mapService;
       dialogService_ = dialogService;
+      geogitService_ = geogitService;
       service_ = this;
       return this;
     };
@@ -49,9 +51,9 @@
       this.currentFeature = this.features[index];
     };
 
-    this.resolveConflict = function(ours) {
+    this.resolveConflict = function(merges) {
       this.currentFeature.resolved = true;
-      this.currentFeature.ours = ours;
+      this.currentFeature.merges = merges;
       diffService_.resolveFeature(this.currentFeature);
     };
 
@@ -129,26 +131,28 @@
       }
     } else {
       var conflict = conflictList.pop();
-      var checkoutOptions = new GeoGitCheckoutOptions();
-      checkoutOptions.path = conflict.id;
-      if (conflict.ours) {
-        checkoutOptions.ours = true;
-      } else {
-        checkoutOptions.theirs = true;
-      }
-      service_.transaction.command('checkout', checkoutOptions).then(function() {
-        var addOptions = new GeoGitAddOptions();
-        addOptions.path = conflict.id;
-        service_.transaction.command('add', addOptions).then(function() {
-          // add successful
+
+      var resolveConflict = {
+        path: conflict.id,
+        ours: service_.ours,
+        theirs: service_.theirs,
+        merges: conflict.merges
+      };
+
+      geogitService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {
+        var resolveConflictOptions = new GeoGitResolveConflictOptions();
+        resolveConflictOptions.path = conflict.id;
+        resolveConflictOptions.objectid = response.data;
+        service_.transaction.command('resolveconflict', resolveConflictOptions).then(function() {
+          // success
           commitInternal(conflictList, conflictsInError);
         }, function(reject) {
           commitInternal(conflictList, conflictsInError + 1);
-          console.log('ERROR: Failed to add resolved conflicts to the tree: ', conflict, reject);
+          console.log('ERROR: Failed to resolve the conflict: ', conflict, reject);
         });
       }, function(reject) {
         commitInternal(conflictList, conflictsInError + 1);
-        console.log('ERROR: Failed to checkout conflicted feature: ', conflict, reject);
+        console.log('ERROR: Failed to merge the conflicted feature: ', conflict, reject);
       });
     }
   }

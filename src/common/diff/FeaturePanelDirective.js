@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_panel_directive', []);
 
   module.directive('loomFeaturePanel',
-      function(mapService, $timeout, geogitService) {
+      function($rootScope, mapService, $timeout, featureDiffService) {
         return {
           restrict: 'C',
           scope: {
@@ -24,6 +24,17 @@
                   $(loadingtarget).fadeOut();
                 }, 500);
               }, 500);
+            }
+
+            scope.isMergePanel = scope.panel === featureDiffService.merged;
+
+            if (scope.isMergePanel) {
+              scope.$watch('panel.attributes', function() {
+                for (var i = 0; i < scope.panel.attributes.length; i++) {
+                  featureDiffService.updateChangeType(scope.panel.attributes[i]);
+                }
+                $rootScope.$broadcast('merge-feature-modified');
+              }, true);
             }
 
             scope.$on('feature-diff-performed', updateVariables);

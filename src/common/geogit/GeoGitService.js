@@ -103,6 +103,23 @@
       return deferredResponse.promise;
     };
 
+    this.post = function(repoId, command, data) {
+      var deferredResponse = q.defer();
+      var repo = service_.getRepoById(repoId);
+      if (goog.isDefAndNotNull(repo)) {
+        var URL = repo.url + '/' + command;
+        URL += '&_dc=' + new Date().getTime(); // Disable caching of responses.
+        http.post(URL, data).then(function(response) {
+          deferredResponse.resolve(response);
+        }, function(reject) {
+          deferredResponse.reject(reject);
+        }, function(update) {
+          deferredResponse.update(update);
+        });
+      }
+      return deferredResponse.promise;
+    };
+
     this.addRepo = function(newRepo) {
       var result = q.defer();
       for (var index = 0; index < service_.repos.length; index++) {
