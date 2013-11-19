@@ -1,0 +1,17 @@
+<div id="editFeatureBody" class="modal-body">
+  <div class="top-fade"></div>
+  <div class="bottom-fade"></div>
+  <form class="form wrapper">
+    <div class="form-group" ng-if="feature.geometry.type == 'Point'">
+        <label for="latLonEdit" class="control-label custom-control-label">Location ( lon, lat )</label>
+        <latloneditor geom="feature.geometry"></latloneditor>
+    </div>
+    <div class="form-group" ng-repeat="prop in properties">
+        <label class="control-label custom-control-label">{{prop[0]}}</label>
+        <autotextarea ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" ng-click="saveEdits()" data-dismiss="modal">Save</button>
+</div>

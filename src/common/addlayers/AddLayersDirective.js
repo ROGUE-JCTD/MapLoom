@@ -6,7 +6,7 @@
       function(serverService, mapService, geogitService) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
-          link: function(scope) {
+          link: function(scope, element) {
             scope.serverService = serverService;
             scope.currentServerIndex = 0;
 

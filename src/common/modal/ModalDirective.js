@@ -3,7 +3,7 @@
   var module = angular.module('loom_modal_directive', []);
 
   module.directive('loomModal',
-      function() {
+      function($rootScope) {
         return {
           replace: true,
           transclude: true,
@@ -18,6 +18,10 @@
                 scope.closeButton = true;
               }
             });
+            scope.closeModal = function() {
+              $rootScope.$broadcast('modal-closed', element);
+              element.closest('.modal').modal('hide');
+            };
           }
         };
       }

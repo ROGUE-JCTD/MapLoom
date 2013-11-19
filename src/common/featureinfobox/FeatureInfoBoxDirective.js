@@ -13,6 +13,11 @@
           link: function(scope, element, attrs) {
             scope.featureInfoBoxService = featureInfoBoxService;
 
+            scope.editFeature = function() {
+              scope.$broadcast('editFeature', featureInfoBoxService.getSelectedItem(),
+                  featureInfoBoxService.getSelectedItemProperties());
+            };
+
             scope.$on('feature-info-click', function() {
               scope.$apply(function() {
                 scope.featureInfoBoxService = featureInfoBoxService;

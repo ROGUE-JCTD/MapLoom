@@ -70,6 +70,8 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/moment/min/moment.min.js',
+      'vendor/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
@@ -91,7 +93,9 @@ module.exports = {
       //-- files for image gallery
       'vendor/blueimp-gallery/css/blueimp-gallery.css',
       'vendor/blueimp-gallery/css/blueimp-gallery-indicator.css',
-      'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css'
+      'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
+
+      'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css'
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

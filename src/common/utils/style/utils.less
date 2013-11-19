@@ -106,3 +106,14 @@
 .z-index(@level; @offset: 0) {
   z-index: ((1000 * @level) + (@offset * 10));
 }
+
+.auto-text-area {
+  resize: none;
+  overflow: hidden;
+  max-height: 200px;
+}
+
+textarea.clone {
+  position: absolute;
+  //visibility: hidden;
+}

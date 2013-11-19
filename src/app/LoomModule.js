@@ -17,6 +17,7 @@
     'loom_utils',
     'loom_merge',
     'loom_sync',
-    'loom_legend'
+    'loom_legend',
+    'loom_editfeature'
   ]);
 }());
