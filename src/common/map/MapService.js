@@ -144,11 +144,7 @@
             label: 'OpenStreetMap',
             metadata: {serverId: 1},
             source: new ol.source.OSM()
-          })
-
-          //NOTE: TODO: do not commit
-          /*
-          ,
+          }),
           new ol.layer.Tile({
             source: new ol.source.TileWMS({
               url: 'http://192.168.10.102/geoserver/wms',
@@ -184,7 +180,6 @@
               }
             })
           })
-          */
         ],
         controls: ol.control.defaults().extend([
           new ol.control.FullScreen(),
