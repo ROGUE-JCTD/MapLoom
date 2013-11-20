@@ -149,8 +149,9 @@
           if (goog.isDefAndNotNull(response.Local.Branch)) {
             forEachArrayish(response.Local.Branch, function(branch) {repo.branches.push(branch.name);});
           } else {
+            console.log('Repository had no local branches: ', repo, response);
             service_.removeRepo(repo.id);
-            result.reject(null);
+            result.reject('Repository had no local branches.');
             return;
           }
           if (goog.isDefAndNotNull(response.Remote.Branch)) {
@@ -168,13 +169,15 @@
             }
           }
           result.resolve(repo);
-        }, function() {
+        }, function(reject) {
+          console.log('Unable to get the repository\'s branches:', repo, reject);
           service_.removeRepo(repo.id);
-          result.reject(null);
+          result.reject('Unable to get the repository\'s branches. Try re-adding the layer.');
         });
-      }, function() {
+      }, function(reject) {
+        console.log('Unable to get the repository\'s remotes:', repo, reject);
         service_.removeRepo(repo.id);
-        result.reject(null);
+        result.reject('Unable to get the repository\'s remotes. Try re-adding the layer.');
       });
     };
 
@@ -320,6 +323,8 @@
                       } else {
                         metadata.repoId = repo;
                       }
+                    }, function(reject) {
+                      dialogService_.error('Error', 'Unable to add the GeoGit remote: ' + reject);
                     });
                     metadata.projection = featureType.srs;
                     metadata.isGeoGit = true;

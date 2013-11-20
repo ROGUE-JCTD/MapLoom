@@ -57,24 +57,32 @@
                           goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                         handleConflicts(endTransactionFailure, transaction, dialogService, conflictService, scope);
                       } else {
+                        dialogService.error('Error',
+                            'An unknown error occurred when finalizing the transaction.  Please try again.');
                         transaction.abort();
-                        console.log('EndTransaction failure: ', endTransactionFailure);
+                        console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                       }
                     });
                   }, function(mergeFailure) {
                     if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
                       handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope);
                     } else {
+                      dialogService.error('Error',
+                          'An unknown error occurred when performing the merge.  Please try again.');
                       transaction.abort();
-                      console.log('Merge failure: ', mergeFailure);
+                      console.log('ERROR: Merge failure: ', mergeOptions, mergeFailure);
                     }
                   });
                 }, function(checkoutFailure) {
+                  dialogService.error('Error',
+                      'An unknown error occurred when checking out the destination branch.  Please try again.');
                   transaction.abort();
-                  console.log('Checkout failure: ', checkoutFailure);
+                  console.log('ERROR: Checkout failure: ', checkoutOptions, checkoutFailure);
                 });
               }, function(beginTransactionFailure) {
-                console.log('Begin transaction failure: ', beginTransactionFailure);
+                dialogService.error('Error',
+                    'An unknown error occurred creating the transaction.  Please try again.');
+                console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
               });
             };
 
