@@ -136,61 +136,84 @@
   module.directive('latloneditor', function() {
     return {
       restrict: 'E',
-      template: '<div class="row">' +
-          '<div class="col-md-6">' +
-          '<div class="form-group">' +
-          '<input ng-model="lon" type="text" class="form-control" ng-change="validate()"/>' +
+      template: '<div ng-class="{\'has-error\': !formName.coords.$valid}" class="form-group">' +
+          '<div class="input-group">' +
+          '<div class="input-group-btn">' +
+          '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
+          '<span class="caret"></span>' +
+          '</button>' +
+          '<ul id="display-list" class="dropdown-menu">' +
+          '<li ng-repeat="display in coordinateDisplays">' +
+          '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
+          '</ul>' +
           '</div>' +
-          '</div>' +
-          '<div class="col-md-6">' +
-          '<div class="form-group">' +
-          '<input ng-model="lat" type="text" class="form-control" ng-change="validate()"/>' +
-          '</div>' +
+          '<input name="coords" ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
           '</div>' +
           '</div>',
       replace: true,
       scope: {
-        geom: '='
+        geom: '=',
+        formName: '=formName',
+        coordDisplay: '=coordDisplay'
       },
-      link: function(scope, element) {
-        scope.lon = ol.coordinate.degreesToStringHDMS_(scope.geom.coordinates[0], 'EW');
-        scope.lat = ol.coordinate.degreesToStringHDMS_(scope.geom.coordinates[1], 'NS');
+      link: function(scope) {
+        scope.coordinateDisplays = coordinateDisplays;
+        if (scope.coordDisplay === coordinateDisplays.DMS) {
+          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coordinates);
+        } else if (scope.coordDisplay === coordinateDisplays.DD) {
+          scope.coordinates = ol.coordinate.createStringXY(scope.geom.coordinates, settings.DDPrecision);
+        }
+
+        scope.selectDisplay = function(index) {
+          scope.coordDisplay = coordinateDisplays[index];
+        };
+
+        var validateDMS = function(name, split) {
+          var upperBounds;
+          var negateChar;
+          if (name === 'lon') {
+            upperBounds = 180;
+            negateChar = 'W';
+          } else if (name === 'lat') {
+            upperBounds = 90;
+            negateChar = 'S';
+          } else {
+            return false;
+          }
+          if (split.length === 4) {
+            var newPos = parseInt(split[0], 10) + ((parseInt(split[1], 10) +
+                (parseFloat(split[2]) / 60)) / 60);
+            if (newPos < 0 || newPos > upperBounds) {
+              return false;
+            }
+            if (split[3].toUpperCase() === negateChar) {
+              newPos = -newPos;
+            }
+          } else {
+            return false;
+          }
+          return true;
+        };
+
         scope.validate = function() {
-          //console.log();
-          /*var lon = window.items.items[0].getValue();
-           lon = lon.replace(/[^\dEWew\.]/g, " ").split(" ");
-           if(lon.length === 4) {
-           var newlon = parseInt(lon[0]) + ((parseInt(lon[1]) + (parseFloat(lon[2])/60))/60);
-           if(newlon < 0 || newlon > 180) {
-           window.items.items[0].setValue(window.items.items[0].originalValue);
-           alert("Invalid coordinates, goes outside of max/min boundaries for longitude");
-           return;
-           }
-           if(lon[3] === "W" || lon[3] === "w") {
-           newlon = -newlon;
-           }
-           } else {
-           window.items.items[0].setValue(window.items.items[0].originalValue);
-           alert("Invalid format, must have Degrees Minutes Seconds Direction");
-           return;
-           }
-           var lat = window.items.items[2].getValue();
-           lat = lat.replace(/[^\dNSns\.]/g, " ").split(" ");
-           if(lat.length === 4) {
-           var newlat = (parseInt(lat[0]) + ((parseInt(lat[1]) + (parseFloat(lat[2])/60))/60));
-           if(newlat < 0 || newlat > 90) {
-           window.items.items[2].setValue(window.items.items[2].originalValue);
-           alert("Invalid coordinates, goes outside of max/min boundaries for latitude");
-           return;
-           }
-           if(lat[3] === "S" || lat[3] === "s") {
-           newlat = -newlat;
-           }
-           } else {
-           window.items.items[2].setValue(window.items.items[2].originalValue);
-           alert("Invalid format, must have Degrees Minutes Seconds Direction");
-           return;
-           }   */
+          var split = scope.coordinates.replace(/[^\dEWewNSns\.]/g, ' ').split(' ');
+          clean(split, '');
+          var valid = false;
+          if (split.length === 8) {
+            var split2 = split.splice(0, 4);
+            if (split[3].toUpperCase() === 'S' || split[3].toUpperCase() === 'N') {
+              valid = validateDMS('lat', split);
+              if (valid === true && (split2[3].toUpperCase() === 'W' || split2[3].toUpperCase() === 'E')) {
+                valid = validateDMS('lon', split2);
+              }
+            } else {
+              valid = validateDMS('lon', split);
+              if (valid === true && (split2[3].toUpperCase() === 'S' || split2[3].toUpperCase() === 'N')) {
+                valid = validateDMS('lat', split2);
+              }
+            }
+          }
+          scope.formName.coords.$valid = valid;
         };
       }
     };

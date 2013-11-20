@@ -9,6 +9,8 @@
           scope: true,
           template: '<div class="panel flat">' +
               '  <div class="btn-group">' +
+              '    <button type="button" ng-click="switchCoords()"' +
+              '      class="btn btn-default">Switch Coords</button>' +
               '    <button type="button" ng-click="addNotification()"' +
               '      class="btn btn-default">Post Notification</button>' +
               '    <button type="button" ng-click="performDiff()"' +
@@ -64,6 +66,15 @@
             }
 
             scope.clearDiff = clearDiff;
+
+            scope.switchCoords = function() {
+              if (settings.coordinateDisplay === coordinateDisplays.DD) {
+                settings.coordinateDisplay = coordinateDisplays.DMS;
+              } else {
+                settings.coordinateDisplay = coordinateDisplays.DD;
+              }
+              mapService.switchMousePosCoordFormat();
+            };
 
             scope.addModal = function() {
               // The dialog service works through promises, the promise will tell you what button

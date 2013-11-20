@@ -8,6 +8,7 @@
           restrict: 'C',
           templateUrl: 'editfeature/partials/editfeature.tpl.html',
           link: function(scope, element) {
+            scope.coordDisplay = settings.coordinateDisplay;
             scope.$on('editFeature', function(event, feature, properties) {
               $('#edit-feature-dialog').modal('toggle');
               scope.feature = feature;
@@ -27,17 +28,6 @@
             scope.saveEdits = function() {
               scope.feature = null;
               scope.properties = null;
-            };
-            scope.today = function() {
-              scope.dt = new Date();
-            };
-            scope.today();
-
-            scope.showWeeks = false;
-
-            scope.dateOptions = {
-              'year-format': "'yy'",
-              'starting-day': 1
             };
           }
         };

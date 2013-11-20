@@ -78,7 +78,29 @@
       return layers;
     };
 
+    this.switchMousePosCoordFormat = function() {
+      var index;
+      for (index = 0; index < this.map.getControls().getLength(); ++index) {
+        if (this.map.getControls().getArray()[index] instanceof ol.control.MousePosition) {
+          break;
+        }
+      }
+
+      if (settings.coordinateDisplay === coordinateDisplays.DMS) {
+        this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.toStringHDMS);
+      } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
+        var precision = settings.DDPrecision;
+        this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.createStringXY(precision));
+      }
+    };
+
     this.createMap = function() {
+      var coordDisplay;
+      if (settings.coordinateDisplay === coordinateDisplays.DMS) {
+        coordDisplay = ol.coordinate.toStringHDMS;
+      } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
+        coordDisplay = ol.coordinate.createStringXY(settings.DDPrecision);
+      }
       var map = new ol.Map({
         layers: [
 
@@ -133,7 +155,7 @@
           new ol.control.ZoomSlider(),
           new ol.control.MousePosition({
             projection: 'EPSG:4326',
-            coordinateFormat: ol.coordinate.toStringHDMS
+            coordinateFormat: coordDisplay
           }),
           new ol.control.ScaleLine({className: 'metric-scale-line ol-scale-line',
             units: ol.control.ScaleLineUnits.METRIC}),

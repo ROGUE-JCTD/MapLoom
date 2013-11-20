@@ -1,3 +1,13 @@
+var coordinateDisplays = {
+  DMS: 'Degrees Minutes Seconds',
+  DD: 'Decimal Degrees'
+};
+
+var settings = {
+  coordinateDisplay: coordinateDisplays.DMS,
+  DDPrecision: 8
+};
+
 var forEachArrayish = function(arrayish, funct) {
   if (goog.isArray(arrayish)) {
     goog.array.forEach(arrayish, funct);
@@ -17,4 +27,14 @@ var getScrollbarWidth = function() {
   }
 
   return width;
+};
+
+var clean = function(array, deleteValue) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] == deleteValue) {
+      array.splice(i, 1);
+      i--;
+    }
+  }
+  return array;
 };
