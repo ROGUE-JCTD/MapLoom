@@ -59,6 +59,7 @@
       selectedItemProperties_ = null;
       state_ = null;
       featureInfoPerLayer_ = [];
+      mapService_.endEditing();
     };
 
     /**
@@ -103,26 +104,32 @@
       if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
+        mapService_.startEditing(selectedItem_.geometry);
       } else if (type === 'layer') {
         if (item.features.length === 1) {
           state_ = 'feature';
           selectedItem_ = item.features[0];
+          mapService_.startEditing(selectedItem_.geometry);
         } else {
           state_ = 'layer';
           selectedItem_ = item;
+          mapService_.endEditing();
         }
       } else if (type === 'layers') {
         if (item.length === 1) {
           if (item[0].features.length === 1) {
             state_ = 'feature';
             selectedItem_ = item[0].features[0];
+            mapService_.startEditing(selectedItem_.geometry);
           } else {
             state_ = 'layer';
             selectedItem_ = item[0];
+            mapService_.endEditing();
           }
         } else {
           state_ = 'layers';
           selectedItem_ = item;
+          mapService_.endEditing();
         }
       } else {
         throw ({

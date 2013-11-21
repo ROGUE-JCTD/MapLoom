@@ -25,6 +25,10 @@
               var layer = mapService.map.removeLayer(mapService.map.getLayers().getAt(length - startIndex));
               mapService.map.getLayers().insertAt(length - endIndex, layer);
             };
+
+            scope.filterHiddenLayers = function(layer) {
+              return !(goog.isDefAndNotNull(layer.get('metadata').hidden) && layer.get('metadata').hidden);
+            };
           }
         };
       }

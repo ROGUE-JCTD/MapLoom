@@ -3,10 +3,45 @@
 
   var dragZoomActive = false;
 
+  var createVectorEditLayer = function() {
+    return new ol.layer.Vector({
+      metadata: {
+        hidden: true
+      },
+      source: new ol.source.Vector({
+        parser: null
+      }),
+      style: new ol.style.Style({
+        symbolizers: [
+          new ol.style.Shape({
+            fill: new ol.style.Fill({
+              color: 'blue',
+              opacity: 0.4
+            }),
+            stroke: new ol.style.Stroke({
+              color: 'blue',
+              width: 4
+            }),
+            size: 20
+          }),
+          new ol.style.Fill({
+            color: 'blue',
+            opacity: 0.4
+          }),
+          new ol.style.Stroke({
+            color: 'blue',
+            width: 4
+          })
+        ]
+      })
+    });
+  };
+
   module.provider('mapService', function() {
     this.$get = function() {
       // create map on init so that other components can use map on their init
       this.map = this.createMap();
+      this.editLayer = createVectorEditLayer();
       return this;
     };
 
@@ -70,7 +105,7 @@
 
       //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
-        if (!(layer.source_ instanceof ol.source.OSM)) {
+        if (!(layer.source_ instanceof ol.source.OSM) && !(layer.get('metadata').hidden)) {
           layers.push(layer);
         }
       });
@@ -101,6 +136,7 @@
       } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
         coordDisplay = ol.coordinate.createStringXY(settings.DDPrecision);
       }
+
       var map = new ol.Map({
         layers: [
 
@@ -227,6 +263,44 @@
           })
         ]
       }));
+
+      this.startEditing = function(geom) {
+        var newFeature = new ol.Feature();
+        var newGeom;
+        switch (geom.type) {
+          case 'Point': {
+            newGeom = new ol.geom.Point(geom.coordinates);
+          } break;
+          case 'LineString': {
+            newGeom = new ol.geom.LineString(geom.coordinates);
+          } break;
+          case 'Polygon': {
+            newGeom = new ol.geom.Polygon(geom.coordinates);
+          } break;
+          case 'MultiPoint': {
+            newGeom = new ol.geom.MultiPoint(geom.coordinates);
+          } break;
+          case 'MultiLineString': {
+            newGeom = new ol.geom.MultiLineString(geom.coordinates);
+          } break;
+          case 'MultiPolygon': {
+            newGeom = new ol.geom.MultiPolygon(geom.coordinates);
+          } break;
+          default: {
+            console.log(geom.geometry.type, 'Not a valid geometry type');
+          }
+        }
+        var transform = ol.proj.getTransform('EPSG:4326', this.map.getView().getView2D().getProjection());
+        newGeom.transform(transform);
+        newFeature.setGeometry(newGeom);
+        this.editLayer.addFeatures([newFeature]);
+        this.map.addLayer(this.editLayer);
+      };
+
+      this.endEditing = function() {
+        this.editLayer.clear();
+        this.map.removeLayer(this.editLayer);
+      };
 
       map.on('dragend', function() {
         if (dragZoomActive === false) {
