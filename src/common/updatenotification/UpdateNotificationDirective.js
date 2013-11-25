@@ -35,7 +35,8 @@
                   var feature = {
                     repo: repos[i].name,
                     layer: splitFeature[0],
-                    feature: splitFeature[1]
+                    feature: splitFeature[1],
+                    original: features[j]
                   };
                   switch (features[j].change) {
                     case 'ADDED':

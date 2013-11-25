@@ -117,9 +117,26 @@
       mapService_.map.addLayer(difflayer_);
       if (goog.isDefAndNotNull(_changeList) && goog.isArray(_changeList)) {
         goog.array.forEach(_changeList, function(change) {
+          var crs = goog.isDefAndNotNull(change.crs) ? change.crs : null;
+          mapService_.map.getLayers().forEach(function(layer) {
+            var metadata = layer.get('metadata');
+            if (goog.isDefAndNotNull(metadata)) {
+              if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === _repo) {
+                var splitFeature = change.id.split('/');
+                if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+                  if (goog.isDefAndNotNull(metadata.projection)) {
+                    crs = metadata.projection;
+                  }
+                }
+              }
+            }
+          });
+
           var geom = ol.parser.WKT.read(change.geometry);
-          var transform = ol.proj.getTransform('EPSG:4326', mapService_.map.getView().getView2D().getProjection());
-          geom.transform(transform);
+          if (goog.isDefAndNotNull(crs)) {
+            var transform = ol.proj.getTransform(crs, mapService_.map.getView().getView2D().getProjection());
+            geom.transform(transform);
+          }
           var olFeature = new ol.Feature();
           olFeature.set('change', change.change);
           olFeature.setGeometry(geom);

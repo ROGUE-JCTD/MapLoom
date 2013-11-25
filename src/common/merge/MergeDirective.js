@@ -27,7 +27,8 @@
 
             scope.onMerge = function() {
               $('#loading').toggleClass('hidden');
-              geogitService.beginTransaction(scope.selectedRepoId).then(function(transaction) {
+              var repoId = scope.selectedRepoId;
+              geogitService.beginTransaction(repoId).then(function(transaction) {
                 var checkoutOptions = new GeoGitCheckoutOptions();
                 checkoutOptions.branch = scope.destinationBranch;
                 transaction.command('checkout', checkoutOptions).then(function(checkoutResult) {
@@ -47,7 +48,38 @@
                           }
                         ],
                         callback: function(feature) {
-                          console.log(feature.feature + ' was clicked!');
+                          var crs = goog.isDefAndNotNull(feature.original.crs) ? feature.original.crs : null;
+                          var repoName = geogitService.getRepoById(repoId).name;
+                          mapService.map.getLayers().forEach(function(layer) {
+                            var metadata = layer.get('metadata');
+                            if (goog.isDefAndNotNull(metadata)) {
+                              if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
+                                if (goog.isDefAndNotNull(metadata.nativeName) &&
+                                    metadata.nativeName === feature.layer) {
+                                  if (goog.isDefAndNotNull(metadata.projection)) {
+                                    crs = metadata.projection;
+                                  }
+                                }
+                              }
+                            }
+                          });
+
+                          var geom = ol.parser.WKT.read(feature.original.geometry);
+                          if (goog.isDefAndNotNull(crs)) {
+                            var transform =
+                                ol.proj.getTransform(crs, mapService.map.getView().getView2D().getProjection());
+                            geom.transform(transform);
+                          }
+                          var newBounds = geom.getBounds();
+                          var x = newBounds[2] - newBounds[0];
+                          var y = newBounds[3] - newBounds[1];
+                          x *= 0.5;
+                          y *= 0.5;
+                          newBounds[0] -= x;
+                          newBounds[2] += x;
+                          newBounds[1] -= y;
+                          newBounds[3] += y;
+                          mapService.zoomToExtent(newBounds);
                         }
                       });
                       scope.cancel();

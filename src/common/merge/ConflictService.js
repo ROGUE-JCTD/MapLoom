@@ -60,7 +60,8 @@
     this.beginResolution = function() {
       diffService_.setTitle('Merge Results');
       diffService_.clickCallback = featureClicked;
-      diffService_.populate(service_.features, null, service_.ourName, service_.theirName);
+      diffService_.populate(service_.features,
+          geogitService_.getRepoById(service_.repoId).name, service_.ourName, service_.theirName);
       pulldownService_.conflictsMode();
     };
 
