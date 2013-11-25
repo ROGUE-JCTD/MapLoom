@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function(featureInfoBoxService) {
+      function(featureInfoBoxService, mapService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -12,7 +12,7 @@
           templateUrl: 'featureinfobox/partial/featureinfobox.tpl.html',
           link: function(scope, element, attrs) {
             scope.featureInfoBoxService = featureInfoBoxService;
-
+            scope.mapService = mapService;
             scope.editFeature = function() {
               scope.$broadcast('editFeature', featureInfoBoxService.getSelectedItem(),
                   featureInfoBoxService.getSelectedItemProperties());

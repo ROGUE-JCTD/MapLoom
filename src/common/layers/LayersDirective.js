@@ -27,7 +27,8 @@
             };
 
             scope.filterHiddenLayers = function(layer) {
-              return !(goog.isDefAndNotNull(layer.get('metadata').hidden) && layer.get('metadata').hidden);
+              return !(!goog.isDefAndNotNull(layer.get('metadata')) ||
+                  (goog.isDefAndNotNull(layer.get('metadata').hidden) && layer.get('metadata').hidden));
             };
           }
         };

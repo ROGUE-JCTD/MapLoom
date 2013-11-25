@@ -12,6 +12,67 @@
         parser: null
       }),
       style: new ol.style.Style({
+        rules: [
+          new ol.style.Rule({
+            filter: 'renderIntent("selected")',
+            symbolizers: [
+              new ol.style.Shape({
+                fill: new ol.style.Fill({
+                  color: '#0099ff',
+                  opacity: 1
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'white',
+                  opacity: 0.75
+                }),
+                size: 14,
+                zIndex: 1
+              }),
+              new ol.style.Fill({
+                color: '#0099ff',
+                opacity: 0.5
+              }),
+              new ol.style.Stroke({
+                color: '#0099ff',
+                width: 3
+              })
+            ]
+          }),
+          new ol.style.Rule({
+            filter: 'renderIntent("temporary")',
+            symbolizers: [
+              new ol.style.Shape({
+                fill: new ol.style.Fill({
+                  color: '#0099ff',
+                  opacity: 1
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'white',
+                  opacity: 0.75
+                }),
+                size: 14,
+                zIndex: 1
+              })
+            ]
+          }),
+          new ol.style.Rule({
+            filter: 'renderIntent("future")',
+            symbolizers: [
+              new ol.style.Shape({
+                fill: new ol.style.Fill({
+                  color: '#00ff33',
+                  opacity: 1
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'white',
+                  opacity: 0.75
+                }),
+                size: 14,
+                zIndex: 1
+              })
+            ]
+          })
+        ],
         symbolizers: [
           new ol.style.Shape({
             fill: new ol.style.Fill({
@@ -105,7 +166,8 @@
 
       //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
-        if (!(layer.source_ instanceof ol.source.OSM) && !(layer.get('metadata').hidden)) {
+        if (!(layer.source_ instanceof ol.source.OSM) && goog.isDefAndNotNull(layer.get('metadata')) &&
+            !(layer.get('metadata').hidden)) {
           layers.push(layer);
         }
       });
@@ -144,7 +206,8 @@
             label: 'OpenStreetMap',
             metadata: {serverId: 1},
             source: new ol.source.OSM()
-          }),
+          })
+          /*,
           new ol.layer.Tile({
             source: new ol.source.TileWMS({
               url: 'http://192.168.10.102/geoserver/wms',
@@ -179,7 +242,7 @@
                 }
               }
             })
-          })
+          })*/
         ],
         controls: ol.control.defaults().extend([
           new ol.control.FullScreen(),
@@ -194,7 +257,8 @@
             units: ol.control.ScaleLineUnits.IMPERIAL})
         ]),
         interactions: ol.interaction.defaults().extend([
-          new ol.interaction.DragRotate()
+          new ol.interaction.DragRotate(),
+          new ol.interaction.Select()
         ]),
         renderer: ol.RendererHint.CANVAS,
         target: 'map',
@@ -259,44 +323,6 @@
         ]
       }));
 
-      this.startEditing = function(geom) {
-        var newFeature = new ol.Feature();
-        var newGeom;
-        switch (geom.type) {
-          case 'Point': {
-            newGeom = new ol.geom.Point(geom.coordinates);
-          } break;
-          case 'LineString': {
-            newGeom = new ol.geom.LineString(geom.coordinates);
-          } break;
-          case 'Polygon': {
-            newGeom = new ol.geom.Polygon(geom.coordinates);
-          } break;
-          case 'MultiPoint': {
-            newGeom = new ol.geom.MultiPoint(geom.coordinates);
-          } break;
-          case 'MultiLineString': {
-            newGeom = new ol.geom.MultiLineString(geom.coordinates);
-          } break;
-          case 'MultiPolygon': {
-            newGeom = new ol.geom.MultiPolygon(geom.coordinates);
-          } break;
-          default: {
-            console.log(geom.geometry.type, 'Not a valid geometry type');
-          }
-        }
-        var transform = ol.proj.getTransform('EPSG:4326', this.map.getView().getView2D().getProjection());
-        newGeom.transform(transform);
-        newFeature.setGeometry(newGeom);
-        this.editLayer.addFeatures([newFeature]);
-        this.map.addLayer(this.editLayer);
-      };
-
-      this.endEditing = function() {
-        this.editLayer.clear();
-        this.map.removeLayer(this.editLayer);
-      };
-
       map.on('dragend', function() {
         if (dragZoomActive === false) {
           return;
@@ -318,6 +344,51 @@
       });
 
       return map;
+    };
+
+    this.selectFeature = function(geom) {
+      var newFeature = new ol.Feature();
+      var newGeom;
+      switch (geom.type) {
+        case 'Point': {
+          newGeom = new ol.geom.Point(geom.coordinates);
+        } break;
+        case 'LineString': {
+          newGeom = new ol.geom.LineString(geom.coordinates);
+        } break;
+        case 'Polygon': {
+          newGeom = new ol.geom.Polygon(geom.coordinates);
+        } break;
+        case 'MultiPoint': {
+          newGeom = new ol.geom.MultiPoint(geom.coordinates);
+        } break;
+        case 'MultiLineString': {
+          newGeom = new ol.geom.MultiLineString(geom.coordinates);
+        } break;
+        case 'MultiPolygon': {
+          newGeom = new ol.geom.MultiPolygon(geom.coordinates);
+        } break;
+        default: {
+          console.log(geom.geometry.type, 'Not a valid geometry type');
+        }
+      }
+      var transform = ol.proj.getTransform('EPSG:4326', this.map.getView().getView2D().getProjection());
+      newGeom.transform(transform);
+      newFeature.setGeometry(newGeom);
+      this.editLayer.addFeatures([newFeature]);
+      var select = this.map.getInteractions().getArray()[11];
+      console.log(select);
+      //console.log(select, map);
+      //this.map.addInteraction(select);
+      select.select(this.map, [[newFeature]], [this.editLayer], false);
+      //console.log(this.editLayer);
+      this.map.addLayer(this.editLayer);
+    };
+
+    this.clearSelectedFeature = function() {
+      this.editLayer.clear();
+      this.map.removeLayer(this.editLayer);
+      console.log(this.map);
     };
   });
 }());

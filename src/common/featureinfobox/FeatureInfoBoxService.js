@@ -13,6 +13,7 @@
   var containerInstance_ = null;
   var overlay_ = null;
   var position_ = null;
+  var modify_ = null;
 
   module.provider('featureInfoBoxService', function() {
 
@@ -24,8 +25,8 @@
       registerOnMapClick($rootScope, $compile);
 
       overlay_ = new ol.Overlay({
-        element: document.getElementById('info-box'),
-        stopEvent: true
+        insertFirst: false,
+        element: document.getElementById('info-box')
       });
 
       mapService_.map.addOverlay(overlay_);
@@ -59,7 +60,7 @@
       selectedItemProperties_ = null;
       state_ = null;
       featureInfoPerLayer_ = [];
-      mapService_.endEditing();
+      mapService_.clearSelectedFeature();
     };
 
     /**
@@ -104,32 +105,32 @@
       if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
-        mapService_.startEditing(selectedItem_.geometry);
+        mapService_.selectFeature(selectedItem_.geometry);
       } else if (type === 'layer') {
         if (item.features.length === 1) {
           state_ = 'feature';
           selectedItem_ = item.features[0];
-          mapService_.startEditing(selectedItem_.geometry);
+          mapService_.selectFeature(selectedItem_.geometry);
         } else {
           state_ = 'layer';
           selectedItem_ = item;
-          mapService_.endEditing();
+          mapService_.clearSelectedFeature();
         }
       } else if (type === 'layers') {
         if (item.length === 1) {
           if (item[0].features.length === 1) {
             state_ = 'feature';
             selectedItem_ = item[0].features[0];
-            mapService_.startEditing(selectedItem_.geometry);
+            mapService_.selectFeature(selectedItem_.geometry);
           } else {
             state_ = 'layer';
             selectedItem_ = item[0];
-            mapService_.endEditing();
+            mapService_.clearSelectedFeature();
           }
         } else {
           state_ = 'layers';
           selectedItem_ = item;
-          mapService_.endEditing();
+          mapService_.clearSelectedFeature();
         }
       } else {
         throw ({
@@ -276,12 +277,25 @@
       }
     };
 
+    this.startGeometryEditing = function() {
+      $('#info-box').hide();
+      rootScope_.$broadcast('startGeometryEdit');
+      modify_ = new ol.interaction.Modify();
+      mapService_.map.addInteraction(modify_);
+    };
+
+    this.endGeometryEditing = function() {
+      $('#info-box').show();
+      rootScope_.$broadcast('endGeometryEdit');
+      mapService_.map.removeInteraction(modify_);
+    };
+
   });
 
   //-- Private functions
 
   function registerOnMapClick($rootScope, $compile) {
-    mapService_.map.on('click', function(evt) {
+    mapService_.map.on('singleclick', function(evt) {
       //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
 
       // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it

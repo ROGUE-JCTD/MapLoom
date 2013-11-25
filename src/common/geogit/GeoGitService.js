@@ -164,7 +164,9 @@
           var index;
           var remoteIndex;
           if (goog.isDefAndNotNull(response.Local.Branch)) {
-            forEachArrayish(response.Local.Branch, function(branch) {repo.branches.push(branch.name);});
+            forEachArrayish(response.Local.Branch, function(branch) {
+              repo.branches.push(branch.name);
+            });
           } else {
             console.log('Repository had no local branches: ', repo, response);
             service_.removeRepo(repo.id);
@@ -326,8 +328,8 @@
               // Then get the datastore to determine if it is a geogit datastore or not
               service_.getDataStore(layer, dataStoreName).then(function(dataStore) {
                 // Finally get the needed information stored on the layer and create the repo object
-                if (dataStore.type === 'GeoGIT') {
-                  service_.getFeatureType(layer, dataStore).then(function(featureType) {
+                service_.getFeatureType(layer, dataStore).then(function(featureType) {
+                  if (dataStore.type === 'GeoGIT') {
                     var repoName = dataStore.connectionParameters.entry[0].$;
                     repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
                     var promise = service_.addRepo(
@@ -343,18 +345,18 @@
                     }, function(reject) {
                       dialogService_.error('Error', 'Unable to add the GeoGit remote: ' + reject);
                     });
-                    metadata.projection = featureType.srs;
                     metadata.isGeoGit = true;
-                    metadata.workspace = featureType.workspace;
                     metadata.geogitStore = dataStore.name;
-                    metadata.nativeName = featureType.nativeName;
-                  }, function(rejected) {
-                    dialogService_.error(
-                        'Error', 'Unable to get feature type of GeoGit data store. (' + rejected.status + ')');
-                  });
-                } else {
-                  metadata.isGeoGit = false;
-                }
+                  } else {
+                    metadata.isGeoGit = false;
+                  }
+                  metadata.projection = featureType.srs;
+                  metadata.workspace = featureType.workspace;
+                  metadata.nativeName = featureType.nativeName;
+                }, function(rejected) {
+                  dialogService_.error(
+                      'Error', 'Unable to get feature type of GeoGit data store. (' + rejected.status + ')');
+                });
               }, function(rejected) {
                 dialogService_.error('Error', 'Unable to get the data store. (' + rejected.status + ')');
               });
