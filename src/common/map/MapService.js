@@ -346,7 +346,7 @@
       return map;
     };
 
-    this.selectFeature = function(geom) {
+    this.selectFeature = function(geom, crs) {
       var newFeature = new ol.Feature();
       var newGeom;
       switch (geom.type) {
@@ -372,7 +372,7 @@
           console.log(geom.geometry.type, 'Not a valid geometry type');
         }
       }
-      var transform = ol.proj.getTransform('EPSG:4326', this.map.getView().getView2D().getProjection());
+      var transform = ol.proj.getTransform(crs, this.map.getView().getView2D().getProjection());
       newGeom.transform(transform);
       newFeature.setGeometry(newGeom);
       this.editLayer.addFeatures([newFeature]);

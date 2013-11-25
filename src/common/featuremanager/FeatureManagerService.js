@@ -16,6 +16,7 @@
   var overlay_ = null;
   var position_ = null;
   var modify_ = null;
+  var enabled_ = true;
 
   module.provider('featureManagerService', function() {
 
@@ -188,8 +189,8 @@
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
-          mapService_.selectFeature(selectedItem_.geometry);
           selectedLayer_ = this.getSelectedItemLayer().layer;
+          mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         } else {
           mapService_.clearSelectedFeature();
         }
@@ -288,6 +289,7 @@
       rootScope_.$broadcast('startGeometryEdit');
       modify_ = new ol.interaction.Modify();
       mapService_.map.addInteraction(modify_);
+      enabled_ = false;
     };
 
     this.endGeometryEditing = function(save) {
@@ -296,11 +298,12 @@
       } else {
         // discard changes
         mapService_.clearSelectedFeature();
-        mapService_.selectFeature(selectedItem_.geometry);
+        mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
       $('#info-box').show();
       rootScope_.$broadcast('endGeometryEdit');
       mapService_.map.removeInteraction(modify_);
+      enabled_ = true;
     };
 
     this.startAttributeEditing = function() {
@@ -354,58 +357,60 @@
 
   function registerOnMapClick($rootScope, $compile) {
     mapService_.map.on('singleclick', function(evt) {
-      //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
+      if (enabled_) {
+        //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
 
-      // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it
-      if (!goog.isDefAndNotNull(containerInstance_)) {
-        containerInstance_ = mapService_.map.getOverlays().array_[0].getElement();
-        $compile(containerInstance_)($rootScope);
-      }
-
-      service_.hide();
-
-      var layers = mapService_.getFeatureLayers();
-
-      mapService_.map.getFeatureInfo({
-        pixel: evt.getPixel(),
-        layers: layers,
-        success: function(featureInfoByLayer) {
-          //console.log('loomFeatureInfoBox.map.getFeatureInfo.success', featureInfoByLayer);
-
-          var infoPerLayer = [];
-
-          featureInfoByLayer.forEach(function(elm, index) {
-            var layerInfo = JSON.parse(elm);
-
-            if (layerInfo.features && layerInfo.features.length > 0) {
-              layerInfo.layer = layers[index];
-              goog.array.insert(infoPerLayer, layerInfo);
-            }
-          });
-          //console.log('-- infoPerLayer: ', infoPerLayer);
-
-          if (infoPerLayer.length > 0) {
-            service_.show(infoPerLayer, evt.getCoordinate());
-          } else {
-            service_.hide();
-          }
-
-          // since setMode changes variables in service potentially used by directives,
-          // trigger any watches so that they can update
-          rootScope_.$broadcast('feature-info-click');
-        },
-        error: function() {
-          console.log('====[ ERROR: loomFeatureInfoBox.map.getFeatureInfo.error');
-          throw ({
-            name: 'featureInfoBox',
-            level: 'High',
-            message: 'map.getFeatureInfo failed!',
-            toString: function() {
-              return this.name + ': ' + this.message;
-            }
-          });
+        // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it
+        if (!goog.isDefAndNotNull(containerInstance_)) {
+          containerInstance_ = mapService_.map.getOverlays().array_[0].getElement();
+          $compile(containerInstance_)($rootScope);
         }
-      });
+
+        service_.hide();
+
+        var layers = mapService_.getFeatureLayers();
+
+        mapService_.map.getFeatureInfo({
+          pixel: evt.getPixel(),
+          layers: layers,
+          success: function(featureInfoByLayer) {
+            //console.log('loomFeatureInfoBox.map.getFeatureInfo.success', featureInfoByLayer);
+
+            var infoPerLayer = [];
+
+            featureInfoByLayer.forEach(function(elm, index) {
+              var layerInfo = JSON.parse(elm);
+
+              if (layerInfo.features && layerInfo.features.length > 0) {
+                layerInfo.layer = layers[index];
+                goog.array.insert(infoPerLayer, layerInfo);
+              }
+            });
+            //console.log('-- infoPerLayer: ', infoPerLayer);
+
+            if (infoPerLayer.length > 0) {
+              service_.show(infoPerLayer, evt.getCoordinate());
+            } else {
+              service_.hide();
+            }
+
+            // since setMode changes variables in service potentially used by directives,
+            // trigger any watches so that they can update
+            rootScope_.$broadcast('feature-info-click');
+          },
+          error: function() {
+            console.log('====[ ERROR: loomFeatureInfoBox.map.getFeatureInfo.error');
+            throw ({
+              name: 'featureInfoBox',
+              level: 'High',
+              message: 'map.getFeatureInfo failed!',
+              toString: function() {
+                return this.name + ': ' + this.message;
+              }
+            });
+          }
+        });
+      }
     });
   }
 
