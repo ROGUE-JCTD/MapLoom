@@ -3,14 +3,14 @@
   var module = angular.module('loom_geometry_edit_directive', []);
 
   module.directive('loomGeometryEdit',
-      function(mapService, featureInfoBoxService) {
+      function(mapService, featureManagerService) {
         return {
           restrict: 'C',
           replace: true,
-          templateUrl: 'featureinfobox/partial/geometryedit.tpl.html',
+          templateUrl: 'featuremanager/partial/geometryedit.tpl.html',
           link: function(scope) {
             scope.mapService = mapService;
-            scope.featureInfoBoxService = featureInfoBoxService;
+            scope.featureManagerService = featureManagerService;
             scope.panelOpen = false;
             var expandPanel = function() {
               if (scope.panelOpen === false) {

@@ -66,7 +66,6 @@
                       })
                     });
                     geogitService.isGeoGit(newLayer);
-                    console.log(newLayer);
                     mapService.map.addLayer(newLayer);
                     layer.add = false;
                     layer.added = true;

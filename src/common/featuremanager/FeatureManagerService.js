@@ -1,27 +1,30 @@
 (function() {
-  var module = angular.module('loom_feature_info_box_service', []);
+  var module = angular.module('loom_feature_manager_service', []);
 
   //-- Private Variables
   var service_ = null;
   var mapService_ = null;
   var rootScope_ = null;
+  var http_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
   var selectedItemPics_ = null;
   var selectedItemProperties_ = null;
+  var selectedLayer_ = null;
   var featureInfoPerLayer_ = [];
   var containerInstance_ = null;
   var overlay_ = null;
   var position_ = null;
   var modify_ = null;
 
-  module.provider('featureInfoBoxService', function() {
+  module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, mapService, $compile) {
+    this.$get = function($rootScope, mapService, $compile, $http) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
+      http_ = $http;
       registerOnMapClick($rootScope, $compile);
 
       overlay_ = new ol.Overlay({
@@ -48,6 +51,10 @@
 
     this.getSelectedItemProperties = function() {
       return selectedItemProperties_;
+    };
+
+    this.getSelectedLayer = function() {
+      return selectedLayer_;
     };
 
     this.getPosition = function() {
@@ -78,7 +85,6 @@
       var selectedItemOld = selectedItem_;
 
       var type = getItemType(item);
-
       // when there is nothing in featureInfoPerLayer_, we need to used the passed in item to initialize it
       // this is used when code calls show without the user clicking on the map.
       if (featureInfoPerLayer_.length === 0) {
@@ -105,32 +111,26 @@
       if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
-        mapService_.selectFeature(selectedItem_.geometry);
       } else if (type === 'layer') {
         if (item.features.length === 1) {
           state_ = 'feature';
           selectedItem_ = item.features[0];
-          mapService_.selectFeature(selectedItem_.geometry);
         } else {
           state_ = 'layer';
           selectedItem_ = item;
-          mapService_.clearSelectedFeature();
         }
       } else if (type === 'layers') {
         if (item.length === 1) {
           if (item[0].features.length === 1) {
             state_ = 'feature';
             selectedItem_ = item[0].features[0];
-            mapService_.selectFeature(selectedItem_.geometry);
           } else {
             state_ = 'layer';
             selectedItem_ = item[0];
-            mapService_.clearSelectedFeature();
           }
         } else {
           state_ = 'layers';
           selectedItem_ = item;
-          mapService_.clearSelectedFeature();
         }
       } else {
         throw ({
@@ -185,6 +185,15 @@
           });
         }
 
+        // -- select the geometry if it is a feature, clear otherwise
+        // -- store the selected layer of the feature
+        if (getItemType(selectedItem_) === 'feature') {
+          mapService_.selectFeature(selectedItem_.geometry);
+          selectedLayer_ = this.getSelectedItemLayer().layer;
+        } else {
+          mapService_.clearSelectedFeature();
+        }
+
         selectedItemProperties_ = props;
         //console.log('---- selectedItemProperties_: ', selectedItemProperties_);
       }
@@ -193,6 +202,17 @@
         position_ = position;
         mapService_.map.getOverlays().array_[0].setPosition(position);
       }
+    };
+
+    this.getSelectedItemLayer = function() {
+      for (var i = 0; i < featureInfoPerLayer_.length; i++) {
+        for (var j = 0; j < featureInfoPerLayer_[i].features.length; j++) {
+          if (featureInfoPerLayer_[i].features[j] === selectedItem_) {
+            return featureInfoPerLayer_[i];
+          }
+        }
+      }
+      return null;
     };
 
     this.showPreviousState = function() {
@@ -207,21 +227,7 @@
       var item = null;
 
       if (state_ === 'feature') {
-        var layer = null;
-
-        for (var i = 0; i < featureInfoPerLayer_.length; i++) {
-          for (var j = 0; j < featureInfoPerLayer_[i].features.length; j++) {
-            if (featureInfoPerLayer_[i].features[j] === selectedItem_) {
-              layer = featureInfoPerLayer_[i];
-              break;
-            }
-          }
-
-          if (layer !== null) {
-            break;
-          }
-        }
-
+        var layer = this.getSelectedItemLayer();
         if (layer) {
           if (layer.features.length > 1) {
             state = 'layer';
@@ -284,12 +290,64 @@
       mapService_.map.addInteraction(modify_);
     };
 
-    this.endGeometryEditing = function() {
+    this.endGeometryEditing = function(save) {
+      if (save) {
+        // actually save the geom
+      } else {
+        // discard changes
+        mapService_.clearSelectedFeature();
+        mapService_.selectFeature(selectedItem_.geometry);
+      }
       $('#info-box').show();
       rootScope_.$broadcast('endGeometryEdit');
       mapService_.map.removeInteraction(modify_);
     };
 
+    this.startAttributeEditing = function() {
+      rootScope_.$broadcast('startAttributeEdit', selectedItem_,
+          selectedItemProperties_);
+    };
+
+    this.endAttributeEditing = function(properties) {
+      //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
+
+      var propertyXmlPartial = '';
+      goog.array.forEach(properties, function(property, index) {
+        if (properties[index][1] !== selectedItemProperties_[index][1]) {
+          propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
+              '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
+        }
+      });
+
+      if (propertyXmlPartial !== '') {
+        var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
+            '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+            'service="WFS" version="1.1.0" ' +
+            'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"> ' +
+            '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
+            selectedLayer_.getSource().getParams().LAYERS + '">' +
+            propertyXmlPartial +
+            '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+            '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
+            '</ogc:Filter>' +
+            '</wfs:Update>' +
+            '</wfs:Transaction>';
+
+        //console.log('---- about to post: ', wfsRequestData);
+
+        http_({
+          url: '/geoserver/wfs/WfsDispatcher',
+          method: 'POST',
+          data: wfsRequestData
+        }).success(function(data, status, headers, config) {
+          //console.log('====[ great success. ', data, status, headers, config);
+          selectedItemProperties_ = properties;
+        }).error(function(data, status, headers, config) {
+          console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
+        });
+      }
+    };
   });
 
   //-- Private functions

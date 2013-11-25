@@ -351,22 +351,22 @@
       var newGeom;
       switch (geom.type) {
         case 'Point': {
-          newGeom = new ol.geom.Point(geom.coordinates);
+          newGeom = new ol.geom.Point($.extend(true, [], geom.coordinates));
         } break;
         case 'LineString': {
-          newGeom = new ol.geom.LineString(geom.coordinates);
+          newGeom = new ol.geom.LineString($.extend(true, [], geom.coordinates));
         } break;
         case 'Polygon': {
-          newGeom = new ol.geom.Polygon(geom.coordinates);
+          newGeom = new ol.geom.Polygon($.extend(true, [], geom.coordinates));
         } break;
         case 'MultiPoint': {
-          newGeom = new ol.geom.MultiPoint(geom.coordinates);
+          newGeom = new ol.geom.MultiPoint($.extend(true, [], geom.coordinates));
         } break;
         case 'MultiLineString': {
-          newGeom = new ol.geom.MultiLineString(geom.coordinates);
+          newGeom = new ol.geom.MultiLineString($.extend(true, [], geom.coordinates));
         } break;
         case 'MultiPolygon': {
-          newGeom = new ol.geom.MultiPolygon(geom.coordinates);
+          newGeom = new ol.geom.MultiPolygon($.extend(true, [], geom.coordinates));
         } break;
         default: {
           console.log(geom.geometry.type, 'Not a valid geometry type');
@@ -377,18 +377,13 @@
       newFeature.setGeometry(newGeom);
       this.editLayer.addFeatures([newFeature]);
       var select = this.map.getInteractions().getArray()[11];
-      console.log(select);
-      //console.log(select, map);
-      //this.map.addInteraction(select);
       select.select(this.map, [[newFeature]], [this.editLayer], false);
-      //console.log(this.editLayer);
       this.map.addLayer(this.editLayer);
     };
 
     this.clearSelectedFeature = function() {
       this.editLayer.clear();
       this.map.removeLayer(this.editLayer);
-      console.log(this.map);
     };
   });
 }());
