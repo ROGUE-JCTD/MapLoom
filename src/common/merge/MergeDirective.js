@@ -87,7 +87,9 @@
                     }, function(endTransactionFailure) {
                       if (goog.isObject(endTransactionFailure) &&
                           goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
-                        handleConflicts(endTransactionFailure, transaction, dialogService, conflictService, scope);
+                        var message = 'Merge transaction\n\nConflicts:';
+                        handleConflicts(endTransactionFailure, transaction,
+                            dialogService, conflictService, scope, message);
                       } else {
                         dialogService.error('Error',
                             'An unknown error occurred when finalizing the transaction.  Please try again.');
@@ -98,7 +100,8 @@
                     });
                   }, function(mergeFailure) {
                     if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
-                      handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope);
+                      var message = 'Merge branch ' + scope.sourceBranch + '\n\nConflicts:';
+                      handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope, message);
                     } else {
                       dialogService.error('Error',
                           'An unknown error occurred when performing the merge.  Please try again.');
@@ -131,7 +134,7 @@
       }
   );
 
-  function handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope) {
+  function handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope, message) {
     var myDialog = dialogService.warn('Merge Conflicts',
         'Some conflicts were encountered when performing the merge,' +
             ' would you like to resolve these or abort the merge?',
@@ -151,6 +154,7 @@
           conflictService.features = mergeFailure.Feature;
           conflictService.repoId = scope.selectedRepoId;
           conflictService.transaction = transaction;
+          conflictService.message = message;
           conflictService.beginResolution();
           break;
       }

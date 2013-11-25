@@ -20,6 +20,7 @@
     this.ourName = null;
     this.theirName = null;
     this.transaction = null;
+    this.message = null;
 
     this.$get = function($rootScope, $location, diffService, pulldownService,
                          featureDiffService, mapService, dialogService, geogitService) {
@@ -75,6 +76,13 @@
         }
       }
 
+      if (conflicts.length > 0) {
+        for (i = 0; i < conflicts.length; i++) {
+          var conflict = conflicts[i];
+          service_.message += '\nResolved conflict: ' + conflict.id;
+        }
+      }
+
       var conflictsInError = 0;
       commitInternal(conflicts, conflictsInError);
     };
@@ -98,7 +106,7 @@
       if (conflictsInError === 0) {
         var commitOptions = new GeoGitCommitOptions();
         commitOptions.all = true;
-        commitOptions.message = 'Resolved some conflicts.';
+        commitOptions.message = service_.message;
         service_.transaction.command('commit', commitOptions).then(function() {
           // commit successful
           service_.transaction.finalize().then(function() {
@@ -176,6 +184,7 @@
           service_.theirs = mergeFailure.theirs;
           service_.ancestor = mergeFailure.ancestor;
           service_.features = mergeFailure.Feature;
+          service_.message = 'Merge transaction\n\nConflicts:';
           service_.beginResolution();
           break;
       }
