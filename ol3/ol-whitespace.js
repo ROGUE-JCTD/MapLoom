@@ -523,17 +523,17 @@ goog.addDependency("../build/src/internal/src/requireall.js", [], ["libtess", "l
 "ol.expr.Identifier", "ol.expr.Lexer", "ol.expr.Literal", "ol.expr.Logical", "ol.expr.LogicalOp", "ol.expr.Math", "ol.expr.MathOp", "ol.expr.Member", "ol.expr.Not", "ol.expr.Parser", "ol.expr.Token", "ol.expr.TokenType", "ol.expr.UnexpectedToken", "ol.expr.functions", "ol.extent", "ol.geom.AbstractCollection", "ol.geom.Geometry", "ol.geom.GeometryCollection", "ol.geom.GeometryEvent", "ol.geom.GeometryType", "ol.geom.LineString", "ol.geom.LinearRing", "ol.geom.MultiLineString", "ol.geom.MultiPoint", 
 "ol.geom.MultiPolygon", "ol.geom.Point", "ol.geom.Polygon", "ol.interaction", "ol.interaction.DoubleClickZoom", "ol.interaction.Drag", "ol.interaction.DragPan", "ol.interaction.DragRotate", "ol.interaction.DragRotateAndZoom", "ol.interaction.DragZoom", "ol.interaction.Draw", "ol.interaction.Interaction", "ol.interaction.KeyboardPan", "ol.interaction.KeyboardZoom", "ol.interaction.Modify", "ol.interaction.MouseWheelZoom", "ol.interaction.Select", "ol.interaction.Touch", "ol.interaction.TouchPan", 
 "ol.interaction.TouchRotate", "ol.interaction.TouchZoom", "ol.layer.Base", "ol.layer.Group", "ol.layer.Image", "ol.layer.Layer", "ol.layer.LayerProperty", "ol.layer.LayerState", "ol.layer.Tile", "ol.layer.Vector", "ol.layer.VectorEventType", "ol.layer.VectorLayerRenderIntent", "ol.math", "ol.parser.AsyncObjectFeatureParser", "ol.parser.AsyncStringFeatureParser", "ol.parser.DomFeatureParser", "ol.parser.GPX", "ol.parser.GeoJSON", "ol.parser.KML", "ol.parser.ObjectFeatureParser", "ol.parser.Parser", 
-"ol.parser.ReadFeaturesResult", "ol.parser.StringFeatureParser", "ol.parser.TopoJSON", "ol.parser.WKT", "ol.parser.XML", "ol.parser.ogc.ExceptionReport", "ol.parser.ogc.Filter", "ol.parser.ogc.Filter_v1", "ol.parser.ogc.Filter_v1_0_0", "ol.parser.ogc.Filter_v1_1_0", "ol.parser.ogc.GML", "ol.parser.ogc.GML_v2", "ol.parser.ogc.GML_v3", "ol.parser.ogc.OWSCommon_v1", "ol.parser.ogc.OWSCommon_v1_1_0", "ol.parser.ogc.Versioned", "ol.parser.ogc.WMSCapabilities", "ol.parser.ogc.WMSCapabilities_v1", "ol.parser.ogc.WMSCapabilities_v1_0_0", 
-"ol.parser.ogc.WMSCapabilities_v1_1", "ol.parser.ogc.WMSCapabilities_v1_1_0", "ol.parser.ogc.WMSCapabilities_v1_1_1", "ol.parser.ogc.WMSCapabilities_v1_1_1_WMSC", "ol.parser.ogc.WMSCapabilities_v1_3_0", "ol.parser.ogc.WMTSCapabilities", "ol.parser.ogc.WMTSCapabilities_v1_0_0", "ol.parser.polyline", "ol.proj", "ol.proj.CH", "ol.proj.EPSG2056", "ol.proj.EPSG21781", "ol.proj.EPSG3857", "ol.proj.EPSG4326", "ol.proj.Projection", "ol.proj.ProjectionLike", "ol.proj.Units", "ol.proj.common", "ol.renderer.Layer", 
-"ol.renderer.Map", "ol.renderer.canvas", "ol.renderer.canvas.ImageLayer", "ol.renderer.canvas.Layer", "ol.renderer.canvas.Map", "ol.renderer.canvas.TileLayer", "ol.renderer.canvas.Vector", "ol.renderer.canvas.VectorLayer", "ol.renderer.dom", "ol.renderer.dom.ImageLayer", "ol.renderer.dom.Layer", "ol.renderer.dom.Map", "ol.renderer.dom.TileLayer", "ol.renderer.webgl", "ol.renderer.webgl.ImageLayer", "ol.renderer.webgl.Layer", "ol.renderer.webgl.Map", "ol.renderer.webgl.TileLayer", "ol.renderer.webgl.map.shader.Color", 
-"ol.renderer.webgl.map.shader.Default", "ol.renderer.webgl.tilelayer.shader", "ol.size", "ol.source.BingMaps", "ol.source.FeatureInfoSource", "ol.source.Image", "ol.source.ImageStatic", "ol.source.ImageWMS", "ol.source.MapQuestOSM", "ol.source.MapQuestOpenAerial", "ol.source.OSM", "ol.source.Source", "ol.source.Stamen", "ol.source.State", "ol.source.Tile", "ol.source.TileDebug", "ol.source.TileImage", "ol.source.TileJSON", "ol.source.TileOptions", "ol.source.TileWMS", "ol.source.Vector", "ol.source.WMSGetFeatureInfoMethod", 
-"ol.source.WMTS", "ol.source.WMTSRequestEncoding", "ol.source.XYZ", "ol.source.wms", "ol.sphere.NORMAL", "ol.sphere.WGS84", "ol.structs.Buffer", "ol.structs.IntegerSet", "ol.structs.LRUCache", "ol.structs.PriorityQueue", "ol.structs.RTree", "ol.style", "ol.style.Fill", "ol.style.Icon", "ol.style.IconLiteral", "ol.style.LineLiteral", "ol.style.Literal", "ol.style.Point", "ol.style.PointLiteral", "ol.style.PolygonLiteral", "ol.style.Rule", "ol.style.Shape", "ol.style.ShapeLiteral", "ol.style.ShapeType", 
-"ol.style.Stroke", "ol.style.StrokeDefaults", "ol.style.Style", "ol.style.Symbolizer", "ol.style.Text", "ol.style.TextLiteral", "ol.tilegrid.TileGrid", "ol.tilegrid.WMTS", "ol.tilegrid.XYZ", "ol.tilejson", "ol.vec.Mat4", "ol.webgl", "ol.webgl.WebGLContextEventType", "ol.webgl.shader"]);
+"ol.parser.ReadFeaturesResult", "ol.parser.StringFeatureParser", "ol.parser.TopoJSON", "ol.parser.WKT", "ol.parser.XML", "ol.parser.ogc.ExceptionReport", "ol.parser.ogc.Filter", "ol.parser.ogc.Filter_v1", "ol.parser.ogc.Filter_v1_0_0", "ol.parser.ogc.Filter_v1_1_0", "ol.parser.ogc.GML", "ol.parser.ogc.GML_v2", "ol.parser.ogc.GML_v3", "ol.parser.ogc.OWSCommon_v1", "ol.parser.ogc.OWSCommon_v1_1_0", "ol.parser.ogc.SLD", "ol.parser.ogc.SLD_v1", "ol.parser.ogc.SLD_v1_0_0", "ol.parser.ogc.Versioned", "ol.parser.ogc.WFS", 
+"ol.parser.ogc.WFS_v1", "ol.parser.ogc.WFS_v1_0_0", "ol.parser.ogc.WFS_v1_1_0", "ol.parser.ogc.WMSCapabilities", "ol.parser.ogc.WMSCapabilities_v1", "ol.parser.ogc.WMSCapabilities_v1_0_0", "ol.parser.ogc.WMSCapabilities_v1_1", "ol.parser.ogc.WMSCapabilities_v1_1_0", "ol.parser.ogc.WMSCapabilities_v1_1_1", "ol.parser.ogc.WMSCapabilities_v1_1_1_WMSC", "ol.parser.ogc.WMSCapabilities_v1_3_0", "ol.parser.ogc.WMTSCapabilities", "ol.parser.ogc.WMTSCapabilities_v1_0_0", "ol.parser.polyline", "ol.proj", "ol.proj.CH", 
+"ol.proj.EPSG2056", "ol.proj.EPSG21781", "ol.proj.EPSG3857", "ol.proj.EPSG4326", "ol.proj.Projection", "ol.proj.ProjectionLike", "ol.proj.Units", "ol.proj.common", "ol.renderer.Layer", "ol.renderer.Map", "ol.renderer.canvas", "ol.renderer.canvas.ImageLayer", "ol.renderer.canvas.Layer", "ol.renderer.canvas.Map", "ol.renderer.canvas.TileLayer", "ol.renderer.canvas.Vector", "ol.renderer.canvas.VectorLayer", "ol.renderer.dom", "ol.renderer.dom.ImageLayer", "ol.renderer.dom.Layer", "ol.renderer.dom.Map", 
+"ol.renderer.dom.TileLayer", "ol.renderer.webgl", "ol.renderer.webgl.ImageLayer", "ol.renderer.webgl.Layer", "ol.renderer.webgl.Map", "ol.renderer.webgl.TileLayer", "ol.renderer.webgl.map.shader.Color", "ol.renderer.webgl.map.shader.Default", "ol.renderer.webgl.tilelayer.shader", "ol.size", "ol.source.BingMaps", "ol.source.FeatureInfoSource", "ol.source.Image", "ol.source.ImageStatic", "ol.source.ImageWMS", "ol.source.MapQuestOSM", "ol.source.MapQuestOpenAerial", "ol.source.OSM", "ol.source.Source", 
+"ol.source.Stamen", "ol.source.State", "ol.source.Tile", "ol.source.TileDebug", "ol.source.TileImage", "ol.source.TileJSON", "ol.source.TileOptions", "ol.source.TileWMS", "ol.source.Vector", "ol.source.WMSGetFeatureInfoMethod", "ol.source.WMTS", "ol.source.WMTSRequestEncoding", "ol.source.XYZ", "ol.source.wms", "ol.sphere.NORMAL", "ol.sphere.WGS84", "ol.structs.Buffer", "ol.structs.IntegerSet", "ol.structs.LRUCache", "ol.structs.PriorityQueue", "ol.structs.RTree", "ol.style", "ol.style.Fill", "ol.style.Icon", 
+"ol.style.IconLiteral", "ol.style.LineLiteral", "ol.style.Literal", "ol.style.Point", "ol.style.PointLiteral", "ol.style.PolygonLiteral", "ol.style.Rule", "ol.style.Shape", "ol.style.ShapeLiteral", "ol.style.ShapeType", "ol.style.Stroke", "ol.style.StrokeDefaults", "ol.style.Style", "ol.style.Symbolizer", "ol.style.Text", "ol.style.TextLiteral", "ol.tilegrid.TileGrid", "ol.tilegrid.WMTS", "ol.tilegrid.XYZ", "ol.tilejson", "ol.vec.Mat4", "ol.webgl", "ol.webgl.WebGLContextEventType", "ol.webgl.shader"]);
 goog.addDependency("../build/src/internal/src/types.js", ["ol.AttributionOptions", "ol.DeviceOrientationOptions", "ol.GeolocationOptions", "ol.GetFeatureInfoOptions", "ol.GetFeaturesOptions", "ol.MapOptions", "ol.OverlayOptions", "ol.Proj4jsProjectionOptions", "ol.ProjectionOptions", "ol.View2DOptions", "ol.animation.BounceOptions", "ol.animation.PanOptions", "ol.animation.RotateOptions", "ol.animation.ZoomOptions", "ol.control.AttributionOptions", "ol.control.ControlOptions", "ol.control.DefaultsOptions", 
 "ol.control.FullScreenOptions", "ol.control.LogoOptions", "ol.control.MousePositionOptions", "ol.control.ScaleLineOptions", "ol.control.ZoomOptions", "ol.control.ZoomSliderOptions", "ol.control.ZoomToExtentOptions", "ol.interaction.DefaultsOptions", "ol.interaction.DoubleClickZoomOptions", "ol.interaction.DragPanOptions", "ol.interaction.DragRotateAndZoomOptions", "ol.interaction.DragRotateOptions", "ol.interaction.DragZoomOptions", "ol.interaction.DrawOptions", "ol.interaction.KeyboardPanOptions", 
 "ol.interaction.KeyboardZoomOptions", "ol.interaction.ModifyOptions", "ol.interaction.MouseWheelZoomOptions", "ol.interaction.SelectOptions", "ol.interaction.TouchPanOptions", "ol.interaction.TouchRotateOptions", "ol.interaction.TouchZoomOptions", "ol.layer.BaseOptions", "ol.layer.GroupOptions", "ol.layer.LayerOptions", "ol.layer.TileOptions", "ol.layer.VectorLayerOptions", "ol.parser.GMLOptions", "ol.parser.GMLReadOptions", "ol.parser.GMLWriteOptions", "ol.parser.GPXOptions", "ol.parser.GPXWriteOptions", 
-"ol.parser.KMLOptions", "ol.source.BingMapsOptions", "ol.source.ImageStaticOptions", "ol.source.ImageWMSOptions", "ol.source.MapQuestOptions", "ol.source.OSMOptions", "ol.source.StamenOptions", "ol.source.TileDebugOptions", "ol.source.TileJSONOptions", "ol.source.TileWMSOptions", "ol.source.VectorOptions", "ol.source.WMSGetFeatureInfoOptions", "ol.source.WMTSOptions", "ol.source.XYZOptions", "ol.style.FillOptions", "ol.style.IconOptions", "ol.style.RuleOptions", "ol.style.ShapeOptions", "ol.style.StrokeOptions", 
-"ol.style.StyleOptions", "ol.style.TextOptions", "ol.tilegrid.TileGridOptions", "ol.tilegrid.WMTSOptions", "ol.tilegrid.XYZOptions"], []);
+"ol.parser.KMLOptions", "ol.parser.SLDReadOptions", "ol.parser.SLDWriteOptions", "ol.source.BingMapsOptions", "ol.source.ImageStaticOptions", "ol.source.ImageWMSOptions", "ol.source.MapQuestOptions", "ol.source.OSMOptions", "ol.source.StamenOptions", "ol.source.TileDebugOptions", "ol.source.TileJSONOptions", "ol.source.TileWMSOptions", "ol.source.VectorOptions", "ol.source.WMTSOptions", "ol.source.XYZOptions", "ol.style.FillOptions", "ol.style.IconOptions", "ol.style.RuleOptions", "ol.style.ShapeOptions", 
+"ol.style.StrokeOptions", "ol.style.StyleOptions", "ol.style.TextOptions", "ol.tilegrid.TileGridOptions", "ol.tilegrid.WMTSOptions", "ol.tilegrid.XYZOptions"], []);
 goog.addDependency("../src/libtess.js/dict/Dict.js", ["libtess.Dict"], ["libtess", "libtess.DictNode"]);
 goog.addDependency("../src/libtess.js/dict/DictNode.js", ["libtess.DictNode"], ["libtess"]);
 goog.addDependency("../src/libtess.js/geom.js", ["libtess.geom"], ["libtess"]);
@@ -573,7 +573,7 @@ goog.addDependency("../src/ol/control/logocontrol.js", ["ol.control.Logo"], ["go
 goog.addDependency("../src/ol/control/mousepositioncontrol.js", ["ol.control.MousePosition"], ["goog.array", "goog.dom", "goog.dom.TagName", "goog.events", "goog.events.EventType", "goog.style", "ol.CoordinateFormatType", "ol.Object", "ol.Pixel", "ol.TransformFunction", "ol.control.Control", "ol.proj", "ol.proj.Projection"]);
 goog.addDependency("../src/ol/control/scalelinecontrol.js", ["ol.control.ScaleLine", "ol.control.ScaleLineProperty", "ol.control.ScaleLineUnits"], ["goog.array", "goog.asserts", "goog.dom", "goog.dom.TagName", "goog.events", "goog.math", "goog.style", "ol.Object", "ol.TransformFunction", "ol.View2DState", "ol.control.Control", "ol.css", "ol.proj", "ol.proj.Units", "ol.sphere.NORMAL"]);
 goog.addDependency("../src/ol/control/zoomcontrol.js", ["ol.control.Zoom"], ["goog.dom", "goog.dom.TagName", "goog.events", "goog.events.EventType", "ol.animation", "ol.control.Control", "ol.css", "ol.easing"]);
-goog.addDependency("../src/ol/control/zoomslidercontrol.js", ["ol.control.ZoomSlider"], ["goog.array", "goog.asserts", "goog.dom", "goog.dom.TagName", "goog.events", "goog.events.EventType", "goog.fx.Dragger", "goog.fx.Dragger.EventType", "goog.math", "goog.math.Rect", "goog.style", "ol.animation", "ol.control.Control", "ol.css", "ol.easing"]);
+goog.addDependency("../src/ol/control/zoomslidercontrol.js", ["ol.control.ZoomSlider"], ["goog.array", "goog.asserts", "goog.dom", "goog.dom.TagName", "goog.events", "goog.events.Event", "goog.events.EventType", "goog.fx.Dragger", "goog.fx.Dragger.EventType", "goog.math", "goog.math.Rect", "goog.style", "ol.animation", "ol.control.Control", "ol.css", "ol.easing"]);
 goog.addDependency("../src/ol/control/zoomtoextentcontrol.js", ["ol.control.ZoomToExtent"], ["goog.dom", "goog.dom.TagName", "goog.events", "goog.events.EventType", "ol.control.Control", "ol.css"]);
 goog.addDependency("../src/ol/coordinate.js", ["ol.Coordinate", "ol.CoordinateArray", "ol.CoordinateFormatType", "ol.coordinate"], ["goog.math"]);
 goog.addDependency("../src/ol/css.js", ["ol.css"], []);
@@ -660,7 +660,14 @@ goog.addDependency("../src/ol/parser/ogc/gmlparser_v2.js", ["ol.parser.ogc.GML_v
 goog.addDependency("../src/ol/parser/ogc/gmlparser_v3.js", ["ol.parser.ogc.GML_v3"], ["goog.array", "goog.functions", "goog.object", "ol.geom.GeometryType", "ol.parser.ogc.GML"]);
 goog.addDependency("../src/ol/parser/ogc/owscommonparser_v1.js", ["ol.parser.ogc.OWSCommon_v1"], ["ol.parser.XML"]);
 goog.addDependency("../src/ol/parser/ogc/owscommonparser_v1_1_0.js", ["ol.parser.ogc.OWSCommon_v1_1_0"], ["goog.object", "ol.parser.ogc.OWSCommon_v1"]);
+goog.addDependency("../src/ol/parser/ogc/sldparser.js", ["ol.parser.ogc.SLD"], ["ol.parser.ogc.SLD_v1_0_0", "ol.parser.ogc.Versioned"]);
+goog.addDependency("../src/ol/parser/ogc/sldparser_v1.js", ["ol.parser.ogc.SLD_v1"], ["goog.asserts", "goog.dom.xml", "goog.object", "ol.expr.Literal", "ol.parser.XML", "ol.parser.ogc.Filter_v1_0_0", "ol.style.Fill", "ol.style.Icon", "ol.style.Rule", "ol.style.Shape", "ol.style.Stroke", "ol.style.Style", "ol.style.Text"]);
+goog.addDependency("../src/ol/parser/ogc/sldparser_v1_0_0.js", ["ol.parser.ogc.SLD_v1_0_0"], ["ol.parser.ogc.SLD_v1"]);
 goog.addDependency("../src/ol/parser/ogc/versionedparser.js", ["ol.parser.ogc.Versioned"], ["goog.dom.xml", "ol.parser.ogc.ExceptionReport"]);
+goog.addDependency("../src/ol/parser/ogc/wfsparser.js", ["ol.parser.ogc.WFS"], ["ol.parser.ogc.Versioned", "ol.parser.ogc.WFS_v1_0_0", "ol.parser.ogc.WFS_v1_1_0"]);
+goog.addDependency("../src/ol/parser/ogc/wfsparser_v1.js", ["ol.parser.ogc.WFS_v1"], ["goog.dom.xml", "ol.parser.XML"]);
+goog.addDependency("../src/ol/parser/ogc/wfsparser_v1_0_0.js", ["ol.parser.ogc.WFS_v1_0_0"], ["goog.array", "goog.functions", "goog.object", "ol.parser.ogc.Filter_v1_0_0", "ol.parser.ogc.WFS_v1"]);
+goog.addDependency("../src/ol/parser/ogc/wfsparser_v1_1_0.js", ["ol.parser.ogc.WFS_v1_1_0"], ["goog.asserts", "goog.functions", "goog.object", "ol.expr.Identifier", "ol.parser.ogc.Filter_v1_1_0", "ol.parser.ogc.WFS_v1"]);
 goog.addDependency("../src/ol/parser/ogc/wmscapabilitiesparser.js", ["ol.parser.ogc.WMSCapabilities"], ["ol.parser.ogc.Versioned", "ol.parser.ogc.WMSCapabilities_v1_0_0", "ol.parser.ogc.WMSCapabilities_v1_1_0", "ol.parser.ogc.WMSCapabilities_v1_1_1", "ol.parser.ogc.WMSCapabilities_v1_1_1_WMSC", "ol.parser.ogc.WMSCapabilities_v1_3_0"]);
 goog.addDependency("../src/ol/parser/ogc/wmscapabilitiesparser_v1.js", ["ol.parser.ogc.WMSCapabilities_v1"], ["goog.dom.xml", "goog.object", "ol.parser.XML"]);
 goog.addDependency("../src/ol/parser/ogc/wmscapabilitiesparser_v1_0_0.js", ["ol.parser.ogc.WMSCapabilities_v1_0_0"], ["goog.object", "goog.string", "ol.parser.ogc.WMSCapabilities_v1_1_0"]);
@@ -724,7 +731,7 @@ goog.addDependency("../src/ol/source/tilejsonsource.js", ["ol.source.TileJSON", 
 goog.addDependency("../src/ol/source/tilesource.js", ["ol.source.Tile", "ol.source.TileOptions"], ["goog.functions", "ol.Attribution", "ol.Extent", "ol.Tile", "ol.TileCoord", "ol.TileRange", "ol.source.Source", "ol.tilegrid.TileGrid"]);
 goog.addDependency("../src/ol/source/tilewmssource.js", ["ol.source.TileWMS"], ["goog.array", "goog.asserts", "goog.math", "goog.object", "ol.TileCoord", "ol.TileUrlFunction", "ol.extent", "ol.source.FeatureInfoSource", "ol.source.TileImage", "ol.source.wms"]);
 goog.addDependency("../src/ol/source/vectorsource.js", ["ol.source.Vector"], ["goog.asserts", "goog.net.XhrIo", "ol.source.Source"]);
-goog.addDependency("../src/ol/source/wmssource.js", ["ol.source.WMSGetFeatureInfoMethod", "ol.source.wms"], ["goog.net.XhrIo", "goog.object", "goog.uri.utils"]);
+goog.addDependency("../src/ol/source/wmssource.js", ["ol.source.WMSGetFeatureInfoMethod", "ol.source.wms"], ["goog.Uri", "goog.net.XhrIo", "goog.object", "goog.uri.utils"]);
 goog.addDependency("../src/ol/source/wmtssource.js", ["ol.source.WMTS", "ol.source.WMTSRequestEncoding"], ["goog.array", "goog.asserts", "goog.math", "goog.object", "goog.uri.utils", "ol.TileCoord", "ol.TileUrlFunction", "ol.TileUrlFunctionType", "ol.extent", "ol.proj", "ol.source.TileImage", "ol.tilegrid.WMTS"]);
 goog.addDependency("../src/ol/source/xyzsource.js", ["ol.source.XYZ"], ["ol.Attribution", "ol.TileUrlFunction", "ol.TileUrlFunctionType", "ol.proj", "ol.source.TileImage", "ol.tilegrid.XYZ"]);
 goog.addDependency("../src/ol/sphere/normal.js", ["ol.sphere.NORMAL"], ["ol.Sphere"]);
@@ -5643,7 +5650,7 @@ ol.Attribution.prototype.intersectsAnyTileRange = function(tileRanges) {
 };
 goog.provide("ol.BrowserFeature");
 ol.ASSUME_TOUCH = false;
-ol.BrowserFeature = {HAS_TOUCH:ol.ASSUME_TOUCH || goog.global.document && "ontouchstart" in goog.global.document.documentElement || !!goog.global.navigator.msPointerEnabled};
+ol.BrowserFeature = {DEVICE_PIXEL_RATIO:goog.global.devicePixelRatio || 1, HAS_TOUCH:ol.ASSUME_TOUCH || goog.global.document && "ontouchstart" in goog.global.document.documentElement || !!goog.global.navigator.msPointerEnabled};
 goog.provide("goog.math");
 goog.require("goog.array");
 goog.require("goog.asserts");
@@ -21354,7 +21361,9 @@ ol.style.Rule = function(options) {
   this.filter_ = filter;
   this.symbolizers_ = goog.isDef(options.symbolizers) ? options.symbolizers : [];
   this.minResolution_ = goog.isDef(options.minResolution) ? options.minResolution : 0;
-  this.maxResolution_ = goog.isDef(options.maxResolution) ? options.maxResolution : Infinity
+  this.maxResolution_ = goog.isDef(options.maxResolution) ? options.maxResolution : Infinity;
+  this.name_ = goog.isDef(options.name) ? options.name : undefined;
+  this.title_ = goog.isDef(options.title) ? options.title : undefined
 };
 ol.style.Rule.prototype.applies = function(feature, resolution) {
   var applies = resolution >= this.minResolution_ && resolution < this.maxResolution_;
@@ -21365,6 +21374,21 @@ ol.style.Rule.prototype.applies = function(feature, resolution) {
 };
 ol.style.Rule.prototype.getSymbolizers = function() {
   return this.symbolizers_
+};
+ol.style.Rule.prototype.getFilter = function() {
+  return this.filter_
+};
+ol.style.Rule.prototype.getMinResolution = function() {
+  return this.minResolution_
+};
+ol.style.Rule.prototype.getMaxResolution = function() {
+  return this.maxResolution_
+};
+ol.style.Rule.prototype.getName = function() {
+  return this.name_
+};
+ol.style.Rule.prototype.getTitle = function() {
+  return this.title_
 };
 goog.provide("ol.style.Point");
 goog.require("ol.style.Symbolizer");
@@ -21629,7 +21653,9 @@ goog.require("ol.style.Stroke");
 goog.require("ol.style.Symbolizer");
 ol.style.Style = function(options) {
   this.rules_ = goog.isDef(options.rules) ? options.rules : [];
-  this.symbolizers_ = goog.isDef(options.symbolizers) ? options.symbolizers : []
+  this.symbolizers_ = goog.isDef(options.symbolizers) ? options.symbolizers : [];
+  this.name_ = goog.isDef(options.name) ? options.name : undefined;
+  this.title_ = goog.isDef(options.title) ? options.title : undefined
 };
 ol.style.Style.prototype.createLiterals = function(feature, resolution) {
   var rules = this.rules_, symbolizers = [], applies = false, rule;
@@ -21709,6 +21735,21 @@ ol.style.Style.reduceLiterals_ = function(literals) {
     }
   }
   return reduced
+};
+ol.style.Style.prototype.getRules = function() {
+  return this.rules_
+};
+ol.style.Style.prototype.setRules = function(rules) {
+  this.rules_ = rules
+};
+ol.style.Style.prototype.getSymbolizers = function() {
+  return this.symbolizers_
+};
+ol.style.Style.prototype.getName = function() {
+  return this.name_
+};
+ol.style.Style.prototype.getTitle = function() {
+  return this.title_
 };
 goog.provide("ol.style.TextLiteral");
 goog.require("goog.asserts");
@@ -23377,7 +23418,8 @@ ol.renderer.canvas.VectorLayer.prototype.getFeatureInfoForPixel = function(pixel
   var callback = function(features, layer) {
     success(layer.getTransformFeatureInfo()(features), layer)
   };
-  this.getFeaturesForPixel(pixel, callback)
+  this.getFeaturesForPixel(pixel, callback);
+  return true
 };
 ol.renderer.canvas.VectorLayer.prototype.getFeaturesForPixel = function(pixel, success, opt_error) {
   var map = this.getMap();
@@ -23604,6 +23646,8 @@ goog.require("ol.source.State");
 ol.renderer.canvas.Map = function(container, map) {
   goog.base(this, container, map);
   this.canvas_ = (goog.dom.createElement(goog.dom.TagName.CANVAS));
+  this.canvas_.style.width = "100%";
+  this.canvas_.style.height = "100%";
   this.canvas_.className = ol.css.CLASS_UNSELECTABLE;
   goog.dom.insertChildAt(container, this.canvas_, 0);
   this.renderedVisible_ = true;
@@ -23637,13 +23681,14 @@ ol.renderer.canvas.Map.prototype.renderFrame = function(frameState) {
     }
     return
   }
+  var context = this.context_;
   var size = frameState.size;
   if(this.canvas_.width != size[0] || this.canvas_.height != size[1]) {
     this.canvas_.width = size[0];
     this.canvas_.height = size[1]
+  }else {
+    context.clearRect(0, 0, this.canvas_.width, this.canvas_.height)
   }
-  var context = this.context_;
-  context.clearRect(0, 0, size[0], size[1]);
   this.calculateMatrices2D(frameState);
   var layerStates = frameState.layerStates;
   var layersArray = frameState.layersArray;
@@ -25366,6 +25411,8 @@ ol.renderer.webgl.TextureCacheEntry;
 ol.renderer.webgl.Map = function(container, map) {
   goog.base(this, container, map);
   this.canvas_ = (goog.dom.createElement(goog.dom.TagName.CANVAS));
+  this.canvas_.style.width = "100%";
+  this.canvas_.style.height = "100%";
   this.canvas_.className = ol.css.CLASS_UNSELECTABLE;
   goog.dom.insertChildAt(container, this.canvas_, 0);
   this.renderedVisible_ = true;
@@ -25622,7 +25669,7 @@ ol.renderer.webgl.Map.prototype.renderFrame = function(frameState) {
   gl.clearColor(0, 0, 0, 0);
   gl.clear(goog.webgl.COLOR_BUFFER_BIT);
   gl.enable(goog.webgl.BLEND);
-  gl.viewport(0, 0, size[0], size[1]);
+  gl.viewport(0, 0, this.canvas_.width, this.canvas_.height);
   this.bindBuffer(goog.webgl.ARRAY_BUFFER, this.arrayBuffer_);
   var currentProgram = null;
   var locations;
@@ -25783,7 +25830,7 @@ ol.Map = function(options) {
   this.overlayContainer_ = goog.dom.createDom(goog.dom.TagName.DIV, "ol-overlaycontainer");
   goog.dom.appendChild(this.viewport_, this.overlayContainer_);
   this.overlayContainerStopEvent_ = goog.dom.createDom(goog.dom.TagName.DIV, "ol-overlaycontainer-stopevent");
-  goog.events.listen(this.overlayContainerStopEvent_, [goog.events.EventType.CLICK, goog.events.EventType.DBLCLICK, goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEUP, goog.events.EventType.TOUCHSTART, goog.events.EventType.TOUCHEND, goog.events.EventType.MSPOINTERDOWN, goog.events.EventType.MSPOINTERUP], goog.events.Event.stopPropagation);
+  goog.events.listen(this.overlayContainerStopEvent_, [goog.events.EventType.CLICK, goog.events.EventType.DBLCLICK, goog.events.EventType.MOUSEDOWN, goog.events.EventType.TOUCHSTART, goog.events.EventType.MSPOINTERDOWN], goog.events.Event.stopPropagation);
   goog.dom.appendChild(this.viewport_, this.overlayContainerStopEvent_);
   var mapBrowserEventHandler = new ol.MapBrowserEventHandler(this);
   goog.events.listen(mapBrowserEventHandler, goog.object.getValues(ol.MapBrowserEvent.EventType), this.handleMapBrowserEvent, false, this);
@@ -27418,6 +27465,7 @@ goog.require("goog.asserts");
 goog.require("goog.dom");
 goog.require("goog.dom.TagName");
 goog.require("goog.events");
+goog.require("goog.events.Event");
 goog.require("goog.events.EventType");
 goog.require("goog.fx.Dragger");
 goog.require("goog.fx.Dragger.EventType");
@@ -27434,14 +27482,15 @@ ol.control.ZoomSlider = function(opt_options) {
   this.currentResolution_ = undefined;
   this.direction_ = ol.control.ZoomSlider.direction.VERTICAL;
   this.sliderInitialized_ = false;
-  this.draggerListenerKeys_ = null;
   var className = goog.isDef(options.className) ? options.className : "ol-zoomslider";
-  var sliderCssCls = className + " " + ol.css.CLASS_UNSELECTABLE;
-  var thumbCssCls = className + "-thumb" + " " + ol.css.CLASS_UNSELECTABLE;
-  var element = goog.dom.createDom(goog.dom.TagName.DIV, sliderCssCls, goog.dom.createDom(goog.dom.TagName.DIV, thumbCssCls));
-  this.dragger_ = this.createDraggable_(element);
-  goog.events.listen(element, [goog.events.EventType.TOUCHEND, goog.events.EventType.CLICK], this.handleContainerClick_, false, this);
-  goog.base(this, {element:element})
+  var thumbElement = goog.dom.createDom(goog.dom.TagName.DIV, [className + "-thumb", ol.css.CLASS_UNSELECTABLE]);
+  var sliderElement = goog.dom.createDom(goog.dom.TagName.DIV, [className, ol.css.CLASS_UNSELECTABLE], thumbElement);
+  this.dragger_ = new goog.fx.Dragger(thumbElement);
+  this.registerDisposable(this.dragger_);
+  goog.events.listen(this.dragger_, [goog.fx.Dragger.EventType.DRAG, goog.fx.Dragger.EventType.END], this.handleSliderChange_, undefined, this);
+  goog.events.listen(sliderElement, goog.events.EventType.CLICK, this.handleContainerClick_, false, this);
+  goog.events.listen(thumbElement, goog.events.EventType.CLICK, goog.events.Event.stopPropagation);
+  goog.base(this, {element:sliderElement})
 };
 goog.inherits(ol.control.ZoomSlider, ol.control.Control);
 ol.control.ZoomSlider.direction = {VERTICAL:0, HORIZONTAL:1};
@@ -27479,6 +27528,15 @@ ol.control.ZoomSlider.prototype.handleMapPostrender = function(mapEvent) {
   }
 };
 ol.control.ZoomSlider.prototype.handleContainerClick_ = function(browserEvent) {
+  var map = this.getMap();
+  var view = map.getView().getView2D();
+  var resolution;
+  var amountDragged = this.amountDragged_(browserEvent.offsetX, browserEvent.offsetY);
+  resolution = this.resolutionForAmount_(amountDragged);
+  goog.asserts.assert(goog.isDef(resolution));
+  map.beforeRender(ol.animation.zoom({resolution:resolution, duration:ol.control.ZOOMSLIDER_ANIMATION_DURATION, easing:ol.easing.easeOut}));
+  resolution = view.constrainResolution(resolution);
+  view.setResolution(resolution)
 };
 ol.control.ZoomSlider.prototype.positionThumbForResolution_ = function(res) {
   var amount = this.amountForResolution_(res), dragger = this.dragger_, thumb = goog.dom.getFirstElementChild(this.element);
@@ -27490,12 +27548,12 @@ ol.control.ZoomSlider.prototype.positionThumbForResolution_ = function(res) {
     goog.style.setPosition(thumb, dragger.limits.left, top)
   }
 };
-ol.control.ZoomSlider.prototype.amountDragged_ = function(e) {
+ol.control.ZoomSlider.prototype.amountDragged_ = function(x, y) {
   var draggerLimits = this.dragger_.limits, amount = 0;
   if(this.direction_ === ol.control.ZoomSlider.direction.HORIZONTAL) {
-    amount = (e.left - draggerLimits.left) / draggerLimits.width
+    amount = (x - draggerLimits.left) / draggerLimits.width
   }else {
-    amount = (e.top - draggerLimits.top) / draggerLimits.height
+    amount = (y - draggerLimits.top) / draggerLimits.height
   }
   return amount
 };
@@ -27514,7 +27572,7 @@ ol.control.ZoomSlider.prototype.handleSliderChange_ = function(e) {
   var view = map.getView().getView2D();
   var resolution;
   if(e.type === goog.fx.Dragger.EventType.DRAG) {
-    var amountDragged = this.amountDragged_(e);
+    var amountDragged = this.amountDragged_(e.left, e.top);
     resolution = this.resolutionForAmount_(amountDragged);
     if(resolution !== this.currentResolution_) {
       this.currentResolution_ = resolution;
@@ -27526,15 +27584,6 @@ ol.control.ZoomSlider.prototype.handleSliderChange_ = function(e) {
     resolution = view.constrainResolution(this.currentResolution_);
     view.setResolution(resolution)
   }
-};
-ol.control.ZoomSlider.prototype.createDraggable_ = function(elem) {
-  if(!goog.isNull(this.draggerListenerKeys_)) {
-    goog.array.forEach(this.draggerListenerKeys_, goog.events.unlistenByKey);
-    this.draggerListenerKeys_ = null
-  }
-  var dragger = new goog.fx.Dragger(elem.childNodes[0]);
-  this.draggerListenerKeys_ = [goog.events.listen(dragger, [goog.fx.Dragger.EventType.DRAG, goog.fx.Dragger.EventType.END], this.handleSliderChange_, undefined, this)];
-  return dragger
 };
 goog.provide("ol.control.ZoomToExtent");
 goog.require("goog.dom");
@@ -28179,7 +28228,8 @@ ol.interaction.Modify.prototype.addSegments_ = function(feature, geometry, layer
   var rTree = this.rTree_;
   var segment, segmentData, coordinates;
   if(geometry instanceof ol.geom.Point) {
-    segmentData = ({feature:feature, geometry:geometry, style:layer.getStyle()});
+    coordinates = geometry.getCoordinates();
+    segmentData = ({feature:feature, geometry:geometry, segment:[coordinates, coordinates], style:layer.getStyle()});
     rTree.insert(geometry.getBounds(), segmentData, uid)
   }else {
     if(geometry instanceof ol.geom.LineString || geometry instanceof ol.geom.LinearRing) {
@@ -28265,20 +28315,18 @@ ol.interaction.Modify.prototype.handleDrag = function(evt) {
     var feature = segmentData.feature;
     var geometry = segmentData.geometry;
     var coordinates = geometry.getCoordinates();
-    var oldBounds, newBounds;
+    var segment = segmentData.segment;
+    var oldBounds = ol.extent.boundingExtent(segment);
     if(geometry instanceof ol.geom.Point) {
-      oldBounds = geometry.getBounds();
-      geometry.setCoordinates(vertex);
-      newBounds = geometry.getBounds()
+      coordinates = vertex;
+      segment[0] = segment[1] = vertex
     }else {
       var index = dragSegment[1];
       coordinates[segmentData.index + index] = vertex;
-      geometry.setCoordinates(coordinates);
-      var segment = segmentData.segment;
-      oldBounds = ol.extent.boundingExtent(segment);
-      segment[index] = vertex;
-      newBounds = ol.extent.boundingExtent(segment)
+      segment[index] = vertex
     }
+    geometry.setCoordinates(coordinates);
+    var newBounds = ol.extent.boundingExtent(segment);
     this.createOrUpdateVertexFeature_(segmentData.style, vertex);
     this.rTree_.remove(oldBounds, segmentData);
     this.rTree_.insert(newBounds, segmentData, goog.getUid(feature))
@@ -32490,7 +32538,7 @@ ol.parser.ogc.Filter_v1 = function() {
     var args = [], container = {};
     this.readChildNodes(node, container);
     if(goog.isDef(container.geometry)) {
-      args.push(new ol.expr.Literal(this.gml_.createGeometry(container)))
+      args.push(new ol.expr.Literal(this.gmlParser_.createGeometry(container)))
     }else {
       args = [new ol.expr.Literal(container.bounds[0]), new ol.expr.Literal(container.bounds[1]), new ol.expr.Literal(container.bounds[2]), new ol.expr.Literal(container.bounds[3])]
     }
@@ -32712,7 +32760,14 @@ ol.parser.ogc.Filter_v1.prototype.write = function(filter) {
 };
 ol.parser.ogc.Filter_v1.prototype.writeOgcExpression = function(expr, node) {
   if(expr instanceof ol.expr.Call) {
-    this.writeNode("Function", expr, null, node)
+    if(ol.expr.isLibCall(expr) === ol.expr.functions.CONCAT) {
+      var args = expr.getArgs();
+      for(var i = 0, ii = args.length;i < ii;++i) {
+        this.writeOgcExpression(args[i], node)
+      }
+    }else {
+      this.writeNode("Function", expr, null, node)
+    }
   }else {
     if(expr instanceof ol.expr.Literal) {
       this.writeNode("Literal", expr, null, node)
@@ -32756,22 +32811,25 @@ ol.parser.ogc.Filter_v1.prototype.aggregateLogical_ = function(filters, operator
     return new ol.expr.Logical(operator, filters[0], filters[1])
   }
 };
+ol.parser.ogc.Filter_v1.prototype.getGmlParser = function() {
+  return this.gmlParser_
+};
 ol.parser.ogc.Filter_v1.prototype.setGmlParser = function(gml) {
-  this.gml_ = gml;
-  for(var uri in this.gml_.readers) {
-    for(var key in this.gml_.readers[uri]) {
+  this.gmlParser_ = gml;
+  for(var uri in this.gmlParser_.readers) {
+    for(var key in this.gmlParser_.readers[uri]) {
       if(!goog.isDef(this.readers[uri])) {
         this.readers[uri] = {}
       }
-      this.readers[uri][key] = goog.bind(this.gml_.readers[uri][key], this.gml_)
+      this.readers[uri][key] = goog.bind(this.gmlParser_.readers[uri][key], this.gmlParser_)
     }
   }
-  for(uri in this.gml_.writers) {
-    for(key in this.gml_.writers[uri]) {
+  for(uri in this.gmlParser_.writers) {
+    for(key in this.gmlParser_.writers[uri]) {
       if(!goog.isDef(this.writers[uri])) {
         this.writers[uri] = {}
       }
-      this.writers[uri][key] = goog.bind(this.gml_.writers[uri][key], this.gml_)
+      this.writers[uri][key] = goog.bind(this.gmlParser_.writers[uri][key], this.gmlParser_)
     }
   }
 };
@@ -32862,6 +32920,8 @@ ol.parser.ogc.GML = function(opt_options) {
     this.readChildNodes(node, parts);
     container.geometry = {type:ol.geom.GeometryType.MULTIPOLYGON, parts:parts}
   }, "polygonMember":function(node, obj) {
+    this.readChildNodes(node, obj)
+  }, "boundedBy":function(node, obj) {
     this.readChildNodes(node, obj)
   }, "Point":function(node, container) {
     var coordinates = [];
@@ -32988,10 +33048,10 @@ ol.parser.ogc.GML = function(opt_options) {
     }
     obj.features.push(feature)
   }, "_geometry":function(node, obj) {
-    if(!this.geometryName) {
-      this.geometryName = node.nodeName.split(":").pop()
-    }
-    this.readChildNodes(node, obj)
+    var local = node.localName || node.nodeName.split(":").pop();
+    this.readChildNodes(node, obj);
+    obj.properties[local] = this.createGeometry({geometry:obj.geometry});
+    delete obj.geometry
   }, "_attribute":function(node, obj) {
     var local = node.localName || node.nodeName.split(":").pop();
     var value = this.getChildValue(node);
@@ -33046,7 +33106,7 @@ ol.parser.ogc.GML = function(opt_options) {
     return node
   }, "geometryMember":function(geometry) {
     var node = this.createElementNS("gml:geometryMember");
-    var child = this.writeNode("_geometry", geometry, this.featureNS);
+    var child = this.writeNode("_geometry", {value:geometry}, this.featureNS);
     node.appendChild(child.firstChild);
     return node
   }}, "http://www.opengis.net/wfs":{"FeatureCollection":function(features) {
@@ -33062,19 +33122,21 @@ ol.parser.ogc.GML = function(opt_options) {
     if(goog.isDef(fid)) {
       this.setAttributeNS(node, this.defaultNamespaceURI, "fid", fid)
     }
-    if(feature.getGeometry() !== null) {
-      this.writeNode("_geometry", feature.getGeometry(), this.featureNS, node)
-    }
-    var attributes = feature.getAttributes(true);
+    var attributes = feature.getAttributes();
     for(var name in attributes) {
       var value = attributes[name];
       if(goog.isDefAndNotNull(value)) {
-        this.writeNode("_attribute", {name:name, value:value}, this.featureNS, node)
+        if(value instanceof ol.geom.Geometry) {
+          this.writeNode("_geometry", {name:name, value:value}, this.featureNS, node)
+        }else {
+          this.writeNode("_attribute", {name:name, value:value}, this.featureNS, node)
+        }
       }
     }
     return node
-  }, "_geometry":function(geometry) {
-    var node = this.createElementNS("feature:" + this.geometryName, this.featureNS);
+  }, "_geometry":function(obj) {
+    var node = this.createElementNS("feature:" + obj.name, this.featureNS);
+    var geometry = obj.value;
     var type = geometry.getType(), child;
     if(type === ol.geom.GeometryType.POINT) {
       child = this.writeNode("Point", geometry, null, node)
@@ -33401,9 +33463,11 @@ ol.parser.ogc.Filter_v1_0_0 = function() {
     goog.asserts.assert(args[1] instanceof ol.expr.Literal);
     goog.asserts.assert(args[2] instanceof ol.expr.Literal);
     goog.asserts.assert(args[3] instanceof ol.expr.Literal);
-    goog.asserts.assert(args[4] instanceof ol.expr.Literal);
     var bbox = [args[0].getValue(), args[1].getValue(), args[2].getValue(), args[3].getValue()];
-    var projection = args[4].getValue();
+    var projection;
+    if(args[4] instanceof ol.expr.Literal) {
+      projection = args[4].getValue()
+    }
     var property = args[5];
     if(goog.isDefAndNotNull(property)) {
       this.writeNode("PropertyName", property, null, node)
@@ -33460,7 +33524,7 @@ ol.parser.ogc.Filter_v1_0_0.prototype.writeSpatial_ = function(filter, name) {
   }else {
     var child;
     if(geom !== null) {
-      child = this.writeNode("_geometry", geom, this.gml_.featureNS).firstChild
+      child = this.writeNode("_geometry", {value:geom}, this.gmlParser_.featureNS).firstChild
     }else {
       if(bbox.length === 4) {
         child = this.writeNode("Box", bbox, "http://www.opengis.net/gml")
@@ -33485,8 +33549,9 @@ goog.require("ol.parser.ogc.GML");
 ol.parser.ogc.GML_v3 = function(opt_options) {
   this.schemaLocation = "http://www.opengis.net/gml " + "http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/" + "1.0.0/gmlsf.xsd";
   goog.base(this, opt_options);
-  this.featureNSWiters_["_geometry"] = function(geometry) {
-    var node = this.createElementNS("feature:" + this.geometryName, this.featureNS);
+  this.featureNSWiters_["_geometry"] = function(obj) {
+    var node = this.createElementNS("feature:" + obj.name, this.featureNS);
+    var geometry = obj.value;
     var type = geometry.getType(), child;
     if(type === ol.geom.GeometryType.POINT) {
       child = this.writeNode("Point", geometry, null, node)
@@ -33991,7 +34056,7 @@ ol.parser.ogc.Filter_v1_1_0.prototype.writeSpatial_ = function(filter, name) {
   }else {
     var child;
     if(geom !== null) {
-      child = this.writeNode("_geometry", geom, this.gml_.featureNS).firstChild
+      child = this.writeNode("_geometry", {value:geom}, this.gmlParser_.featureNS).firstChild
     }else {
       if(bbox.length === 4) {
         child = this.writeNode("Envelope", bbox, "http://www.opengis.net/gml")
@@ -34276,6 +34341,883 @@ ol.parser.ogc.OWSCommon_v1_1_0 = function() {
   }})
 };
 goog.inherits(ol.parser.ogc.OWSCommon_v1_1_0, ol.parser.ogc.OWSCommon_v1);
+goog.provide("ol.style.Text");
+goog.require("goog.asserts");
+goog.require("ol.Feature");
+goog.require("ol.expr");
+goog.require("ol.expr.Expression");
+goog.require("ol.expr.Literal");
+goog.require("ol.style.Symbolizer");
+goog.require("ol.style.TextLiteral");
+ol.style.Text = function(options) {
+  this.color_ = !goog.isDef(options.color) ? new ol.expr.Literal(ol.style.TextDefaults.color) : options.color instanceof ol.expr.Expression ? options.color : new ol.expr.Literal(options.color);
+  this.fontFamily_ = !goog.isDef(options.fontFamily) ? new ol.expr.Literal(ol.style.TextDefaults.fontFamily) : options.fontFamily instanceof ol.expr.Expression ? options.fontFamily : new ol.expr.Literal(options.fontFamily);
+  this.fontSize_ = !goog.isDef(options.fontSize) ? new ol.expr.Literal(ol.style.TextDefaults.fontSize) : options.fontSize instanceof ol.expr.Expression ? options.fontSize : new ol.expr.Literal(options.fontSize);
+  this.fontWeight_ = !goog.isDef(options.fontWeight) ? new ol.expr.Literal(ol.style.TextDefaults.fontWeight) : options.fontWeight instanceof ol.expr.Expression ? options.fontWeight : new ol.expr.Literal(options.fontWeight);
+  this.text_ = options.text instanceof ol.expr.Expression ? options.text : new ol.expr.Literal(options.text);
+  this.opacity_ = !goog.isDef(options.opacity) ? new ol.expr.Literal(ol.style.TextDefaults.opacity) : options.opacity instanceof ol.expr.Expression ? options.opacity : new ol.expr.Literal(options.opacity);
+  this.stroke_ = goog.isDefAndNotNull(options.stroke) ? options.stroke : null;
+  this.zIndex_ = !goog.isDefAndNotNull(options.zIndex) ? new ol.expr.Literal(ol.style.TextDefaults.zIndex) : options.zIndex instanceof ol.expr.Expression ? options.zIndex : new ol.expr.Literal(options.zIndex)
+};
+goog.inherits(ol.style.Text, ol.style.Symbolizer);
+ol.style.Text.prototype.createLiteral = function(featureOrType) {
+  var feature, type;
+  if(featureOrType instanceof ol.Feature) {
+    feature = featureOrType;
+    var geometry = feature.getGeometry();
+    type = geometry ? geometry.getType() : null
+  }else {
+    type = featureOrType
+  }
+  var color = ol.expr.evaluateFeature(this.color_, feature);
+  goog.asserts.assertString(color, "color must be a string");
+  var fontFamily = ol.expr.evaluateFeature(this.fontFamily_, feature);
+  goog.asserts.assertString(fontFamily, "fontFamily must be a string");
+  var fontSize = Number(ol.expr.evaluateFeature(this.fontSize_, feature));
+  goog.asserts.assert(!isNaN(fontSize), "fontSize must be a number");
+  var fontWeight = ol.expr.evaluateFeature(this.fontWeight_, feature);
+  goog.asserts.assertString(fontWeight, "fontWeight must be a string");
+  var text = ol.expr.evaluateFeature(this.text_, feature);
+  goog.asserts.assertString(text, "text must be a string");
+  var opacity = Number(ol.expr.evaluateFeature(this.opacity_, feature));
+  goog.asserts.assert(!isNaN(opacity), "opacity must be a number");
+  var strokeColor, strokeOpacity, strokeWidth;
+  if(!goog.isNull(this.stroke_)) {
+    strokeColor = ol.expr.evaluateFeature(this.stroke_.getColor(), feature);
+    goog.asserts.assertString(strokeColor, "strokeColor must be a string");
+    strokeOpacity = Number(ol.expr.evaluateFeature(this.stroke_.getOpacity(), feature));
+    goog.asserts.assert(!isNaN(strokeOpacity), "strokeOpacity must be a number");
+    strokeWidth = Number(ol.expr.evaluateFeature(this.stroke_.getWidth(), feature));
+    goog.asserts.assert(!isNaN(strokeWidth), "strokeWidth must be a number")
+  }
+  var zIndex = Number(ol.expr.evaluateFeature(this.zIndex_, feature));
+  goog.asserts.assert(!isNaN(zIndex), "zIndex must be a number");
+  return new ol.style.TextLiteral({color:color, fontFamily:fontFamily, fontSize:fontSize, fontWeight:fontWeight, text:text, opacity:opacity, strokeColor:strokeColor, strokeOpacity:strokeOpacity, strokeWidth:strokeWidth, zIndex:zIndex})
+};
+ol.style.Text.prototype.getColor = function() {
+  return this.color_
+};
+ol.style.Text.prototype.getFontFamily = function() {
+  return this.fontFamily_
+};
+ol.style.Text.prototype.getFontSize = function() {
+  return this.fontSize_
+};
+ol.style.Text.prototype.getFontWeight = function() {
+  return this.fontWeight_
+};
+ol.style.Text.prototype.getOpacity = function() {
+  return this.opacity_
+};
+ol.style.Text.prototype.getText = function() {
+  return this.text_
+};
+ol.style.Text.prototype.getZIndex = function() {
+  return this.zIndex_
+};
+ol.style.Text.prototype.getStroke = function() {
+  return this.stroke_
+};
+ol.style.Text.prototype.setColor = function(color) {
+  goog.asserts.assertInstanceof(color, ol.expr.Expression);
+  this.color_ = color
+};
+ol.style.Text.prototype.setFontFamily = function(fontFamily) {
+  goog.asserts.assertInstanceof(fontFamily, ol.expr.Expression);
+  this.fontFamily_ = fontFamily
+};
+ol.style.Text.prototype.setFontSize = function(fontSize) {
+  goog.asserts.assertInstanceof(fontSize, ol.expr.Expression);
+  this.fontSize_ = fontSize
+};
+ol.style.Text.prototype.setFontWeight = function(fontWeight) {
+  goog.asserts.assertInstanceof(fontWeight, ol.expr.Expression);
+  this.fontWeight_ = fontWeight
+};
+ol.style.Text.prototype.setOpacity = function(opacity) {
+  goog.asserts.assertInstanceof(opacity, ol.expr.Expression);
+  this.opacity_ = opacity
+};
+ol.style.Text.prototype.setText = function(text) {
+  goog.asserts.assertInstanceof(text, ol.expr.Expression);
+  this.text_ = text
+};
+ol.style.Text.prototype.setZIndex = function(zIndex) {
+  goog.asserts.assertInstanceof(zIndex, ol.expr.Expression);
+  this.zIndex_ = zIndex
+};
+ol.style.TextDefaults = {color:"#000", fontFamily:"sans-serif", fontSize:10, fontWeight:"normal", opacity:1, zIndex:0};
+goog.provide("ol.parser.ogc.SLD_v1");
+goog.require("goog.asserts");
+goog.require("goog.dom.xml");
+goog.require("goog.object");
+goog.require("ol.expr.Literal");
+goog.require("ol.parser.XML");
+goog.require("ol.parser.ogc.Filter_v1_0_0");
+goog.require("ol.style.Fill");
+goog.require("ol.style.Icon");
+goog.require("ol.style.Rule");
+goog.require("ol.style.Shape");
+goog.require("ol.style.Stroke");
+goog.require("ol.style.Style");
+goog.require("ol.style.Text");
+ol.parser.ogc.SLD_v1 = function() {
+  this.defaultNamespaceURI = "http://www.opengis.net/sld";
+  this.readers = {};
+  this.readers[this.defaultNamespaceURI] = {"StyledLayerDescriptor":function(node, sld) {
+    sld.version = node.getAttribute("version");
+    this.readChildNodes(node, sld)
+  }, "Name":function(node, obj) {
+    obj.name = this.getChildValue(node)
+  }, "Title":function(node, obj) {
+    obj.title = this.getChildValue(node)
+  }, "Abstract":function(node, obj) {
+    obj.description = this.getChildValue(node)
+  }, "NamedLayer":function(node, sld) {
+    var layer = {userStyles:[], namedStyles:[]};
+    this.readChildNodes(node, layer);
+    sld.namedLayers[layer.name] = layer
+  }, "NamedStyle":function(node, layer) {
+    layer.namedStyles.push(this.getChildValue(node.firstChild))
+  }, "UserStyle":function(node, layer) {
+    var obj = {rules:[]};
+    this.featureTypeCounter = -1;
+    this.readChildNodes(node, obj);
+    layer.userStyles.push(new ol.style.Style(obj))
+  }, "FeatureTypeStyle":function(node, style) {
+    ++this.featureTypeCounter;
+    var obj = {rules:style.rules};
+    this.readChildNodes(node, obj)
+  }, "Rule":function(node, obj) {
+    var config = {symbolizers:[]};
+    this.readChildNodes(node, config);
+    var rule = new ol.style.Rule(config);
+    obj.rules.push(rule)
+  }, "ElseFilter":function(node, rule) {
+    rule.elseFilter = true
+  }, "MinScaleDenominator":function(node, rule) {
+    rule.minResolution = this.getResolutionFromScaleDenominator_(parseFloat(this.getChildValue(node)))
+  }, "MaxScaleDenominator":function(node, rule) {
+    rule.maxResolution = this.getResolutionFromScaleDenominator_(parseFloat(this.getChildValue(node)))
+  }, "TextSymbolizer":function(node, rule) {
+    var config = {};
+    this.readChildNodes(node, config);
+    config.color = goog.isDef(config.fill) ? config.fill.fillColor : ol.parser.ogc.SLD_v1.defaults_.fontColor;
+    delete config.fill;
+    config.zIndex = this.featureTypeCounter;
+    rule.symbolizers.push(new ol.style.Text((config)))
+  }, "Label":function(node, symbolizer) {
+    var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+    var value = ogcreaders._expression.call(this, node);
+    if(value) {
+      symbolizer.text = value
+    }
+  }, "Font":function(node, symbolizer) {
+    this.readChildNodes(node, symbolizer)
+  }, "Halo":function(node, symbolizer) {
+    var obj = {};
+    this.readChildNodes(node, obj);
+    symbolizer.stroke = new ol.style.Stroke({color:goog.isDef(obj.fill.fillColor) ? obj.fill.fillColor : ol.parser.ogc.SLD_v1.defaults_.haloColor, width:goog.isDef(obj.haloRadius) ? obj.haloRadius * 2 : ol.parser.ogc.SLD_v1.defaults_.haloRadius, opacity:goog.isDef(obj.fill.fillOpacity) ? obj.fill.fillOpacity : ol.parser.ogc.SLD_v1.defaults_.haloOpacity})
+  }, "Radius":function(node, symbolizer) {
+    var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+    var radius = ogcreaders._expression.call(this, node);
+    goog.asserts.assertInstanceof(radius, ol.expr.Literal, "radius expected to be an ol.expr.Literal");
+    if(goog.isDef(radius)) {
+      symbolizer.haloRadius = radius.getValue()
+    }
+  }, "LineSymbolizer":function(node, rule) {
+    var config = {};
+    this.readChildNodes(node, config);
+    config.zIndex = this.featureTypeCounter;
+    rule.symbolizers.push(new ol.style.Stroke(config))
+  }, "PolygonSymbolizer":function(node, rule) {
+    var config = {};
+    this.readChildNodes(node, config);
+    config.zIndex = this.featureTypeCounter;
+    if(goog.isDef(config.fill)) {
+      var fill = {color:config.fill.fillColor.getValue(), opacity:goog.isDef(config.fill.fillOpacity) ? config.fill.fillOpacity : ol.parser.ogc.SLD_v1.defaults_.fillOpacity};
+      rule.symbolizers.push(new ol.style.Fill(fill));
+      delete config.fill
+    }
+    if(goog.isDef(config.stroke)) {
+      var stroke = {color:config.stroke.strokeColor.getValue(), opacity:goog.isDef(config.stroke.strokeOpacity) ? config.stroke.strokeOpacity : ol.parser.ogc.SLD_v1.defaults_.strokeOpacity, width:goog.isDef(config.stroke.strokeWidth) ? config.stroke.strokeWidth : ol.parser.ogc.SLD_v1.defaults_.strokeWidth};
+      rule.symbolizers.push(new ol.style.Stroke(stroke));
+      delete config.stroke
+    }
+  }, "PointSymbolizer":function(node, rule) {
+    var config = {};
+    this.readChildNodes(node, config);
+    config.zIndex = this.featureTypeCounter;
+    if(config.fill) {
+      var fillConfig = {color:goog.isDef(config.fill.fillColor) ? config.fill.fillColor : ol.parser.ogc.SLD_v1.defaults_.fillColor, opacity:goog.isDef(config.fill.fillOpacity) ? config.fill.fillOpacity : ol.parser.ogc.SLD_v1.defaults_.fillOpacity};
+      config.fill = new ol.style.Fill(fillConfig)
+    }
+    if(config.stroke) {
+      var strokeConfig = {color:goog.isDef(config.stroke.strokeColor) ? config.stroke.strokeColor : ol.parser.ogc.SLD_v1.defaults_.strokeColor, width:goog.isDef(config.stroke.strokeWidth) ? config.stroke.strokeWidth : ol.parser.ogc.SLD_v1.defaults_.strokeWidth, opacity:goog.isDef(config.stroke.strokeOpacity) ? config.stroke.strokeOpacity : ol.parser.ogc.SLD_v1.defaults_.strokeOpacity};
+      config.stroke = new ol.style.Stroke(strokeConfig)
+    }
+    var symbolizer;
+    if(goog.isDef(config.externalGraphic)) {
+      config.width = config.height = config.size;
+      symbolizer = new ol.style.Icon((config))
+    }else {
+      symbolizer = new ol.style.Shape(config)
+    }
+    rule.symbolizers.push(symbolizer)
+  }, "Stroke":function(node, symbolizer) {
+    var stroke = {};
+    this.readChildNodes(node, stroke);
+    symbolizer.stroke = stroke
+  }, "Fill":function(node, symbolizer) {
+    var fill = {};
+    this.readChildNodes(node, fill);
+    symbolizer.fill = fill
+  }, "CssParameter":function(node, symbolizer) {
+    var cssProperty = node.getAttribute("name");
+    var symProperty = ol.parser.ogc.SLD_v1.cssMap_[cssProperty];
+    if(symProperty) {
+      var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+      symbolizer[symProperty] = ogcreaders._expression.call(this, node)
+    }
+  }, "Graphic":function(node, symbolizer) {
+    var graphic = {};
+    this.readChildNodes(node, graphic);
+    var properties = ["stroke", "fill", "rotation", "opacity"];
+    var prop, value;
+    for(var i = 0, ii = properties.length;i < ii;++i) {
+      prop = properties[i];
+      value = graphic[prop];
+      if(goog.isDef(value)) {
+        symbolizer[prop] = value
+      }
+    }
+    if(goog.isDef(graphic.graphicName)) {
+      symbolizer.type = graphic.graphicName
+    }
+    if(goog.isDef(graphic.size)) {
+      var pointRadius = graphic.size / 2;
+      if(isNaN(pointRadius)) {
+        symbolizer.size = graphic.size
+      }else {
+        symbolizer.size = graphic.size / 2
+      }
+    }
+    if(goog.isDef(graphic.href)) {
+      symbolizer.url = graphic.href
+    }
+  }, "ExternalGraphic":function(node, graphic) {
+    this.readChildNodes(node, graphic)
+  }, "Mark":function(node, graphic) {
+    this.readChildNodes(node, graphic)
+  }, "WellKnownName":function(node, graphic) {
+    graphic.graphicName = this.getChildValue(node)
+  }, "Opacity":function(node, obj) {
+    var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+    obj.opacity = ogcreaders._expression.call(this, node)
+  }, "Size":function(node, obj) {
+    var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+    obj.size = ogcreaders._expression.call(this, node)
+  }, "Rotation":function(node, obj) {
+    var ogcreaders = this.readers[this.filter_.defaultNamespaceURI];
+    obj.rotation = ogcreaders._expression.call(this, node)
+  }, "OnlineResource":function(node, obj) {
+    obj.href = this.getAttributeNS(node, "http://www.w3.org/1999/xlink", "href")
+  }, "Format":function(node, graphic) {
+    graphic.graphicFormat = this.getChildValue(node)
+  }};
+  this.writers = {};
+  this.writers[this.defaultNamespaceURI] = {"StyledLayerDescriptor":function(sld) {
+    var node = this.createElementNS("sld:StyledLayerDescriptor");
+    node.setAttribute("version", this.version);
+    if(goog.isDef(sld.name)) {
+      this.writeNode("Name", sld.name, null, node)
+    }
+    if(goog.isDef(sld.title)) {
+      this.writeNode("Title", sld.title, null, node)
+    }
+    if(goog.isDef(sld.description)) {
+      this.writeNode("Abstract", sld.description, null, node)
+    }
+    goog.object.forEach(sld.namedLayers, function(layer) {
+      this.writeNode("NamedLayer", layer, null, node)
+    }, this);
+    return node
+  }, "Name":function(name) {
+    var node = this.createElementNS("sld:Name");
+    node.appendChild(this.createTextNode(name));
+    return node
+  }, "Title":function(title) {
+    var node = this.createElementNS("sld:Title");
+    node.appendChild(this.createTextNode(title));
+    return node
+  }, "Abstract":function(description) {
+    var node = this.createElementNS("sld:Abstract");
+    node.appendChild(this.createTextNode(description));
+    return node
+  }, "NamedLayer":function(layer) {
+    var node = this.createElementNS("sld:NamedLayer");
+    this.writeNode("Name", layer.name, null, node);
+    var i, ii;
+    if(layer.namedStyles) {
+      for(i = 0, ii = layer.namedStyles.length;i < ii;++i) {
+        this.writeNode("NamedStyle", layer.namedStyles[i], null, node)
+      }
+    }
+    if(layer.userStyles) {
+      for(i = 0, ii = layer.userStyles.length;i < ii;++i) {
+        this.writeNode("UserStyle", layer.userStyles[i], null, node)
+      }
+    }
+    return node
+  }, "NamedStyle":function(name) {
+    var node = this.createElementNS("sld:NamedStyle");
+    this.writeNode("Name", name, null, node);
+    return node
+  }, "UserStyle":function(style) {
+    var node = this.createElementNS("sld:UserStyle");
+    var name = style.getName(), title = style.getTitle();
+    if(goog.isDef(name)) {
+      this.writeNode("Name", name, null, node)
+    }
+    if(goog.isDef(title)) {
+      this.writeNode("Title", title, null, node)
+    }
+    this.writeNode("FeatureTypeStyle", style, null, node);
+    return node
+  }, "FeatureTypeStyle":function(style) {
+    var node = this.createElementNS("sld:FeatureTypeStyle");
+    var rules = style.getRules();
+    for(var i = 0, ii = rules.length;i < ii;++i) {
+      this.writeNode("Rule", rules[i], null, node)
+    }
+    var symbolizers = style.getSymbolizers();
+    if(symbolizers.length > 0) {
+      var rule = new ol.style.Rule({symbolizers:symbolizers});
+      rule.elseFilter = true;
+      this.writeNode("Rule", rule, null, node)
+    }
+    return node
+  }, "Rule":function(rule) {
+    var node = this.createElementNS("sld:Rule");
+    var filter = rule.getFilter();
+    var name = rule.getName(), title = rule.getTitle();
+    if(goog.isDef(name)) {
+      this.writeNode("Name", name, null, node)
+    }
+    if(goog.isDef(title)) {
+      this.writeNode("Title", title, null, node)
+    }
+    if(rule.elseFilter === true) {
+      this.writeNode("ElseFilter", null, null, node)
+    }else {
+      if(filter) {
+        this.writeNode("Filter", filter, this.filter_.defaultNamespaceURI, node)
+      }
+    }
+    var minResolution = rule.getMinResolution();
+    if(minResolution > 0) {
+      this.writeNode("MinScaleDenominator", this.getScaleDenominatorFromResolution_(minResolution), null, node)
+    }
+    var maxResolution = rule.getMaxResolution();
+    if(maxResolution < Infinity) {
+      this.writeNode("MaxScaleDenominator", this.getScaleDenominatorFromResolution_(maxResolution), null, node)
+    }
+    var type, symbolizer, symbolizers = rule.getSymbolizers();
+    if(symbolizers) {
+      for(var i = 0, ii = symbolizers.length;i < ii;++i) {
+        symbolizer = symbolizers[i];
+        if(symbolizer instanceof ol.style.Text) {
+          type = "Text"
+        }else {
+          if(symbolizer instanceof ol.style.Stroke) {
+            type = "Line"
+          }else {
+            if(symbolizer instanceof ol.style.Fill) {
+              type = "Polygon"
+            }else {
+              if(symbolizer instanceof ol.style.Shape || symbolizer instanceof ol.style.Icon) {
+                type = "Point"
+              }
+            }
+          }
+        }
+        if(goog.isDef(type)) {
+          this.writeNode(type + "Symbolizer", symbolizer, null, node)
+        }
+      }
+    }
+    return node
+  }, "PointSymbolizer":function(symbolizer) {
+    var node = this.createElementNS("sld:PointSymbolizer");
+    this.writeNode("Graphic", symbolizer, null, node);
+    return node
+  }, "Mark":function(symbolizer) {
+    var node = this.createElementNS("sld:Mark");
+    this.writeNode("WellKnownName", symbolizer.getType(), null, node);
+    var fill = symbolizer.getFill();
+    if(!goog.isNull(fill)) {
+      this.writeNode("Fill", fill, null, node)
+    }
+    var stroke = symbolizer.getStroke();
+    if(!goog.isNull(stroke)) {
+      this.writeNode("Stroke", stroke, null, node)
+    }
+    return node
+  }, "WellKnownName":function(name) {
+    var node = this.createElementNS("sld:WellKnownName");
+    node.appendChild(this.createTextNode(name));
+    return node
+  }, "Graphic":function(symbolizer) {
+    var node = this.createElementNS("sld:Graphic");
+    var size;
+    if(symbolizer instanceof ol.style.Icon) {
+      this.writeNode("ExternalGraphic", symbolizer, null, node);
+      var opacity = symbolizer.getOpacity();
+      goog.asserts.assertInstanceof(opacity, ol.expr.Literal, "Only ol.expr.Literal supported for graphicOpacity");
+      this.writeNode("Opacity", opacity.getValue(), null, node);
+      size = symbolizer.getWidth()
+    }else {
+      if(symbolizer instanceof ol.style.Shape) {
+        this.writeNode("Mark", symbolizer, null, node);
+        size = symbolizer.getSize()
+      }
+    }
+    this.writeNode("Size", size, null, node);
+    if(symbolizer instanceof ol.style.Icon) {
+      var rotation = symbolizer.getRotation();
+      goog.asserts.assertInstanceof(rotation, ol.expr.Literal, "Only ol.expr.Literal supported for rotation");
+      this.writeNode("Rotation", rotation.getValue(), null, node)
+    }
+    return node
+  }, "PolygonSymbolizer":function(symbolizer) {
+    var node = this.createElementNS("sld:PolygonSymbolizer");
+    this.writeNode("Fill", symbolizer, null, node);
+    return node
+  }, "Fill":function(symbolizer) {
+    var node = this.createElementNS("sld:Fill");
+    var fillColor = symbolizer.getColor();
+    var msg = "Only ol.expr.Literal supported for Fill properties";
+    goog.asserts.assertInstanceof(fillColor, ol.expr.Literal, msg);
+    this.writeNode("CssParameter", {value:fillColor.getValue(), key:"fillColor"}, null, node);
+    var fillOpacity = symbolizer.getOpacity();
+    goog.asserts.assertInstanceof(fillOpacity, ol.expr.Literal, msg);
+    this.writeNode("CssParameter", {value:fillOpacity.getValue(), key:"fillOpacity"}, null, node);
+    return node
+  }, "TextSymbolizer":function(symbolizer) {
+    var node = this.createElementNS("sld:TextSymbolizer");
+    var text = symbolizer.getText();
+    this.writeNode("Label", text, null, node);
+    this.writeNode("Font", symbolizer, null, node);
+    var stroke = symbolizer.getStroke();
+    if(!goog.isNull(stroke)) {
+      this.writeNode("Halo", stroke, null, node)
+    }
+    var color = symbolizer.getColor();
+    goog.asserts.assertInstanceof(color, ol.expr.Literal, "font color should be ol.expr.Literal");
+    this.writeNode("Fill", symbolizer, null, node);
+    return node
+  }, "Halo":function(symbolizer) {
+    var node = this.createElementNS("sld:Halo");
+    goog.asserts.assertInstanceof(symbolizer.getWidth(), ol.expr.Literal, "Only ol.expr.Literal supported for haloRadius");
+    this.writeNode("Radius", symbolizer.getWidth().getValue() / 2, null, node);
+    this.writeNode("Fill", symbolizer, null, node);
+    return node
+  }, "Radius":function(value) {
+    var node = this.createElementNS("sld:Radius");
+    node.appendChild(this.createTextNode(value));
+    return node
+  }, "LineSymbolizer":function(symbolizer) {
+    var node = this.createElementNS("sld:LineSymbolizer");
+    this.writeNode("Stroke", symbolizer, null, node);
+    return node
+  }, "Stroke":function(symbolizer) {
+    var node = this.createElementNS("sld:Stroke");
+    var strokeColor = symbolizer.getColor();
+    var msg = "SLD writing of stroke properties only supported " + "for ol.expr.Literal";
+    goog.asserts.assertInstanceof(strokeColor, ol.expr.Literal, msg);
+    this.writeNode("CssParameter", {value:strokeColor.getValue(), key:"strokeColor"}, null, node);
+    var strokeOpacity = symbolizer.getOpacity();
+    goog.asserts.assertInstanceof(strokeOpacity, ol.expr.Literal, msg);
+    this.writeNode("CssParameter", {value:strokeOpacity.getValue(), key:"strokeOpacity"}, null, node);
+    var strokeWidth = symbolizer.getWidth();
+    goog.asserts.assertInstanceof(strokeWidth, ol.expr.Literal, msg);
+    this.writeNode("CssParameter", {value:strokeWidth.getValue(), key:"strokeWidth"}, null, node);
+    return node
+  }, "CssParameter":function(obj) {
+    var name = ol.parser.ogc.SLD_v1.getCssProperty_(obj.key);
+    if(goog.isDef(name)) {
+      var node = this.createElementNS("sld:CssParameter");
+      node.setAttribute("name", name);
+      node.appendChild(this.createTextNode(obj.value));
+      return node
+    }
+  }, "Label":function(label) {
+    var node = this.createElementNS("sld:Label");
+    this.filter_.writeOgcExpression(label, node);
+    return node
+  }, "Font":function(symbolizer) {
+    var node = this.createElementNS("sld:Font");
+    this.writeNode("CssParameter", {key:"fontFamily", value:symbolizer.getFontFamily().getValue()}, null, node);
+    this.writeNode("CssParameter", {key:"fontSize", value:symbolizer.getFontSize().getValue()}, null, node);
+    return node
+  }, "MinScaleDenominator":function(scale) {
+    var node = this.createElementNS("sld:MinScaleDenominator");
+    node.appendChild(this.createTextNode(scale));
+    return node
+  }, "MaxScaleDenominator":function(scale) {
+    var node = this.createElementNS("sld:MaxScaleDenominator");
+    node.appendChild(this.createTextNode(scale));
+    return node
+  }, "Size":function(value) {
+    var node = this.createElementNS("sld:Size");
+    this.filter_.writeOgcExpression(value, node);
+    return node
+  }};
+  this.filter_ = new ol.parser.ogc.Filter_v1_0_0;
+  for(var uri in this.filter_.readers) {
+    for(var key in this.filter_.readers[uri]) {
+      if(!goog.isDef(this.readers[uri])) {
+        this.readers[uri] = {}
+      }
+      this.readers[uri][key] = goog.bind(this.filter_.readers[uri][key], this.filter_)
+    }
+  }
+  for(var uri in this.filter_.writers) {
+    for(var key in this.filter_.writers[uri]) {
+      if(!goog.isDef(this.writers[uri])) {
+        this.writers[uri] = {}
+      }
+      this.writers[uri][key] = goog.bind(this.filter_.writers[uri][key], this.filter_)
+    }
+  }
+  goog.base(this)
+};
+goog.inherits(ol.parser.ogc.SLD_v1, ol.parser.XML);
+ol.parser.ogc.SLD_v1.cssMap_ = {"stroke":"strokeColor", "stroke-opacity":"strokeOpacity", "stroke-width":"strokeWidth", "stroke-linecap":"strokeLinecap", "stroke-dasharray":"strokeDashstyle", "fill":"fillColor", "fill-opacity":"fillOpacity", "font-family":"fontFamily", "font-size":"fontSize", "font-weight":"fontWeight", "font-style":"fontStyle"};
+ol.parser.ogc.SLD_v1.defaults_ = {fillOpacity:1, strokeOpacity:1, strokeWidth:1, strokeColor:"#000000", haloColor:"#FFFFFF", haloOpacity:1, haloRadius:1, fillColor:"#808080", fontColor:"#000000"};
+ol.parser.ogc.SLD_v1.getCssProperty_ = function(sym) {
+  return goog.object.findKey(ol.parser.ogc.SLD_v1.cssMap_, function(value, key, obj) {
+    return sym === value
+  })
+};
+ol.parser.ogc.SLD_v1.prototype.getResolutionFromScaleDenominator_ = function(scaleDenominator) {
+  var dpi = 25.4 / 0.28;
+  var mpu = ol.METERS_PER_UNIT[this.units];
+  return 1 / (1 / scaleDenominator * (mpu * 39.37) * dpi)
+};
+ol.parser.ogc.SLD_v1.prototype.getScaleDenominatorFromResolution_ = function(resolution) {
+  var dpi = 25.4 / 0.28;
+  var mpu = ol.METERS_PER_UNIT[this.units];
+  return resolution * mpu * 39.37 * dpi
+};
+ol.parser.ogc.SLD_v1.prototype.read = function(data, opt_options) {
+  var units = "m";
+  if(goog.isDef(opt_options) && goog.isDef(opt_options.units)) {
+    units = opt_options.units
+  }
+  this.units = units;
+  if(goog.isString(data)) {
+    data = goog.dom.xml.loadXml(data)
+  }
+  if(data && data.nodeType == 9) {
+    data = data.documentElement
+  }
+  var obj = {namedLayers:{}};
+  this.readNode(data, obj);
+  delete this.units;
+  return obj
+};
+ol.parser.ogc.SLD_v1.prototype.write = function(style, opt_options) {
+  var units = "m";
+  if(goog.isDef(opt_options) && goog.isDef(opt_options.units)) {
+    units = opt_options.units
+  }
+  this.units = units;
+  var root = this.writeNode("StyledLayerDescriptor", style);
+  this.setAttributeNS(root, "http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", this.schemaLocation);
+  var result = this.serialize(root);
+  delete this.units;
+  return result
+};
+goog.provide("ol.parser.ogc.SLD_v1_0_0");
+goog.require("ol.parser.ogc.SLD_v1");
+ol.parser.ogc.SLD_v1_0_0 = function() {
+  goog.base(this);
+  this.version = "1.0.0";
+  this.schemaLocation = "http://www.opengis.net/sld " + "http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
+};
+goog.inherits(ol.parser.ogc.SLD_v1_0_0, ol.parser.ogc.SLD_v1);
+goog.provide("ol.parser.ogc.SLD");
+goog.require("ol.parser.ogc.SLD_v1_0_0");
+goog.require("ol.parser.ogc.Versioned");
+ol.ENABLE_SLD_1_0_0 = true;
+ol.parser.ogc.SLD = function(opt_options) {
+  opt_options = opt_options || {};
+  opt_options["defaultVersion"] = "1.0.0";
+  this.parsers = {};
+  if(ol.ENABLE_SLD_1_0_0) {
+    this.parsers["v1_0_0"] = ol.parser.ogc.SLD_v1_0_0
+  }
+  goog.base(this, opt_options)
+};
+goog.inherits(ol.parser.ogc.SLD, ol.parser.ogc.Versioned);
+goog.provide("ol.parser.ogc.WFS_v1");
+goog.require("goog.dom.xml");
+goog.require("ol.parser.XML");
+ol.parser.WFSWriteOptions;
+ol.parser.ogc.WFS_v1 = function() {
+  this.defaultNamespaceURI = "http://www.opengis.net/wfs";
+  this.readers = {};
+  this.readers[this.defaultNamespaceURI] = {"FeatureCollection":function(node, obj) {
+    obj.features = [];
+    this.readChildNodes(node, obj)
+  }};
+  this.writers = {};
+  this.writers[this.defaultNamespaceURI] = {"GetFeature":function(options) {
+    options = (options);
+    var node = this.createElementNS("wfs:GetFeature");
+    node.setAttribute("service", "WFS");
+    node.setAttribute("version", this.version);
+    if(goog.isDef(options)) {
+      if(goog.isDef(options.handle)) {
+        node.setAttribute("handle", options.handle)
+      }
+      if(goog.isDef(options.outputFormat)) {
+        node.setAttribute("outputFormat", options.outputFormat)
+      }
+      if(goog.isDef(options.maxFeatures)) {
+        node.setAttribute("maxFeatures", options.maxFeatures)
+      }
+    }
+    for(var i = 0, ii = options.featureTypes.length;i < ii;i++) {
+      options.featureType = options.featureTypes[i];
+      this.writeNode("Query", options, null, node)
+    }
+    this.setAttributeNS(node, "http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", this.schemaLocation);
+    return{node:node, options:options}
+  }, "Transaction":function(obj) {
+    obj = obj || {};
+    var options = obj.options || {};
+    var node = this.createElementNS("wfs:Transaction");
+    node.setAttribute("service", "WFS");
+    node.setAttribute("version", this.version);
+    if(goog.isDef(options.handle)) {
+      node.setAttribute("handle", options.handle)
+    }
+    var i, ii;
+    var features = obj.features;
+    if(goog.isDefAndNotNull(features)) {
+      var name, feature;
+      for(i = 0, ii = features.length;i < ii;++i) {
+        feature = features[i];
+        if(goog.isDef(name)) {
+          this.writeNode(name, {feature:feature, options:options}, null, node)
+        }
+      }
+    }
+    if(goog.isDef(options.nativeElements)) {
+      for(i = 0, ii = options.nativeElements.length;i < ii;++i) {
+        this.writeNode("Native", options.nativeElements[i], null, node)
+      }
+    }
+    return node
+  }, "Native":function(nativeElement) {
+    var node = this.createElementNS("wfs:Native");
+    node.setAttribute("vendorId", nativeElement.vendorId);
+    node.setAttribute("safeToIgnore", nativeElement.safeToIgnore);
+    node.appendChild(this.createTextNode(nativeElement.value));
+    return node
+  }};
+  goog.base(this)
+};
+goog.inherits(ol.parser.ogc.WFS_v1, ol.parser.XML);
+ol.parser.ogc.WFS_v1.prototype.getFilterParser = function() {
+  return this.filter_
+};
+ol.parser.ogc.WFS_v1.prototype.setFilterParser = function(filter) {
+  this.filter_ = filter;
+  for(var uri in this.filter_.readers) {
+    for(var key in this.filter_.readers[uri]) {
+      if(!goog.isDef(this.readers[uri])) {
+        this.readers[uri] = {}
+      }
+      if(!goog.isDef(this.readers[uri][key])) {
+        this.readers[uri][key] = goog.bind(this.filter_.readers[uri][key], this.filter_)
+      }
+    }
+  }
+  for(uri in this.filter_.writers) {
+    for(key in this.filter_.writers[uri]) {
+      if(!goog.isDef(this.writers[uri])) {
+        this.writers[uri] = {}
+      }
+      if(!goog.isDef(this.writers[uri][key])) {
+        this.writers[uri][key] = goog.bind(this.filter_.writers[uri][key], this.filter_)
+      }
+    }
+  }
+};
+ol.parser.ogc.WFS_v1.prototype.read = function(data) {
+  if(goog.isString(data)) {
+    data = goog.dom.xml.loadXml(data)
+  }
+  if(data && data.nodeType == 9) {
+    data = data.documentElement
+  }
+  var obj = {};
+  this.readNode(data, obj);
+  return obj
+};
+ol.parser.ogc.WFS_v1.prototype.write = function(features, options) {
+  var root = this.writeNode("Transaction", {features:features, options:options});
+  this.setAttributeNS(root, "http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", this.schemaLocation);
+  return this.serialize(root)
+};
+goog.provide("ol.parser.ogc.WFS_v1_0_0");
+goog.require("goog.array");
+goog.require("goog.functions");
+goog.require("goog.object");
+goog.require("ol.parser.ogc.Filter_v1_0_0");
+goog.require("ol.parser.ogc.WFS_v1");
+ol.parser.ogc.WFS_v1_0_0 = function() {
+  goog.base(this);
+  this.version = "1.0.0";
+  this.schemaLocation = this.defaultNamespaceURI + " " + "http://schemas.opengis.net/wfs/1.0.0/WFS-transaction.xsd";
+  goog.object.extend(this.readers[this.defaultNamespaceURI], {"WFS_TransactionResponse":function(node, obj) {
+    obj.insertIds = [];
+    obj.success = false;
+    this.readChildNodes(node, obj)
+  }, "InsertResult":function(node, container) {
+    var obj = {fids:[]};
+    this.readChildNodes(node, obj);
+    for(var key in obj.fids) {
+      container.insertIds.push(key)
+    }
+  }, "TransactionResult":function(node, obj) {
+    this.readChildNodes(node, obj)
+  }, "Status":function(node, obj) {
+    this.readChildNodes(node, obj)
+  }, "SUCCESS":function(node, obj) {
+    obj.success = true
+  }});
+  goog.object.extend(this.writers[this.defaultNamespaceURI], {"GetFeature":goog.functions.compose(function(obj) {
+    return obj.node
+  }, this.writers["http://www.opengis.net/wfs"]["GetFeature"]), "Query":function(options) {
+    var prefix = goog.isDef(options.featurePrefix) ? options.featurePrefix + ":" : "";
+    var node = this.createElementNS("wfs:Query");
+    node.setAttribute("typeName", prefix + options.featureType);
+    if(goog.isDef(options.srsNameInQuery) && goog.isDef(options.srsName)) {
+      node.setAttribute("srsName", options.srsName)
+    }
+    if(goog.isDef(options.featureNS)) {
+      node.setAttribute("xmlns:" + options.featurePrefix, options.featureNS)
+    }
+    if(goog.isDef(options.propertyNames)) {
+      for(var i = 0, ii = options.propertyNames.length;i < ii;i++) {
+        this.writeNode("PropertyName", options.propertyNames[i], "http://www.opengis.net/ogc", node)
+      }
+    }
+    if(goog.isDef(options.filter)) {
+      this.writeNode("Filter", options.filter, "http://www.opengis.net/ogc", node)
+    }
+    return node
+  }});
+  var filter = new ol.parser.ogc.Filter_v1_0_0;
+  delete filter.getGmlParser().featureNS;
+  this.setFilterParser(filter)
+};
+goog.inherits(ol.parser.ogc.WFS_v1_0_0, ol.parser.ogc.WFS_v1);
+goog.provide("ol.parser.ogc.WFS_v1_1_0");
+goog.require("goog.asserts");
+goog.require("goog.functions");
+goog.require("goog.object");
+goog.require("ol.expr.Identifier");
+goog.require("ol.parser.ogc.Filter_v1_1_0");
+goog.require("ol.parser.ogc.WFS_v1");
+ol.parser.ogc.WFS_v1_1_0 = function() {
+  goog.base(this);
+  this.version = "1.1.0";
+  this.schemaLocation = this.defaultNamespaceURI + " " + "http://schemas.opengis.net/wfs/1.1.0/wfs.xsd";
+  goog.object.extend(this.readers[this.defaultNamespaceURI], {"FeatureCollection":goog.functions.sequence(function(node, obj) {
+    var numberOfFeatures = node.getAttribute("numberOfFeatures");
+    if(!goog.isNull(numberOfFeatures)) {
+      obj.numberOfFeatures = parseInt(numberOfFeatures, 10)
+    }
+  }, this.readers["http://www.opengis.net/wfs"]["FeatureCollection"]), "TransactionResponse":function(node, obj) {
+    obj.insertIds = [];
+    obj.success = false;
+    this.readChildNodes(node, obj)
+  }, "TransactionSummary":function(node, obj) {
+    obj.success = true
+  }, "InsertResults":function(node, obj) {
+    this.readChildNodes(node, obj)
+  }, "Feature":function(node, container) {
+    var obj = {};
+    this.readChildNodes(node, obj);
+    for(var key in obj.fids) {
+      container.insertIds.push(key)
+    }
+  }});
+  goog.object.extend(this.writers[this.defaultNamespaceURI], {"GetFeature":goog.functions.compose(function(obj) {
+    var options = obj.options;
+    var node = obj.node;
+    if(goog.isDef(options)) {
+      if(goog.isDef(options.resultType)) {
+        node.setAttribute("resultType", options.resultType)
+      }
+      if(goog.isDef(options.startIndex)) {
+        node.setAttribute("startIndex", options.startIndex)
+      }
+      if(goog.isDef(options.count)) {
+        node.setAttribute("count", options.count)
+      }
+    }
+    return node
+  }, this.writers["http://www.opengis.net/wfs"]["GetFeature"]), "Query":function(options) {
+    var prefix = goog.isDef(options.featurePrefix) ? options.featurePrefix + ":" : "";
+    var node = this.createElementNS("wfs:Query");
+    node.setAttribute("typeName", prefix + options.featureType);
+    node.setAttribute("srsName", options.srsName);
+    if(goog.isDef(options.featureNS)) {
+      node.setAttribute("xmlns:" + options.featurePrefix, options.featureNS)
+    }
+    if(goog.isDef(options.propertyNames)) {
+      for(var i = 0, ii = options.propertyNames.length;i < ii;i++) {
+        this.writeNode("PropertyName", options.propertyNames[i], null, node)
+      }
+    }
+    if(goog.isDef(options.filter)) {
+      this.writeNode("Filter", options.filter, "http://www.opengis.net/ogc", node)
+    }
+    return node
+  }, "PropertyName":function(obj) {
+    goog.asserts.assertInstanceof(obj, ol.expr.Identifier);
+    var node = this.createElementNS("wfs:PropertyName");
+    node.appendChild(this.createTextNode(obj.getName()));
+    return node
+  }});
+  this.setFilterParser(new ol.parser.ogc.Filter_v1_1_0)
+};
+goog.inherits(ol.parser.ogc.WFS_v1_1_0, ol.parser.ogc.WFS_v1);
+goog.require("ol.parser.ogc.Versioned");
+goog.provide("ol.parser.ogc.WFS");
+goog.require("ol.parser.ogc.WFS_v1_0_0");
+goog.require("ol.parser.ogc.WFS_v1_1_0");
+ol.ENABLE_WFS_1_0_0 = true;
+ol.ENABLE_WFS_1_1_0 = true;
+ol.parser.ogc.WFS = function(opt_options) {
+  var options = opt_options || {};
+  options["defaultVersion"] = "1.0.0";
+  this.parsers = {};
+  if(ol.ENABLE_WFS_1_0_0) {
+    this.parsers["v1_0_0"] = ol.parser.ogc.WFS_v1_0_0
+  }
+  if(ol.ENABLE_WFS_1_1_0) {
+    this.parsers["v1_1_0"] = ol.parser.ogc.WFS_v1_1_0
+  }
+  goog.base(this, options)
+};
+goog.inherits(ol.parser.ogc.WFS, ol.parser.ogc.Versioned);
 goog.provide("ol.parser.ogc.WMSCapabilities_v1");
 goog.require("goog.dom.xml");
 goog.require("goog.object");
@@ -35664,9 +36606,11 @@ ol.source.ImageStatic.createImageFunction = function(url) {
 };
 goog.provide("ol.source.WMSGetFeatureInfoMethod");
 goog.provide("ol.source.wms");
+goog.require("goog.Uri");
 goog.require("goog.net.XhrIo");
 goog.require("goog.object");
 goog.require("goog.uri.utils");
+ol.source.WMSGetFeatureInfoOptions;
 ol.source.WMSGetFeatureInfoMethod = {IFRAME:"iframe", XHR_GET:"xhr_get"};
 ol.source.wms.getUrl = function(baseUrl, params, extent, size, projection) {
   var baseParams = {"SERVICE":"WMS", "VERSION":"1.3.0", "REQUEST":"GetMap", "FORMAT":"image/png", "TRANSPARENT":true, "WIDTH":Math.round(size[0]), "HEIGHT":Math.round(size[1])};
@@ -35692,7 +36636,11 @@ ol.source.wms.getFeatureInfo = function(url, pixel, options, success, opt_error)
     goog.object.extend(params, {"X":x, "Y":y})
   }
   goog.object.extend(params, localOptions.params);
-  url = goog.uri.utils.appendParamsFromMap(url, params);
+  var uri = new goog.Uri(url, true);
+  for(var key in params) {
+    uri.setParameterValue(key, params[key])
+  }
+  url = uri.toString();
   if(localOptions.method == ol.source.WMSGetFeatureInfoMethod.IFRAME) {
     goog.global.setTimeout(function() {
       success('\x3ciframe seamless src\x3d"' + url + '"\x3e\x3c/iframe\x3e')
@@ -35726,7 +36674,7 @@ ol.source.ImageWMS = function(options) {
   this.params_ = options.params;
   var imageUrlFunction = goog.isDef(options.url) ? ol.ImageUrlFunction.createFromParamsFunction(options.url, this.params_, ol.source.wms.getUrl) : ol.ImageUrlFunction.nullImageUrlFunction;
   goog.base(this, {attributions:options.attributions, crossOrigin:options.crossOrigin, extent:options.extent, projection:options.projection, resolutions:options.resolutions, imageUrlFunction:imageUrlFunction});
-  this.getFeatureInfoOptions_ = goog.isDef(options.getFeatureInfoOptions) ? options.getFeatureInfoOptions : {};
+  this.getFeatureInfoOptions_ = goog.isDef(options.getFeatureInfoOptions) ? options.getFeatureInfoOptions : ({});
   this.image_ = null;
   this.ratio_ = goog.isDef(options.ratio) ? options.ratio : 1.5
 };
@@ -36018,7 +36966,7 @@ ol.source.TileWMS = function(options) {
     return new ol.TileCoord(tileCoord.z, x, tileCoord.y)
   };
   goog.base(this, {attributions:options.attributions, crossOrigin:options.crossOrigin, extent:extent, logo:options.logo, tileGrid:options.tileGrid, opaque:!transparent, projection:options.projection, tileLoadFunction:options.tileLoadFunction, tileUrlFunction:ol.TileUrlFunction.withTileCoordTransform(tileCoordTransform, tileUrlFunction)});
-  this.getFeatureInfoOptions_ = goog.isDef(options.getFeatureInfoOptions) ? options.getFeatureInfoOptions : {}
+  this.getFeatureInfoOptions_ = goog.isDef(options.getFeatureInfoOptions) ? options.getFeatureInfoOptions : ({})
 };
 goog.inherits(ol.source.TileWMS, ol.source.TileImage);
 ol.source.TileWMS.prototype.getKeyZXY = function(z, x, y) {
@@ -36258,109 +37206,6 @@ ol.source.WMTS.optionsFromCapabilities = function(wmtsCap, layer) {
 goog.provide("ol.sphere.WGS84");
 goog.require("ol.Sphere");
 ol.sphere.WGS84 = new ol.Sphere(6378137);
-goog.provide("ol.style.Text");
-goog.require("goog.asserts");
-goog.require("ol.Feature");
-goog.require("ol.expr");
-goog.require("ol.expr.Expression");
-goog.require("ol.expr.Literal");
-goog.require("ol.style.Symbolizer");
-goog.require("ol.style.TextLiteral");
-ol.style.Text = function(options) {
-  this.color_ = !goog.isDef(options.color) ? new ol.expr.Literal(ol.style.TextDefaults.color) : options.color instanceof ol.expr.Expression ? options.color : new ol.expr.Literal(options.color);
-  this.fontFamily_ = !goog.isDef(options.fontFamily) ? new ol.expr.Literal(ol.style.TextDefaults.fontFamily) : options.fontFamily instanceof ol.expr.Expression ? options.fontFamily : new ol.expr.Literal(options.fontFamily);
-  this.fontSize_ = !goog.isDef(options.fontSize) ? new ol.expr.Literal(ol.style.TextDefaults.fontSize) : options.fontSize instanceof ol.expr.Expression ? options.fontSize : new ol.expr.Literal(options.fontSize);
-  this.fontWeight_ = !goog.isDef(options.fontWeight) ? new ol.expr.Literal(ol.style.TextDefaults.fontWeight) : options.fontWeight instanceof ol.expr.Expression ? options.fontWeight : new ol.expr.Literal(options.fontWeight);
-  this.text_ = options.text instanceof ol.expr.Expression ? options.text : new ol.expr.Literal(options.text);
-  this.opacity_ = !goog.isDef(options.opacity) ? new ol.expr.Literal(ol.style.TextDefaults.opacity) : options.opacity instanceof ol.expr.Expression ? options.opacity : new ol.expr.Literal(options.opacity);
-  this.stroke_ = goog.isDefAndNotNull(options.stroke) ? options.stroke : null;
-  this.zIndex_ = !goog.isDefAndNotNull(options.zIndex) ? new ol.expr.Literal(ol.style.TextDefaults.zIndex) : options.zIndex instanceof ol.expr.Expression ? options.zIndex : new ol.expr.Literal(options.zIndex)
-};
-goog.inherits(ol.style.Text, ol.style.Symbolizer);
-ol.style.Text.prototype.createLiteral = function(featureOrType) {
-  var feature, type;
-  if(featureOrType instanceof ol.Feature) {
-    feature = featureOrType;
-    var geometry = feature.getGeometry();
-    type = geometry ? geometry.getType() : null
-  }else {
-    type = featureOrType
-  }
-  var color = ol.expr.evaluateFeature(this.color_, feature);
-  goog.asserts.assertString(color, "color must be a string");
-  var fontFamily = ol.expr.evaluateFeature(this.fontFamily_, feature);
-  goog.asserts.assertString(fontFamily, "fontFamily must be a string");
-  var fontSize = Number(ol.expr.evaluateFeature(this.fontSize_, feature));
-  goog.asserts.assert(!isNaN(fontSize), "fontSize must be a number");
-  var fontWeight = ol.expr.evaluateFeature(this.fontWeight_, feature);
-  goog.asserts.assertString(fontWeight, "fontWeight must be a string");
-  var text = ol.expr.evaluateFeature(this.text_, feature);
-  goog.asserts.assertString(text, "text must be a string");
-  var opacity = Number(ol.expr.evaluateFeature(this.opacity_, feature));
-  goog.asserts.assert(!isNaN(opacity), "opacity must be a number");
-  var strokeColor, strokeOpacity, strokeWidth;
-  if(!goog.isNull(this.stroke_)) {
-    strokeColor = ol.expr.evaluateFeature(this.stroke_.getColor(), feature);
-    goog.asserts.assertString(strokeColor, "strokeColor must be a string");
-    strokeOpacity = Number(ol.expr.evaluateFeature(this.stroke_.getOpacity(), feature));
-    goog.asserts.assert(!isNaN(strokeOpacity), "strokeOpacity must be a number");
-    strokeWidth = Number(ol.expr.evaluateFeature(this.stroke_.getWidth(), feature));
-    goog.asserts.assert(!isNaN(strokeWidth), "strokeWidth must be a number")
-  }
-  var zIndex = Number(ol.expr.evaluateFeature(this.zIndex_, feature));
-  goog.asserts.assert(!isNaN(zIndex), "zIndex must be a number");
-  return new ol.style.TextLiteral({color:color, fontFamily:fontFamily, fontSize:fontSize, fontWeight:fontWeight, text:text, opacity:opacity, strokeColor:strokeColor, strokeOpacity:strokeOpacity, strokeWidth:strokeWidth, zIndex:zIndex})
-};
-ol.style.Text.prototype.getColor = function() {
-  return this.color_
-};
-ol.style.Text.prototype.getFontFamily = function() {
-  return this.fontFamily_
-};
-ol.style.Text.prototype.getFontSize = function() {
-  return this.fontSize_
-};
-ol.style.Text.prototype.getFontWeight = function() {
-  return this.fontWeight_
-};
-ol.style.Text.prototype.getOpacity = function() {
-  return this.opacity_
-};
-ol.style.Text.prototype.getText = function() {
-  return this.text_
-};
-ol.style.Text.prototype.getZIndex = function() {
-  return this.zIndex_
-};
-ol.style.Text.prototype.setColor = function(color) {
-  goog.asserts.assertInstanceof(color, ol.expr.Expression);
-  this.color_ = color
-};
-ol.style.Text.prototype.setFontFamily = function(fontFamily) {
-  goog.asserts.assertInstanceof(fontFamily, ol.expr.Expression);
-  this.fontFamily_ = fontFamily
-};
-ol.style.Text.prototype.setFontSize = function(fontSize) {
-  goog.asserts.assertInstanceof(fontSize, ol.expr.Expression);
-  this.fontSize_ = fontSize
-};
-ol.style.Text.prototype.setFontWeight = function(fontWeight) {
-  goog.asserts.assertInstanceof(fontWeight, ol.expr.Expression);
-  this.fontWeight_ = fontWeight
-};
-ol.style.Text.prototype.setOpacity = function(opacity) {
-  goog.asserts.assertInstanceof(opacity, ol.expr.Expression);
-  this.opacity_ = opacity
-};
-ol.style.Text.prototype.setText = function(text) {
-  goog.asserts.assertInstanceof(text, ol.expr.Expression);
-  this.text_ = text
-};
-ol.style.Text.prototype.setZIndex = function(zIndex) {
-  goog.asserts.assertInstanceof(zIndex, ol.expr.Expression);
-  this.zIndex_ = zIndex
-};
-ol.style.TextDefaults = {color:"#000", fontFamily:"sans-serif", fontSize:10, fontWeight:"normal", opacity:1, zIndex:0};
 goog.require("libtess");
 goog.require("libtess.ActiveRegion");
 goog.require("libtess.CachedVertex");
@@ -36565,7 +37410,14 @@ goog.require("ol.parser.ogc.GML_v2");
 goog.require("ol.parser.ogc.GML_v3");
 goog.require("ol.parser.ogc.OWSCommon_v1");
 goog.require("ol.parser.ogc.OWSCommon_v1_1_0");
+goog.require("ol.parser.ogc.SLD");
+goog.require("ol.parser.ogc.SLD_v1");
+goog.require("ol.parser.ogc.SLD_v1_0_0");
 goog.require("ol.parser.ogc.Versioned");
+goog.require("ol.parser.ogc.WFS");
+goog.require("ol.parser.ogc.WFS_v1");
+goog.require("ol.parser.ogc.WFS_v1_0_0");
+goog.require("ol.parser.ogc.WFS_v1_1_0");
 goog.require("ol.parser.ogc.WMSCapabilities");
 goog.require("ol.parser.ogc.WMSCapabilities_v1");
 goog.require("ol.parser.ogc.WMSCapabilities_v1_0_0");
@@ -36717,6 +37569,8 @@ goog.provide("ol.parser.GMLWriteOptions");
 goog.provide("ol.parser.GPXOptions");
 goog.provide("ol.parser.GPXWriteOptions");
 goog.provide("ol.parser.KMLOptions");
+goog.provide("ol.parser.SLDReadOptions");
+goog.provide("ol.parser.SLDWriteOptions");
 goog.provide("ol.source.BingMapsOptions");
 goog.provide("ol.source.ImageStaticOptions");
 goog.provide("ol.source.ImageWMSOptions");
@@ -36727,7 +37581,6 @@ goog.provide("ol.source.TileDebugOptions");
 goog.provide("ol.source.TileJSONOptions");
 goog.provide("ol.source.TileWMSOptions");
 goog.provide("ol.source.VectorOptions");
-goog.provide("ol.source.WMSGetFeatureInfoOptions");
 goog.provide("ol.source.WMTSOptions");
 goog.provide("ol.source.XYZOptions");
 goog.provide("ol.style.FillOptions");
@@ -36790,6 +37643,8 @@ ol.parser.GMLWriteOptions;
 ol.parser.GPXOptions;
 ol.parser.GPXWriteOptions;
 ol.parser.KMLOptions;
+ol.parser.SLDReadOptions;
+ol.parser.SLDWriteOptions;
 ol.source.BingMapsOptions;
 ol.source.ImageStaticOptions;
 ol.source.ImageWMSOptions;
@@ -36800,7 +37655,6 @@ ol.source.TileDebugOptions;
 ol.source.TileJSONOptions;
 ol.source.TileWMSOptions;
 ol.source.VectorOptions;
-ol.source.WMSGetFeatureInfoOptions;
 ol.source.WMTSOptions;
 ol.source.XYZOptions;
 ol.style.FillOptions;
