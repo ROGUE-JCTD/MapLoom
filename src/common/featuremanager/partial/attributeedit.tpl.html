@@ -10,9 +10,19 @@
         <label class="control-label custom-control-label">{{prop[0]}}</label>
         <div ng-switch on="prop.type">
           <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop" date-key="1"></datetimepicker>
-          <select ng-model="prop[1]" ng-switch-when="simpleType" class="form-control">
-            <option ng-repeat="enum in prop.enum">{{enum._value}}</option>
-          </select>
+          <div ng-switch-when="simpleType" class="input-group">
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li ng-repeat="enum in prop.enum">
+                  <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
+                </li>
+              </ul>
+            </div>
+            <input ng-model="prop[1]" type="text" class="form-control" disabled/>
+          </div>
           <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
         </div>
 

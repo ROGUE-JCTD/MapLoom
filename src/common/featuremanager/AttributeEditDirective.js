@@ -36,6 +36,10 @@
               }
             };
 
+            scope.selectValue = function(property, index) {
+              property[1] = property.enum[index]._value;
+            };
+
             scope.$on('modal-closed', closeModal);
           }
         };
