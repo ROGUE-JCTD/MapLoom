@@ -310,7 +310,28 @@
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
         response.data.featureType.workspace = workspaceRoute.workspace;
-        deferredResponse.resolve(response.data.featureType);
+        var featureType = response.data.featureType;
+        url = layer.get('metadata').url + '/wfs?service=wfs&version=1.0.0&request=DescribeFeatureType&typeName=' +
+            featureType.nativeName;
+
+        http.get(url).then(function(response) {
+          // TODO: Use the OpenLayers parser once it is done
+          var x2js = new X2JS();
+          var json = x2js.xml_str2json(response.data);
+          var schema = [];
+
+          goog.array.forEach(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
+            schema[obj._name] = obj;
+            if (goog.isDefAndNotNull(obj.simpleType)) {
+              schema[obj._name]._type = 'simpleType';
+            }
+          });
+
+          layer.get('metadata').schema = schema;
+          deferredResponse.resolve(featureType);
+        }, function(reject) {
+          deferredResponse.reject(reject);
+        });
       }, function(reject) {
         deferredResponse.reject(reject);
       });
@@ -355,7 +376,7 @@
                   metadata.nativeName = featureType.nativeName;
                 }, function(rejected) {
                   dialogService_.error(
-                      'Error', 'Unable to get feature type of GeoGit data store. (' + rejected.status + ')');
+                      'Error', 'Unable to get feature type of data store. (' + rejected.status + ')');
                 });
               }, function(rejected) {
                 dialogService_.error('Error', 'Unable to get the data store. (' + rejected.status + ')');

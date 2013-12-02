@@ -137,7 +137,7 @@
     return {
       restrict: 'E',
       template: '<div ng-class="{\'has-error\': !formName.coords.$valid}" class="form-group">' +
-          '<div class="input-group">' +
+          /*'<div class="input-group">' +
           '<div class="input-group-btn">' +
           '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
           '<span class="caret"></span>' +
@@ -146,9 +146,9 @@
           '<li ng-repeat="display in coordinateDisplays">' +
           '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
           '</ul>' +
-          '</div>' +
+          '</div>' +*/
           '<input name="coords" ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
-          '</div>' +
+          /*'</div>' +*/
           '</div>',
       replace: true,
       scope: {

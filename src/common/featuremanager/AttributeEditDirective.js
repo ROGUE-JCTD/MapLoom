@@ -13,10 +13,17 @@
             scope.$on('startAttributeEdit', function(event, feature, properties) {
 
               scope.properties = new Array(properties.length);
+              var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
                 scope.properties[index] = goog.object.clone(property);
+                if (goog.isDefAndNotNull(attributeTypes)) {
+                  scope.properties[index].type = attributeTypes[scope.properties[index][0]]._type;
+                  if (scope.properties[index].type === 'simpleType') {
+                    scope.properties[index].enum =
+                        attributeTypes[scope.properties[index][0]].simpleType.restriction.enumeration;
+                  }
+                }
               });
-
               $('#attribute-edit-dialog').modal('toggle');
               scope.feature = feature;
             });

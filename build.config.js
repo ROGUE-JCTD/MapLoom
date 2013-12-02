@@ -72,6 +72,7 @@ module.exports = {
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/moment/min/moment.min.js',
       'vendor/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+      'vendor/x2js/xml2json.min.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',

@@ -8,7 +8,14 @@
     </div>
     <div class="form-group" ng-repeat="prop in properties">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
-        <autotextarea ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
+        <div ng-switch on="prop.type">
+          <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop" date-key="1"></datetimepicker>
+          <select ng-model="prop[1]" ng-switch-when="simpleType" class="form-control">
+            <option ng-repeat="enum in prop.enum">{{enum._value}}</option>
+          </select>
+          <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
+        </div>
+
     </div>
   </form>
 </div>
