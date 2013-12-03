@@ -1,0 +1,120 @@
+.history-scroll-pane {
+  max-height: 300px;
+  overflow-y: auto;
+  .list-group-item {
+    height: 40px;
+  }
+
+  .popover {
+    width: 400px;
+    max-width: 400px;
+
+    .history-popover-label {
+      display: block;
+      margin: 0;
+      padding: 0;
+      font: @featureInfoBoxLabelFont;
+      color: @featureInfoBoxLabelFontColor;
+      word-wrap: break-word;
+    }
+
+    .history-popover-value {
+      display: block;
+      margin: 0;
+      padding: 0 0 7px;
+      font: @featureInfoBoxValueFont;
+      white-space: normal;
+      word-wrap: break-word;
+    }
+  }
+}
+
+.history-loading .loading{
+  position: relative;
+  margin: -3px 0 0 -14px;
+}
+
+#history-loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  .z-index(@dialogLevel, 1);
+  opacity: 0.5;
+  background-color: black;
+}
+
+.history-button {
+  .loom-button-variant(@syncListButtonFontColor, @syncListButtonFontColor, @syncListButtonColor, @syncListButtonColor);
+  border: 1px solid lighten(@syncListColor, 10%) !important;
+  border-radius: 0;
+  margin: 3px;
+  .glyphicon {
+    top: 2px;
+  }
+}
+
+.commit-summary {
+  height: 33px;
+  position: relative;
+  float: left;
+  width: 80px;
+  margin-bottom: 0px;
+  top: -8px;
+  left: -12px;
+  border: 1px solid @layerHeaderColor;
+
+  .progress-bar-add {
+    background-color: @addColor;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .progress-bar-modify {
+    background-color: darken(@modifyColor, 5%);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .progress-bar-delete {
+    background-color: @deleteColor;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .progress-bar-none {
+    background-color: darken(@mainListItemColor, 7%) !important;
+    width: 100%;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .no-summary-text {
+    color: @layerHeaderColor;
+    font-size: 20px;
+    position: relative;
+    top: 4px;
+    left: -1px;
+  }
+}
+
+.author-name {
+  float: left;
+  position: relative;
+  top: -8px;
+  width: 190px;
+  font-weight: 900;
+}
+
+.commit-time {
+  float: left;
+  position: relative;
+  top: -7px;
+  width: 190px;
+  font-size: 13px;
+}

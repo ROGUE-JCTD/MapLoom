@@ -98,8 +98,8 @@ var GeoGitTagOptions = function() {
 
 var GeoGitFeatureDiffOptions = function() {
   this.path = null;
-  this.oldCommitId = null;
-  this.newCommitId = null;
+  this.oldTreeish = null;
+  this.newTreeish = null;
   this.all = null;
 };
 
@@ -166,7 +166,10 @@ var GeoGitLogOptions = function() {
   this.paths = null;
   this.since = null;
   this.until = null;
+  this.sinceTime = null;
+  this.untilTime = null;
   this.page = null;
-  this.elementsPerPage = null;
+  this.show = null;
   this.firstParentOnly = null;
+  this.summarize = null;
 };

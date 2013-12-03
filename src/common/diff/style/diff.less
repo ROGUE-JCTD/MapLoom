@@ -47,6 +47,11 @@
   }
 }
 
+.diffpanel-diff-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .merge-button-wrap {
   width: 46%;
   margin: 5px;
@@ -182,5 +187,45 @@
         }
       }
     }
+  }
+}
+
+.diff-summary {
+  text-align: center;
+  background-color: darken(@mainListItemColor, 7%) !important;
+  border: 1px solid darken(@mainListItemColor, 10%) !important;
+  padding-top: 3px;
+  padding-bottom: 5px;
+
+  .glyphicon {
+    font-size: large;
+    position: relative;
+    left: -5px;
+    top: 3px;
+  }
+
+  .summary-text {
+    color: black !important;
+    text-decoration: none !important;
+    padding-right: 15px;
+    left: -2px;
+    top: -1px;
+    position: relative;
+  }
+
+  .add.glyphicon {
+    color: @addColor;
+  }
+
+  .modify.glyphicon {
+    color: @modifyColor;
+  }
+
+  .delete.glyphicon {
+    color: @deleteColor;
+  }
+
+  .merged.glyphicon {
+    color: @mergedColor;
   }
 }

@@ -3,7 +3,7 @@
   var module = angular.module('loom_merge_directive', []);
 
   module.directive('loomMerge',
-      function(geogitService, dialogService, notificationService, conflictService, mapService) {
+      function(geogitService, dialogService, notificationService, conflictService, mapService, featureDiffService) {
         return {
           templateUrl: 'merge/partials/merge.tpl.html',
           link: function(scope, element, attrs) {
@@ -34,74 +34,72 @@
                 transaction.command('checkout', checkoutOptions).then(function(checkoutResult) {
                   var mergeOptions = new GeoGitMergeOptions();
                   mergeOptions.commit = scope.sourceBranch;
+                  mergeOptions.noCommit = true;
                   transaction.command('merge', mergeOptions).then(function(mergeResult) {
-                    transaction.finalize().then(function() {
-                      notificationService.addNotification({
-                        text: 'Merge Successful',
-                        read: false,
-                        type: 'loom-update-notification',
-                        emptyMessage: 'The merge resulted in no changes.',
-                        repos: [
-                          {
-                            name: 'geogit_repo',
-                            features: mergeResult.Merge.Feature
-                          }
-                        ],
-                        callback: function(feature) {
-                          var crs = goog.isDefAndNotNull(feature.original.crs) ? feature.original.crs : null;
-                          var repoName = geogitService.getRepoById(repoId).name;
-                          mapService.map.getLayers().forEach(function(layer) {
-                            var metadata = layer.get('metadata');
-                            if (goog.isDefAndNotNull(metadata)) {
-                              if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
-                                if (goog.isDefAndNotNull(metadata.nativeName) &&
-                                    metadata.nativeName === feature.layer) {
-                                  if (goog.isDefAndNotNull(metadata.projection)) {
-                                    crs = metadata.projection;
-                                  }
-                                }
+                    transaction.command('status').then(function(statusResult) {
+                      var commitOptions = new GeoGitCommitOptions();
+                      commitOptions.all = true;
+                      commitOptions.message =
+                          conflictService.buildMergeMessage(statusResult, scope.sourceBranch, false);
+                      transaction.command('commit', commitOptions).then(function(commitResponse) {
+                        transaction.finalize().then(function() {
+                          var leftName = scope.destinationBranch;
+                          var rightName = scope.sourceBranch;
+                          notificationService.addNotification({
+                            text: 'Merge Successful',
+                            read: false,
+                            type: 'loom-update-notification',
+                            emptyMessage: 'The merge resulted in no changes.',
+                            repos: [
+                              {
+                                name: 'geogit_repo',
+                                features: mergeResult.Merge.Feature
                               }
+                            ],
+                            callback: function(feature) {
+                              featureDiffService.leftName = leftName;
+                              featureDiffService.rightName = rightName;
+                              featureDiffService.setFeature(
+                                  feature.original, mergeResult.Merge.ours,
+                                  mergeResult.Merge.theirs, mergeResult.Merge.ancestor,
+                                  commitResponse.commitId, repoId);
+                              $('#feature-diff-dialog').modal('show');
                             }
                           });
-
-                          var geom = ol.parser.WKT.read(feature.original.geometry);
-                          if (goog.isDefAndNotNull(crs)) {
-                            var transform =
-                                ol.proj.getTransform(crs, mapService.map.getView().getView2D().getProjection());
-                            geom.transform(transform);
+                          scope.cancel();
+                          mapService.dumpTileCache();
+                        }, function(endTransactionFailure) {
+                          if (goog.isObject(endTransactionFailure) &&
+                              goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
+                            handleConflicts(endTransactionFailure, transaction,
+                                dialogService, conflictService, 'Transaction', 'Repository', scope, 'Transaction');
+                          } else {
+                            dialogService.error('Error',
+                                'An unknown error occurred when finalizing the transaction.  Please try again.');
+                            transaction.abort();
+                            scope.cancel();
+                            console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                           }
-                          var newBounds = geom.getBounds();
-                          var x = newBounds[2] - newBounds[0];
-                          var y = newBounds[3] - newBounds[1];
-                          x *= 0.5;
-                          y *= 0.5;
-                          newBounds[0] -= x;
-                          newBounds[2] += x;
-                          newBounds[1] -= y;
-                          newBounds[3] += y;
-                          mapService.zoomToExtent(newBounds);
-                        }
-                      });
-                      scope.cancel();
-                      mapService.dumpTileCache();
-                    }, function(endTransactionFailure) {
-                      if (goog.isObject(endTransactionFailure) &&
-                          goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
-                        var message = 'Merge transaction\n\nConflicts:';
-                        handleConflicts(endTransactionFailure, transaction,
-                            dialogService, conflictService, scope, message);
-                      } else {
+                        });
+                      }, function(commitFailure) {
                         dialogService.error('Error',
-                            'An unknown error occurred when finalizing the transaction.  Please try again.');
+                            'An unknown error occurred when finalizing the commit.  Please try again.');
                         transaction.abort();
                         scope.cancel();
-                        console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
-                      }
+                        console.log('ERROR: Commit failure: ', commitFailure);
+                      });
+                    }, function(statusFailure) {
+                      dialogService.error('Error',
+                          'An unknown error occurred when building the commit.  Please try again.');
+                      transaction.abort();
+                      scope.cancel();
+                      console.log('ERROR: Status failure: ', statusFailure);
                     });
                   }, function(mergeFailure) {
                     if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
-                      var message = 'Merge branch ' + scope.sourceBranch + '\n\nConflicts:';
-                      handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope, message);
+                      handleConflicts(mergeFailure, transaction,
+                          dialogService, conflictService, scope.destinationBranch, scope.sourceBranch,
+                          scope, scope.sourceBranch);
                     } else {
                       dialogService.error('Error',
                           'An unknown error occurred when performing the merge.  Please try again.');
@@ -134,7 +132,8 @@
       }
   );
 
-  function handleConflicts(mergeFailure, transaction, dialogService, conflictService, scope, message) {
+  function handleConflicts(mergeFailure, transaction, dialogService, conflictService,
+                           ourName, theirName, scope, mergeBranch) {
     var myDialog = dialogService.warn('Merge Conflicts',
         'Some conflicts were encountered when performing the merge,' +
             ' would you like to resolve these or abort the merge?',
@@ -146,15 +145,15 @@
           transaction.abort();
           break;
         case 'Resolve Conflicts':
-          conflictService.ourName = scope.destinationBranch;
-          conflictService.theirName = scope.sourceBranch;
+          conflictService.ourName = ourName;
+          conflictService.theirName = theirName;
           conflictService.ours = mergeFailure.ours;
           conflictService.theirs = mergeFailure.theirs;
           conflictService.ancestor = mergeFailure.ancestor;
           conflictService.features = mergeFailure.Feature;
           conflictService.repoId = scope.selectedRepoId;
           conflictService.transaction = transaction;
-          conflictService.message = message;
+          conflictService.mergeBranch = mergeBranch;
           conflictService.beginResolution();
           break;
       }

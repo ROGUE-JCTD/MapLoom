@@ -9,8 +9,20 @@
       <button class="merge-button btn btn-default" ng-class="{disabled:numConflicts>0}" type="button" ng-click="done()">
         Done
       </button>
-    </div
+    </div>
   </div>
-  <div class="loom-diff-list" add-list="adds" modify-list="modifies" delete-list="deletes" conflict-list="conflicts"
+  <div ng-if="!mergeButtons">
+    <div class="list-group-item diff-summary">
+      <span class="glyphicon glyphicon-plus-sign add" tooltip-placement="top" tooltip="Adds"/>
+      <span class="summary-text"> {{adds.length}}</span>
+      <span class="glyphicon glyphicon-edit modify" tooltip-placement="top" tooltip="Modifications"/>
+      <span class="summary-text"> {{modifies.length}}</span>
+      <span class="glyphicon glyphicon-minus-sign delete" tooltip-placement="top" tooltip="Deletes"/>
+      <span class="summary-text"> {{deletes.length}}</span>
+      <span ng-if="merges.length > 0" class="glyphicon glyphicon-random merged" tooltip-placement="top" tooltip="Merges"/>
+      <span ng-if="merges.length > 0" class="summary-text"> {{merges.length}}</span>
+    </div>
+  </div>
+  <div class="loom-diff-list diffpanel-diff-list" add-list="adds" modify-list="modifies" delete-list="deletes" conflict-list="conflicts"
        merge-list="merges" click-callback="featureClicked"/>
 </div>

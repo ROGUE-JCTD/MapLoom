@@ -6,6 +6,9 @@
   var service_ = null;
   var difflayer_ = null;
   var mapService_ = null;
+  var geogitService_ = null;
+  var featureDiffService_ = null;
+  var q_ = null;
 
   module.provider('diffService', function() {
     this.adds = [];
@@ -13,77 +16,44 @@
     this.deletes = [];
     this.conflicts = [];
     this.merges = [];
+    this.features = [];
     this.title = 'Diffs';
     this.clickCallback = null;
     this.oldName = null;
     this.newName = null;
+    this.mergeDiff = false;
+    this.oldCommitId = null;
+    this.newCommitId = null;
+    this.repoId = null;
 
-    this.$get = function($rootScope, mapService) {
+    this.$get = function($rootScope, $q, mapService, geogitService, featureDiffService) {
       rootScope = $rootScope;
+      geogitService_ = geogitService;
+      featureDiffService_ = featureDiffService;
+      q_ = $q;
       service_ = this;
       difflayer_ = new ol.layer.Vector({
         label: 'Differences',
+        metadata: {
+          hidden: false
+        },
         source: new ol.source.Vector({
           parser: null
         }),
         style: new ol.style.Style({rules: [
           new ol.style.Rule({
-            filter: 'change == "ADDED"',
+            filter: '(geometryType("polygon") || geometryType("multipolygon"))',
             symbolizers: [
-              new ol.style.Fill({
-                color: '#00FF00',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#006600'
-              })
+              new ol.style.Fill({color: ol.expr.parse('change.fill'), opacity: 0.5}),
+              new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
             ]
           }),
           new ol.style.Rule({
-            filter: 'change == "REMOVED"',
+            filter: '(geometryType("point") || geometryType("multipoint"))',
             symbolizers: [
-              new ol.style.Fill({
-                color: '#FF0000',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#660000'
-              })
-            ]
-          }),
-          new ol.style.Rule({
-            filter: 'change == "MODIFIED"',
-            symbolizers: [
-              new ol.style.Fill({
-                color: '#FFFF00',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#666600'
-              })
-            ]
-          }),
-          new ol.style.Rule({
-            filter: 'change == "CONFLICT"',
-            symbolizers: [
-              new ol.style.Fill({
-                color: '#F87531',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#964514'
-              })
-            ]
-          }),
-          new ol.style.Rule({
-            filter: 'change == "MERGED"',
-            symbolizers: [
-              new ol.style.Fill({
-                color: '#0000FF',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#000066'
+              new ol.style.Shape({size: 20,
+                fill: new ol.style.Fill({color: ol.expr.parse('change.fill'), opacity: 0.5}),
+                stroke: new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
               })
             ]
           })
@@ -112,11 +82,12 @@
       service_.merges = [];
       service_.oldName = oldName;
       service_.newName = newName;
+      service_.features = _changeList;
       difflayer_.clear();
       mapService_.map.removeLayer(difflayer_);
       mapService_.map.addLayer(difflayer_);
-      if (goog.isDefAndNotNull(_changeList) && goog.isArray(_changeList)) {
-        goog.array.forEach(_changeList, function(change) {
+      if (goog.isDefAndNotNull(_changeList)) {
+        forEachArrayish(_changeList, function(change) {
           var crs = goog.isDefAndNotNull(change.crs) ? change.crs : null;
           mapService_.map.getLayers().forEach(function(layer) {
             var metadata = layer.get('metadata');
@@ -138,7 +109,7 @@
             geom.transform(transform);
           }
           var olFeature = new ol.Feature();
-          olFeature.set('change', change.change);
+          olFeature.set('change', DiffColorMap[change.change]);
           olFeature.setGeometry(geom);
           difflayer_.addFeatures([olFeature]);
           change.olFeature = olFeature;
@@ -170,24 +141,29 @@
       rootScope.$broadcast('diff_performed', _repo);
     };
 
-    this.performDiff = function(repo, from, to) {
-      this.adds = [
-        {repo: 'repo1', layer: 'layer1', feature: 'fid-34f32ac32'}
-      ];
-      this.modifies = [
-        {repo: 'repo1', layer: 'layer1', feature: 'fid-ffc2380ba'},
-        {repo: 'repo1', layer: 'layer2', feature: 'fid-87291defa'}
-      ];
-      this.deletes = [
-        {repo: 'repo1', layer: 'layer2', feature: 'fid-23cdfa320'}
-      ];
-      this.merges = [
-        {repo: 'repo1', layer: 'layer4', feature: 'fid-aa3426cda'}
-      ];
-      this.conflicts = [
-        {repo: 'repo1', layer: 'layer1', feature: 'fid-3487badc0'}
-      ];
-      rootScope.$broadcast('diff_performed', repo, from, to);
+    this.performDiff = function(repoId, options) {
+      var deferredResponse = q_.defer();
+      geogitService_.command(repoId, 'diff', options).then(function(response) {
+        service_.clearDiff();
+        if (goog.isDefAndNotNull(response.Feature)) {
+          service_.mergeDiff = false;
+          service_.oldCommitId = options.oldRefSpec;
+          service_.newCommitId = options.newRefSpec;
+          service_.clickCallback = featureClicked;
+          service_.repoId = repoId;
+          if (goog.isArray(response.Feature)) {
+            service_.populate(response.Feature, geogitService_.getRepoById(repoId).name, 'From', 'To');
+          } else {
+            service_.populate([response.Feature], geogitService_.getRepoById(repoId).name, 'From', 'To');
+          }
+        }
+        deferredResponse.resolve(response);
+      }, function(reject) {
+        //failed to get diff
+        console.log(reject);
+        deferredResponse.reject();
+      });
+      return deferredResponse.promise;
     };
 
     this.clearDiff = function() {
@@ -196,17 +172,42 @@
       this.deletes = [];
       this.conflicts = [];
       this.merges = [];
+      this.features = [];
+      this.repoId = null;
+      this.clickCallback = null;
       mapService_.map.removeLayer(difflayer_);
       rootScope.$broadcast('diff_cleared');
     };
 
     this.hasDifferences = function() {
-      return (this.adds.length + this.modifies.length + this.deletes.length + this.conflicts.length !== 0);
+      return (
+          this.adds.length + this.modifies.length +
+          this.deletes.length + this.merges.length +
+          this.conflicts.length !== 0
+      );
     };
 
     this.setTitle = function(title) {
       this.title = title;
     };
   });
+
+
+  function featureClicked(feature) {
+    var fid = feature.layer + '/' + feature.feature;
+    for (var i = 0; i < service_.features.length; i++) {
+      if (fid === service_.features[i].id) {
+        console.log('found feature', service_.features[i]);
+        featureDiffService_.leftName = service_.oldName;
+        featureDiffService_.rightName = service_.newName;
+        featureDiffService_.setFeature(
+            service_.features[i], service_.oldCommitId, service_.newCommitId,
+            service_.oldCommitId, null, service_.repoId);
+        $('#feature-diff-dialog').modal('show');
+        service_.currentFeature = service_.features[i];
+        break;
+      }
+    }
+  }
 
 }());

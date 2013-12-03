@@ -2,7 +2,7 @@
   var module = angular.module('loom_pulldown_controller', []);
 
   module.controller('LoomPulldownController',
-      function($scope, pulldownService, geogitService, diffService) {
+      function($scope, pulldownService, geogitService, diffService, historyService) {
 
         $('#pulldown-content').on('show.bs.collapse', function(e) {
           $('#pulldown-content .in').not($(e.target).parents()).collapse('hide');
@@ -14,6 +14,7 @@
           $scope.notificationsPanel = pulldownService.notificationsPanel.getVisible();
           $scope.layersPanel = pulldownService.layersPanel.getVisible();
           $scope.syncPanel = pulldownService.syncPanel.getVisible();
+          $scope.historyPanel = pulldownService.historyPanel.getVisible();
         }
 
         function updateScopeVariables() {
@@ -45,5 +46,13 @@
 
         $scope.$on('diff_performed', diffPanelEnabled);
         $scope.$on('diff_cleared', diffPanelEnabled);
+
+        var historyPanelEnabled = function() {
+          pulldownService.historyPanel.enabled = historyService.log.length > 0;
+          updateScopeVariables();
+        };
+
+        $scope.$on('history_fetched', historyPanelEnabled);
+        $scope.$on('history_cleared', historyPanelEnabled);
       });
 })();

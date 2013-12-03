@@ -16,10 +16,11 @@
 
   module.provider('pulldownService', function() {
 
-    this.diffPanel = new PulldownPanel(false, false);
+    this.diffPanel = new PulldownPanel(true, false);
     this.notificationsPanel = new PulldownPanel(true, true);
     this.layersPanel = new PulldownPanel(true, true);
     this.syncPanel = new PulldownPanel(true, false);
+    this.historyPanel = new PulldownPanel(true, false);
 
     this.$get = function($rootScope, $timeout) {
       rootScope_ = $rootScope;
@@ -36,10 +37,9 @@
       this.notificationsPanel.visible = false;
       this.layersPanel.visible = true;
       this.syncPanel.visible = false;
+      this.historyPanel.visible = false;
       this.apply();
-      timeout_(function() {
-        $('#diff-panel').collapse('show');
-      }, 1);
+      this.showDiffPanel();
     };
 
     this.defaultMode = function() {
@@ -47,7 +47,24 @@
       this.notificationsPanel.visible = true;
       this.layersPanel.visible = true;
       this.syncPanel.visible = true;
+      this.historyPanel.visible = true;
       this.apply();
+      this.showLayerPanel();
+    };
+
+    this.showHistoryPanel = function() {
+      timeout_(function() {
+        $('#history-panel').collapse('show');
+      }, 1);
+    };
+
+    this.showDiffPanel = function() {
+      timeout_(function() {
+        $('#diff-panel').collapse('show');
+      }, 1);
+    };
+
+    this.showLayerPanel = function() {
       timeout_(function() {
         $('#layer-manager-panel').collapse('show');
       }, 1);

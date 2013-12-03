@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_diff_directive', []);
 
   module.directive('loomFeatureDiff',
-      function(featureDiffService, diffService, conflictService) {
+      function(featureDiffService, conflictService) {
         return {
           restrict: 'C',
           templateUrl: 'diff/partial/featurediff.tpl.html',
@@ -23,15 +23,15 @@
                   scope.rightTitle = 'Changed Feature';
                   break;
                 case 'MERGED':
-                  scope.leftTitle = diffService.oldName;
+                  scope.leftTitle = featureDiffService.leftName;
                   scope.mergedTitle = 'Merged Feature';
-                  scope.rightTitle = diffService.newName;
+                  scope.rightTitle = featureDiffService.rightName;
                   break;
                 case 'CONFLICT':
                   scope.editable = true;
-                  scope.leftTitle = diffService.oldName;
+                  scope.leftTitle = featureDiffService.leftName;
                   scope.mergedTitle = 'Merged Feature';
-                  scope.rightTitle = diffService.newName;
+                  scope.rightTitle = featureDiffService.rightName;
                   break;
               }
               var width = 80 + getScrollbarWidth();
@@ -79,7 +79,7 @@
 
             scope.save = function() {
               featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
-              featureDiffService.feature.olFeature.set('change', 'MERGED');
+              featureDiffService.feature.olFeature.set('change', DiffColorMap.MERGED);
               conflictService.resolveConflict(featureDiffService.getMerges());
               featureDiffService.clear();
               scope.leftPanel = false;

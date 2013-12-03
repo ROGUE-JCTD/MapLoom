@@ -11,6 +11,7 @@
   var ours_ = null;
   var theirs_ = null;
   var ancestor_ = null;
+  var merged_ = null;
   var repoId_ = null;
   var diffsNeeded_ = null;
   var diffsInError_ = 0;
@@ -63,6 +64,8 @@
     this.right = new FeaturePanel();
     this.merged = new FeaturePanel();
     this.change = null;
+    this.leftName = null;
+    this.rightName = null;
 
     this.$get = function($rootScope, mapService, geogitService, dialogService) {
       service_ = this;
@@ -75,7 +78,8 @@
           renderer: ol.RendererHint.CANVAS,
           view: new ol.View2D({
             center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 14
+            zoom: 14,
+            maxZoom: 20
           })
         });
 
@@ -104,12 +108,15 @@
       ours_ = null;
       theirs_ = null;
       ancestor_ = null;
+      merged_ = null;
       repoId_ = null;
       service_.feature = null;
       service_.change = null;
       service_.left.clearFeature();
       service_.right.clearFeature();
       service_.merged.clearFeature();
+      service_.leftName = null;
+      service_.rightName = null;
     };
 
     this.chooseGeometry = function(panel) {
@@ -181,7 +188,7 @@
       return merges;
     };
 
-    this.setFeature = function(feature, ours, theirs, ancestor, repoId) {
+    this.setFeature = function(feature, ours, theirs, ancestor, merged, repoId) {
       service_.change = feature.change;
       service_.left.clearFeature();
       service_.right.clearFeature();
@@ -189,6 +196,7 @@
       ours_ = ours;
       theirs_ = theirs;
       ancestor_ = ancestor;
+      merged_ = merged;
       repoId_ = repoId;
       var layers = mapService_.map.getLayers();
       service_.feature = feature;
@@ -246,7 +254,7 @@
           diffsNeeded_ = 2;
           service_.merged.active = true;
           service_.merged.olFeature = new ol.Feature();
-          service_.merged.olFeature.set('MapLoomChange', feature.change);
+          service_.merged.olFeature.set('MapLoomChange', DiffColorMap[feature.change]);
           service_.merged.olFeature.setGeometry(geom);
           service_.merged.featureLayer.addFeatures([service_.merged.olFeature]);
           service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
@@ -256,7 +264,7 @@
           diffsNeeded_ = 3;
           service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
           service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          service_.performFeatureDiff(feature, ours_, ancestor_, service_.merged);
+          service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
           break;
       }
       mapService_.zoomToExtent(newBounds);
@@ -267,8 +275,8 @@
     this.performFeatureDiff = function(feature, newCommit, oldCommit, panel) {
       var diffOptions = new GeoGitFeatureDiffOptions();
       diffOptions.all = true;
-      diffOptions.newCommitId = newCommit;
-      diffOptions.oldCommitId = oldCommit;
+      diffOptions.newTreeish = newCommit;
+      diffOptions.oldTreeish = oldCommit;
       diffOptions.path = feature.id;
       panel.active = true;
       geogitService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
@@ -304,7 +312,7 @@
           geom.transform(transform);
         }
         var olFeature = new ol.Feature();
-        olFeature.set('MapLoomChange', panel.geometry.changetype);
+        olFeature.set('MapLoomChange', DiffColorMap[panel.geometry.changetype]);
         olFeature.setGeometry(geom);
         panel.featureLayer.addFeatures([olFeature]);
         panel.olFeature = olFeature;
@@ -322,7 +330,7 @@
         if (diffsNeeded_ === 0) {
           if (diffsInError_ > 0) {
             dialogService_.error('Error',
-                'Unable to retrieve all the differences for the layer.  Check network connection and try again.');
+                'Unable to retrieve all the differences for the feature.  Check network connection and try again.');
           } else {
             if (feature.change == 'CONFLICT') {
               service_.merged.attributes = $.extend(true, [], service_.left.attributes);
@@ -358,7 +366,7 @@
         diffsInError_ += 1;
         if (diffsNeeded_ === 0) {
           dialogService_.error('Error',
-              'Unable to retrieve all the differences for the layer.  Check network connection and try again.');
+              'Unable to retrieve all the differences for the feature.  Check network connection and try again.');
         }
         console.log('Feature diff failed: ', panel, reject);
       });
@@ -372,50 +380,18 @@
       }),
       style: new ol.style.Style({rules: [
         new ol.style.Rule({
-          filter: 'MapLoomChange == "ADDED"',
+          filter: '(geometryType("polygon") || geometryType("multipolygon"))',
           symbolizers: [
-            new ol.style.Fill({
-              color: '#00FF00',
-              opacity: 0.5
-            }),
-            new ol.style.Stroke({
-              color: '#006600'
-            })
+            new ol.style.Fill({color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0}),
+            new ol.style.Stroke({color: ol.expr.parse('MapLoomChange.stroke')})
           ]
         }),
         new ol.style.Rule({
-          filter: 'MapLoomChange == "REMOVED"',
+          filter: '(geometryType("point") || geometryType("multipoint"))',
           symbolizers: [
-            new ol.style.Fill({
-              color: '#FF0000',
-              opacity: 0.5
-            }),
-            new ol.style.Stroke({
-              color: '#660000'
-            })
-          ]
-        }),
-        new ol.style.Rule({
-          filter: 'MapLoomChange == "MODIFIED"',
-          symbolizers: [
-            new ol.style.Fill({
-              color: '#FFFF00',
-              opacity: 0.5
-            }),
-            new ol.style.Stroke({
-              color: '#666600'
-            })
-          ]
-        }),
-        new ol.style.Rule({
-          filter: 'MapLoomChange == "NO_CHANGE"',
-          symbolizers: [
-            new ol.style.Fill({
-              color: '#FFFFFF',
-              opacity: 0.5
-            }),
-            new ol.style.Stroke({
-              color: '#333333'
+            new ol.style.Shape({size: 20,
+              fill: new ol.style.Fill({color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0}),
+              stroke: new ol.style.Stroke({color: ol.expr.parse('MapLoomChange.stroke')})
             })
           ]
         })

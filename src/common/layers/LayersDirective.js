@@ -3,7 +3,7 @@
   var module = angular.module('loom_layers_directive', []);
 
   module.directive('loomLayers',
-      function($rootScope, mapService) {
+      function($rootScope, mapService, pulldownService, historyService) {
         return {
           restrict: 'C',
           replace: true,
@@ -29,6 +29,23 @@
             scope.filterHiddenLayers = function(layer) {
               return !(!goog.isDefAndNotNull(layer.get('metadata')) ||
                   (goog.isDefAndNotNull(layer.get('metadata').hidden) && layer.get('metadata').hidden));
+            };
+
+            scope.isGeogit = function(layer) {
+              if (goog.isDefAndNotNull(layer)) {
+                var metadata = layer.get('metadata');
+                if (goog.isDefAndNotNull(metadata)) {
+                  if (goog.isDefAndNotNull(metadata.isGeoGit)) {
+                    return metadata.isGeoGit;
+                  }
+                }
+              }
+              return false;
+            };
+
+            scope.showHistory = function(layer) {
+              historyService.setTitle('History for ' + layer.get('label'));
+              historyService.getHistory(layer);
             };
           }
         };

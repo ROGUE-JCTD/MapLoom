@@ -264,7 +264,8 @@
         target: 'map',
         view: new ol.View2D({
           center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
-          zoom: 14
+          zoom: 14,
+          maxZoom: 20
         })
       });
 

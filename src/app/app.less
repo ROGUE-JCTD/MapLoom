@@ -40,10 +40,34 @@ html, body {
 	display: block;
 	text-decoration: none;
 	border-top: 1px solid darken(@mainPanelColor, 5%);
+
+  .panel-header-button {
+    font-size: 17px;
+    position: relative;
+    top: -2px;
+    padding-left: 5px;
+  }
+
+  .panel-title {
+    width: 82%;
+    float: left;
+  }
+}
+
+.fixed-height-header {
+  height: 37px;
 }
 
 #pulldown-content {
 	max-height: 80%;
+}
+
+.modal-open {
+  body&,
+  .navbar-fixed-top,
+  .navbar-fixed-bottom {
+    margin-right: 0px;
+  }
 }
 
 #add-layer-dialog .modal-dialog{

@@ -15,7 +15,7 @@
           scope.merges = diffService.merges;
           scope.diffService = diffService;
           scope.featureClicked = diffService.clickCallback;
-          scope.mergeButtons = true;
+          scope.mergeButtons = diffService.mergeDiff;
           scope.conflictsText = 'Complete the merge';
           if (scope.numConflicts === 1) {
             scope.conflictsText = '1 conflict remains';

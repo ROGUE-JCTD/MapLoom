@@ -57,25 +57,39 @@
             </div>
           </div>
         </div>
-        <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
-          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-               data-target="#diff-panel">
-            <span>{{title}}</span>
-            <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
-          </div>
-          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
-        </div>
         <div class="panel" ng-show="syncPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#syncronization-panel">
             <span>Synchronization</span>
 
             <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
-                 class="glyphicon glyphicon-cog pull-right"></div>
+                 class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
           </div>
           <div id="syncronization-panel" class="panel-collapse collapse">
             <div class="loom-synclinks"></div>
           </div>
+        </div>
+        <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
+          <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content" data-target="#history-panel">
+            <span class="ellipsis panel-title">{{title}}</span>
+
+            <div stop-event='click' ng-click="clearHistory()"
+                 class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
+            <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
+                 class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
+          </div>
+          <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes here.</div>
+        </div>
+        <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
+          <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
+               data-target="#diff-panel">
+            <span class="ellipsis panel-title">{{title}}</span>
+
+            <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
+                 class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
+            <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
+          </div>
+          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
         </div>
       </div>
     </div>
@@ -102,6 +116,10 @@
 </div>
 <div loom-modal id="mergeWindow" modal-title="Merge" close-button="false">
   <div loom-merge id="merge">
+  </div>
+</div>
+<div loom-modal id="historyDiffWindow" modal-title="Select Date Range" close-button="false">
+  <div loom-history-diff id="historyDiff">
   </div>
 </div>
 <div loom-modal id="addSyncWindow" modal-title="Add Sync">

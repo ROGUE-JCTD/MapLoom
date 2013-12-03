@@ -47,12 +47,16 @@
             }
 
             scope.geometryArrowClick = function() {
-              featureDiffService.chooseGeometry(scope.panel);
-              updateVariables();
+              if (scope.hover) {
+                featureDiffService.chooseGeometry(scope.panel);
+                updateVariables();
+              }
             };
 
             scope.arrowClick = function(index) {
-              featureDiffService.chooseAttribute(index, scope.panel);
+              if (scope.hover) {
+                featureDiffService.chooseAttribute(index, scope.panel);
+              }
             };
 
             scope.$on('merge-feature-modified', updateVariables);

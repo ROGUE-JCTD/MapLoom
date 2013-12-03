@@ -20,7 +20,7 @@
     this.ourName = null;
     this.theirName = null;
     this.transaction = null;
-    this.message = null;
+    this.mergeBranch = null;
 
     this.$get = function($rootScope, $location, diffService, pulldownService,
                          featureDiffService, mapService, dialogService, geogitService) {
@@ -61,6 +61,7 @@
     this.beginResolution = function() {
       diffService_.setTitle('Merge Results');
       diffService_.clickCallback = featureClicked;
+      diffService_.mergeDiff = true;
       diffService_.populate(service_.features,
           geogitService_.getRepoById(service_.repoId).name, service_.ourName, service_.theirName);
       pulldownService_.conflictsMode();
@@ -76,15 +77,63 @@
         }
       }
 
-      if (conflicts.length > 0) {
-        for (i = 0; i < conflicts.length; i++) {
-          var conflict = conflicts[i];
-          service_.message += '\nResolved conflict: ' + conflict.id;
-        }
-      }
-
       var conflictsInError = 0;
       commitInternal(conflicts, conflictsInError);
+    };
+
+    this.buildMergeMessage = function(status, mergeBranch, useConflicts) {
+      var message = {};
+      message.merge_branch = mergeBranch;
+      if (goog.isDefAndNotNull(status.staged)) {
+
+        forEachArrayish(status.staged, function(entry) {
+          var layer = null;
+          if (goog.isDefAndNotNull(entry.path) && entry.path.length > 0) {
+            layer = entry.path.split('/')[0];
+          } else {
+            layer = entry.newPath.split('/')[0];
+          }
+          if (!goog.isDefAndNotNull(message[layer])) {
+            message[layer] = {};
+          }
+          switch (entry.changeType) {
+            case 'ADDED':
+              if (!goog.isDefAndNotNull(message[layer].added)) {
+                message[layer].added = 0;
+              }
+              message[layer].added++;
+              break;
+            case 'REMOVED':
+              if (!goog.isDefAndNotNull(message[layer].removed)) {
+                message[layer].removed = 0;
+              }
+              message[layer].removed++;
+              break;
+            case 'MODIFIED':
+              if (!goog.isDefAndNotNull(message[layer].modified)) {
+                message[layer].modified = 0;
+              }
+              message[layer].modified++;
+              break;
+          }
+        });
+        if (goog.isDefAndNotNull(useConflicts) && useConflicts === true) {
+          for (i = 0; i < service_.features.length; i++) {
+            var feature = service_.features[i];
+            if (feature.change === 'CONFLICT') {
+              var layer = feature.id.split('/')[0];
+              if (!goog.isDefAndNotNull(message[layer])) {
+                message[layer] = {};
+              }
+              if (!goog.isDefAndNotNull(message[layer].conflicted)) {
+                message[layer].conflicted = [];
+              }
+              message[layer].conflicted.push(feature.id);
+            }
+          }
+        }
+      }
+      return JSON.stringify(message);
     };
   });
 
@@ -92,8 +141,10 @@
     var fid = feature.layer + '/' + feature.feature;
     for (var i = 0; i < service_.features.length; i++) {
       if (fid === service_.features[i].id) {
+        featureDiffService_.leftName = service_.ourName;
+        featureDiffService_.rightName = service_.theirName;
         featureDiffService_.setFeature(
-            service_.features[i], service_.ours, service_.theirs, service_.ancestor, service_.repoId);
+            service_.features[i], service_.ours, service_.theirs, service_.ancestor, 'WORK_HEAD', service_.repoId);
         $('#feature-diff-dialog').modal('show');
         service_.currentFeature = service_.features[i];
         break;
@@ -104,33 +155,36 @@
   function commitInternal(conflictList, conflictsInError) {
     if (conflictList.length === 0) {
       if (conflictsInError === 0) {
-        var commitOptions = new GeoGitCommitOptions();
-        commitOptions.all = true;
-        commitOptions.message = service_.message;
-        service_.transaction.command('commit', commitOptions).then(function() {
-          // commit successful
-          service_.transaction.finalize().then(function() {
-            // transaction complete
-            diffService_.clearDiff();
-            service_.transaction = null;
-            service_.abort();
-            pulldownService_.defaultMode();
-            mapService_.dumpTileCache();
-          }, function(endTransactionFailure) {
-            if (goog.isObject(endTransactionFailure) &&
-                goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
-              handleConflicts(endTransactionFailure);
-            } else {
-              dialogService_.error('Error',
-                  'An unknown error occurred when finalizing the transaction.  Please try again.');
-              console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
-            }
+        service_.transaction.command('status').then(function(response) {
+          var commitOptions = new GeoGitCommitOptions();
+          commitOptions.all = true;
+          commitOptions.message = service_.buildMergeMessage(response, service_.mergeBranch, true);
+          service_.transaction.command('commit', commitOptions).then(function() {
+            // commit successful
+            service_.transaction.finalize().then(function() {
+              // transaction complete
+              diffService_.clearDiff();
+              service_.transaction = null;
+              service_.abort();
+              pulldownService_.defaultMode();
+              mapService_.dumpTileCache();
+            }, function(endTransactionFailure) {
+              if (goog.isObject(endTransactionFailure) &&
+                  goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
+                handleConflicts(endTransactionFailure);
+              } else {
+                dialogService_.error('Error',
+                    'An unknown error occurred when finalizing the transaction.  Please try again.');
+                console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
+              }
+            });
+          }, function(reject) {
+            // couldn't commit
+            dialogService_.error('Error',
+                'An unknown error occurred when committing the merge.  Please try again.');
+            console.log('ERROR: Failed to commit merge: ', reject);
           });
         }, function(reject) {
-          // couldn't commit
-          dialogService_.error('Error',
-              'An unknown error occurred when committing the merge.  Please try again.');
-          console.log('ERROR: Failed to commit merge: ', reject);
         });
       } else {
         // couldn't resolve all conflicts
@@ -184,7 +238,7 @@
           service_.theirs = mergeFailure.theirs;
           service_.ancestor = mergeFailure.ancestor;
           service_.features = mergeFailure.Feature;
-          service_.message = 'Merge transaction\n\nConflicts:';
+          service_.mergeBranch = 'Transaction';
           service_.beginResolution();
           break;
       }
