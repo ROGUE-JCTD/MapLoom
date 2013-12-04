@@ -159,9 +159,9 @@
       link: function(scope) {
         scope.coordinateDisplays = coordinateDisplays;
         if (scope.coordDisplay === coordinateDisplays.DMS) {
-          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coordinates);
+          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom);
         } else if (scope.coordDisplay === coordinateDisplays.DD) {
-          scope.coordinates = ol.coordinate.createStringXY(scope.geom.coordinates, settings.DDPrecision);
+          scope.coordinates = ol.coordinate.createStringXY(scope.geom, settings.DDPrecision);
         }
 
         scope.selectDisplay = function(index) {
@@ -171,12 +171,15 @@
         var validateDMS = function(name, split) {
           var upperBounds;
           var negateChar;
+          var coordIndex;
           if (name === 'lon') {
             upperBounds = 180;
             negateChar = 'W';
+            coordIndex = 0;
           } else if (name === 'lat') {
             upperBounds = 90;
             negateChar = 'S';
+            coordIndex = 1;
           } else {
             return false;
           }
@@ -189,6 +192,7 @@
             if (split[3].toUpperCase() === negateChar) {
               newPos = -newPos;
             }
+            scope.geom[coordIndex] = newPos;
           } else {
             return false;
           }
@@ -205,14 +209,19 @@
               valid = validateDMS('lat', split);
               if (valid === true && (split2[3].toUpperCase() === 'W' || split2[3].toUpperCase() === 'E')) {
                 valid = validateDMS('lon', split2);
+              } else {
+                valid = false;
               }
             } else {
               valid = validateDMS('lon', split);
               if (valid === true && (split2[3].toUpperCase() === 'S' || split2[3].toUpperCase() === 'N')) {
                 valid = validateDMS('lat', split2);
+              } else {
+                valid = false;
               }
             }
           }
+          scope.formName.$valid = valid;
           scope.formName.coords.$valid = valid;
         };
       }

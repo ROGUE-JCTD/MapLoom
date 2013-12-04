@@ -241,7 +241,7 @@
     };
 
     this.isNotLayerGroup = function(layer) {
-      var featureType = layer.getSource().getParams().LAYERS;
+      var featureType = layer.get('metadata').name;
       var url = layer.get('metadata').url + '/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=DescribeLayer&layers=' +
           featureType;
       if (SERVER_SERVICE_USE_PROXY) {
@@ -263,7 +263,7 @@
     };
 
     this.getDataStoreName = function(layer) {
-      var featureType = layer.getSource().getParams().LAYERS;
+      var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/layers/' + featureType + '.json';
@@ -283,7 +283,7 @@
     };
 
     this.getDataStore = function(layer, name) {
-      var featureType = layer.getSource().getParams().LAYERS;
+      var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' + name +
@@ -302,7 +302,7 @@
     };
 
     this.getFeatureType = function(layer, dataStore) {
-      var featureType = layer.getSource().getParams().LAYERS;
+      var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' +
@@ -312,7 +312,7 @@
         response.data.featureType.workspace = workspaceRoute.workspace;
         var featureType = response.data.featureType;
         url = layer.get('metadata').url + '/wfs?service=wfs&version=1.0.0&request=DescribeFeatureType&typeName=' +
-            featureType.nativeName;
+            workspaceRoute.typeName;
 
         http.get(url).then(function(response) {
           // TODO: Use the OpenLayers parser once it is done

@@ -11,7 +11,6 @@
             scope.featureManagerService = featureManagerService;
             scope.coordDisplay = coordinateDisplays.DMS;
             scope.$on('startAttributeEdit', function(event, feature, properties) {
-
               scope.properties = new Array(properties.length);
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
@@ -24,6 +23,7 @@
                   }
                 }
               });
+              scope.coordinates = goog.array.clone(feature.geometry.coordinates);
               $('#attribute-edit-dialog').modal('toggle');
               scope.feature = feature;
             });
@@ -33,6 +33,7 @@
               if (parentModal[0] === element[0]) {
                 scope.feature = null;
                 scope.properties = null;
+                scope.coordinates = null;
               }
             };
 

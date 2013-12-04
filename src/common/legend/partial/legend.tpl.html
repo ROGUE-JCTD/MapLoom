@@ -12,7 +12,7 @@
                     data-target="{{'#' + layer.get('label') + 'legend'}}">{{layer.get('label')}}
                 </div>
                 <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('label') + 'legend'}}">
-                    <img ng-src="{{serverService.getServer(layer.get('metadata').serverId).url}}?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer={{layer.getSource().getParams().LAYERS}}&transparent=true&legend_options=fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;">
+                    <img ng-src="{{serverService.getServer(layer.get('metadata').serverId).url}}?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer={{layer.get('metadata').name}}&transparent=true&legend_options=fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;">
                 </div>
             </div>
         </div>

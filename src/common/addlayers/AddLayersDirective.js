@@ -52,7 +52,7 @@
                     var url = scope.serverService.getServer(scope.currentServerIndex).url.slice(0, urlIndex);
                     var newLayer = new ol.layer.Tile({
                       label: layer.title,
-                      metadata: {serverId: scope.currentServerIndex, url: url},
+                      metadata: {serverId: scope.currentServerIndex, url: url, name: layer.name},
                       source: new ol.source.TileWMS({
                         url: scope.serverService.getServer(scope.currentServerIndex).url,
                         params: {'LAYERS': layer.name},

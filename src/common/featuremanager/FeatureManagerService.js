@@ -295,13 +295,41 @@
     this.endGeometryEditing = function(save) {
       if (save) {
         // actually save the geom
+        var feature = mapService_.editLayer.getFeatures()[0];
+        if (feature.original_) {
+          // Feature was modified so we need to save the changes
+          // TODO: Find a better way to write geometry to GML or a better way to parse it
+          // Write the feature to GML
+          var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
+            featureType: selectedLayer_.get('metadata').nativeName});
+          var featureGML = writer.write({features: [feature]},
+              {srsName: mapService_.map.getView().getView2D().getProjection().getCode()});
+          // Parse out only the geometry
+          var startIndex = featureGML.indexOf('<feature:geometry>');
+          var endIndex = featureGML.indexOf('</feature:geometry');
+          featureGML = featureGML.substring((startIndex + 18), endIndex);
+          // Its missing the namespace for the gml geometry so we need to add that
+          startIndex = featureGML.indexOf(' srsName=');
+          var originalString = featureGML.substring(0, startIndex);
+          var newString = originalString + ' xmlns:gml="http://www.opengis.net/gml"';
+          featureGML = featureGML.replace(originalString, newString);
+          // Finish constructing the partial that will be sent in the post request
+          var partial = '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
+              '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
+          // Transform the geometry so that we can get the new Decimal Degrees to display in the info-box
+          var transformedGeom = transformPoint(feature.getGeometry().getCoordinates(),
+              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+          // Issue the request
+          issueWFSPost(partial, null, transformedGeom.getCoordinates(), feature.getGeometry().getCoordinates());
+        }
       } else {
         // discard changes
+        // TODO: Figure out how to use the original feature stored on a modified feature to reset
         mapService_.clearSelectedFeature();
         mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
       $('#info-box').show();
-      rootScope_.$broadcast('endGeometryEdit');
+      rootScope_.$broadcast('endGeometryEdit', save);
       mapService_.map.removeInteraction(modify_);
       enabled_ = true;
     };
@@ -311,7 +339,7 @@
           selectedItemProperties_);
     };
 
-    this.endAttributeEditing = function(properties) {
+    this.endAttributeEditing = function(properties, coords) {
       //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
 
       var propertyXmlPartial = '';
@@ -321,34 +349,29 @@
               '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
         }
       });
+      var newPos = null;
+      if (goog.isDefAndNotNull(coords)) {
+        // Check if either of the coordinates we changed in the attribute editing process
+        if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
+            (coords[1] !== selectedItem_.geometry.coordinates[1])) {
+          // Transform the geometry so we can get the new place on the map to show the info-box
+          var newGeom = transformPoint(coords, selectedLayer_.get('metadata').projection,
+              mapService_.map.getView().getView2D().getProjection());
+          // We also need to update the vector feature so that it is in the new position
+          var feature = mapService_.editLayer.getFeatures()[0];
+          feature.setGeometry(newGeom);
+          newPos = newGeom.getCoordinates();
+          // Construct the property change to put in the partial to send in the post request
+          var featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
+              newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
+          propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
+              '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
+        }
+      }
 
       if (propertyXmlPartial !== '') {
-        var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
-            '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
-            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-            'service="WFS" version="1.1.0" ' +
-            'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"> ' +
-            '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
-            selectedLayer_.getSource().getParams().LAYERS + '">' +
-            propertyXmlPartial +
-            '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
-            '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
-            '</ogc:Filter>' +
-            '</wfs:Update>' +
-            '</wfs:Transaction>';
-
-        //console.log('---- about to post: ', wfsRequestData);
-
-        http_({
-          url: '/geoserver/wfs/WfsDispatcher',
-          method: 'POST',
-          data: wfsRequestData
-        }).success(function(data, status, headers, config) {
-          //console.log('====[ great success. ', data, status, headers, config);
-          selectedItemProperties_ = properties;
-        }).error(function(data, status, headers, config) {
-          console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
-        });
+        issueWFSPost(propertyXmlPartial, properties, coords, newPos);
       }
     };
   });
@@ -428,5 +451,48 @@
     }
 
     return type;
+  }
+
+  function issueWFSPost(partial, properties, coords, newPos) {
+    var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
+        '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+        'service="WFS" version="1.1.0" ' +
+        'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"> ' +
+        '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
+        selectedLayer_.get('metadata').name + '">' +
+        partial +
+        '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+        '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
+        '</ogc:Filter>' +
+        '</wfs:Update>' +
+        '</wfs:Transaction>';
+
+    http_({
+      url: '/geoserver/wfs/WfsDispatcher',
+      method: 'POST',
+      data: wfsRequestData
+    }).success(function(data, status, headers, config) {
+      //console.log('====[ great success. ', data, status, headers, config);
+      if (goog.isDefAndNotNull(properties)) {
+        selectedItemProperties_ = properties;
+      }
+      if (goog.isDefAndNotNull(coords)) {
+        selectedItem_.geometry.coordinates = coords;
+        if (goog.isDefAndNotNull(newPos)) {
+          service_.show(selectedItem_, newPos);
+        }
+      }
+      mapService_.dumpTileCache();
+    }).error(function(data, status, headers, config) {
+      console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
+    });
+  }
+
+  function transformPoint(coords, crsFrom, crsTo) {
+    var newGeom = new ol.geom.Point(goog.array.clone(coords));
+    var transform = ol.proj.getTransform(crsFrom, crsTo);
+    newGeom.transform(transform);
+    return newGeom;
   }
 }());
