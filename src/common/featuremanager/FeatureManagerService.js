@@ -317,10 +317,21 @@
           var partial = '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
               '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
           // Transform the geometry so that we can get the new Decimal Degrees to display in the info-box
-          var transformedGeom = transformPoint(feature.getGeometry().getCoordinates(),
-              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+          var coords = null;
+          var newPos = null;
+          if (feature.getGeometry().getType() == 'point') {
+            var transformedGeom = transformPoint(feature.getGeometry().getCoordinates(),
+                mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+            coords = transformedGeom.getCoordinates();
+            newPos = feature.getGeometry().getCoordinates();
+          } else if (feature.getGeometry().getType() == 'multilinestring') {
+            newPos = feature.getGeometry().getComponents()[0].getCoordinates();
+            newPos = newPos[Math.floor(newPos.length / 2)];
+          } else if (feature.getGeometry().getType() == 'multipolygon') {
+            newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
+          }
           // Issue the request
-          issueWFSPost(partial, null, transformedGeom.getCoordinates(), feature.getGeometry().getCoordinates());
+          issueWFSPost(partial, null, coords, newPos);
         }
       } else {
         // discard changes
@@ -367,6 +378,9 @@
               newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
           propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
               '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
+          var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+          mapService_.map.beforeRender(pan);
+          mapService_.map.getView().getView2D().setCenter(newPos);
         }
       }
 
@@ -479,9 +493,9 @@
       }
       if (goog.isDefAndNotNull(coords)) {
         selectedItem_.geometry.coordinates = coords;
-        if (goog.isDefAndNotNull(newPos)) {
-          service_.show(selectedItem_, newPos);
-        }
+      }
+      if (goog.isDefAndNotNull(newPos)) {
+        service_.show(selectedItem_, newPos);
       }
       mapService_.dumpTileCache();
     }).error(function(data, status, headers, config) {
