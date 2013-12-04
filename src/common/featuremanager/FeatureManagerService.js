@@ -468,12 +468,14 @@
   }
 
   function issueWFSPost(partial, properties, coords, newPos) {
+    var commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{modified:1}}';
     var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
         '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
         'service="WFS" version="1.1.0" ' +
+        'handle="' + commitMsg + '" ' +
         'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"> ' +
-        '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
+        '<wfs:Update handle="' + commitMsg + '" xmlns:feature="http://www.geonode.org/" typeName="' +
         selectedLayer_.get('metadata').name + '">' +
         partial +
         '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
