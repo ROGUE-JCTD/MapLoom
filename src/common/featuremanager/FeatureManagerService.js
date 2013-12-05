@@ -6,6 +6,7 @@
   var mapService_ = null;
   var rootScope_ = null;
   var http_ = null;
+  var exclusiveModeService_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
   var selectedItemPics_ = null;
@@ -21,12 +22,13 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, mapService, $compile, $http) {
+    this.$get = function($rootScope, mapService, $compile, $http, exclusiveModeService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
       http_ = $http;
+      exclusiveModeService_ = exclusiveModeService;
       registerOnMapClick($rootScope, $compile);
 
       overlay_ = new ol.Overlay({
@@ -288,6 +290,13 @@
     this.startGeometryEditing = function() {
       $('#info-box').hide();
       rootScope_.$broadcast('startGeometryEdit');
+      exclusiveModeService_.startExclusiveMode('Editing Geometry', {title: 'Save', callback: function() {
+        service_.endGeometryEditing(true);
+        exclusiveModeService_.endExclusiveMode();
+      }}, {title: 'Cancel', callback: function() {
+        service_.endGeometryEditing(false);
+        exclusiveModeService_.endExclusiveMode();
+      }});
       modify_ = new ol.interaction.Modify();
       mapService_.map.addInteraction(modify_);
       enabled_ = false;

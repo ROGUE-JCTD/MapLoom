@@ -33,76 +33,82 @@
           <span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>
         </div>
       </div>
-      <div id="pulldown-content" class="panel-group in">
-        <div class="panel" ng-show="notificationsPanel">
-          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-               data-target="#notification-panel">
-            <span translate="notifications_tab">Notifications</span>
-            <span class="loom-notification-badge pull-right"></span>
-          </div>
-          <div id="notification-panel" notification-empty-text="'no_notifications' | translate"
-               class="pulldown-panel loom-notifications">
-          </div>
-        </div>
-        <div class="panel" ng-show="layersPanel">
-          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-               data-target="#layer-manager-panel">
-            <span translate="map_layers">Map Layers</span>
-          </div>
-          <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
-            <div class="loom-layers"></div>
-            <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal">
-              <i class="glyphicon glyphicon-plus-sign"></i>
-              {{'add_layer_btn' | translate}}
+      <div id="pulldown-menu" class="panel-group in">
+        <div id="pulldown-content">
+          <div class="panel" ng-show="notificationsPanel">
+            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#notification-panel">
+              <span translate="notifications_tab">Notifications</span>
+              <span class="loom-notification-badge pull-right"></span>
+            </div>
+            <div id="notification-panel" notification-empty-text="'no_notifications' | translate"
+                 class="pulldown-panel loom-notifications">
             </div>
           </div>
-        </div>
-        <div class="panel" ng-show="syncPanel">
-          <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-               data-target="#syncronization-panel">
-            <span translate="synchronization">Synchronization</span>
+          <div class="panel" ng-show="layersPanel">
+            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#layer-manager-panel">
+              <span translate="map_layers">Map Layers</span>
+            </div>
+            <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
+              <div class="loom-layers"></div>
+              <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog"
+                   data-toggle="modal">
+                <i class="glyphicon glyphicon-plus-sign"></i>
+                {{'add_layer_btn' | translate}}
+              </div>
+            </div>
+          </div>
+          <div class="panel" ng-show="syncPanel">
+            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#syncronization-panel">
+              <span translate="synchronization">Synchronization</span>
 
-            <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
-                 class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
+              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
+                   class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
+            </div>
+            <div id="syncronization-panel" class="panel-collapse collapse">
+              <div class="loom-synclinks"></div>
+            </div>
           </div>
-          <div id="syncronization-panel" class="panel-collapse collapse">
-            <div class="loom-synclinks"></div>
-          </div>
-        </div>
-        <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
-          <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content" data-target="#history-panel">
-            <span class="ellipsis panel-title">{{title}}</span>
+          <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
+            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#history-panel">
+              <span class="ellipsis panel-title">{{title}}</span>
 
-            <div stop-event='click' ng-click="clearHistory()"
-                 class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
-            <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
-                 class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
+              <div stop-event='click' ng-click="clearHistory()"
+                   class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
+              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
+                   class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
+            </div>
+            <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes
+              here.
+            </div>
           </div>
-          <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes here.</div>
-        </div>
-        <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
-          <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
-               data-target="#diff-panel">
-            <span class="ellipsis panel-title">{{title}}</span>
+          <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
+            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#diff-panel">
+              <span class="ellipsis panel-title">{{title}}</span>
 
-            <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
-                 class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
-            <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
+              <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
+                   class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
+              <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
+            </div>
+            <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
           </div>
-          <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
         </div>
       </div>
     </div>
-    <button type="button" data-toggle="collapse" data-target="#pulldown-content" translate="toggle_menu"
+    <button type="button" data-toggle="collapse" data-target="#pulldown-menu" translate="toggle_menu"
             class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
     </button>
   </div>
   <div class="loom-notification-poster"></div>
   <div class="loom-legend"></div>
-  <div class="loom-geometry-edit"></div>
+  <div class="loom-exclusive-mode"></div>
   <div id="zoom-to-world-border" class="map-btn-border">
     <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
-        <i class="glyphicon glyphicon-globe"></i>
+      <i class="glyphicon glyphicon-globe"></i>
     </div>
   </div>
 </div>
