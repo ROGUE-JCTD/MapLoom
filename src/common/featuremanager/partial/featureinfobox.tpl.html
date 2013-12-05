@@ -59,7 +59,7 @@
         <button type="button" ng-click="featureManagerService.startGeometryEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_geometry' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
-        <button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
+        <button type="button" ng-click="deleteFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-trash"></button>
       </div>
     </div>

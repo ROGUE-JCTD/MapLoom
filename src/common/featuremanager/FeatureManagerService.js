@@ -17,6 +17,7 @@
   var position_ = null;
   var modify_ = null;
   var enabled_ = true;
+  var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
 
   module.provider('featureManagerService', function() {
 
@@ -331,7 +332,7 @@
             newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
           }
           // Issue the request
-          issueWFSPost(partial, null, coords, newPos);
+          issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos);
         }
       } else {
         // discard changes
@@ -385,8 +386,12 @@
       }
 
       if (propertyXmlPartial !== '') {
-        issueWFSPost(propertyXmlPartial, properties, coords, newPos);
+        issueWFSPost(wfsPostTypes_.UPDATE, propertyXmlPartial, properties, coords, newPos);
       }
+    };
+
+    this.deleteFeature = function() {
+      issueWFSPost(wfsPostTypes_.DELETE);
     };
   });
 
@@ -467,21 +472,40 @@
     return type;
   }
 
-  function issueWFSPost(partial, properties, coords, newPos) {
-    var commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{modified:1}}';
+  function issueWFSPost(postType, partial, properties, coords, newPos) {
+    var wfsRequestTypePartial;
+    var commitMsg;
+    if (postType === wfsPostTypes_.INSERT) {
+      commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{added:1}}';
+      // TODO: Create partial for insert
+      return;
+    } else {
+      var filter = '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+          '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
+          '</ogc:Filter>';
+      if (postType === wfsPostTypes_.DELETE) {
+        commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{removed:1}}';
+        wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
+            '" xmlns:feature="http://www.geonode.org/" typeName="' +
+            selectedLayer_.get('metadata').name + '">' +
+            filter + '</wfs:Delete>';
+      } else if (postType === wfsPostTypes_.UPDATE) {
+        commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{modified:1}}';
+        wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
+            '" xmlns:feature="http://www.geonode.org/" typeName="' +
+            selectedLayer_.get('metadata').name + '">' +
+            partial + filter +
+            '</wfs:Update>';
+      }
+    }
+
     var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
         '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
         'service="WFS" version="1.1.0" ' +
         'handle="' + commitMsg + '" ' +
         'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"> ' +
-        '<wfs:Update handle="' + commitMsg + '" xmlns:feature="http://www.geonode.org/" typeName="' +
-        selectedLayer_.get('metadata').name + '">' +
-        partial +
-        '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
-        '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
-        '</ogc:Filter>' +
-        '</wfs:Update>' +
+        wfsRequestTypePartial +
         '</wfs:Transaction>';
 
     http_({
@@ -498,6 +522,9 @@
       }
       if (goog.isDefAndNotNull(newPos)) {
         service_.show(selectedItem_, newPos);
+      }
+      if (postType === wfsPostTypes_.DELETE) {
+        service_.hide();
       }
       mapService_.dumpTileCache();
     }).error(function(data, status, headers, config) {

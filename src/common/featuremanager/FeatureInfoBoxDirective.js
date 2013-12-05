@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function(featureManagerService, mapService, historyService) {
+      function(featureManagerService, mapService, historyService, dialogService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -35,6 +35,19 @@
                   }
                 }
               }
+            };
+
+            scope.deleteFeature = function() {
+              dialogService.warn('Delete Feature', 'Are you sure you want to delete this feature?',
+                  ['Yes', 'No'], false).then(function(button) {
+                switch (button) {
+                  case 'Yes':
+                    featureManagerService.deleteFeature();
+                    break;
+                  case 'No':
+                    break;
+                }
+              });
             };
           }
         };
