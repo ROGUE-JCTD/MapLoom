@@ -7,6 +7,7 @@
   var rootScope_ = null;
   var http_ = null;
   var exclusiveModeService_ = null;
+  var dialogService_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
   var selectedItemPics_ = null;
@@ -17,18 +18,20 @@
   var overlay_ = null;
   var position_ = null;
   var modify_ = null;
+  var draw_ = null;
   var enabled_ = true;
   var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, mapService, $compile, $http, exclusiveModeService) {
+    this.$get = function($rootScope, mapService, $compile, $http, exclusiveModeService, dialogService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
       http_ = $http;
       exclusiveModeService_ = exclusiveModeService;
+      dialogService_ = dialogService;
       registerOnMapClick($rootScope, $compile);
 
       overlay_ = new ol.Overlay({
@@ -63,6 +66,10 @@
 
     this.getPosition = function() {
       return position_;
+    };
+
+    this.getEnabled = function() {
+      return enabled_;
     };
 
     this.hide = function() {
@@ -287,16 +294,117 @@
       }
     };
 
+    this.startFeatureInsert = function(layer) {
+      // TODO: Find a better way to handle this
+      service_.hide();
+      enabled_ = false;
+      exclusiveModeService_.startExclusiveMode('Drawing Geometry', exclusiveModeService_.button('Accept', function() {
+        if (mapService_.editLayer.getFeatures().length < 1) {
+          dialogService_.warn('Adding Feature', 'You must create a feature before continuing.',
+              ['OK'], false).then(function(button) {
+            switch (button) {
+              case 'OK':
+                break;
+            }
+          });
+        } else {
+          var feature = mapService_.editLayer.getFeatures()[0];
+          selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
+          var newGeom = transformGeometry(selectedItem_.geometry,
+              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+          selectedItem_.geometry.coordinates = newGeom.getCoordinates();
+          service_.startAttributeEditing(true);
+        }
+      }), exclusiveModeService_.button('Discard', function() {
+        service_.endFeatureInsert(false);
+      }));
+      var props = [];
+      var geometryType = '';
+      var geometryName = '';
+      goog.object.forEach(layer.get('metadata').schema, function(v, k) {
+        if (k !== 'fotos' && k !== 'photos') {
+          if (v._type.search('gml:') == -1) {
+            props.push([k, null]);
+          } else {
+            geometryName = k;
+            geometryType = v._type;
+          }
+        }
+      });
+      selectedItemProperties_ = props;
+      selectedLayer_ = layer;
+      geometryType = geometryType.split(':')[1].replace('PropertyType', '').toLowerCase();
+      selectedItem_ = {geometry: {type: geometryType}, geometry_name: geometryName, properties: {}};
+      mapService_.map.addLayer(mapService_.editLayer);
+      draw_ = new ol.interaction.Draw({layer: mapService_.editLayer, type: geometryType});
+      mapService_.map.addInteraction(draw_);
+      rootScope_.$broadcast('startFeatureInsert');
+    };
+
+    this.endFeatureInsert = function(save, properties, coords) {
+      if (save) {
+        var propertyXmlPartial = '';
+        var featureGML = '';
+        var newPos;
+        var feature = mapService_.editLayer.getFeatures()[0];
+        if (goog.isDefAndNotNull(coords)) {
+          // Check if either of the coordinates we changed in the attribute editing process
+          if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
+              (coords[1] !== selectedItem_.geometry.coordinates[1])) {
+            // Transform the geometry so we can get the new place on the map to show the info-box
+            var newGeom = transformGeometry({type: 'point', coordinates: coords},
+                selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
+            // We also need to update the vector feature so that it is in the new position
+            feature.setGeometry(newGeom);
+            newPos = newGeom.getCoordinates();
+            // Construct the property change to put in the partial to send in the post request
+            featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+                mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
+                newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
+            var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+            mapService_.map.beforeRender(pan);
+            mapService_.map.getView().getView2D().setCenter(newPos);
+          } else {
+            featureGML = getGeometryGMLFromFeature(feature);
+            newPos = feature.getGeometry().getCoordinates();
+          }
+        } else {
+          featureGML = getGeometryGMLFromFeature(feature);
+          if (feature.getGeometry().getType() == 'multilinestring') {
+            newPos = feature.getGeometry().getComponents()[0].getCoordinates();
+            newPos = newPos[Math.floor(newPos.length / 2)];
+          } else if (feature.getGeometry().getType() == 'multipolygon') {
+            newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
+          }
+        }
+        propertyXmlPartial += '<feature:' + selectedItem_.geometry_name + '>' + featureGML + '</feature:' +
+            selectedItem_.geometry_name + '>';
+
+        goog.array.forEach(properties, function(property, index) {
+          if (properties[index][1] !== selectedItemProperties_[index][1]) {
+            propertyXmlPartial += '<feature:' + property[0] + '>' + property[1] + '</feature:' + property[0] + '>';
+          }
+        });
+        issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos);
+        mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+      } else {
+        service_.hide();
+      }
+      enabled_ = true;
+      mapService_.map.removeInteraction(draw_);
+      exclusiveModeService_.endExclusiveMode();
+      rootScope_.$broadcast('endFeatureInsert', save);
+    };
+
     this.startGeometryEditing = function() {
-      $('#info-box').hide();
       rootScope_.$broadcast('startGeometryEdit');
-      exclusiveModeService_.startExclusiveMode('Editing Geometry', {title: 'Save', callback: function() {
+      exclusiveModeService_.startExclusiveMode('Editing Geometry', exclusiveModeService_.button('Save', function() {
         service_.endGeometryEditing(true);
         exclusiveModeService_.endExclusiveMode();
-      }}, {title: 'Cancel', callback: function() {
+      }), exclusiveModeService_.button('Cancel', function() {
         service_.endGeometryEditing(false);
         exclusiveModeService_.endExclusiveMode();
-      }});
+      }));
       modify_ = new ol.interaction.Modify();
       mapService_.map.addInteraction(modify_);
       enabled_ = false;
@@ -308,21 +416,7 @@
         var feature = mapService_.editLayer.getFeatures()[0];
         if (feature.original_) {
           // Feature was modified so we need to save the changes
-          // TODO: Find a better way to write geometry to GML or a better way to parse it
-          // Write the feature to GML
-          var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
-            featureType: selectedLayer_.get('metadata').nativeName});
-          var featureGML = writer.write({features: [feature]},
-              {srsName: mapService_.map.getView().getView2D().getProjection().getCode()});
-          // Parse out only the geometry
-          var startIndex = featureGML.indexOf('<feature:geometry>');
-          var endIndex = featureGML.indexOf('</feature:geometry');
-          featureGML = featureGML.substring((startIndex + 18), endIndex);
-          // Its missing the namespace for the gml geometry so we need to add that
-          startIndex = featureGML.indexOf(' srsName=');
-          var originalString = featureGML.substring(0, startIndex);
-          var newString = originalString + ' xmlns:gml="http://www.opengis.net/gml"';
-          featureGML = featureGML.replace(originalString, newString);
+          var featureGML = getGeometryGMLFromFeature(feature);
           // Finish constructing the partial that will be sent in the post request
           var partial = '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
               '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
@@ -330,7 +424,8 @@
           var coords = null;
           var newPos = null;
           if (feature.getGeometry().getType() == 'point') {
-            var transformedGeom = transformPoint(feature.getGeometry().getCoordinates(),
+            coords = feature.getGeometry().getCoordinates();
+            var transformedGeom = transformGeometry({type: 'point', coordinates: coords},
                 mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
             coords = transformedGeom.getCoordinates();
             newPos = feature.getGeometry().getCoordinates();
@@ -349,58 +444,63 @@
         mapService_.clearSelectedFeature();
         mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
-      $('#info-box').show();
       rootScope_.$broadcast('endGeometryEdit', save);
       mapService_.map.removeInteraction(modify_);
       enabled_ = true;
     };
 
-    this.startAttributeEditing = function() {
-      rootScope_.$broadcast('startAttributeEdit', selectedItem_,
-          selectedItemProperties_);
+    this.startAttributeEditing = function(inserting) {
+      rootScope_.$broadcast('startAttributeEdit', selectedItem_.geometry,
+          selectedItemProperties_, inserting);
     };
 
-    this.endAttributeEditing = function(properties, coords) {
+    this.endAttributeEditing = function(save, inserting, properties, coords) {
       //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
-
-      var propertyXmlPartial = '';
-      goog.array.forEach(properties, function(property, index) {
-        if (properties[index][1] !== selectedItemProperties_[index][1]) {
-          propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
-              '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
+      if (inserting) {
+        // create request
+        service_.endFeatureInsert(save, properties, coords);
+      } else if (save) {
+        var propertyXmlPartial = '';
+        goog.array.forEach(properties, function(property, index) {
+          if (properties[index][1] !== selectedItemProperties_[index][1]) {
+            propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
+                '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
+          }
+        });
+        var newPos = null;
+        if (goog.isDefAndNotNull(coords)) {
+          // Check if either of the coordinates we changed in the attribute editing process
+          if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
+              (coords[1] !== selectedItem_.geometry.coordinates[1])) {
+            // Transform the geometry so we can get the new place on the map to show the info-box
+            var newGeom = transformGeometry({type: 'point', coordinates: coords},
+                selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
+            // We also need to update the vector feature so that it is in the new position
+            var feature = mapService_.editLayer.getFeatures()[0];
+            feature.setGeometry(newGeom);
+            newPos = newGeom.getCoordinates();
+            // Construct the property change to put in the partial to send in the post request
+            var featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+                mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
+                newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
+            propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
+                '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
+            var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+            mapService_.map.beforeRender(pan);
+            mapService_.map.getView().getView2D().setCenter(newPos);
+          }
         }
-      });
-      var newPos = null;
-      if (goog.isDefAndNotNull(coords)) {
-        // Check if either of the coordinates we changed in the attribute editing process
-        if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
-            (coords[1] !== selectedItem_.geometry.coordinates[1])) {
-          // Transform the geometry so we can get the new place on the map to show the info-box
-          var newGeom = transformPoint(coords, selectedLayer_.get('metadata').projection,
-              mapService_.map.getView().getView2D().getProjection());
-          // We also need to update the vector feature so that it is in the new position
-          var feature = mapService_.editLayer.getFeatures()[0];
-          feature.setGeometry(newGeom);
-          newPos = newGeom.getCoordinates();
-          // Construct the property change to put in the partial to send in the post request
-          var featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-              mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
-              newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
-          propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
-              '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
-          var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
-          mapService_.map.beforeRender(pan);
-          mapService_.map.getView().getView2D().setCenter(newPos);
+
+        if (propertyXmlPartial !== '') {
+          issueWFSPost(wfsPostTypes_.UPDATE, propertyXmlPartial, properties, coords, newPos);
         }
       }
-
-      if (propertyXmlPartial !== '') {
-        issueWFSPost(wfsPostTypes_.UPDATE, propertyXmlPartial, properties, coords, newPos);
-      }
+      rootScope_.$broadcast('endAttributeEdit', save);
     };
 
     this.deleteFeature = function() {
       issueWFSPost(wfsPostTypes_.DELETE);
+      rootScope_.$broadcast('featureDeleted');
     };
   });
 
@@ -485,21 +585,27 @@
     var wfsRequestTypePartial;
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
-      commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"added":1}}';
-      // TODO: Create partial for insert
-      return;
+      commitMsg = '{&quot;' + selectedLayer_.get('metadata').nativeName + '&quot;:{&quot;added&quot;:1}}';
+      wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
+          '"><feature:' + selectedLayer_.get('metadata').nativeName + ' xmlns:feature="http://www.geonode.org/">' +
+          partial + '</feature:' + selectedLayer_.get('metadata').nativeName + '></wfs:Insert>';
+      goog.array.forEach(properties, function(obj) {
+        if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
+          selectedItem_.properties[obj[0]] = obj[1];
+        }
+      });
     } else {
       var filter = '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
           '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
           '</ogc:Filter>';
       if (postType === wfsPostTypes_.DELETE) {
-        commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"removed":1}}';
+        commitMsg = '{&quot;' + selectedLayer_.get('metadata').nativeName + '&quot;:{&quot;removed&quot;:1}}';
         wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
             '" xmlns:feature="http://www.geonode.org/" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             filter + '</wfs:Delete>';
       } else if (postType === wfsPostTypes_.UPDATE) {
-        commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"modified":1}}';
+        commitMsg = '{&quot;' + selectedLayer_.get('metadata').nativeName + '&quot;:{&quot;modified&quot;:1}}';
         wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
             '" xmlns:feature="http://www.geonode.org/" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
@@ -523,6 +629,12 @@
       data: wfsRequestData
     }).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
+      if (postType === wfsPostTypes_.INSERT) {
+        var x2js = new X2JS();
+        var json = x2js.xml_str2json(data);
+        selectedItem_.id = json.TransactionResponse.InsertResults.Feature.FeatureId._fid;
+        selectedItem_.type = 'Feature';
+      }
       if (goog.isDefAndNotNull(properties)) {
         selectedItemProperties_ = properties;
       }
@@ -541,10 +653,53 @@
     });
   }
 
-  function transformPoint(coords, crsFrom, crsTo) {
-    var newGeom = new ol.geom.Point(goog.array.clone(coords));
+  function transformGeometry(geometry, crsFrom, crsTo) {
+    var newGeom;
+    switch (geometry.type.toLowerCase()) {
+      case 'point': {
+        newGeom = new ol.geom.Point($.extend(true, [], geometry.coordinates));
+      } break;
+      case 'linestring': {
+        newGeom = new ol.geom.LineString($.extend(true, [], geometry.coordinates));
+      } break;
+      case 'polygon': {
+        newGeom = new ol.geom.Polygon($.extend(true, [], geometry.coordinates));
+      } break;
+      case 'multipoint': {
+        newGeom = new ol.geom.MultiPoint($.extend(true, [], geometry.coordinates));
+      } break;
+      case 'multilinestring': {
+        newGeom = new ol.geom.MultiLineString($.extend(true, [], geometry.coordinates));
+      } break;
+      case 'multipolygon': {
+        newGeom = new ol.geom.MultiPolygon($.extend(true, [], geometry.coordinates));
+      } break;
+      default: {
+        console.log(geometry.geometry.type, 'Not a valid geometry type');
+      }
+    }
     var transform = ol.proj.getTransform(crsFrom, crsTo);
     newGeom.transform(transform);
     return newGeom;
   }
+
+  function getGeometryGMLFromFeature(feature) {
+    // TODO: Find a better way to write geometry to GML or a better way to parse it
+    // Write the feature to GML
+    var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
+      featureType: selectedLayer_.get('metadata').nativeName});
+    var featureGML = writer.write({features: [feature]},
+        {srsName: mapService_.map.getView().getView2D().getProjection().getCode()});
+    // Parse out only the geometry
+    var startIndex = featureGML.indexOf('<feature:geometry>');
+    var endIndex = featureGML.indexOf('</feature:geometry');
+    featureGML = featureGML.substring((startIndex + 18), endIndex);
+    // Its missing the namespace for the gml geometry so we need to add that
+    startIndex = featureGML.indexOf(' srsName=');
+    var originalString = featureGML.substring(0, startIndex);
+    var newString = originalString + ' xmlns:gml="http://www.opengis.net/gml"';
+    featureGML = featureGML.replace(originalString, newString);
+    return featureGML;
+  }
+
 }());

@@ -3,6 +3,8 @@
 
   var dragZoomActive = false;
 
+  var select = null;
+
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
@@ -257,8 +259,7 @@
             units: ol.control.ScaleLineUnits.IMPERIAL})
         ]),
         interactions: ol.interaction.defaults().extend([
-          new ol.interaction.DragRotate(),
-          new ol.interaction.Select()
+          new ol.interaction.DragRotate()
         ]),
         renderer: ol.RendererHint.CANVAS,
         target: 'map',
@@ -348,25 +349,26 @@
     };
 
     this.selectFeature = function(geom, crs) {
+      this.editLayer.clear();
       var newFeature = new ol.Feature();
       var newGeom;
-      switch (geom.type) {
-        case 'Point': {
+      switch (geom.type.toLowerCase()) {
+        case 'point': {
           newGeom = new ol.geom.Point($.extend(true, [], geom.coordinates));
         } break;
-        case 'LineString': {
+        case 'linestring': {
           newGeom = new ol.geom.LineString($.extend(true, [], geom.coordinates));
         } break;
-        case 'Polygon': {
+        case 'polygon': {
           newGeom = new ol.geom.Polygon($.extend(true, [], geom.coordinates));
         } break;
-        case 'MultiPoint': {
+        case 'multipoint': {
           newGeom = new ol.geom.MultiPoint($.extend(true, [], geom.coordinates));
         } break;
-        case 'MultiLineString': {
+        case 'multilinestring': {
           newGeom = new ol.geom.MultiLineString($.extend(true, [], geom.coordinates));
         } break;
-        case 'MultiPolygon': {
+        case 'multipolygon': {
           newGeom = new ol.geom.MultiPolygon($.extend(true, [], geom.coordinates));
         } break;
         default: {
@@ -377,14 +379,16 @@
       newGeom.transform(transform);
       newFeature.setGeometry(newGeom);
       this.editLayer.addFeatures([newFeature]);
-      var select = this.map.getInteractions().getArray()[11];
+      select = new ol.interaction.Select();
       select.select(this.map, [[newFeature]], [this.editLayer], false);
+      this.map.addInteraction(select);
       this.map.addLayer(this.editLayer);
     };
 
     this.clearSelectedFeature = function() {
       this.editLayer.clear();
       this.map.removeLayer(this.editLayer);
+      this.map.removeInteraction(select);
     };
   });
 }());

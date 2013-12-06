@@ -15,6 +15,8 @@
           $scope.layersPanel = pulldownService.layersPanel.getVisible();
           $scope.syncPanel = pulldownService.syncPanel.getVisible();
           $scope.historyPanel = pulldownService.historyPanel.getVisible();
+          $scope.toggleEnabled = pulldownService.toggleEnabled;
+          $scope.pulldownService = pulldownService;
         }
 
         function updateScopeVariables() {
@@ -54,5 +56,6 @@
 
         $scope.$on('history_fetched', historyPanelEnabled);
         $scope.$on('history_cleared', historyPanelEnabled);
+        $scope.$watch('pulldownService.toggleEnabled', updateScopeVariables);
       });
 })();

@@ -3,13 +3,14 @@
   var module = angular.module('loom_layers_directive', []);
 
   module.directive('loomLayers',
-      function($rootScope, mapService, pulldownService, historyService) {
+      function($rootScope, mapService, pulldownService, historyService, featureManagerService) {
         return {
           restrict: 'C',
           replace: true,
           templateUrl: 'layers/partials/layers.tpl.html',
           link: function(scope) {
             scope.mapService = mapService;
+            scope.featureManagerService = featureManagerService;
 
             scope.toggleVisibility = function(layer) {
               layer.setVisible(!layer.get('visible'));

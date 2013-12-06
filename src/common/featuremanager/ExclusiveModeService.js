@@ -3,10 +3,16 @@
 
   var title_ = '';
   var buttons_ = [];
+  var pulldownService_ = null;
 
   module.provider('exclusiveModeService', function() {
-    this.$get = function() {
+    this.$get = function(pulldownService) {
+      pulldownService_ = pulldownService;
       return this;
+    };
+
+    this.button = function(title, callback) {
+      return {title: title, callback: callback};
     };
 
     this.getTitle = function() {
@@ -25,14 +31,20 @@
       title_ = title;
       buttons_ = [buttonOne, buttonTwo];
       angular.element('#pulldown-menu').collapse('hide');
-      angular.element('#exclusive-mode-container').collapse('show');
+      pulldownService_.toggleEnabled = false;
+      setTimeout(function() {
+        angular.element('#exclusive-mode-container').collapse('show');
+      }, 350);
     };
 
     this.endExclusiveMode = function() {
-      title_ = '';
-      buttons_ = [];
-      angular.element('#pulldown-menu').collapse('show');
       angular.element('#exclusive-mode-container').collapse('hide');
+      pulldownService_.toggleEnabled = true;
+      setTimeout(function() {
+        angular.element('#pulldown-menu').collapse('show');
+        title_ = '';
+        buttons_ = [];
+      }, 350);
     };
   });
 }());

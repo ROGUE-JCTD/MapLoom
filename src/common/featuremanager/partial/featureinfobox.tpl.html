@@ -36,7 +36,7 @@
     </div>
 
     <div class="feature-info-box">
-      <span ng-if="featureManagerService.getSelectedItem().geometry.type == 'Point'">
+      <span ng-if="featureManagerService.getSelectedItem().geometry.type.toLowerCase() == 'point'">
         <span class="info-box-attribute">{{'location_lon_lat' | translate}}</span>
         <span class="info-box-attribute-value">({{featureManagerService.getSelectedItem().geometry.coordinates[0]}},{{featureManagerService.getSelectedItem().geometry.coordinates[1]}})</span>
       </span>

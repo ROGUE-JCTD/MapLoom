@@ -99,7 +99,7 @@
         </div>
       </div>
     </div>
-    <button type="button" data-toggle="collapse" data-target="#pulldown-menu" translate="toggle_menu"
+    <button ng-class="{'disabled': !toggleEnabled}" type="button" data-toggle="collapse" data-target="#pulldown-menu" translate="toggle_menu"
             class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
     </button>
   </div>
@@ -145,7 +145,7 @@
   <div class="loom-attribute-edit" id="edit-feature">
   </div>
 </div>
-<div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem()"
+<div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
      class="feature-info-box-popup">
 </div>
 

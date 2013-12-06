@@ -10,7 +10,7 @@
           link: function(scope, element) {
             scope.featureManagerService = featureManagerService;
             scope.coordDisplay = coordinateDisplays.DMS;
-            scope.$on('startAttributeEdit', function(event, feature, properties) {
+            scope.$on('startAttributeEdit', function(event, geometry, properties, inserting) {
               scope.properties = new Array(properties.length);
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
@@ -23,18 +23,31 @@
                   }
                 }
               });
-              scope.coordinates = goog.array.clone(feature.geometry.coordinates);
+              if (geometry.type.toLowerCase() == 'point') {
+                scope.coordinates = goog.array.clone(geometry.coordinates);
+              }
+              scope.inserting = inserting;
               $('#attribute-edit-dialog').modal('toggle');
-              scope.feature = feature;
             });
+
+            var reset = function() {
+              scope.featureManagerService = null;
+              scope.properties = null;
+              scope.coordinates = null;
+              scope.inserting = false;
+            };
 
             var parentModal = element.closest('.modal');
             var closeModal = function(event, element) {
               if (parentModal[0] === element[0]) {
-                scope.feature = null;
-                scope.properties = null;
-                scope.coordinates = null;
+                featureManagerService.endAttributeEditing(false, scope.inserting);
+                reset();
               }
+            };
+
+            scope.save = function() {
+              featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties, scope.coordinates);
+              reset();
             };
 
             scope.selectValue = function(property, index) {

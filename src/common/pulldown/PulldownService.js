@@ -21,6 +21,7 @@
     this.layersPanel = new PulldownPanel(true, true);
     this.syncPanel = new PulldownPanel(true, false);
     this.historyPanel = new PulldownPanel(true, false);
+    this.toggleEnabled = true;
 
     this.$get = function($rootScope, $timeout) {
       rootScope_ = $rootScope;

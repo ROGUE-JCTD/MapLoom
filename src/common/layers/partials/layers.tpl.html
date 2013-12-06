@@ -1,7 +1,8 @@
 <div id="layerpanel-group" class="panel-group loom-arrangeable" arrangeable-handle="div.layer-heading"
      arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer"
      arrangeable-placeholder='<div class="placeholder"></div>'>
-  <div class="panel" ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterHiddenLayers">
+  <div class="panel"
+       ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterHiddenLayers">
     <div class="panel-heading layer-heading" data-toggle="collapse"
          data-parent="#layerpanel-group" data-target="#{{layer.get('label')}}">
       <div class="row">
@@ -17,9 +18,11 @@
             <i class="glyphicon"
                ng-class="{'glyphicon-eye-close': !layer.get('visible'), 'glyphicon-eye-open': layer.get('visible')}"></i>
           </span>
-          <!--<div stop-event="click mousedown" class="btn btn-xs btn-default">
+          <span ng-click="featureManagerService.startFeatureInsert(layer)" ng-show="layer.get('metadata').editable"
+               ng-class="{'disabled': (!layer.get('visible') || !layer.get('metadata').schema)}" stop-event="click mousedown"
+               class="btn btn-xs btn-default">
             <i class="glyphicon glyphicon-pencil"></i>
-          </div>-->
+          </span>
         </div>
       </div>
     </div>
