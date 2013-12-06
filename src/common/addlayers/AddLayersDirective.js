@@ -3,12 +3,14 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function(serverService, mapService, geogitService) {
+      function(serverService, mapService, geogitService, $translate) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
             scope.serverService = serverService;
             scope.currentServerIndex = 0;
+
+            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
 
             scope.addLayers = function() {
               var layers = scope.serverService.getLayers(scope.currentServerIndex);

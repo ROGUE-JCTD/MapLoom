@@ -37,7 +37,7 @@
         <div class="panel" ng-show="notificationsPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#notification-panel">
-            <span>Notifications</span>
+            <span translate="notifications_tab">Notifications</span>
             <span class="loom-notification-badge pull-right"></span>
           </div>
           <div id="notification-panel" notification-empty-text="No notifications..."
@@ -47,11 +47,12 @@
         <div class="panel" ng-show="layersPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#layer-manager-panel">
-            <span>Map Layers</span>
+            <span translate="map_layers">Map Layers</span>
           </div>
           <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
             <div class="loom-layers"></div>
-            <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal">
+            <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal"
+              translate="add_layer_btn">
               <i class="glyphicon glyphicon-plus-sign"></i>
               Add Layer
             </div>
@@ -60,7 +61,7 @@
         <div class="panel" ng-show="syncPanel">
           <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                data-target="#syncronization-panel">
-            <span>Synchronization</span>
+            <span translate="synchronization">Synchronization</span>
 
             <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
                  class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
@@ -93,7 +94,7 @@
         </div>
       </div>
     </div>
-    <button type="button" data-toggle="collapse" data-target="#pulldown-content"
+    <button type="button" data-toggle="collapse" data-target="#pulldown-content" translate="toggle_menu"
             class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
     </button>
   </div>
@@ -106,11 +107,12 @@
     </div>
   </div>
 </div>
-<div loom-modal id="add-layer-dialog" modal-title="Add Layers">
+<!--modal titles are in a lower case underscore separated format so that they can be translated-->
+<div loom-modal id="add-layer-dialog" modal-title="add_layers">
   <div loom-addlayers id="add-layers">
   </div>
 </div>
-<div loom-modal id="add-server-dialog" modal-title="Add Server">
+<div loom-modal id="add-server-dialog" modal-title="add_server">
   <div loom-add-server id="add-server">
   </div>
 </div>
@@ -126,7 +128,7 @@
   <div loom-addsync id="add-sync">
   </div>
 </div>
-<div loom-modal id="configWindow" modal-title="Config">
+<div loom-modal id="configWindow" modal-title="config">
   <div loom-syncconfig id="sync-config">
   </div>
 </div>

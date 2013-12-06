@@ -2,7 +2,8 @@
   var module = angular.module('loom_notification_poster_directive', []);
 
   module.directive('loomNotificationPoster',
-      function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService) {
+      function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService,
+          $translate) {
         return{
           restrict: 'C',
           replace: true,
@@ -21,6 +22,8 @@
               '      class="btn btn-default">Drag Zoom</button>' +
               '    <button type="button" ng-click="addModal()"' +
               '      class="btn btn-default">Modal</button>' +
+              '    <button type="button" ng-click="localize()"' +
+              '      class="btn btn-default">Switch Language</button>' +
               '  </div>' +
               '</div>',
           // The linking function will add behavior to the template
@@ -99,6 +102,17 @@
               $timeout(function() {
                 dialogService.error('ERROR', 'This is an error message.');
               }, 4000);
+            };
+
+            var activeLang = 'en';
+            scope.localize = function() {
+              if (activeLang === 'en') {
+                $translate.uses('es');
+                activeLang = 'es';
+              } else {
+                $translate.uses('en');
+                activeLang = 'en';
+              }
             };
           }
         };

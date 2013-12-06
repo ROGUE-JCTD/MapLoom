@@ -3,11 +3,16 @@
   var module = angular.module('loom_syncconfig_directive', []);
 
   module.directive('loomSyncconfig',
-      function($q, geogitService) {
+      function($q, geogitService, $translate) {
         return {
           templateUrl: 'sync/partials/syncconfig.tpl.html',
           link: function(scope) {
             scope.geogitService = geogitService;
+
+            angular.element('#remote-name')[0].attributes.placeholder.value = $translate('repo_name');
+            angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate('repo_username');
+            angular.element('#remotePassword')[0].attributes.placeholder.value = $translate('repo_password');
+
             var reset = function() {
               scope.selectedRepo = null;
               scope.selectedRemote = null;

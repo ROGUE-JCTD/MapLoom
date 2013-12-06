@@ -1,7 +1,7 @@
 <div class="notification-content panel-collapse collapse">
   <div id="notification-collapse-group" class="panel-group">
     <div ng-if="notificationService.getNotifications().length == 0"
-         class="notification-panel-heading panel-heading flat read">{{emptyText}}
+         class="notification-panel-heading panel-heading flat read" translate="no_notifications">
     </div>
     <div class="panel"
          ng-repeat="notification in notifications = notificationService.getNotifications() | orderBy:'id':true">

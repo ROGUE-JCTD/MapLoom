@@ -23,7 +23,7 @@
         </select>
       </div>
       <div class="col-md-2" ng-hide="!selectedRepoId">
-        <p class="form-control-static text-center">into</p>
+        <p class="form-control-static text-center" translate="into">into</p>
       </div>
       <div class="col-md-3" ng-hide="!selectedRepoId">
         <select class="form-control" ng-model="destinationBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches | filter:listFilter(sourceBranch)">
@@ -32,7 +32,8 @@
     </div>
   </form>
   <div class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-class="{'disabled':!mergePossible()}" ng-click="onMerge()">Merge</button>
+    <button type="button" class="btn btn-default" ng-click="cancel()" translate="cancel_btn">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-class="{'disabled':!mergePossible()}"
+      ng-click="onMerge()" translate="merge">Merge</button>
   </div>
 </div>

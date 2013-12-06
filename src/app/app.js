@@ -24,13 +24,10 @@
     });
 
     $scope.mapService = mapService;
-
-    $translate.uses('en');
-
   });
 
   module.config(function($translateProvider) {
-    $translateProvider.uses('en');
+    $translateProvider.preferredLanguage('en');
   });
 }());
 

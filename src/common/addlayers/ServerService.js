@@ -10,11 +10,11 @@ var SERVER_SERVICE_USE_PROXY = true;
   var rootScope = null;
 
   module.provider('serverService', function() {
-    this.$get = function($rootScope, $location) {
+    this.$get = function($rootScope, $location, $translate) {
       rootScope = $rootScope;
       servers.push({
         type: 'WMS',
-        name: 'Local Geoserver',
+        name: $translate('local_geoserver'),
         url: ('http://' + $location.host() + (SERVER_SERVICE_USE_PORT ? ':' + $location.port() : '') + '/geoserver/wms')
       });
       servers.push({

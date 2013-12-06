@@ -2,7 +2,7 @@
   <form name="syncform" class="form-horizontal">
     <div class="form-group" ng-class="{'has-error': !syncform.syncname.$valid}">
       <div class="col-md-2">
-        <label>Name: </label>
+        <label translate="server_name">Name: </label>
       </div>
       <div class="col-md-10">
         <input name="syncname" ng-minlength="1" ng-model="name" type="text" class="form-control" placeholder="Name" required>
@@ -10,7 +10,7 @@
     </div>
     <div class="form-group">
       <div class="col-md-2">
-        <label>Repo: </label>
+        <label translate="repo">Repo: </label>
       </div>
       <div class="col-md-5">
         <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.repos">
@@ -23,7 +23,7 @@
     </div>
     <div class="form-group">
       <div class="col-md-2">
-        <label>Remote: </label>
+        <label translate="remote">Remote: </label>
       </div>
       <div class="col-md-5">
         <select class="form-control" ng-show="selectedRepo" ng-model="selectedRemote" required ng-options="remote.name for remote in geogitService.getRepoById(selectedRepo.id).remotes">
@@ -37,6 +37,8 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-  <button type="button" class="btn btn-primary" ng-click="createLink(name, selectedRepo, selectedRemote, localBranch, remoteBranch)" ng-class="{'disabled': !syncform.$valid}">Add</button>
+  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
+  <button type="button" class="btn btn-primary"
+          ng-click="createLink(name, selectedRepo, selectedRemote, localBranch, remoteBranch)"
+          ng-class="{'disabled': !syncform.$valid}" translate="add_btn">Add</button>
 </div>

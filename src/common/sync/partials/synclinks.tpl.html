@@ -5,12 +5,12 @@
         <a id="AddSyncButton" class="btn sync-list-button" data-target="#addSyncWindow"
            data-toggle="modal">
           <i class="glyphicon glyphicon-plus-sign"></i>
-          Add Sync
+          <span translate="add_sync">Add Sync</span>
         </a>
         <a id="MergeButton" class="btn sync-list-button" data-target="#mergeWindow"
            data-toggle="modal">
           <i class="glyphicon glyphicon-resize-small"></i>
-          Merge
+          <span translate="merge">Merge</span>
         </a>
       </div>
     </li>
@@ -32,8 +32,18 @@
             </button>
             <ul class="dropdown-menu">
               <li class="dropdown-header">Synchronize</li>
-              <li><a ng-click="link.setContinuous(false)"><i ng-hide="link.continuous" class="glyphicon glyphicon-check pull-right"></i> Single</a></li>
-              <li><a ng-click="link.setContinuous(true)"><i ng-show="link.continuous" class="glyphicon glyphicon-check pull-right"></i> Continuous</a></li>
+              <li>
+                <a ng-click="link.setContinuous(false)">
+                  <i ng-hide="link.continuous" class="glyphicon glyphicon-check pull-right"></i>
+                  <span translate="single">Single</span>
+                </a>
+              </li>
+              <li>
+                <a ng-click="link.setContinuous(true)">
+                  <i ng-show="link.continuous" class="glyphicon glyphicon-check pull-right"></i>
+                  <span translate="continuous">Continuous</span>
+                </a>
+              </li>
             </ul>
           </div>
           <i ng-class="{'remote-up': link.getIsActive()}" class="glyphicon glyphicon-certificate remote pull-right"></i>
