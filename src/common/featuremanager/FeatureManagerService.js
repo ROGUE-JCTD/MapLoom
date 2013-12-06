@@ -485,7 +485,7 @@
     var wfsRequestTypePartial;
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
-      commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{added:1}}';
+      commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"added":1}}';
       // TODO: Create partial for insert
       return;
     } else {
@@ -493,13 +493,13 @@
           '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
           '</ogc:Filter>';
       if (postType === wfsPostTypes_.DELETE) {
-        commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{removed:1}}';
+        commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"removed":1}}';
         wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
             '" xmlns:feature="http://www.geonode.org/" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             filter + '</wfs:Delete>';
       } else if (postType === wfsPostTypes_.UPDATE) {
-        commitMsg = '{' + selectedLayer_.get('metadata').nativeName + ':{modified:1}}';
+        commitMsg = '{"' + selectedLayer_.get('metadata').nativeName + '":{"modified":1}}';
         wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
             '" xmlns:feature="http://www.geonode.org/" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
