@@ -23,7 +23,7 @@
               var logOptions = new GeoGitLogOptions();
               logOptions.untilTime = startTime < endTime ? endTime : startTime;
               logOptions.sinceTime = startTime < endTime ? startTime : endTime;
-              logOptions.path = [historyService.featureType];
+              logOptions.path = historyService.pathFilter;
               logOptions.summarize = true;
               geogitService.command(historyService.repoId, 'log', logOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.untilCommit)) {
@@ -44,7 +44,7 @@
                   diffOptions.oldRefSpec = lastCommitId;
                   diffOptions.newRefSpec = firstCommitId;
                   diffOptions.showGeometryChanges = true;
-                  diffOptions.pathFilter = historyService.featureType;
+                  diffOptions.pathFilter = historyService.pathFilter;
                   diffOptions.show = 1000;
                   diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                     if (goog.isDefAndNotNull(response.Feature)) {

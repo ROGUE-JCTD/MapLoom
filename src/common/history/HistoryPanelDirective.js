@@ -54,7 +54,7 @@
               diffOptions.oldRefSpec = lastCommitId;
               diffOptions.newRefSpec = commit.id;
               diffOptions.showGeometryChanges = true;
-              diffOptions.pathFilter = historyService.featureType;
+              diffOptions.pathFilter = historyService.pathFilter;
               diffOptions.show = 1000;
               diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.Feature)) {

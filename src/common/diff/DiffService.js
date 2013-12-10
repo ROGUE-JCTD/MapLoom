@@ -197,7 +197,6 @@
     var fid = feature.layer + '/' + feature.feature;
     for (var i = 0; i < service_.features.length; i++) {
       if (fid === service_.features[i].id) {
-        console.log('found feature', service_.features[i]);
         featureDiffService_.leftName = service_.oldName;
         featureDiffService_.rightName = service_.newName;
         featureDiffService_.setFeature(

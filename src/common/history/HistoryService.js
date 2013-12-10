@@ -15,7 +15,7 @@
     this.entriesPerPage = 30;
     this.layer = null;
     this.repoId = null;
-    this.featureType = null;
+    this.pathFilter = null;
 
     this.$get = function($rootScope, geogitService, pulldownService) {
       rootScope_ = $rootScope;
@@ -25,8 +25,9 @@
       return this;
     };
 
-    this.getHistory = function(layer) {
+    this.getHistory = function(layer, pathFilter) {
       service_.clearHistory();
+      service_.pathFilter = pathFilter;
       if (goog.isDefAndNotNull(layer)) {
         service_.layer = layer;
       }
@@ -44,7 +45,7 @@
       service_.nextPage = false;
       service_.layer = null;
       service_.repoId = null;
-      service_.featureType = null;
+      service_.pathFilter = null;
       rootScope_.$broadcast('history_cleared');
     };
 
@@ -63,8 +64,10 @@
       if (goog.isDefAndNotNull(metadata)) {
         if (goog.isDefAndNotNull(metadata.repoId) && goog.isDefAndNotNull(metadata.nativeName)) {
           service_.repoId = metadata.repoId;
-          service_.featureType = metadata.nativeName;
-          logOptions.path = [metadata.nativeName];
+          if (!goog.isDefAndNotNull(service_.pathFilter)) {
+            service_.pathFilter = metadata.nativeName;
+          }
+          logOptions.path = service_.pathFilter;
           geogitService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
             if (goog.isDefAndNotNull(response.commit)) {
               forEachArrayish(response.commit, function(commit) {

@@ -35,7 +35,7 @@
               if (goog.isDefAndNotNull(layer)) {
                 var metadata = layer.get('metadata');
                 if (goog.isDefAndNotNull(metadata)) {
-                  if (goog.isDefAndNotNull(metadata.isGeoGit)) {
+                  if (goog.isDefAndNotNull(metadata.isGeoGit) && metadata.isGeoGit) {
                     return metadata.isGeoGit;
                   }
                 }
