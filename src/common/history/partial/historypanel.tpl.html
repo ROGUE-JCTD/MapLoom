@@ -14,7 +14,7 @@
             <span class="sr-only"></span>
           </div>
           <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
-            <span class="no-summary-text">?</span>
+            <span class="sr-only"></span>
           </div>
         </div>
         <div class="author-name">{{getCommitAuthor(commit)}}</div>
@@ -33,6 +33,8 @@
             </div>
           </div>
         </div>
+      </li>
+      <li class="history-last-list-item">
       </li>
     </ul>
   </div>

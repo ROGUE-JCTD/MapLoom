@@ -1,8 +1,16 @@
 .history-scroll-pane {
   max-height: 300px;
   overflow-y: auto;
+
+  .list-group {
+    overflow-y: hidden;
+  }
   .list-group-item {
     height: 40px;
+  }
+
+  .history-last-list-item {
+    display: none;
   }
 
   .popover {
@@ -56,13 +64,11 @@
 }
 
 .commit-summary {
-  height: 33px;
-  position: relative;
-  float: left;
+  height: 15px;
+  position: absolute;
   width: 80px;
   margin-bottom: 0px;
-  top: -8px;
-  left: -12px;
+  right: 14px;
   border: 1px solid @layerHeaderColor;
 
   .progress-bar-add {
@@ -87,34 +93,25 @@
   }
 
   .progress-bar-none {
-    background-color: darken(@mainListItemColor, 7%) !important;
+    background-color: darken(@mainListItemColor, 3%) !important;
     width: 100%;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
   }
-
-  .no-summary-text {
-    color: @layerHeaderColor;
-    font-size: 20px;
-    position: relative;
-    top: 4px;
-    left: -1px;
-  }
 }
 
 .author-name {
-  float: left;
-  position: relative;
-  top: -8px;
+  position: absolute;
+  top: 0px;
   width: 190px;
   font-weight: 900;
 }
 
 .commit-time {
-  float: left;
-  position: relative;
-  top: -7px;
+  position: absolute;
+  top: 19px;
+  left: 14px;
   width: 190px;
   font-size: 13px;
 }

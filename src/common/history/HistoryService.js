@@ -6,6 +6,7 @@
   var service_ = null;
   var geogitService_ = null;
   var pulldownService_ = null;
+  var dialogService_ = null;
 
   module.provider('historyService', function() {
     this.log = [];
@@ -17,11 +18,12 @@
     this.repoId = null;
     this.pathFilter = null;
 
-    this.$get = function($rootScope, geogitService, pulldownService) {
+    this.$get = function($rootScope, geogitService, pulldownService, dialogService) {
       rootScope_ = $rootScope;
       service_ = this;
       geogitService_ = geogitService;
       pulldownService_ = pulldownService;
+      dialogService_ = dialogService;
       return this;
     };
 
@@ -94,6 +96,7 @@
                   };
 
                 } catch (e) {
+                  // Generate random summaries for commits that don't have one. (Debug purposes)
                   /*var max = 5;
                   var min = 0;
                   var added = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -122,6 +125,7 @@
             }
           }, function(reject) {
             console.log('History failed: ', reject);
+            dialogService_.error('Error', 'Failed to fetch the history of the layer. Please try again.');
           });
         }
       }
