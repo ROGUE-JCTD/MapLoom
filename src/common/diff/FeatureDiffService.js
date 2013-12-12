@@ -49,7 +49,7 @@
         featurePanel.map.removeLayer(layer);
       });
       newLayers.forEach(function(layer) {
-        if (layer.get('label') !== 'Differences') {
+        if (layer.get('metadata').label !== 'Differences') {
           featurePanel.map.addLayer(layer);
         }
       });

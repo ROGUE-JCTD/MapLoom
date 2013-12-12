@@ -9,9 +9,9 @@
         <div id="legend-panel" class="panel in legend-panel-body">
             <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getFeatureLayers()">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
-                    data-target="{{'#' + layer.get('label') + 'legend'}}">{{layer.get('label')}}
+                    data-target="{{'#' + layer.get('metadata').label + 'legend'}}">{{layer.get('metadata').label}}
                 </div>
-                <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('label') + 'legend'}}">
+                <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('metadata').label + 'legend'}}">
                     <img ng-src="{{serverService.getServer(layer.get('metadata').serverId).url}}?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer={{layer.get('metadata').name}}&transparent=true&legend_options=fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;">
                 </div>
             </div>

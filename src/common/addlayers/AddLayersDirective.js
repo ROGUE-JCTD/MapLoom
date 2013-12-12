@@ -17,8 +17,7 @@
               if (scope.currentServerIndex === 1) {
                 if (layers[0].add) {
                   var osmLayer = new ol.layer.Tile({
-                    label: layers[0].title,
-                    metadata: {serverId: scope.currentServerIndex},
+                    metadata: {label: layers[0].title, serverId: scope.currentServerIndex},
                     source: new ol.source.OSM()
                   });
                   mapService.map.addLayer(osmLayer);
@@ -27,8 +26,7 @@
                 }
                 if (layers[1].add) {
                   var imageryLayer = new ol.layer.Tile({
-                    label: layers[1].title,
-                    metadata: {serverId: scope.currentServerIndex},
+                    metadata: {label: layers[1].title, serverId: scope.currentServerIndex},
                     source: new ol.source.MapQuestOpenAerial()
                   });
                   mapService.map.addLayer(imageryLayer);
@@ -37,8 +35,7 @@
                 }
                 if (layers[2].add) {
                   var mapquestLayer = new ol.layer.Tile({
-                    label: layers[2].title,
-                    metadata: {serverId: scope.currentServerIndex},
+                    metadata: {label: layers[2].title, serverId: scope.currentServerIndex},
                     source: new ol.source.MapQuestOSM()
                   });
                   mapService.map.addLayer(mapquestLayer);
@@ -53,8 +50,13 @@
                     var urlIndex = scope.serverService.getServer(scope.currentServerIndex).url.lastIndexOf('/');
                     var url = scope.serverService.getServer(scope.currentServerIndex).url.slice(0, urlIndex);
                     var newLayer = new ol.layer.Tile({
-                      label: layer.title,
-                      metadata: {serverId: scope.currentServerIndex, url: url, name: layer.name, editable: true},
+                      metadata: {
+                        label: layer.title,
+                        serverId: scope.currentServerIndex,
+                        url: url,
+                        name: layer.name,
+                        editable: true
+                      },
                       source: new ol.source.TileWMS({
                         url: scope.serverService.getServer(scope.currentServerIndex).url,
                         params: {'LAYERS': layer.name},
@@ -88,7 +90,7 @@
               var length = layers.length;
               for (var index = 0; index < length; index++) {
                 var serverLayer = layers[index];
-                if (serverLayer.title === layer.get('label')) {
+                if (serverLayer.title === layer.get('metadata').label) {
                   serverLayer.added = false;
                   return;
                 }

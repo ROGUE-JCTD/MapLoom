@@ -205,8 +205,7 @@
         layers: [
 
           new ol.layer.Tile({
-            label: 'OpenStreetMap',
-            metadata: {serverId: 1},
+            metadata: {label: 'OpenStreetMap', serverId: 1},
             source: new ol.source.OSM()
           })
           /*,

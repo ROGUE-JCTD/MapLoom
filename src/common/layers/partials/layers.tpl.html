@@ -4,10 +4,10 @@
   <div class="panel"
        ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterHiddenLayers">
     <div class="panel-heading layer-heading" data-toggle="collapse"
-         data-parent="#layerpanel-group" data-target="#{{layer.get('label')}}">
+         data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').label}}">
       <div class="row">
         <div class="layer-title ellipsis">
-          {{layer.get('label')}}
+          {{layer.get('metadata').label}}
         </div>
         <div class="layer-buttons">
           <span ng-if="isGeogit(layer)" ng-click="showHistory(layer)" stop-event="click mousedown" class="btn btn-xs btn-default">
@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div id="{{layer.get('label')}}" class="panel-collapse collapse">
+    <div id="{{layer.get('metadata').label}}" class="panel-collapse collapse">
       <div class="panel-body">
         <button ng-click="removeLayer(layer)" id="remove-button" class="remove-layer-button btn btn-sm btn-block">
           <i class="glyphicon glyphicon-minus-sign"></i>

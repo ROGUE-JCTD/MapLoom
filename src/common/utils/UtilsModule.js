@@ -136,7 +136,7 @@
   module.directive('latloneditor', function() {
     return {
       restrict: 'E',
-      template: '<div ng-class="{\'has-error\': !formName.coords.$valid}" class="form-group">' +
+      template: '<div ng-class="{\'has-error\': !geom.valid}" class="form-group">' +
           /*'<div class="input-group">' +
           '<div class="input-group-btn">' +
           '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
@@ -147,21 +147,20 @@
           '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
           '</ul>' +
           '</div>' +*/
-          '<input name="coords" ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
+          '<input ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
           /*'</div>' +*/
           '</div>',
       replace: true,
       scope: {
         geom: '=',
-        formName: '=formName',
         coordDisplay: '=coordDisplay'
       },
       link: function(scope) {
         scope.coordinateDisplays = coordinateDisplays;
         if (scope.coordDisplay === coordinateDisplays.DMS) {
-          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom);
+          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coords);
         } else if (scope.coordDisplay === coordinateDisplays.DD) {
-          scope.coordinates = ol.coordinate.createStringXY(scope.geom, settings.DDPrecision);
+          scope.coordinates = ol.coordinate.createStringXY(scope.geom.coords, settings.DDPrecision);
         }
 
         scope.selectDisplay = function(index) {
@@ -192,7 +191,7 @@
             if (split[3].toUpperCase() === negateChar) {
               newPos = -newPos;
             }
-            scope.geom[coordIndex] = newPos;
+            scope.geom.coords[coordIndex] = newPos;
           } else {
             return false;
           }
@@ -221,8 +220,7 @@
               }
             }
           }
-          scope.formName.$valid = valid;
-          scope.formName.coords.$valid = valid;
+          scope.geom.valid = valid;
         };
       }
     };
