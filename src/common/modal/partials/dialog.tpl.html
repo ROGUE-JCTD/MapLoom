@@ -8,7 +8,7 @@
   </div>
   <div ng-if="buttons.length > 0" class="modal-footer">
     <div align="center">
-      <button class="btn btn-default" type="button" ng-repeat="button in buttons" ng-click="buttonClick(button)">
+      <button class="btn btn-default" type="button" ng-repeat="button in buttons" ng-click="buttonClick($index)">
         {{button}}
       </button>
     </div>

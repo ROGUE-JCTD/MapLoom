@@ -8,6 +8,7 @@
   var mapService_ = null;
   var geogitService_ = null;
   var featureDiffService_ = null;
+  var translate_ = null;
   var q_ = null;
 
   module.provider('diffService', function() {
@@ -26,14 +27,15 @@
     this.newCommitId = null;
     this.repoId = null;
 
-    this.$get = function($rootScope, $q, mapService, geogitService, featureDiffService) {
+    this.$get = function($rootScope, $q, $translate, mapService, geogitService, featureDiffService) {
       rootScope = $rootScope;
       geogitService_ = geogitService;
       featureDiffService_ = featureDiffService;
+      translate_ = $translate;
       q_ = $q;
       service_ = this;
       difflayer_ = new ol.layer.Vector({
-        label: 'Differences',
+        label: translate_('differences'),
         metadata: {
           hidden: false
         },
@@ -58,6 +60,10 @@
             ]
           })
         ]})
+      });
+      rootScope.$on('translation_change', function() {
+        // TODO: update differences layer label when translation changes.
+        //difflayer_.setLabel(translate_('differences'));
       });
       mapService_ = mapService;
       return this;
@@ -152,9 +158,11 @@
           service_.clickCallback = featureClicked;
           service_.repoId = repoId;
           if (goog.isArray(response.Feature)) {
-            service_.populate(response.Feature, geogitService_.getRepoById(repoId).name, 'From', 'To');
+            service_.populate(response.Feature, geogitService_.getRepoById(repoId).name,
+                translate_('from'), translate_('to'));
           } else {
-            service_.populate([response.Feature], geogitService_.getRepoById(repoId).name, 'From', 'To');
+            service_.populate([response.Feature], geogitService_.getRepoById(repoId).name,
+                translate_('from'), translate_('to'));
           }
         }
         deferredResponse.resolve(response);

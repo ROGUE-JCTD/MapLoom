@@ -1,6 +1,6 @@
 <div>
   <div ng-if="mergeButtons">
-    <div class="merge-button-wrap" tooltip-placement="top" tooltip="Cancel the merge">
+    <div class="merge-button-wrap" tooltip-placement="top" tooltip="{{'cancel_merge' | translate}}">
       <button class="merge-button btn btn-default" type="button" ng-click="cancel()">
         Cancel
       </button>
@@ -13,13 +13,13 @@
   </div>
   <div ng-if="!mergeButtons">
     <div class="list-group-item diff-summary">
-      <span class="glyphicon glyphicon-plus-sign add" tooltip-placement="top" tooltip="Adds"/>
+      <span class="glyphicon glyphicon-plus-sign add" tooltip-placement="top" tooltip="{{'adds' | translate}}"/>
       <span class="summary-text"> {{adds.length}}</span>
-      <span class="glyphicon glyphicon-edit modify" tooltip-placement="top" tooltip="Modifications"/>
+      <span class="glyphicon glyphicon-edit modify" tooltip-placement="top" tooltip="{{'modifications' | translate}}"/>
       <span class="summary-text"> {{modifies.length}}</span>
-      <span class="glyphicon glyphicon-minus-sign delete" tooltip-placement="top" tooltip="Deletes"/>
+      <span class="glyphicon glyphicon-minus-sign delete" tooltip-placement="top" tooltip="{{'deletes' | translate}}"/>
       <span class="summary-text"> {{deletes.length}}</span>
-      <span ng-if="merges.length > 0" class="glyphicon glyphicon-random merged" tooltip-placement="top" tooltip="Merges"/>
+      <span ng-if="merges.length > 0" class="glyphicon glyphicon-random merged" tooltip-placement="top" tooltip="{{'merges' | translate}}"/>
       <span ng-if="merges.length > 0" class="summary-text"> {{merges.length}}</span>
     </div>
   </div>

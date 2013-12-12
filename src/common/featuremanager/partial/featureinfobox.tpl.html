@@ -10,14 +10,16 @@
   <div class="animate-switch-container">
     <div ng-if="featureManagerService.getState() == 'layers'">
       <ul class="list-group list-group-info-box">
-        <li ng-repeat="layerInfo in featureManagerService.getSelectedItem()" class="list-group-item-info-box" ng-click="featureManagerService.show(layerInfo)">
+        <li ng-repeat="layerInfo in featureManagerService.getSelectedItem()" class="list-group-item-info-box"
+            ng-click="featureManagerService.show(layerInfo)">
           <div>{{layerInfo.layer.source_.params_.LAYERS}}</div>
         </li>
       </ul>
     </div>
     <div ng-if="featureManagerService.getState() == 'layer'">
       <ul class="list-group list-group-info-box">
-        <li ng-repeat="feature in featureManagerService.getSelectedItem().features" class="list-group-item-info-box" ng-click="featureManagerService.show(feature)">
+        <li ng-repeat="feature in featureManagerService.getSelectedItem().features" class="list-group-item-info-box"
+            ng-click="featureManagerService.show(feature)">
           <div>{{feature.id}}</div>
         </li>
       </ul>
@@ -35,7 +37,7 @@
 
     <div class="feature-info-box">
       <span ng-if="featureManagerService.getSelectedItem().geometry.type == 'Point'">
-        <span class="info-box-attribute">Location ( lon, lat )</span>
+        <span class="info-box-attribute">{{'location_lon_lat' | translate}}</span>
         <span class="info-box-attribute-value">({{featureManagerService.getSelectedItem().geometry.coordinates[0]}},{{featureManagerService.getSelectedItem().geometry.coordinates[1]}})</span>
       </span>
       <span ng-repeat="prop in featureManagerService.getSelectedItemProperties()">
@@ -46,12 +48,19 @@
 
     <div id="feature-info-box-bottom">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
-        <button type="button" ng-click="showFeatureHistory()" data-toggle="tooltip" title="Show History"
+        <button type="button" ng-click="showFeatureHistory()" tooltip-append-to-body="true" tooltip-placement="top"
+                tooltip="{{'show_history' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-time"></button>
-        <button type="button" data-toggle="tooltip" title="Show Pics" class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>
-        <button type="button" ng-click="featureManagerService.startAttributeEditing()" data-toggle="tooltip" title="Edit attributes" class="btn btn-sm btn-default glyphicon glyphicon-list"></button>
-        <button type="button" ng-click="featureManagerService.startGeometryEditing()" data-toggle="tooltip" title="Edit geometry" class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
-        <button type="button" data-toggle="tooltip" title="Delete" class="btn btn-sm btn-default glyphicon glyphicon-trash"></button>
+        <button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_pics' | translate}}"
+                class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>
+        <button type="button" ng-click="featureManagerService.startAttributeEditing()"
+                tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_attributes' | translate}}"
+                class="btn btn-sm btn-default glyphicon glyphicon-list"></button>
+        <button type="button" ng-click="featureManagerService.startGeometryEditing()"
+                tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_geometry' | translate}}"
+                class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
+        <button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
+                class="btn btn-sm btn-default glyphicon glyphicon-trash"></button>
       </div>
     </div>
   </div>

@@ -3,7 +3,7 @@
   <div class="bottom-fade"></div>
   <form name="editfeatureform" class="form wrapper">
     <div class="form-group" ng-if="feature.geometry.type == 'Point'">
-        <label for="latLonEdit" class="control-label custom-control-label">Location ( lon, lat )</label>
+        <label for="latLonEdit" class="control-label custom-control-label">{{'location_lon_lat' | translate}}</label>
         <latloneditor id="latLonEdit" coord-display="coordDisplay" form-name="editfeatureform" geom="coordinates"></latloneditor>
     </div>
     <div class="form-group" ng-repeat="prop in properties">

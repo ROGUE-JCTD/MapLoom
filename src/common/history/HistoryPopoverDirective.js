@@ -2,11 +2,11 @@
   var module = angular.module('loom_history_popover_directive', []);
 
   module.directive('loomHistoryPopover',
-      function($rootScope, $timeout, diffService, dialogService, historyService, pulldownService) {
+      function() {
         return {
           restrict: 'C',
           replace: false,
-          link: function(scope, element, attrs) {
+          link: function(scope, element) {
             var safeName = function(name) {
               if (goog.isDefAndNotNull(name) && name.length > 0) {
                 return name;

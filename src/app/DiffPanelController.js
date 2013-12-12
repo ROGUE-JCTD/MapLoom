@@ -2,7 +2,7 @@
   var module = angular.module('loom_diff_controller', []);
 
   module.controller('LoomDiffController',
-      function($scope, diffService, pulldownService) {
+      function($scope, diffService) {
         function assignScopeVariables() {
           $scope.title = diffService.title;
           $scope.diffService = diffService;

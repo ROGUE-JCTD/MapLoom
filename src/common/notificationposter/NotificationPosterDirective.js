@@ -85,10 +85,10 @@
               dialogService.open('My Title', 'This is the message of the dialog.',
                   ['OK', 'Cancel'], false).then(function(button) {
                 switch (button) {
-                  case 'OK':
+                  case 0:
                     console.log('OK was clicked!');
                     break;
-                  case 'Cancel':
+                  case 1:
                     console.log('Cancel was clicked!');
                     break;
                 }
@@ -113,6 +113,7 @@
                 $translate.uses('en');
                 activeLang = 'en';
               }
+              $rootScope.$broadcast('translation_change', activeLang);
             };
           }
         };

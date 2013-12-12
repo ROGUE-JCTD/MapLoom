@@ -141,10 +141,10 @@
 
     myDialog.then(function(button) {
       switch (button) {
-        case 'Abort':
+        case 0:
           transaction.abort();
           break;
-        case 'Resolve Conflicts':
+        case 1:
           conflictService.ourName = ourName;
           conflictService.theirName = theirName;
           conflictService.ours = mergeFailure.ours;

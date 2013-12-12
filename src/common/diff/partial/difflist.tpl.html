@@ -2,8 +2,8 @@
   <ul class="list-group">
     <li class="list-group-item conflict" ng-click="clickCallback(conflict,'conflict')" ng-repeat="conflict in conflictList">
       <span class="glyphicon glyphicon-warning-sign"/> '{{conflict.feature}}' in {{conflict.layer}}
-      <span ng-if="!conflict.resolved" class="badge conflict-badge">CONFLICT</span>
-      <span ng-if="conflict.resolved" class="badge resolved-badge">FIXED</span>
+      <span ng-if="!conflict.resolved" class="badge conflict-badge">{{'conflict' | translate}}</span>
+      <span ng-if="conflict.resolved" class="badge resolved-badge">{{'fixed' | translate}}</span>
     </li>
     <li class="list-group-item merged" ng-click="clickCallback(merged,'merge')" ng-repeat="merged in mergeList">
       <span class="glyphicon glyphicon-random"/> '{{merged.feature}}' in {{merged.layer}}

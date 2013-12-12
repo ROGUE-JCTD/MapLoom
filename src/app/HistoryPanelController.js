@@ -2,7 +2,7 @@
   var module = angular.module('loom_history_controller', []);
 
   module.controller('LoomHistoryController',
-      function($scope, historyService, pulldownService) {
+      function($scope, historyService) {
         function assignScopeVariables() {
           $scope.title = historyService.title;
         }

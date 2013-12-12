@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_diff_directive', []);
 
   module.directive('loomFeatureDiff',
-      function(featureDiffService, conflictService) {
+      function($translate, featureDiffService, conflictService) {
         return {
           restrict: 'C',
           templateUrl: 'diff/partial/featurediff.tpl.html',
@@ -13,24 +13,24 @@
               scope.editable = false;
               switch (featureDiffService.change) {
                 case 'ADDED':
-                  scope.rightTitle = 'New Feature';
+                  scope.rightTitle = $translate('new_feature');
                   break;
                 case 'REMOVED':
-                  scope.rightTitle = 'Removed Feature';
+                  scope.rightTitle = $translate('removed_feature');
                   break;
                 case 'MODIFIED':
-                  scope.leftTitle = 'Original Feature';
-                  scope.rightTitle = 'Changed Feature';
+                  scope.leftTitle = $translate('original_feature');
+                  scope.rightTitle = $translate('changed_feature');
                   break;
                 case 'MERGED':
                   scope.leftTitle = featureDiffService.leftName;
-                  scope.mergedTitle = 'Merged Feature';
+                  scope.mergedTitle = $translate('merged_feature');
                   scope.rightTitle = featureDiffService.rightName;
                   break;
                 case 'CONFLICT':
                   scope.editable = true;
                   scope.leftTitle = featureDiffService.leftName;
-                  scope.mergedTitle = 'Merged Feature';
+                  scope.mergedTitle = $translate('merged_feature');
                   scope.rightTitle = featureDiffService.rightName;
                   break;
               }

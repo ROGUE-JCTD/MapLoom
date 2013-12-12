@@ -40,7 +40,7 @@
             <span translate="notifications_tab">Notifications</span>
             <span class="loom-notification-badge pull-right"></span>
           </div>
-          <div id="notification-panel" notification-empty-text="No notifications..."
+          <div id="notification-panel" notification-empty-text="'no_notifications' | translate"
                class="pulldown-panel loom-notifications">
           </div>
         </div>
@@ -51,10 +51,9 @@
           </div>
           <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
             <div class="loom-layers"></div>
-            <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal"
-              translate="add_layer_btn">
+            <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog" data-toggle="modal">
               <i class="glyphicon glyphicon-plus-sign"></i>
-              Add Layer
+              {{'add_layer_btn' | translate}}
             </div>
           </div>
         </div>

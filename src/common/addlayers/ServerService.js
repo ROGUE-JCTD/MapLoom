@@ -7,14 +7,18 @@ var SERVER_SERVICE_USE_PROXY = true;
   // Private Variables
   var servers = [];
 
-  var rootScope = null;
+  var rootScope_ = null;
+  var dialogService_ = null;
+  var translate_ = null;
 
   module.provider('serverService', function() {
-    this.$get = function($rootScope, $location, $translate) {
-      rootScope = $rootScope;
+    this.$get = function($rootScope, $location, $translate, dialogService) {
+      rootScope_ = $rootScope;
+      dialogService_ = dialogService;
+      translate_ = $translate;
       servers.push({
         type: 'WMS',
-        name: $translate('local_geoserver'),
+        name: translate_('local_geoserver'),
         url: ('http://' + $location.host() + (SERVER_SERVICE_USE_PORT ? ':' + $location.port() : '') + '/geoserver/wms')
       });
       servers.push({
@@ -35,6 +39,9 @@ var SERVER_SERVICE_USE_PROXY = true;
             added: false
           }
         ]
+      });
+      rootScope_.$on('translation_change', function() {
+        servers[0].name = translate_('local_geoserver');
       });
       return this;
     };
@@ -77,10 +84,11 @@ var SERVER_SERVICE_USE_PROXY = true;
               for (var index = 0; index < server.layers.length; index += 1) {
                 server.layers[index].added = false;
               }
-              rootScope.$broadcast('layers-loaded');
+              rootScope_.$broadcast('layers-loaded');
             }
           } else {
-            alert('Failed to get capabilities: ' + xhr.status.toString() + ' ' + xhr.statusText);
+            dialogService_.error(translate_('error'),
+                translate_('failed_get_capabilities') + xhr.status.toString() + ' ' + xhr.statusText);
           }
         };
         xhr.send();
@@ -129,10 +137,11 @@ var SERVER_SERVICE_USE_PROXY = true;
                 }
               }
               server.layers = layers;
-              rootScope.$broadcast('layers-loaded');
+              rootScope_.$broadcast('layers-loaded');
             }
           } else {
-            alert('Failed to get capabilities: ' + xhr.status.toString() + ' ' + xhr.statusText);
+            dialogService_.error(translate_('error'),
+                translate_('failed_get_capabilities') + xhr.status.toString() + ' ' + xhr.statusText);
           }
         };
         xhr.send();
