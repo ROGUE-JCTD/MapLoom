@@ -3,7 +3,7 @@
   var module = angular.module('loom_history_diff_directive', []);
 
   module.directive('loomHistoryDiff',
-      function(historyService, geogitService, diffService, pulldownService, dialogService) {
+      function(historyService, geogitService, diffService, pulldownService, dialogService, $http, $window) {
         return {
           templateUrl: 'history/partial/historydiff.tpl.html',
           link: function(scope, element, attrs) {
@@ -25,6 +25,8 @@
               logOptions.sinceTime = startTime < endTime ? startTime : endTime;
               logOptions.path = historyService.pathFilter;
               logOptions.summarize = true;
+              // TODO: Add the since option to specify branch name
+              //logOptions.since = historyService.layer.get('metadata').branchName;
               geogitService.command(historyService.repoId, 'log', logOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.untilCommit)) {
                   var firstCommitId = response.untilCommit.id;
@@ -80,6 +82,21 @@
                     'An unknown error occurred when processing the history.  Please try again.', ['OK']);
                 $('#history-loading').addClass('hidden');
               });
+            };
+
+            scope.exportCSV = function() {
+              var repo = geogitService.getRepoById(historyService.layer.get('metadata').repoId);
+              var startTime = new Date(scope.startDate[0]).getTime();
+              var endTime = new Date(scope.endDate[0]).getTime();
+              var untilTime = startTime < endTime ? endTime : startTime;
+              var sinceTime = startTime < endTime ? startTime : endTime;
+              var path = historyService.pathFilter;
+              // TODO: Add the since option to specify branch name
+              //var since = historyService.layer.get('metadata').branchName;
+              // TODO: Make this work with a proxy once it supports authentication
+              var url = repo.url + '/repo/exportcsv?path=' +
+                  path + '&sinceTime=' + sinceTime + '&untilTime=' + untilTime;
+              $window.open(url);
             };
           }
         };
