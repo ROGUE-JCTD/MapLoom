@@ -653,36 +653,6 @@
     });
   }
 
-  function transformGeometry(geometry, crsFrom, crsTo) {
-    var newGeom;
-    switch (geometry.type.toLowerCase()) {
-      case 'point': {
-        newGeom = new ol.geom.Point($.extend(true, [], geometry.coordinates));
-      } break;
-      case 'linestring': {
-        newGeom = new ol.geom.LineString($.extend(true, [], geometry.coordinates));
-      } break;
-      case 'polygon': {
-        newGeom = new ol.geom.Polygon($.extend(true, [], geometry.coordinates));
-      } break;
-      case 'multipoint': {
-        newGeom = new ol.geom.MultiPoint($.extend(true, [], geometry.coordinates));
-      } break;
-      case 'multilinestring': {
-        newGeom = new ol.geom.MultiLineString($.extend(true, [], geometry.coordinates));
-      } break;
-      case 'multipolygon': {
-        newGeom = new ol.geom.MultiPolygon($.extend(true, [], geometry.coordinates));
-      } break;
-      default: {
-        console.log(geometry.geometry.type, 'Not a valid geometry type');
-      }
-    }
-    var transform = ol.proj.getTransform(crsFrom, crsTo);
-    newGeom.transform(transform);
-    return newGeom;
-  }
-
   function getGeometryGMLFromFeature(feature) {
     // TODO: Find a better way to write geometry to GML or a better way to parse it
     // Write the feature to GML

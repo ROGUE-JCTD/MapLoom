@@ -45,7 +45,7 @@
             };
 
             scope.showHistory = function(layer) {
-              historyService.setTitle('History for ' + layer.get('label'));
+              historyService.setTitle('History for ' + layer.get('metadata').label);
               historyService.getHistory(layer);
             };
           }

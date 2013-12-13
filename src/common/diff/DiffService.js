@@ -35,8 +35,8 @@
       q_ = $q;
       service_ = this;
       difflayer_ = new ol.layer.Vector({
-        label: translate_('differences'),
         metadata: {
+          label: translate_('differences'),
           hidden: false
         },
         source: new ol.source.Vector({

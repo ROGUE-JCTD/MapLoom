@@ -41,10 +41,10 @@
               dialogService.warn('Delete Feature', 'Are you sure you want to delete this feature?',
                   ['Yes', 'No'], false).then(function(button) {
                 switch (button) {
-                  case 'Yes':
+                  case 0:
                     featureManagerService.deleteFeature();
                     break;
-                  case 'No':
+                  case 1:
                     break;
                 }
               });

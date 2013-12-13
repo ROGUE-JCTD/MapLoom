@@ -350,32 +350,7 @@
     this.selectFeature = function(geom, crs) {
       this.editLayer.clear();
       var newFeature = new ol.Feature();
-      var newGeom;
-      switch (geom.type.toLowerCase()) {
-        case 'point': {
-          newGeom = new ol.geom.Point($.extend(true, [], geom.coordinates));
-        } break;
-        case 'linestring': {
-          newGeom = new ol.geom.LineString($.extend(true, [], geom.coordinates));
-        } break;
-        case 'polygon': {
-          newGeom = new ol.geom.Polygon($.extend(true, [], geom.coordinates));
-        } break;
-        case 'multipoint': {
-          newGeom = new ol.geom.MultiPoint($.extend(true, [], geom.coordinates));
-        } break;
-        case 'multilinestring': {
-          newGeom = new ol.geom.MultiLineString($.extend(true, [], geom.coordinates));
-        } break;
-        case 'multipolygon': {
-          newGeom = new ol.geom.MultiPolygon($.extend(true, [], geom.coordinates));
-        } break;
-        default: {
-          console.log(geom.geometry.type, 'Not a valid geometry type');
-        }
-      }
-      var transform = ol.proj.getTransform(crs, this.map.getView().getView2D().getProjection());
-      newGeom.transform(transform);
+      var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
       newFeature.setGeometry(newGeom);
       this.editLayer.addFeatures([newFeature]);
       select = new ol.interaction.Select();
