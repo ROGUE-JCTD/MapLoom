@@ -65,6 +65,7 @@
               <span translate="synchronization">Synchronization</span>
 
               <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
+                   tooltip-placement="top" tooltip="{{'remote_options' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
             </div>
             <div id="syncronization-panel" class="panel-collapse collapse">
@@ -74,11 +75,12 @@
           <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
             <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#history-panel">
-              <span class="ellipsis panel-title">{{title}}</span>
+              <span class="ellipsis pulldown-menu-title">{{title}}</span>
 
               <div stop-event='click' ng-click="clearHistory()"
                    class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
               <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
+                   tooltip-placement="top" tooltip="{{'history_summary' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
             </div>
             <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes
@@ -88,7 +90,7 @@
           <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
             <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#diff-panel">
-              <span class="ellipsis panel-title">{{title}}</span>
+              <span class="ellipsis pulldown-menu-title">{{title}}</span>
 
               <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
                    class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
@@ -106,7 +108,8 @@
   <div class="loom-notification-poster"></div>
   <div class="loom-legend"></div>
   <div class="loom-exclusive-mode"></div>
-  <div id="zoom-to-world-border" class="map-btn-border">
+  <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
+       tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
     <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
       <i class="glyphicon glyphicon-globe"></i>
     </div>

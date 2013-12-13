@@ -11,15 +11,18 @@
         </div>
         <div class="layer-buttons">
           <span ng-show="isGeogit(layer)" ng-click="showHistory(layer)" stop-event="click mousedown"
-                class="btn btn-xs btn-default">
+                tooltip-placement="top" tooltip="{{'show_history' | translate}}" class="btn btn-xs btn-default"
+                tooltip-append-to-body="true">
             <i class="glyphicon glyphicon-time"></i>
           </span>
-          <span ng-click="featureManagerService.startFeatureInsert(layer)"
+          <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'add_feature' | translate}}"
                 ng-show="layer.get('metadata').editable" stop-event="click mousedown" class="btn btn-xs btn-default"
                 ng-class="{'disabled': (!layer.get('visible') || !layer.get('metadata').schema)}">
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
-          <span ng-click="toggleVisibility(layer)" stop-event="click mousedown"
+          <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"
                 class="btn btn-xs btn-default layer-visible-button" ng-class="{'layer-visible': layer.get('visible')}">
             <i class="glyphicon"
                ng-class="{'glyphicon-eye-close': !layer.get('visible'), 'glyphicon-eye-open': layer.get('visible')}"></i>

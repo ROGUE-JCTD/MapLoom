@@ -3,7 +3,8 @@
   var module = angular.module('loom_layers_directive', []);
 
   module.directive('loomLayers',
-      function($rootScope, $translate, mapService, pulldownService, historyService, featureManagerService) {
+      function($rootScope, mapService, pulldownService, historyService, featureManagerService, dialogService,
+               $translate) {
         return {
           restrict: 'C',
           replace: true,
@@ -17,8 +18,17 @@
             };
 
             scope.removeLayer = function(layer) {
-              mapService.map.removeLayer(layer);
-              $rootScope.$broadcast('layerRemoved', layer);
+              dialogService.warn($translate('remove_layer'), $translate('sure_remove_layer'),
+                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                switch (button) {
+                  case 0:
+                    mapService.map.removeLayer(layer);
+                    $rootScope.$broadcast('layerRemoved', layer);
+                    break;
+                  case 1:
+                    break;
+                }
+              });
             };
 
             scope.reorderLayer = function(startIndex, endIndex) {

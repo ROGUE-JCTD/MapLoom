@@ -133,7 +133,15 @@
     'must_create_feature': 'You must create a feature before continuing.',
     'editing_geometry': 'Editing Geometry',
     'save_attributes': 'Save Attributes',
-    'invalid_fields': 'There are {{value}} invalid fields, you must fix these problems before you can save.'
+    'invalid_fields': 'There are {{value}} invalid fields, you must fix these problems before you can save.',
+    'add_feature': 'Add Feature',
+    'toggle_visibility': 'Toggle Visibility',
+    'remote_options': 'Remote Options',
+    'history_summary': 'History Summary',
+    'zoom_world': 'Zoom To World',
+    'toggle_legend': 'Toggle Legend',
+    'refresh_layers': 'Refresh Layers',
+    'sure_remove_layer': 'Are you sure that you want to remove this layer?'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
