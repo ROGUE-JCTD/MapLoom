@@ -3,7 +3,7 @@
   var module = angular.module('loom_layers_directive', []);
 
   module.directive('loomLayers',
-      function($rootScope, mapService, pulldownService, historyService, featureManagerService) {
+      function($rootScope, $translate, mapService, pulldownService, historyService, featureManagerService) {
         return {
           restrict: 'C',
           replace: true,
@@ -45,7 +45,7 @@
             };
 
             scope.showHistory = function(layer) {
-              historyService.setTitle('History for ' + layer.get('metadata').label);
+              historyService.setTitle($translate('history_for', {value: layer.get('metadata').label}));
               historyService.getHistory(layer);
             };
           }

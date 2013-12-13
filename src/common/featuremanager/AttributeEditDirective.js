@@ -3,7 +3,7 @@
   var module = angular.module('loom_attribute_edit_directive', []);
 
   module.directive('loomAttributeEdit',
-      function(featureManagerService, dialogService) {
+      function($translate, featureManagerService, dialogService) {
         return {
           restrict: 'C',
           templateUrl: 'featuremanager/partial/attributeedit.tpl.html',
@@ -76,9 +76,8 @@
                 }
               }
               if (numErrors > 0) {
-                dialogService.warn('Save Attributes', 'There are ' + numErrors + ' invalid fields, you must fix these' +
-                        ' problems before you can save.',
-                    ['OK'], false);
+                dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
+                    [$translate('btn_ok')], false);
                 return;
               }
               featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties, scope.coordinates);

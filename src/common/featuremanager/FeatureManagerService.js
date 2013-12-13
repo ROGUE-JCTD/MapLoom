@@ -5,6 +5,7 @@
   var service_ = null;
   var mapService_ = null;
   var rootScope_ = null;
+  var translate_ = null;
   var http_ = null;
   var exclusiveModeService_ = null;
   var dialogService_ = null;
@@ -24,11 +25,12 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, mapService, $compile, $http, exclusiveModeService, dialogService) {
+    this.$get = function($rootScope, $translate, mapService, $compile, $http, exclusiveModeService, dialogService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
+      translate_ = $translate;
       http_ = $http;
       exclusiveModeService_ = exclusiveModeService;
       dialogService_ = dialogService;
@@ -298,26 +300,27 @@
       // TODO: Find a better way to handle this
       service_.hide();
       enabled_ = false;
-      exclusiveModeService_.startExclusiveMode('Drawing Geometry', exclusiveModeService_.button('Accept', function() {
-        if (mapService_.editLayer.getFeatures().length < 1) {
-          dialogService_.warn('Adding Feature', 'You must create a feature before continuing.',
-              ['OK'], false).then(function(button) {
-            switch (button) {
-              case 'OK':
-                break;
+      exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
+          exclusiveModeService_.button(translate_('done_btn'), function() {
+            if (mapService_.editLayer.getFeatures().length < 1) {
+              dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
+                  [translate_('ok_btn')], false).then(function(button) {
+                switch (button) {
+                  case 0:
+                    break;
+                }
+              });
+            } else {
+              var feature = mapService_.editLayer.getFeatures()[0];
+              selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
+              var newGeom = transformGeometry(selectedItem_.geometry,
+                  mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+              selectedItem_.geometry.coordinates = newGeom.getCoordinates();
+              service_.startAttributeEditing(true);
             }
-          });
-        } else {
-          var feature = mapService_.editLayer.getFeatures()[0];
-          selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
-          var newGeom = transformGeometry(selectedItem_.geometry,
-              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
-          selectedItem_.geometry.coordinates = newGeom.getCoordinates();
-          service_.startAttributeEditing(true);
-        }
-      }), exclusiveModeService_.button('Discard', function() {
-        service_.endFeatureInsert(false);
-      }));
+          }), exclusiveModeService_.button(translate_('cancel_btn'), function() {
+            service_.endFeatureInsert(false);
+          }));
       var props = [];
       var geometryType = '';
       var geometryName = '';
@@ -398,13 +401,14 @@
 
     this.startGeometryEditing = function() {
       rootScope_.$broadcast('startGeometryEdit');
-      exclusiveModeService_.startExclusiveMode('Editing Geometry', exclusiveModeService_.button('Save', function() {
-        service_.endGeometryEditing(true);
-        exclusiveModeService_.endExclusiveMode();
-      }), exclusiveModeService_.button('Cancel', function() {
-        service_.endGeometryEditing(false);
-        exclusiveModeService_.endExclusiveMode();
-      }));
+      exclusiveModeService_.startExclusiveMode(translate_('editing_geometry'),
+          exclusiveModeService_.button(translate_('save_btn'), function() {
+            service_.endGeometryEditing(true);
+            exclusiveModeService_.endExclusiveMode();
+          }), exclusiveModeService_.button(translate_('cancel_btn'), function() {
+            service_.endGeometryEditing(false);
+            exclusiveModeService_.endExclusiveMode();
+          }));
       modify_ = new ol.interaction.Modify();
       mapService_.map.addInteraction(modify_);
       enabled_ = false;
@@ -585,10 +589,11 @@
     var wfsRequestTypePartial;
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
+      var featureType = selectedLayer_.get('metadata').name.split(':')[1];
       commitMsg = '{&quot;' + selectedLayer_.get('metadata').nativeName + '&quot;:{&quot;added&quot;:1}}';
       wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
-          '"><feature:' + selectedLayer_.get('metadata').nativeName + ' xmlns:feature="http://www.geonode.org/">' +
-          partial + '</feature:' + selectedLayer_.get('metadata').nativeName + '></wfs:Insert>';
+          '"><feature:' + featureType + ' xmlns:feature="http://www.geonode.org/">' +
+          partial + '</feature:' + featureType + '></wfs:Insert>';
       goog.array.forEach(properties, function(obj) {
         if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
           selectedItem_.properties[obj[0]] = obj[1];

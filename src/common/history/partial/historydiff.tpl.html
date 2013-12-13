@@ -11,21 +11,21 @@
       </div>
     </div>
   </div>
-  <form class="form">
+  <form ng-if="!contentHidden" class="form">
     <div ng-if="active">
       <div class="form-group">
-        <label class="control-label">Start Date:</label>
+        <label class="control-label">{{'start_date' | translate}}</label>
         <datetimepicker date-object="startDate" date-key="0"></datetimepicker>
       </div>
       <div class="form-group">
-        <label class="control-label">End Date:</label>
+        <label class="control-label">{{'end_date' | translate}}</label>
         <datetimepicker date-object="endDate" date-key="0"></datetimepicker>
       </div>
     </div>
   </form>
   <div class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-click="onDiff()">Summarize</button>
-    <button type="button" class="btn btn-danger pull-left" ng-click="exportCSV()"><i class="glyphicon glyphicon-download-alt"></i> Export CSV</button>
+    <button type="button" class="btn btn-default" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="onDiff()">{{'summarize_btn' | translate}}</button>
+    <button type="button" class="btn btn-danger pull-left" ng-click="exportCSV()"><i class="glyphicon glyphicon-download-alt"></i> {{'export_csv' | translate}}</button>
   </div>
 </div>

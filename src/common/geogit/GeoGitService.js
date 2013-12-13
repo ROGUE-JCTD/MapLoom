@@ -5,7 +5,7 @@
   var nextRepoId = 0;
 
   // services
-  var q, http, rootScope, dialogService_;
+  var q, http, rootScope, dialogService_, translate_;
 
   var service_ = null;
 
@@ -33,12 +33,13 @@
     // public variables
     this.repos = [];
 
-    this.$get = function($q, $http, $rootScope, dialogService) {
+    this.$get = function($q, $http, $rootScope, dialogService, $translate) {
       service_ = this;
       q = $q;
       http = $http;
       rootScope = $rootScope;
       dialogService_ = dialogService;
+      translate_ = $translate;
       rootScope.$on('layerRemoved', service_.removedLayer);
       return service_;
     };
@@ -170,7 +171,7 @@
           } else {
             console.log('Repository had no local branches: ', repo, response);
             service_.removeRepo(repo.id);
-            result.reject('Repository had no local branches.');
+            result.reject(translate_('no_local_branches'));
             return;
           }
           if (goog.isDefAndNotNull(response.Remote.Branch)) {
@@ -191,12 +192,12 @@
         }, function(reject) {
           console.log('Unable to get the repository\'s branches:', repo, reject);
           service_.removeRepo(repo.id);
-          result.reject('Unable to get the repository\'s branches. Try re-adding the layer.');
+          result.reject(translate_('unable_to_get_branches'));
         });
       }, function(reject) {
         console.log('Unable to get the repository\'s remotes:', repo, reject);
         service_.removeRepo(repo.id);
-        result.reject('Unable to get the repository\'s remotes. Try re-adding the layer.');
+        result.reject(translate_('unable_to_get_remotes'));
       });
     };
 
@@ -293,8 +294,9 @@
         if (goog.isDefAndNotNull(response.data) && goog.isDefAndNotNull(response.data.dataStore) &&
             goog.isDefAndNotNull(response.data.dataStore.type)) {
           deferredResponse.resolve(response.data.dataStore);
+        } else {
+          deferredResponse.reject(translate_('unable_to_get_datastore'));
         }
-        deferredResponse.reject('Something went wrong when getting the datastore.');
       }, function(reject) {
         deferredResponse.reject(reject);
       });
@@ -364,7 +366,7 @@
                         metadata.repoId = repo;
                       }
                     }, function(reject) {
-                      dialogService_.error('Error', 'Unable to add the GeoGit remote: ' + reject);
+                      dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
                     });
                     metadata.isGeoGit = true;
                     metadata.geogitStore = dataStore.name;
@@ -376,17 +378,19 @@
                   metadata.nativeName = featureType.nativeName;
                 }, function(rejected) {
                   dialogService_.error(
-                      'Error', 'Unable to get feature type of data store. (' + rejected.status + ')');
+                      translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
                 });
               }, function(rejected) {
-                dialogService_.error('Error', 'Unable to get the data store. (' + rejected.status + ')');
+                dialogService_.error(
+                    translate_('error'), translate_('unable_to_get_datastore') + ' (' + rejected.status + ')');
               });
             }, function(rejected) {
-              dialogService_.error('Error', 'Unable to determine the data store name. (' + rejected.status + ')');
+              dialogService_.error(
+                  translate_('error'), translate_('unable_to_get_datastore_name') + ' (' + rejected.status + ')');
             });
           }, function(rejected) {
             dialogService_.error(
-                'Error', 'Unable to determine if the layer was a layer group. (' + rejected.status + ')');
+                translate_('error'), translate_('layer_was_layer_group') + ' (' + rejected.status + ')');
           });
         }
       }

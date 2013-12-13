@@ -100,10 +100,15 @@
     });
   };
 
+  var dialogService_ = null;
+  var translate_ = null;
+
   module.provider('mapService', function() {
-    this.$get = function() {
+    this.$get = function($translate, dialogService) {
       // create map on init so that other components can use map on their init
       this.map = this.createMap();
+      dialogService_ = dialogService;
+      translate_ = $translate;
       this.editLayer = createVectorEditLayer();
       return this;
     };
@@ -117,7 +122,7 @@
         }
       }
       if (index == this.map.getInteractions().getLength()) {
-        alert('Drag zoom interaction is not supported on this map');
+        dialogService_.open(translate_('error'), translate_('drag_zoom_not_supported'));
         return;
       }
 
@@ -335,7 +340,7 @@
           }
         }
         if (index == this.getInteractions().getLength()) {
-          alert('Drag zoom interaction is not supported on this map');
+          dialogService_.open(translate_('error'), translate_('drag_zoom_not_supported'));
           return;
         }
 

@@ -11,8 +11,6 @@
             scope.type = 'WMS';
             scope.name = null;
             scope.url = null;
-
-            angular.element('#server-name')[0].attributes.placeholder.value = $translate('server_name');
           }
         };
       }

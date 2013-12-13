@@ -71,7 +71,7 @@
     };
   });
 
-  module.directive('datetimepicker', function() {
+  module.directive('datetimepicker', function($translate) {
     return {
       restrict: 'E',
       template: '<div class="row">' +
@@ -122,13 +122,33 @@
           }
           scope.dateObject[scope.dateKey] = newDate.toISOString();
         };
-        element.find('.datepicker').datetimepicker({pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
-          defaultDate: scope.dateObject[scope.dateKey]});
-        element.find('.datepicker').on('change.dp', updateDateTime);
-        if (scope.time === 'true' && scope.seperateTime === 'true') {
-          element.find('.timepicker').datetimepicker({pickDate: false, defaultDate: scope.dateObject[scope.dateKey]});
-          element.find('.timepicker').on('change.dp', updateDateTime);
-        }
+
+        var dateOptions = {
+          pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
+          defaultDate: scope.dateObject[scope.dateKey],
+          language: $translate.uses()
+        };
+
+        var timeOptions = {
+          pickDate: false,
+          defaultDate: scope.dateObject[scope.dateKey],
+          language: $translate.uses()
+        };
+
+        var setUpPickers = function() {
+          element.find('.datepicker').datetimepicker(dateOptions);
+          element.find('.datepicker').on('change.dp', updateDateTime);
+          if (scope.time === 'true' && scope.seperateTime === 'true') {
+            element.find('.timepicker').datetimepicker(timeOptions);
+            element.find('.timepicker').on('change.dp', updateDateTime);
+          }
+        };
+        setUpPickers();
+
+        scope.$on('translation_change', function(event, lang) {
+          dateOptions.language = lang;
+          timeOptions.language = lang;
+        });
       }
     };
   });

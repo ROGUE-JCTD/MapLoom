@@ -4,7 +4,7 @@
   <form name="editfeatureform" class="form wrapper">
     <div class="form-group" ng-if="coordinates">
         <label for="latLonEdit" class="control-label custom-control-label">{{'location_lon_lat' | translate}}</label>
-        <latloneditor id="latLonEdit" coord-display="coordDisplay" form-name="editfeatureform" geom="coordinates"></latloneditor>
+        <latloneditor id="latLonEdit" coord-display="coordDisplay" geom="coordinates"></latloneditor>
     </div>
     <div class="form-group" ng-repeat="prop in properties">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
@@ -36,5 +36,5 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" ng-class="{'disabled': !editfeatureform.$valid}" ng-click="save()">Save</button>
+  <button type="button" class="btn btn-primary" ng-click="save()">{{'save_btn' | translate}}</button>
 </div>

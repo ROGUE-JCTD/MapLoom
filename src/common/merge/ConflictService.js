@@ -9,6 +9,7 @@
   var mapService_ = null;
   var dialogService_ = null;
   var geogitService_ = null;
+  var translate_ = null;
 
   module.provider('conflictService', function() {
     this.features = null;
@@ -22,7 +23,7 @@
     this.transaction = null;
     this.mergeBranch = null;
 
-    this.$get = function($rootScope, $location, diffService, pulldownService,
+    this.$get = function($rootScope, $location, $translate, diffService, pulldownService,
                          featureDiffService, mapService, dialogService, geogitService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
@@ -30,6 +31,7 @@
       mapService_ = mapService;
       dialogService_ = dialogService;
       geogitService_ = geogitService;
+      translate_ = $translate;
       service_ = this;
       return this;
     };
@@ -59,7 +61,7 @@
     };
 
     this.beginResolution = function() {
-      diffService_.setTitle('Merge Results');
+      diffService_.setTitle(translate_('merge_results'));
       diffService_.clickCallback = featureClicked;
       diffService_.mergeDiff = true;
       diffService_.populate(service_.features,
@@ -173,23 +175,20 @@
                   goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                 handleConflicts(endTransactionFailure);
               } else {
-                dialogService_.error('Error',
-                    'An unknown error occurred when finalizing the transaction.  Please try again.');
+                dialogService_.error(translate_('error'), translate_('conflict_unknown_error'));
                 console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
               }
             });
           }, function(reject) {
             // couldn't commit
-            dialogService_.error('Error',
-                'An unknown error occurred when committing the merge.  Please try again.');
+            dialogService_.error(translate_('error'), translate_('conflict_unknown_error'));
             console.log('ERROR: Failed to commit merge: ', reject);
           });
         }, function(reject) {
         });
       } else {
         // couldn't resolve all conflicts
-        dialogService_.error('Error',
-            'Unable to resolve ' + conflictsInError + ' conflicts.  Please try again.');
+        dialogService_.error(translate_('error'), translate_('unable_to_resolve_conflicts', {value: conflictsInError}));
         console.log('ERROR: ' + conflictsInError + ' conflicts could not be resolved.');
       }
     } else {
@@ -221,10 +220,8 @@
   }
 
   function handleConflicts(mergeFailure) {
-    var myDialog = dialogService_.warn('Merge Conflicts',
-        'Some conflicts were encountered when committing the transaction,' +
-            ' would you like to resolve these or abort the merge?',
-        ['Abort', 'Resolve Conflicts'], false);
+    var myDialog = dialogService_.warn(translate_('merge_conflicts'), translate_('conflicts_encountered'),
+        [translate_('abort'), translate_('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {
@@ -232,13 +229,13 @@
           service_.transaction.abort();
           break;
         case 1:
-          service_.ourName = 'Transaction';
-          service_.theirName = 'Repository';
+          service_.ourName = translate_('transaction');
+          service_.theirName = translate_('repository');
           service_.ours = mergeFailure.ours;
           service_.theirs = mergeFailure.theirs;
           service_.ancestor = mergeFailure.ancestor;
           service_.features = mergeFailure.Feature;
-          service_.mergeBranch = 'Transaction';
+          service_.mergeBranch = translate_('transaction');
           service_.beginResolution();
           break;
       }

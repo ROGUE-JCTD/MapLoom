@@ -2,7 +2,7 @@
   var module = angular.module('loom_history_panel_directive', []);
 
   module.directive('loomHistoryPanel',
-      function($rootScope, $timeout, diffService, dialogService, historyService, pulldownService) {
+      function($rootScope, $timeout, $translate, diffService, dialogService, historyService, pulldownService) {
         return {
           restrict: 'C',
           replace: true,
@@ -30,12 +30,13 @@
             }
 
             scope.getCommitAuthor = function(commit) {
-              return commit.author['name'].length > 0 ? commit.author['name'] : 'Anonymous';
+              return commit.author['name'].length > 0 ? commit.author['name'] : $translate('anonymous');
             };
 
             scope.getCommitTime = function(commit) {
-              var date = new Date(commit.author.timestamp);
-              return date.toLocaleDateString() + ' @ ' + date.toLocaleTimeString();
+              var date = moment(new Date(commit.author.timestamp));
+              date.lang($translate.uses());
+              return date.format('L') + ' @ ' + date.format('LT');
             };
 
             scope.historyClicked = function(commit) {
@@ -59,21 +60,21 @@
               diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.Feature)) {
                   if (goog.isDefAndNotNull(response.nextPage) && response.nextPage == 'true') {
-                    dialogService.warn('Warning',
-                        'There were too many changes in the specified commit to display.', ['OK']);
+                    dialogService.warn($translate('warning'),
+                        $translate('too_many_changes'), [$translate('btn_ok')]);
                   } else {
-                    diffService.setTitle('Summary of Changes');
+                    diffService.setTitle($translate('summary_of_changes'));
                     pulldownService.showDiffPanel();
                     //diffService_.clickCallback = featureClicked;
                   }
                 } else {
-                  dialogService.open('History',
-                      'No changes were made to the layer in the specified commit.', ['OK']);
+                  dialogService.open($translate('history'),
+                      $translate('no_changes_in_commit'), [$translate('btn_ok')]);
                 }
               }, function(reject) {
                 //failed to get diff
-                dialogService.error('Error',
-                    'An unknown error occurred while summarizing the differences.  Please try again.', ['OK']);
+                dialogService.error($translate('error'),
+                    $translate('diff_unknown_error'), [$translate('btn_ok')]);
               });
             };
 

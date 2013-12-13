@@ -13,6 +13,8 @@
           },
           templateUrl: 'modal/partials/modal.tpl.html',
           link: function(scope, element, attrs) {
+            scope.contentHidden = true;
+
             attrs.$observe('closeButton', function(val) {
               if (!angular.isDefined(val)) {
                 scope.closeButton = true;

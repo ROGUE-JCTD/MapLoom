@@ -2,12 +2,12 @@
   <div ng-if="mergeButtons">
     <div class="merge-button-wrap" tooltip-placement="top" tooltip="{{'cancel_merge' | translate}}">
       <button class="merge-button btn btn-default" type="button" ng-click="cancel()">
-        Cancel
+        {{'cancel_btn' | translate}}
       </button>
     </div>
     <div class="merge-button-wrap" tooltip-placement="top" tooltip="{{conflictsText}}">
       <button class="merge-button btn btn-default" ng-class="{disabled:numConflicts>0}" type="button" ng-click="done()">
-        Done
+        {{'done_btn' | translate}}
       </button>
     </div>
   </div>

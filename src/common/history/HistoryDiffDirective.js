@@ -3,13 +3,34 @@
   var module = angular.module('loom_history_diff_directive', []);
 
   module.directive('loomHistoryDiff',
-      function(historyService, geogitService, diffService, pulldownService, dialogService, $http, $window) {
+      function($rootScope, historyService, $translate, geogitService, diffService,
+               pulldownService, dialogService, $http, $window) {
         return {
           templateUrl: 'history/partial/historydiff.tpl.html',
           link: function(scope, element, attrs) {
             scope.startDate = [new Date().toISOString()];
             scope.endDate = [new Date().toISOString()];
             scope.active = true;
+            scope.contentHidden = true;
+
+            element.closest('.modal').on('hidden.bs.modal', function(e) {
+              if (!scope.$$phase && !$rootScope.$$phase) {
+                scope.$apply(function() {
+                  scope.contentHidden = true;
+                });
+              } else {
+                scope.contentHidden = true;
+              }
+            });
+            element.closest('.modal').on('show.bs.modal', function(e) {
+              if (!scope.$$phase && !$rootScope.$$phase) {
+                scope.$apply(function() {
+                  scope.contentHidden = false;
+                });
+              } else {
+                scope.contentHidden = false;
+              }
+            });
 
             scope.cancel = function() {
               element.closest('.modal').modal('hide');
@@ -51,35 +72,36 @@
                   diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                     if (goog.isDefAndNotNull(response.Feature)) {
                       if (goog.isDefAndNotNull(response.nextPage) && response.nextPage == 'true') {
-                        dialogService.warn('Warning',
-                            'There were too many changes in the specified time frame to display.' +
-                                'Please narrow your range.', ['OK']);
+                        dialogService.warn($translate('warning'),
+                            $translate('too_many_changes'), [$translate('btn_ok')]);
                       } else {
-                        diffService.setTitle('Summary of Changes');
+                        diffService.setTitle($translate('summary_of_changes'));
                         pulldownService.showDiffPanel();
                         scope.cancel();
                       }
                     } else {
-                      dialogService.open('History',
-                          'No changes were made to the layer in the specified time frame.', ['OK']);
+                      dialogService.open($translate('history'),
+                          $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
                       $('#history-loading').addClass('hidden');
                     }
                   }, function(reject) {
                     //failed to get diff
-                    dialogService.error('Error',
-                        'An unknown error occurred while summarizing the differences.  Please try again.', ['OK']);
+                    console.log('Failed to get diff: ', reject);
+                    dialogService.error($translate('error'),
+                        $translate('diff_unknown_error'), [$translate('btn_ok')]);
                     $('#history-loading').addClass('hidden');
                   });
                 } else {
                   // no commits
-                  dialogService.open('History',
-                      'No changes were made to the layer in the specified time frame.', ['OK']);
+                  dialogService.open($translate('history'),
+                      $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
                   $('#history-loading').addClass('hidden');
                 }
               }, function(reject) {
                 // failed to get log
-                dialogService.error('Error',
-                    'An unknown error occurred when processing the history.  Please try again.', ['OK']);
+                console.log('Failed to get log: ', reject);
+                dialogService.error($translate('error'),
+                    $translate('diff_unknown_error'), [$translate('btn_ok')]);
                 $('#history-loading').addClass('hidden');
               });
             };

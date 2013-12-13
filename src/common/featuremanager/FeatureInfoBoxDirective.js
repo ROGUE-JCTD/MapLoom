@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function(featureManagerService, mapService, historyService, dialogService) {
+      function($translate, featureManagerService, mapService, historyService, dialogService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -30,7 +30,7 @@
                     var nativeLayer = metadata.nativeName;
                     var featureId = featureManagerService.getSelectedItem().id;
                     var fid = nativeLayer + '/' + featureId;
-                    historyService.setTitle('History for ' + featureId);
+                    historyService.setTitle($translate('history_for', {value: featureId}));
                     historyService.getHistory(layer, fid);
                   }
                 }
@@ -38,8 +38,8 @@
             };
 
             scope.deleteFeature = function() {
-              dialogService.warn('Delete Feature', 'Are you sure you want to delete this feature?',
-                  ['Yes', 'No'], false).then(function(button) {
+              dialogService.warn($translate('delete_feature'), $translate('sure_delete_feature'),
+                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     featureManagerService.deleteFeature();

@@ -83,7 +83,7 @@
               // The dialog service works through promises, the promise will tell you what button
               // was pushed.
               dialogService.open('My Title', 'This is the message of the dialog.',
-                  ['OK', 'Cancel'], false).then(function(button) {
+                  [$translate('btn_ok'), 'Cancel'], false).then(function(button) {
                 switch (button) {
                   case 0:
                     console.log('OK was clicked!');

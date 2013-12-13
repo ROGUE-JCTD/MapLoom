@@ -3,7 +3,8 @@
   var module = angular.module('loom_merge_directive', []);
 
   module.directive('loomMerge',
-      function(geogitService, dialogService, notificationService, conflictService, mapService, featureDiffService) {
+      function($translate, geogitService, dialogService, notificationService,
+               conflictService, mapService, featureDiffService) {
         return {
           templateUrl: 'merge/partials/merge.tpl.html',
           link: function(scope, element, attrs) {
@@ -46,10 +47,10 @@
                           var leftName = scope.destinationBranch;
                           var rightName = scope.sourceBranch;
                           notificationService.addNotification({
-                            text: 'Merge Successful',
+                            text: $translate('merge_successful'),
                             read: false,
                             type: 'loom-update-notification',
-                            emptyMessage: 'The merge resulted in no changes.',
+                            emptyMessage: $translate('merge_no_changes'),
                             repos: [
                               {
                                 name: 'geogit_repo',
@@ -72,25 +73,23 @@
                           if (goog.isObject(endTransactionFailure) &&
                               goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                             handleConflicts(endTransactionFailure, transaction,
-                                dialogService, conflictService, 'Transaction', 'Repository', scope, 'Transaction');
+                                dialogService, conflictService, $translate,
+                                $translate('transaction'), $translate('repository'), scope, $translate('transaction'));
                           } else {
-                            dialogService.error('Error',
-                                'An unknown error occurred when finalizing the transaction.  Please try again.');
+                            dialogService.error($translate('error'), $translate('merge_unknown_error'));
                             transaction.abort();
                             scope.cancel();
                             console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                           }
                         });
                       }, function(commitFailure) {
-                        dialogService.error('Error',
-                            'An unknown error occurred when finalizing the commit.  Please try again.');
+                        dialogService.error($translate('error'), $translate('merge_unknown_error'));
                         transaction.abort();
                         scope.cancel();
                         console.log('ERROR: Commit failure: ', commitFailure);
                       });
                     }, function(statusFailure) {
-                      dialogService.error('Error',
-                          'An unknown error occurred when building the commit.  Please try again.');
+                      dialogService.error($translate('error'), $translate('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
                       console.log('ERROR: Status failure: ', statusFailure);
@@ -98,26 +97,23 @@
                   }, function(mergeFailure) {
                     if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
                       handleConflicts(mergeFailure, transaction,
-                          dialogService, conflictService, scope.destinationBranch, scope.sourceBranch,
+                          dialogService, conflictService, $translate, scope.destinationBranch, scope.sourceBranch,
                           scope, scope.sourceBranch);
                     } else {
-                      dialogService.error('Error',
-                          'An unknown error occurred when performing the merge.  Please try again.');
+                      dialogService.error($translate('error'), $translate('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
                       console.log('ERROR: Merge failure: ', mergeOptions, mergeFailure);
                     }
                   });
                 }, function(checkoutFailure) {
-                  dialogService.error('Error',
-                      'An unknown error occurred when checking out the destination branch.  Please try again.');
+                  dialogService.error($translate('error'), $translate('merge_unknown_error'));
                   transaction.abort();
                   scope.cancel();
                   console.log('ERROR: Checkout failure: ', checkoutOptions, checkoutFailure);
                 });
               }, function(beginTransactionFailure) {
-                dialogService.error('Error',
-                    'An unknown error occurred creating the transaction.  Please try again.');
+                dialogService.error($translate('error'), $translate('merge_unknown_error'));
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
               });
@@ -132,12 +128,10 @@
       }
   );
 
-  function handleConflicts(mergeFailure, transaction, dialogService, conflictService,
+  function handleConflicts(mergeFailure, transaction, dialogService, conflictService, translate,
                            ourName, theirName, scope, mergeBranch) {
-    var myDialog = dialogService.warn('Merge Conflicts',
-        'Some conflicts were encountered when performing the merge,' +
-            ' would you like to resolve these or abort the merge?',
-        ['Abort', 'Resolve Conflicts'], false);
+    var myDialog = dialogService.warn(translate('merge_conflicts'), translate('conflicts_encountered'),
+        [translate('abort'), translate('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {

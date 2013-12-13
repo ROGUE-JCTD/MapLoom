@@ -7,6 +7,7 @@
   var geogitService_ = null;
   var pulldownService_ = null;
   var dialogService_ = null;
+  var translate_ = null;
 
   module.provider('historyService', function() {
     this.log = [];
@@ -18,12 +19,13 @@
     this.repoId = null;
     this.pathFilter = null;
 
-    this.$get = function($rootScope, geogitService, pulldownService, dialogService) {
+    this.$get = function($rootScope, $translate, geogitService, pulldownService, dialogService) {
       rootScope_ = $rootScope;
       service_ = this;
       geogitService_ = geogitService;
       pulldownService_ = pulldownService;
       dialogService_ = dialogService;
+      translate_ = $translate;
       return this;
     };
 
@@ -125,7 +127,7 @@
             }
           }, function(reject) {
             console.log('History failed: ', reject);
-            dialogService_.error('Error', 'Failed to fetch the history of the layer. Please try again.');
+            dialogService_.error(translate_('error'), translate_('history_failed'));
           });
         }
       }

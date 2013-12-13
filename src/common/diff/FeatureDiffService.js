@@ -7,6 +7,7 @@
   var mapService_ = null;
   var geogitService_ = null;
   var dialogService_ = null;
+  var translate_ = null;
 
   var ours_ = null;
   var theirs_ = null;
@@ -49,7 +50,8 @@
         featurePanel.map.removeLayer(layer);
       });
       newLayers.forEach(function(layer) {
-        if (layer.get('metadata').label !== 'Differences') {
+        if (!goog.isDefAndNotNull(layer.get('metadata').differences_layer) ||
+            !layer.get('metadata').differences_layer) {
           featurePanel.map.addLayer(layer);
         }
       });
@@ -67,12 +69,13 @@
     this.leftName = null;
     this.rightName = null;
 
-    this.$get = function($rootScope, mapService, geogitService, dialogService) {
+    this.$get = function($rootScope, mapService, geogitService, dialogService, $translate) {
       service_ = this;
       rootScope_ = $rootScope;
       mapService_ = mapService;
       geogitService_ = geogitService;
       dialogService_ = dialogService;
+      translate_ = $translate;
       var createMap = function(panel) {
         panel.map = new ol.Map({
           renderer: ol.RendererHint.CANVAS,
@@ -329,8 +332,7 @@
         diffsNeeded_ -= 1;
         if (diffsNeeded_ === 0) {
           if (diffsInError_ > 0) {
-            dialogService_.error('Error',
-                'Unable to retrieve all the differences for the feature.  Check network connection and try again.');
+            dialogService_.error(translate_('error'), translate_('feature_diff_error'));
           } else {
             if (feature.change == 'CONFLICT') {
               service_.merged.attributes = $.extend(true, [], service_.left.attributes);
@@ -365,8 +367,7 @@
         diffsNeeded_ -= 1;
         diffsInError_ += 1;
         if (diffsNeeded_ === 0) {
-          dialogService_.error('Error',
-              'Unable to retrieve all the differences for the feature.  Check network connection and try again.');
+          dialogService_.error(translate_('error'), translate_('feature_diff_error'));
         }
         console.log('Feature diff failed: ', panel, reject);
       });

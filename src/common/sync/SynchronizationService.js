@@ -4,7 +4,7 @@
   // Private Variables
   var synchronizationLinks_ = [];
   var nextLinkId_ = 0;
-  var service_, dialogService_, rootScope_, geogitService_, q_ = null;
+  var service_, dialogService_, rootScope_, geogitService_, q_, translate_ = null;
   var syncing = false;
   var numSyncingLinks = 0;
   var syncTimeout = null;
@@ -63,11 +63,12 @@
   };
 
   module.provider('synchronizationService', function() {
-    this.$get = function($rootScope, $q, dialogService, geogitService) {
+    this.$get = function($rootScope, $q, $translate, dialogService, geogitService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
       geogitService_ = geogitService;
+      translate_ = $translate;
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
         goog.array.forEach(synchronizationLinks_, function(link) {
@@ -90,7 +91,7 @@
     this.addLink = function(link) {
       for (var index = 0; index < synchronizationLinks_.length; index++) {
         if (synchronizationLinks_[index].equals(link)) {
-          dialogService_.open('Add Sync', 'This link already exists', ['OK'], false);
+          dialogService_.open(translate_('add_sync'), translate_('link_already_exists'), [translate_('btn_ok')], false);
           return;
         }
       }

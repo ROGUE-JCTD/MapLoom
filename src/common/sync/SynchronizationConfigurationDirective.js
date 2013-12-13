@@ -3,7 +3,7 @@
   var module = angular.module('loom_syncconfig_directive', []);
 
   module.directive('loomSyncconfig',
-      function($q, geogitService, $translate) {
+      function($q, $translate, geogitService) {
         return {
           templateUrl: 'sync/partials/syncconfig.tpl.html',
           link: function(scope) {
@@ -13,10 +13,14 @@
             angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate('repo_username');
             angular.element('#remotePassword')[0].attributes.placeholder.value = $translate('repo_password');
 
+            scope.$on('translation_change', function() {
+              scope.selectedText = '*' + $translate('new_remote');
+            });
+
             var reset = function() {
               scope.selectedRepo = null;
               scope.selectedRemote = null;
-              scope.selectedText = '*New Remote';
+              scope.selectedText = '*' + $translate('new_remote');
               scope.remoteName = null;
               scope.remoteURL = null;
               scope.remoteUsername = '';
@@ -25,7 +29,7 @@
             reset();
             scope.selectRemote = function(remote) {
               if (remote === null) {
-                scope.selectedText = '*New Remote';
+                scope.selectedText = '*' + $translate('new_remote');
               } else {
                 scope.selectedText = remote.name;
               }
@@ -74,7 +78,7 @@
               geogitService.command(scope.selectedRepo.id, 'remote', options).then(function() {
                 geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
                 scope.selectedRemote = null;
-                scope.selectedText = '*New Remote';
+                scope.selectedText = '*' + $translate('new_remote');
               });
             };
 

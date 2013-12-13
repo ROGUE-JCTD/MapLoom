@@ -1,21 +1,26 @@
 <div class="difflist">
   <ul class="list-group">
     <li class="list-group-item conflict" ng-click="clickCallback(conflict,'conflict')" ng-repeat="conflict in conflictList">
-      <span class="glyphicon glyphicon-warning-sign"/> '{{conflict.feature}}' in {{conflict.layer}}
+      <span class="glyphicon glyphicon-warning-sign"/><span class="ellipsis diff-list-title">
+      '{{conflict.feature}}' {{'in_lower_case' | translate}} {{conflict.layer}}</span>
       <span ng-if="!conflict.resolved" class="badge conflict-badge">{{'conflict' | translate}}</span>
       <span ng-if="conflict.resolved" class="badge resolved-badge">{{'fixed' | translate}}</span>
     </li>
     <li class="list-group-item merged" ng-click="clickCallback(merged,'merge')" ng-repeat="merged in mergeList">
-      <span class="glyphicon glyphicon-random"/> '{{merged.feature}}' in {{merged.layer}}
+      <span class="glyphicon glyphicon-random"/><span class="ellipsis diff-list-title">
+      '{{merged.feature}}' {{'in_lower_case' | translate}} {{merged.layer}}</span>
     </li>
     <li class="list-group-item add" ng-click="clickCallback(add,'add')" ng-repeat="add in addList">
-      <span class="glyphicon glyphicon-plus-sign"/> '{{add.feature}}' to {{add.layer}}
+      <span class="glyphicon glyphicon-plus-sign"/><span class="ellipsis diff-list-title">
+      '{{add.feature}}' {{'to_lower_case' | translate}} {{add.layer}}</span>
     </li>
     <li class="list-group-item modify" ng-click="clickCallback(modify,'modify')" ng-repeat="modify in modifyList">
-      <span class="glyphicon glyphicon-edit"/> '{{modify.feature}}' in {{modify.layer}}
+      <span class="glyphicon glyphicon-edit"/><span class="ellipsis diff-list-title">
+      '{{modify.feature}}' {{'in_lower_case' | translate}} {{modify.layer}}</span>
     </li>
     <li class="list-group-item delete" ng-click="clickCallback(delete,'delete')" ng-repeat="delete in deleteList">
-      <span class="glyphicon glyphicon-minus-sign"/> '{{delete.feature}}' from {{delete.layer}}
+      <span class="glyphicon glyphicon-minus-sign"/><span class="ellipsis diff-list-title">
+      '{{delete.feature}}' {{'from_lower_case' | translate}} {{delete.layer}}</span>
     </li>
   </ul>
 </div>

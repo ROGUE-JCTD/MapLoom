@@ -2,15 +2,15 @@
   <form name="syncform" class="form-horizontal">
     <div class="form-group" ng-class="{'has-error': !syncform.syncname.$valid}">
       <div class="col-md-2">
-        <label translate="server_name">Name: </label>
+        <label>{{'server_name' | translate}}: </label>
       </div>
       <div class="col-md-10">
-        <input name="syncname" ng-minlength="1" ng-model="name" type="text" class="form-control" placeholder="Name" required>
+        <input name="syncname" ng-minlength="1" ng-model="name" type="text" class="form-control" placeholder="{{'server_name' | translate}}" required>
       </div>
     </div>
     <div class="form-group">
       <div class="col-md-2">
-        <label translate="repo">Repo: </label>
+        <label>{{'repo' | translate}}: </label>
       </div>
       <div class="col-md-5">
         <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.repos">
@@ -23,7 +23,7 @@
     </div>
     <div class="form-group">
       <div class="col-md-2">
-        <label translate="remote">Remote: </label>
+        <label>{{'remote' | translate}}: </label>
       </div>
       <div class="col-md-5">
         <select class="form-control" ng-show="selectedRepo" ng-model="selectedRemote" required ng-options="remote.name for remote in geogitService.getRepoById(selectedRepo.id).remotes">

@@ -37,7 +37,8 @@
       difflayer_ = new ol.layer.Vector({
         metadata: {
           label: translate_('differences'),
-          hidden: false
+          hidden: false,
+          differences_layer: true
         },
         source: new ol.source.Vector({
           parser: null
@@ -62,8 +63,7 @@
         ]})
       });
       rootScope.$on('translation_change', function() {
-        // TODO: update differences layer label when translation changes.
-        //difflayer_.setLabel(translate_('differences'));
+        difflayer_.get('metadata').label = translate_('differences');
       });
       mapService_ = mapService;
       return this;
