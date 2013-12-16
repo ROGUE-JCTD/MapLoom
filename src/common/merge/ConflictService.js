@@ -61,6 +61,9 @@
     };
 
     this.beginResolution = function() {
+      if (!goog.isArray(service_.features)) {
+        service_.features = [service_.features];
+      }
       diffService_.setTitle(translate_('merge_results'));
       diffService_.clickCallback = featureClicked;
       diffService_.mergeDiff = true;

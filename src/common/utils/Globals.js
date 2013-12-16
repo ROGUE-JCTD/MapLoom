@@ -68,3 +68,22 @@ var transformGeometry = function(geometry, crsFrom, crsTo) {
   newGeom.transform(transform);
   return newGeom;
 };
+
+var validateInteger = function(property, key) {
+  var numbers = /^[-+]?[0-9]*$/;
+  var valid = true;
+  if (!numbers.test(property[key])) {
+    valid = false;
+  }
+  property.valid = valid;
+};
+
+var validateDouble = function(property, key) {
+  var numbers = /^[-+]?[0-9]*\.?[0-9]+$/;
+  var valid = true;
+  if (property[key] !== null && property[key] !== '' &&
+      !numbers.test(property[key])) {
+    valid = false;
+  }
+  property.valid = valid;
+};

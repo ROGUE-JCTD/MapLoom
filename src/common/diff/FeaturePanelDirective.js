@@ -37,6 +37,13 @@
               }, true);
             }
 
+            scope.selectValue = function(property, index) {
+              property.newvalue = property.enum[index]._value;
+            };
+
+            scope.validateInteger = validateInteger;
+            scope.validateDouble = validateDouble;
+
             scope.$on('feature-diff-performed', updateVariables);
           }
         };

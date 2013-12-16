@@ -38,24 +38,9 @@
               scope.inserting = false;
             };
 
-            scope.validateInteger = function(form, index) {
-              var nonNumbers = /^[-+]?[0-9]*$/;
-              var valid = true;
-              if (!nonNumbers.test(scope.properties[index][1])) {
-                valid = false;
-              }
-              scope.properties[index].valid = valid;
-            };
+            scope.validateInteger = validateInteger;
 
-            scope.validateDouble = function(form, index) {
-              var nonNumbers = /^[-+]?[0-9]*\.?[0-9]+$/;
-              var valid = true;
-              if (scope.properties[index][1] !== null && scope.properties[index][1] !== '' &&
-                  !nonNumbers.test(scope.properties[index][1])) {
-                valid = false;
-              }
-              scope.properties[index].valid = valid;
-            };
+            scope.validateDouble = validateDouble;
 
             var parentModal = element.closest('.modal');
             var closeModal = function(event, element) {

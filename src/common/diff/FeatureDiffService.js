@@ -68,6 +68,7 @@
     this.change = null;
     this.leftName = null;
     this.rightName = null;
+    this.schema = null;
 
     this.$get = function($rootScope, mapService, geogitService, dialogService, $translate) {
       service_ = this;
@@ -120,6 +121,7 @@
       service_.merged.clearFeature();
       service_.leftName = null;
       service_.rightName = null;
+      service_.schema = null;
     };
 
     this.chooseGeometry = function(panel) {
@@ -131,7 +133,10 @@
     };
 
     this.chooseAttribute = function(index, panel) {
+      var type = this.merged.attributes[index].type;
       this.merged.attributes[index] = $.extend(true, {}, panel.attributes[index]);
+      this.merged.attributes[index].type = type;
+      assignAttributeTypes(this.merged.attributes, true);
     };
 
     this.choose = function(panel) {
@@ -215,6 +220,9 @@
           if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
             var splitFeature = feature.id.split('/');
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+              if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
+                service_.schema = layer.get('metadata').schema;
+              }
               if (goog.isDefAndNotNull(metadata.projection)) {
                 crs_ = metadata.projection;
               }
@@ -330,6 +338,7 @@
         newBounds[3] += y;
         panel.bounds = newBounds;
         diffsNeeded_ -= 1;
+        assignAttributeTypes(panel.attributes, false);
         if (diffsNeeded_ === 0) {
           if (diffsInError_ > 0) {
             dialogService_.error(translate_('error'), translate_('feature_diff_error'));
@@ -356,8 +365,10 @@
                     service_.updateChangeType(service_.merged.attributes[i]);
                   }
                 }
+                assignAttributeTypes(service_.merged.attributes, true);
               } else {
                 service_.choose(service_.left);
+                assignAttributeTypes(service_.merged.attributes, true);
               }
             }
             rootScope_.$broadcast('feature-diff-performed');
@@ -398,6 +409,20 @@
         })
       ]})
     });
+  }
+
+  function assignAttributeTypes(properties, editable) {
+    if (goog.isDefAndNotNull(service_.schema)) {
+      for (var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++) {
+        properties[propertyIndex].type = service_.schema[properties[propertyIndex].attributename]._type;
+        if (properties[propertyIndex].type === 'simpleType') {
+          properties[propertyIndex].enum =
+              service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
+        }
+        properties[propertyIndex].valid = true;
+        properties[propertyIndex].editable = editable;
+      }
+    }
   }
 
 }());

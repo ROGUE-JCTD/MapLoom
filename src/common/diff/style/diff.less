@@ -106,6 +106,12 @@
         border: 1px solid #88a3bd;
       }
 
+      button, span.input-group-addon {
+        border: 1px solid darken(@featurePanelColor, 5%);
+        background-color: lighten(@featurePanelColor, 7%);
+        cursor: pointer;
+      }
+
       .preview-map {
         position: relative;
         width: 220px;
@@ -121,7 +127,7 @@
         color: #000000;
       }
 
-      .attr-none {
+      input.attr-none {
         width: 98%;
         background-color: @featurePanelColor;
         border: 1px solid darken(@featurePanelColor, 5%);
@@ -132,17 +138,43 @@
         }
       }
 
-      .attr-modified {
+      input.attr-modified {
         background-color: #A6BD9F;
         border: 1px solid #81977c;
       }
 
-      .attr-added {
+      input.attr-added {
         background-color: #73BD9F;
         border: 1px solid #549c7f;
       }
 
-      .attr-removed {
+      input.attr-removed {
+        background-color: #A68A9F;
+        border: 1px solid #8d7186;
+      }
+
+      .attr-none input {
+        width: 98%;
+        background-color: @featurePanelColor;
+        border: 1px solid darken(@featurePanelColor, 5%);
+        cursor: auto;
+
+        &[disabled] {
+          cursor: default;
+        }
+      }
+
+      .attr-modified input {
+        background-color: #A6BD9F;
+        border: 1px solid #81977c;
+      }
+
+      .attr-added input {
+        background-color: #73BD9F;
+        border: 1px solid #549c7f;
+      }
+
+      .attr-removed input {
         background-color: #A68A9F;
         border: 1px solid #8d7186;
       }
@@ -150,6 +182,20 @@
       .info-box-attribute {
         color: #000000;
         height: 15px !important;
+      }
+      .merge-select {
+        border-spacing: 0;
+      }
+      .merge-datetime {
+        div.col-md-12 {
+          border-spacing: 0;
+          padding: 0;
+        }
+        border-spacing: 0;
+        margin: 0;
+        div .form-group {
+          margin: 0;
+        }
       }
     }
 

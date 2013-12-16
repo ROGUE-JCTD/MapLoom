@@ -24,10 +24,10 @@
             <input ng-model="prop[1]" type="text" class="form-control" disabled/>
           </div>
           <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">
-            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(editfeatureform, $index)"/>
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
           </div>
           <div ng-switch-when="xsd:double" ng-class="{'has-error': !prop.valid}">
-            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(editfeatureform, $index)"/>
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
           </div>
           <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
         </div>

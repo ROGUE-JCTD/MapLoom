@@ -15,11 +15,59 @@
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
   <span ng-repeat="attribute in panel.attributes" class="">
     <span class="info-box-attribute">{{attribute.attributename}}</span>
-    <input ng-model="attribute.newvalue" type="text" class="form-control attr-none" ng-disabled="!isMergePanel" placeholder=""
-           ng-class="{
+            <div ng-switch on="attribute.type">
+              <div ng-switch-when="xsd:dateTime" ng-class="{
+                        'attr-added': attribute.changetype == 'ADDED',
+                        'attr-modified': attribute.changetype == 'MODIFIED',
+                        'attr-removed' : attribute.chantetype == 'REMOVED'
+                      }">
+                <datetimepicker ng-disabled="!isMergePanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
+                                seperate-time="false" date-object="attribute" date-key="'newvalue'"></datetimepicker>
+              </div>
+              <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable}">
+                <div ng-if="attribute.editable" class="input-group-btn">
+                  <button ng-disabled="!isMergePanel" type="button" class="btn btn-default dropdown-toggle attr-none"
+                          data-toggle="dropdown">
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="enum in attribute.enum">
+                      <a ng-click="selectValue(attribute, $index)">{{enum._value}}</a>
+                    </li>
+                  </ul>
+                </div>
+                <input ng-model="attribute.newvalue" type="text" class="form-control attr-none" disabled ng-class="{
+                      'attr-added': attribute.changetype == 'ADDED',
+                      'attr-modified': attribute.changetype == 'MODIFIED',
+                      'attr-removed' : attribute.chantetype == 'REMOVED',
+                      'form-control' : attribute.editable
+                    }"/>
+              </div>
+              <div ng-switch-when="xsd:int" ng-class="{'has-error': !attribute.valid}">
+                <input ng-disabled="!isMergePanel" ng-model="attribute.newvalue" type="text"
+                       class="form-control attr-none"
+                       ng-change="validateInteger(attribute, 'newvalue')" ng-class="{
+                      'attr-added': attribute.changetype == 'ADDED',
+                      'attr-modified': attribute.changetype == 'MODIFIED',
+                      'attr-removed' : attribute.chantetype == 'REMOVED'
+                    }"/>
+              </div>
+              <div ng-switch-when="xsd:double" ng-class="{'has-error': !attribute.valid}">
+                <input ng-disabled="!isMergePanel" ng-model="attribute.newvalue" type="text"
+                       class="form-control attr-none"
+                       ng-change="validateDouble(attribute, 'newvalue')" ng-class="{
+                      'attr-added': attribute.changetype == 'ADDED',
+                      'attr-modified': attribute.changetype == 'MODIFIED',
+                      'attr-removed' : attribute.chantetype == 'REMOVED'
+                    }"/>
+              </div>
+              <input ng-switch-default ng-model="attribute.newvalue" type="text" class="form-control attr-none"
+                     ng-disabled="!isMergePanel" placeholder=""
+                     ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
                       'attr-removed' : attribute.chantetype == 'REMOVED'
                     }">
+            </div>
   </span>
 </div>

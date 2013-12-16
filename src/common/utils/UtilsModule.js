@@ -71,35 +71,46 @@
     };
   });
 
-  module.directive('datetimepicker', function($translate) {
+  module.directive('datetimepicker', function($rootScope, $translate) {
     return {
       restrict: 'E',
       template: '<div class="row">' +
-          '<div ng-class="{\'col-md-6\': (time === \'true\'),' +
+          '<div ng-show="(editable !== \'false\')" ng-class="{\'col-md-6\': (time === \'true\'),' +
           ' \'col-md-12\': (time === \'false\') || (seperateTime === \'false\')}">' +
           '<div class="form-group">' +
           '<div class="input-group date datepicker">' +
-          '<input type="text" class="form-control" />' +
-          '<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>' +
+          '<input type="text" class="form-control"/>' +
+          '<span class="input-group-addon">' +
+          '<span class="glyphicon glyphicon-calendar"></span>' +
           '</span>' +
           '</div>' +
           '</div>' +
           '</div>' +
-          '<div ng-show="(time === \'true\') && (seperateTime === \'true\')" class="col-md-6">' +
+          '<div ng-show="(editable !== \'false\') && (time === \'true\') && (seperateTime === \'true\')" +' +
+          'class="col-md-6">' +
           '<div class="form-group">' +
           '<div class="input-group date timepicker">' +
-          '<input type="text" class="form-control" />' +
-          '<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span>' +
+          '<input type="text" class="form-control"/>' +
+          '<span class="input-group-addon">' +
+          '<span class="glyphicon glyphicon-time"></span>' +
           '</span>' +
           '</div>' +
           '</div>' +
-          '</div></div>',
+          '</div>' +
+          '<div ng-show="(editable === \'false\')">' +
+          '<input type="text" ng-model="disabledText" disabled class="disabled-date form-control"/>' +
+          '</div>' +
+          '</div>',
       replace: true,
       scope: {
         dateObject: '=dateObject',
-        dateKey: '=dateKey'
+        dateKey: '=dateKey',
+        editable: '@editable'
       },
       link: function(scope, element, attrs) {
+        if (!goog.isDefAndNotNull(scope.editable)) {
+          scope.editable = 'true';
+        }
         if (!goog.isDefAndNotNull(attrs.time)) {
           scope.time = 'true';
         } else {
@@ -116,24 +127,39 @@
           newDate.setFullYear(date.year(), date.month(), date.date());
           if (scope.time === 'true' && scope.seperateTime === 'true') {
             var time = element.find('.timepicker').data('DateTimePicker').getDate();
-            newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
+            if (goog.isDefAndNotNull(time)) {
+              newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
+            } else {
+              newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
+            }
           } else {
             newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
           }
-          scope.dateObject[scope.dateKey] = newDate.toISOString();
+          if (!scope.$$phase && !$rootScope.$$phase) {
+            scope.$apply(function() {
+              scope.dateObject[scope.dateKey] = newDate.toISOString();
+              scope.disabledText = newDate.toISOString();
+            });
+          } else {
+            scope.dateObject[scope.dateKey] = newDate.toISOString();
+            scope.disabledText = newDate.toISOString();
+          }
         };
 
         var dateOptions = {
           pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
-          defaultDate: scope.dateObject[scope.dateKey],
           language: $translate.uses()
         };
 
         var timeOptions = {
           pickDate: false,
-          defaultDate: scope.dateObject[scope.dateKey],
           language: $translate.uses()
         };
+
+        if (goog.isDefAndNotNull(scope.dateObject[scope.dateKey])) {
+          dateOptions.defaultDate = scope.dateObject[scope.dateKey];
+          timeOptions.defaultDate = scope.dateObject[scope.dateKey];
+        }
 
         var setUpPickers = function() {
           element.find('.datepicker').datetimepicker(dateOptions);
@@ -141,6 +167,13 @@
           if (scope.time === 'true' && scope.seperateTime === 'true') {
             element.find('.timepicker').datetimepicker(timeOptions);
             element.find('.timepicker').on('change.dp', updateDateTime);
+          }
+          if (goog.isDefAndNotNull(dateOptions.defaultDate)) {
+            var date = moment(new Date(dateOptions.defaultDate));
+            date.lang($translate.uses());
+            scope.disabledText = date.format('L') + ' ' + date.format('LT');
+          } else {
+            scope.disabledText = '';
           }
         };
         setUpPickers();
