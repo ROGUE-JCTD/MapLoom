@@ -123,6 +123,22 @@ hr {
 	border-top: 1px solid darken(@mainPanelColor, 5%);
 }
 
+#map-title{
+  .panel-heading{
+    font-size: 20px;
+    font-weight: 100;
+  }
+
+   i{
+    color: @saveIconColor;
+    cursor: pointer;
+  }
+
+  i:before{
+    content: @saveIcon;
+  }
+}
+
 /* Overwriting these because the default rounded corners didn't look quite right */
 .panel-heading, .flat-top {
 	border-top-left-radius: 0;

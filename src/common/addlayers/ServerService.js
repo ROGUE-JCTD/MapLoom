@@ -16,33 +16,35 @@ var SERVER_SERVICE_USE_PROXY = true;
       rootScope_ = $rootScope;
       dialogService_ = dialogService;
       translate_ = $translate;
-      servers.push({
+
+      /*this.addServer({
         type: 'WMS',
-        name: translate_('local_geoserver'),
+        name: 'Local Geoserver',
         url: ('http://' + $location.host() + (SERVER_SERVICE_USE_PORT ? ':' + $location.port() : '') + '/geoserver/wms')
       });
-      servers.push({
+
+
+      var id = this.addServer({
         type: 'fakeType',
         name: 'OpenStreetMap',
-        url: 'fakeURL',
-        layers: [
-          {
-            title: 'OpenStreetMap',
-            added: true
-          },
-          {
-            title: 'MapQuestImagery',
-            added: false
-          },
-          {
-            title: 'MapQuestOSM',
-            added: false
-          }
-        ]
+        url: 'fakeURL'
       });
-      rootScope_.$on('translation_change', function() {
-        servers[0].name = translate_('local_geoserver');
-      });
+
+      this.getServer(id).layers = [
+        {
+          title: 'OpenStreetMap',
+          added: false
+        },
+        {
+          title: 'MapQuestImagery',
+          added: false
+        },
+        {
+          title: 'MapQuestOSM',
+          added: false
+        }
+      ];*/
+
       return this;
     };
 
@@ -50,25 +52,58 @@ var SERVER_SERVICE_USE_PROXY = true;
       return servers;
     };
 
-    this.getServer = function(index) {
-      return servers[index];
+    this.getServer = function(indexOrName) {
+      if (!goog.isDefAndNotNull(indexOrName)) {
+        throw ({
+          name: 'serverService',
+          level: 'High',
+          message: 'undefined server.',
+          toString: function() {
+            return this.name + ': ' + this.message;
+          }
+        });
+      }
+      if (typeof indexOrName !== 'string') {
+        return servers[indexOrName];
+      } else if (!isNaN(parseInt(indexOrName, 10)) && (parseInt(indexOrName, 10).toString() === indexOrName)) {
+        // if it is a string that can be converted to an integer
+        return servers[parseInt(indexOrName, 10)];
+      } else {
+        for (var index = 0; index < servers.length; index += 1) {
+          if (servers[index].name.toLocaleLowerCase() === indexOrName.toLowerCase()) {
+            return servers[index];
+          }
+        }
+      }
     };
 
-    this.addServer = function(type, name, url) {
+    this.addServer = function(serverInfo) {
+      // save the config object on the server object so that when we save the server, we only pass the config as opposed
+      // to anything else that the app ads to the server objects.
+      var server = {id: servers.length, ptype: 'gxp_olsource', config: serverInfo};
+
+      goog.object.extend(server, serverInfo, {});
+
+      console.log('---- adding server: ', server);
       // TODO: Actually use the type specified in the url
-      servers.push({type: type, name: name, url: (url)});
+      servers.push(server);
+      return server.id;
     };
 
-    this.getLayers = function(index) {
+    this.populateLayers = function(index) {
       var server = servers[index];
 
-      if (!goog.isDefAndNotNull(server.layers)) {
+      if (!goog.isDefAndNotNull(server)) {
+        return [];
+      }
+
+      if (!goog.isDefAndNotNull(server.layers) && goog.isDefAndNotNull(server.url)) {
+        console.log('Sending GetCapabilities.server: ', server, ', index:', index);
         var parser = new ol.parser.ogc.WMSCapabilities();
         var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
         if (SERVER_SERVICE_USE_PROXY) {
           url = '/proxy/?url=' + encodeURIComponent(url);
         }
-
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
 
@@ -89,6 +124,7 @@ var SERVER_SERVICE_USE_PROXY = true;
           } else {
             dialogService_.error(translate_('error'),
                 translate_('failed_get_capabilities') + xhr.status.toString() + ' ' + xhr.statusText);
+            server.layers = [];
           }
         };
         xhr.send();
@@ -98,7 +134,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.refreshLayers = function(index) {
       var server = servers[index];
-      if (goog.isDefAndNotNull(server.layers)) {
+      if (goog.isDefAndNotNull(server) && goog.isDefAndNotNull(server.layers)) {
         var parser = new ol.parser.ogc.WMSCapabilities();
 
         var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';

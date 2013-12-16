@@ -14,7 +14,7 @@
     console.log('---- app.js.run');
   });
 
-  module.controller('AppCtrl', function AppCtrl($scope, $location, $translate, mapService) {
+  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService) {
     console.log('---- ngBoilerplate.controller.');
 
     $scope.$on('$stateChangeSuccess', function(event, toState) {
