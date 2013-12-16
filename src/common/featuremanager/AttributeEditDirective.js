@@ -80,7 +80,8 @@
                     [$translate('btn_ok')], false);
                 return;
               }
-              featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties, scope.coordinates);
+              featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
+                  scope.coordinates.coords);
               reset();
               $('#attribute-edit-dialog').modal('toggle');
             };
