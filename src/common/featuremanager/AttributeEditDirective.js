@@ -81,7 +81,7 @@
                 return;
               }
               featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
-                  scope.coordinates.coords);
+                  goog.isDefAndNotNull(scope.coordinates) ? scope.coordinates.coords : scope.coordinates);
               reset();
               $('#attribute-edit-dialog').modal('toggle');
             };
