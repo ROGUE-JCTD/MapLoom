@@ -537,13 +537,11 @@
               try {
                 var layerInfo = JSON.parse(elm);
 
-                if (layerInfo.features && layerInfo.features.length > 0) {
+                if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
                   layerInfo.layer = layers[index];
                   goog.array.insert(infoPerLayer, layerInfo);
                 }
-              } catch (e) {
-                console.log('feature info parse exception: ', elm);
-              }
+              } catch (e) {}
             });
             //console.log('-- infoPerLayer: ', infoPerLayer);
 
