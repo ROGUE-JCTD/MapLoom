@@ -143,7 +143,10 @@
     'zoom_world': 'Zoom To World',
     'toggle_legend': 'Toggle Legend',
     'refresh_layers': 'Refresh Layers',
-    'sure_remove_layer': 'Are you sure that you want to remove this layer?'
+    'sure_remove_layer': 'Are you sure that you want to remove this layer?',
+    'pull_unknown_error': 'An unknown error occurred when pulling from the remote.  Please try again.',
+    'local': 'Local',
+    'pull_conflicts': 'Pull Conflicts'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

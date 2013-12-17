@@ -4,7 +4,7 @@
   // Private Variables
   var synchronizationLinks_ = [];
   var nextLinkId_ = 0;
-  var service_, dialogService_, rootScope_, geogitService_, q_, translate_ = null;
+  var service_, dialogService_, rootScope_, geogitService_, q_, translate_, conflictService_ = null;
   var syncing = false;
   var numSyncingLinks = 0;
   var syncTimeout = null;
@@ -63,11 +63,12 @@
   };
 
   module.provider('synchronizationService', function() {
-    this.$get = function($rootScope, $q, $translate, dialogService, geogitService) {
+    this.$get = function($rootScope, $q, $translate, dialogService, geogitService, conflictService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
       geogitService_ = geogitService;
+      conflictService_ = conflictService;
       translate_ = $translate;
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
@@ -147,7 +148,6 @@
         pullOptions.ref = link.getRemoteBranch() + ':' + link.getLocalBranch();
         pullOptions.remoteName = link.getRemote().name;
         transaction.command('pull', pullOptions).then(function(pullResult) {
-          // TODO: Handle conflicts
           var pushOptions = new GeoGitPushOptions();
           pushOptions.ref = link.getLocalBranch() + ':' + link.getRemoteBranch();
           pushOptions.remoteName = link.getRemote().name;
@@ -167,9 +167,17 @@
             transaction.abort();
           });
         }, function(pullFailed) {
-          syncing = false;
-          result.reject(pullFailed);
-          transaction.abort();
+          if (goog.isObject(pullFailed) && goog.isDefAndNotNull(pullFailed.conflicts)) {
+            var branch = link.getRemote().name + '/' + link.getRemoteBranch();
+            handleConflicts(pullFailed, transaction, link.getRepo().id, translate_('local'),
+                link.getRemote().name, branch);
+          } else {
+            dialogService_.error(translate_('error'), translate_('pull_unknown_error'));
+            syncing = false;
+            result.reject(pullFailed);
+            transaction.abort();
+            console.log('ERROR: Pull failure: ', pullOptions, pullFailed);
+          }
         });
       }, function(beginTransactionFailed) {
         syncing = false;
@@ -178,5 +186,31 @@
       return result.promise;
     };
   });
+
+  function handleConflicts(mergeFailure, transaction, repoId, ourName, theirName, mergeBranch) {
+    var myDialog = dialogService_.warn(translate_('pull_conflicts'), translate_('conflicts_encountered'),
+        [translate_('abort'), translate_('resolve_conflicts')], false);
+
+    myDialog.then(function(button) {
+      switch (button) {
+        case 0:
+          syncing = false;
+          transaction.abort();
+          break;
+        case 1:
+          conflictService_.ourName = ourName;
+          conflictService_.theirName = theirName;
+          conflictService_.ours = mergeFailure.ours;
+          conflictService_.theirs = mergeFailure.theirs;
+          conflictService_.ancestor = mergeFailure.ancestor;
+          conflictService_.features = mergeFailure.Feature;
+          conflictService_.repoId = repoId;
+          conflictService_.transaction = transaction;
+          conflictService_.mergeBranch = mergeBranch;
+          conflictService_.beginResolution();
+          break;
+      }
+    });
+  }
 
 }());

@@ -534,11 +534,15 @@
             var infoPerLayer = [];
 
             featureInfoByLayer.forEach(function(elm, index) {
-              var layerInfo = JSON.parse(elm);
+              try {
+                var layerInfo = JSON.parse(elm);
 
-              if (layerInfo.features && layerInfo.features.length > 0) {
-                layerInfo.layer = layers[index];
-                goog.array.insert(infoPerLayer, layerInfo);
+                if (layerInfo.features && layerInfo.features.length > 0) {
+                  layerInfo.layer = layers[index];
+                  goog.array.insert(infoPerLayer, layerInfo);
+                }
+              } catch (e) {
+                console.log('feature info parse exception: ', elm);
               }
             });
             //console.log('-- infoPerLayer: ', infoPerLayer);
