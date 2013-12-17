@@ -153,7 +153,12 @@
     'table_view': 'Vista de Tabla',
     'filter_table': 'Filtrar',
     'clear_table_filter': 'Limpiar',
-    'word_wrap': 'Ajuste de línea de alternancia'
+    'word_wrap': 'Ajuste de línea de alternancia',
+    'title': 'es_Title',
+    'abstract': 'es_Abstract',
+    'save_this_map': 'es_Save this map.',
+    'save_failed': 'es_Save failed',
+    'map_save_failed': 'es_Map save failed with the following status'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

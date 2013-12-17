@@ -19,7 +19,7 @@
             };
 
             scope.removeLayer = function(layer) {
-              dialogService.warn($translate('remove_layer'), $translate('sure_remove_layer'),
+              dialogService.warn($translate('remove_layer'), $translate('verify_remove_layer'),
                   [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:

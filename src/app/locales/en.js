@@ -153,7 +153,12 @@
     'table_view': 'Table View',
     'filter_table': 'Filter',
     'clear_table_filter': 'Clear',
-    'word_wrap': 'Toggle Word Wrap'
+    'word_wrap': 'Toggle Word Wrap',
+    'title': 'Title',
+    'abstract': 'Abstract',
+    'save_this_map': 'Save this map.',
+    'save_failed': 'Save failed',
+    'map_save_failed': 'Map save failed with the following status'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
