@@ -31,7 +31,7 @@
   module.provider('configService', function() {
     this.configuration = {};
 
-    this.$get = function($window, $http, $cookies, $location) {
+    this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
       this.configuration = {
         about: {
@@ -68,6 +68,8 @@
             'name': 'OpenStreetMap'
           }
         ],
+        currentLanguage: 'en',
+        username: 'anonymous',
         userprofilename: 'Anonymous',
         userprofileemail: '',
         username: '',
@@ -80,15 +82,19 @@
         goog.object.extend(this.configuration, $window.config, {});
       }
       this.username = this.configuration.username;
+      this.currentLanguage = this.configuration.currentLanguage;
       this.user_profile_name = this.configuration.userprofilename;
       this.user_profile_email = this.configuration.userprofileemail;
       this.user_name = this.configuration.username;
       this.proxy = this.configuration.proxy;
       this.csrfToken = $cookies.csrftoken;
+      this.currentLanguage = this.configuration.currentLanguage;
 
       if (goog.isDefAndNotNull(this.configuration.map.zoom) && this.configuration.map.zoom === 0) {
         this.configuration.map.zoom = 1;
       }
+
+      $translate.uses(this.currentLanguage);
 
       return this;
     };

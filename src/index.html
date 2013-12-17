@@ -34,36 +34,38 @@
 <% }); %>
 
 <% if (!(typeof django === 'undefined') && (django)) { %>
+    {% get_current_language as language%}
 <script type="text/javascript">
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
-    username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
+        username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
         userprofilename: {% if user.is_authenticated %} "{{ user.profile.name }}" {% else %} undefined {% endif %},
-            userprofileemail: {% if user.is_authenticated %} "{{ user.profile.email }}" {% else %} undefined {% endif %},
-                proxy: "/proxy/?url=",
-                        printService: "{{GEOSERVER_BASE_URL}}pdf/",
-                    /* The URL to a REST map configuration service.  This service
-                     * provides listing and, with an authenticated user, saving of
-                     * maps on the server for sharing and editing.
-                     */
-                        rest: "{% url "maps_browse" %}",
-                        ajaxLoginUrl: "{% url "account_ajax_login" %}",
-                        homeUrl: "{% url "home" %}",
-                        portalItems: [{
-                    xtype: "container",
-                    layout: "fit",
-                    {% if classification_banner_enabled %}
-                height: 99,
-                        {% else %}
+        userprofileemail: {% if user.is_authenticated %} "{{ user.profile.email }}" {% else %} undefined {% endif %},
+        currentLanguage: "{{language|default:'en'}}",
+        proxy: "/proxy/?url=",
+        printService: "{{GEOSERVER_BASE_URL}}pdf/",
+        /* The URL to a REST map configuration service.  This service
+         * provides listing and, with an authenticated user, saving of
+         * maps on the server for sharing and editing.
+         */
+        rest: "{% url "maps_browse" %}",
+        ajaxLoginUrl: "{% url "account_ajax_login" %}",
+        homeUrl: "{% url "home" %}",
+        portalItems: [{
+                xtype: "container",
+                layout: "fit",
+        {% if classification_banner_enabled %}
+            height: 99,
+        {% else %}
             height: 81,
-                    {% endif %}
+        {% endif %}
         region: "north"
-    }],
-    localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
-            localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
-            csrfToken: "{{ csrf_token }}",
-            tools: [{ptype: "gxp_getfeedfeatureinfo"}],
-    };
+        }],
+        localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
+        localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
+        csrfToken: "{{ csrf_token }}",
+        tools: [{ptype: "gxp_getfeedfeatureinfo"}],
+        };
 
     goog.object.extend( config, {{ config|safe }});
 
@@ -209,7 +211,7 @@
 <div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
      class="feature-info-box-popup">
 </div>
-<div loom-modal id="saveMap" modal-title="Save this map.">
+<div loom-modal id="saveMap" modal-title="{{ 'save_this_map' | translate}}">
     <div loom-save-map id="save-map">
     </div>
 </div>
