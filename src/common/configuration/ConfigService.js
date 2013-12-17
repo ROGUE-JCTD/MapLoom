@@ -59,7 +59,7 @@
       this.proxy = this.configuration.proxy;
       this.csrfToken = $cookies.csrftoken;
 
-      if (goog.isDefAndNotNull(this.configuration.map.zoom) && this.configuration.map.zoom == 0) {
+      if (goog.isDefAndNotNull(this.configuration.map.zoom) && this.configuration.map.zoom === 0) {
         this.configuration.map.zoom = 1;
       }
 
