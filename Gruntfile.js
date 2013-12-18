@@ -603,6 +603,15 @@ module.exports = function ( grunt ) {
   ]);
 
   /**
+   * The `django_maploom_build` task generates static files that get placed into django_maploom.
+   */
+  grunt.registerTask( 'django_maploom_build', [
+    'clean', 'html2js', 'gjslint', 'jshint', 'coffeelint', 'coffee', 'recess:build',
+    'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets', 'copy:build_vendor_fonts',
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'compile'//,'karmaconfig', 'karma:continuous'
+  ]);
+
+  /**
    * The `compile` task gets your app ready for deployment by concatenating and
    * minifying your code.
    */
