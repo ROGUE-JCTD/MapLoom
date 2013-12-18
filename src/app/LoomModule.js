@@ -20,6 +20,7 @@
     'loom_merge',
     'loom_sync',
     'loom_legend',
-    'loom_utils'
+    'loom_utils',
+    'loom_refresh'
   ]);
 }());

@@ -25,37 +25,39 @@
             var merges = [];
             var conflicts = [];
 
-            var i, j, k;
+            var i = 0;
+            //this function has to be defined outside of the loop, otherwise the linter gets angry
+            var featureHandler = function(repoFeature) {
+              var splitFeature = repoFeature.id.split('/');
+              var feature = {
+                repo: repos[i].name,
+                layer: splitFeature[0],
+                feature: splitFeature[1],
+                original: repoFeature
+              };
+              switch (repoFeature.change) {
+                case 'ADDED':
+                  adds.push(feature);
+                  break;
+                case 'MODIFIED':
+                  modifies.push(feature);
+                  break;
+                case 'REMOVED':
+                  deletes.push(feature);
+                  break;
+                case 'MERGED':
+                  merges.push(feature);
+                  break;
+                case 'CONFLICT':
+                  conflicts.push(feature);
+                  break;
+              }
+            };
             for (i = 0; i < repos.length; i += 1) {
               var features = repos[i].features;
               if (goog.isDefAndNotNull(features)) {
                 scope.noFeatures = false;
-                for (j = 0; j < features.length; j += 1) {
-                  var splitFeature = features[j].id.split('/');
-                  var feature = {
-                    repo: repos[i].name,
-                    layer: splitFeature[0],
-                    feature: splitFeature[1],
-                    original: features[j]
-                  };
-                  switch (features[j].change) {
-                    case 'ADDED':
-                      adds.push(feature);
-                      break;
-                    case 'MODIFIED':
-                      modifies.push(feature);
-                      break;
-                    case 'REMOVED':
-                      deletes.push(feature);
-                      break;
-                    case 'MERGED':
-                      merges.push(feature);
-                      break;
-                    case 'CONFLICT':
-                      conflicts.push(feature);
-                      break;
-                  }
-                }
+                forEachArrayish(features, featureHandler);
               } else {
                 scope.noFeatures = true;
                 scope.message = scope.notification.emptyMessage;

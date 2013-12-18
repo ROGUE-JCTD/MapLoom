@@ -157,7 +157,7 @@ var GeoGitDiffOptions = function() {
   this.pathFilter = null;
   this.showGeometryChanges = null;
   this.page = null;
-  this.elementsPerPage = null;
+  this.show = null;
 };
 
 var GeoGitLogOptions = function() {

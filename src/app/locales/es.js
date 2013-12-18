@@ -88,6 +88,8 @@
     'btn_ok': 'es_OK',
     'summary_of_changes': 'es_Summary of Changes',
     'too_many_changes': 'es_There were too many changes to display. If possible, narrow the range.',
+    'too_many_changes_refresh': 'es_There were too many changes to display.  Only the first ' +
+        '{{value}} changes will be shown',
     'no_changes_in_time_range': 'es_No changes were made to the layer in the specified time frame.',
     'no_changes_in_commit': 'es_No changes were made to the layer in the specified commit.',
     'diff_unknown_error': 'es_An unknown error occurred while summarizing the differences.  Please try again.',

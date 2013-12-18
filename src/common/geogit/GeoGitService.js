@@ -340,6 +340,45 @@
       return deferredResponse.promise;
     };
 
+    //gets the current commit id of a layer's repository
+    this.getCommitId = function(layer) {
+      var url = layer.get('metadata').url + '/geogit/' + layer.get('metadata').workspace + ':' +
+          layer.get('metadata').geogitStore + '/repo/manifest';
+      var deferredResponse = q.defer();
+      http.get(url).then(function(response) {
+        var branchArray = response.data.split('\n');
+        var branchData;
+        var commitId = -1;
+
+        for (var branch in branchArray) {
+          branchData = branchArray[branch].split(' ');
+
+          // > 2 elements means that this one is a sym ref, so we'll skip it
+          // < 2  means that it's an empty array created by splitting the new line at the end of the response
+          if (branchData.length != 2) {
+            continue;
+          }
+
+          //get the index of the branch name to see if we're on the right branch
+          //  the '/' is so that a search for 'master' won't leave us on a branch called '*_master'
+          var branchNameIndex = branchData[0].indexOf('/' + layer.get('metadata').branchName);
+
+          //extract the branch name so that we can check the length and ensure we don't end up with 'master_*'
+          var branchNameSubString = branchData[0].slice(branchNameIndex + 1);
+
+          if (branchNameIndex !== -1 && branchNameSubString.length === layer.get('metadata').branchName.length) {
+            //these are the droids we're looking for
+            commitId = branchData[1];
+            break;
+          }
+        }
+        deferredResponse.resolve(commitId);
+      }, function(reject) {
+        deferredResponse.reject(reject);
+      });
+      return deferredResponse.promise;
+    };
+
     this.isGeoGit = function(layer) {
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
@@ -355,6 +394,14 @@
                   if (dataStore.type === 'GeoGIT') {
                     var repoName = dataStore.connectionParameters.entry[0].$;
                     repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
+
+                    metadata.branchName = dataStore.connectionParameters.entry[1].$;
+
+                    //the branch name will apparently come back as 'false' if its on master,
+                    // so we need to correct for that
+                    if (metadata.branchName === 'false') {
+                      metadata.branchName = 'master';
+                    }
                     var promise = service_.addRepo(
                         new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name,
                             dataStore.connectionParameters.entry[1].$, repoName));
@@ -376,6 +423,10 @@
                   metadata.projection = featureType.srs;
                   metadata.workspace = featureType.workspace;
                   metadata.nativeName = featureType.nativeName;
+
+                  service_.getCommitId(layer).then(function(response) {
+                    metadata.repoCommitId = response;
+                  });
                 }, function(rejected) {
                   dialogService_.error(
                       translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');

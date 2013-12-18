@@ -3,7 +3,7 @@
 
   module.directive('loomNotificationPoster',
       function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService,
-          $translate) {
+          $translate, refreshService) {
         return{
           restrict: 'C',
           replace: true,
@@ -24,11 +24,14 @@
               '      class="btn btn-default">Modal</button>' +
               '    <button type="button" ng-click="localize()"' +
               '      class="btn btn-default">Switch Language</button>' +
+              '    <button type="button" ng-click="refreshService.refreshLayers()"' +
+              '      class="btn btn-default">Refresh Layers</button>' +
               '  </div>' +
               '</div>',
           // The linking function will add behavior to the template
           link: function(scope) { //Unused: element, attrs
             scope.mapService = mapService;
+            scope.refreshService = refreshService;
 
             function addNotification() {
               notificationService.addNotification({

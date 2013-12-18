@@ -161,7 +161,7 @@
       }
 
       //set the condition to always so that drag zoom will activate anytime the map is dragged
-      this.map.getInteractions().getArray()[index].condition_ = ol.interaction.condition.always;
+      this.map.getInteractions().getArray()[index].condition_ = ol.events.condition.always;
       dragZoomActive = true;
     };
 
@@ -608,7 +608,7 @@
         }
 
         //Reset the condition to its default behavior after each use
-        this.getInteractions().getArray()[index].condition_ = ol.interaction.condition.shiftKeyOnly;
+        this.getInteractions().getArray()[index].condition_ = ol.events.condition.shiftKeyOnly;
         dragZoomActive = false;
       });
 
