@@ -10,12 +10,14 @@ var SERVER_SERVICE_USE_PROXY = true;
   var rootScope_ = null;
   var dialogService_ = null;
   var translate_ = null;
+  var http_ = null;
 
   module.provider('serverService', function() {
-    this.$get = function($rootScope, $location, $translate, dialogService) {
+    this.$get = function($rootScope, $http, $location, $translate, dialogService) {
       rootScope_ = $rootScope;
       dialogService_ = dialogService;
       translate_ = $translate;
+      http_ = $http;
 
       /*this.addServer({
         type: 'WMS',
@@ -99,20 +101,12 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (!goog.isDefAndNotNull(server.layers) && goog.isDefAndNotNull(server.url)) {
         console.log('Sending GetCapabilities.server: ', server, ', index:', index);
+        server.layers = [];
         var parser = new ol.parser.ogc.WMSCapabilities();
         var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-        if (SERVER_SERVICE_USE_PROXY) {
-          url = '/proxy/?url=' + encodeURIComponent(url);
-        }
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-
-        /**
-         * onload handler for the XHR request.
-         */
-        xhr.onload = function() {
+        http_.get(url).then(function(xhr) {
           if (xhr.status == 200) {
-            var response = parser.read(xhr.response);
+            var response = parser.read(xhr.data);
             if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
               server.layers = response.capability.layers;
 
@@ -123,11 +117,14 @@ var SERVER_SERVICE_USE_PROXY = true;
             }
           } else {
             dialogService_.error(translate_('error'),
-                translate_('failed_get_capabilities') + xhr.status.toString() + ' ' + xhr.statusText);
+                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
             server.layers = [];
           }
-        };
-        xhr.send();
+        }, function(xhr) {
+          dialogService_.error(translate_('error'),
+              translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+          server.layers = [];
+        });
       }
       return server.layers;
     };
@@ -138,20 +135,9 @@ var SERVER_SERVICE_USE_PROXY = true;
         var parser = new ol.parser.ogc.WMSCapabilities();
 
         var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-        if (SERVER_SERVICE_USE_PROXY) {
-          url = '/proxy/?url=' + encodeURIComponent(url);
-        }
-
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-
-        /**
-         * onload handler for the XHR request.
-         */
-        xhr.onload = function() {
+        http_.get(url).then(function(xhr) {
           if (xhr.status == 200) {
-            var response = parser.read(xhr.responseXML);
+            var response = parser.read(xhr.data);
             if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
               var serverLayers = [];
               var index;
@@ -177,10 +163,12 @@ var SERVER_SERVICE_USE_PROXY = true;
             }
           } else {
             dialogService_.error(translate_('error'),
-                translate_('failed_get_capabilities') + xhr.status.toString() + ' ' + xhr.statusText);
+                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
           }
-        };
-        xhr.send();
+        }, function(xhr) {
+          dialogService_.error(translate_('error'),
+              translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+        });
       }
       return server.layers;
     };

@@ -162,7 +162,6 @@
         branchOptions.list = true;
         branchOptions.remotes = true;
         service_.command(repo.id, 'branch', branchOptions).then(function(response) {
-          var index;
           var remoteIndex;
           if (goog.isDefAndNotNull(response.Local.Branch)) {
             forEachArrayish(response.Local.Branch, function(branch) {
@@ -175,18 +174,15 @@
             return;
           }
           if (goog.isDefAndNotNull(response.Remote.Branch)) {
-            if (goog.isDefAndNotNull(response.Remote.Branch.length)) {
-              for (index = 0; index < response.Remote.Branch.length; index++) {
-                if (response.Remote.Branch[index].name === 'HEAD') {
-                  continue;
-                }
+            forEachArrayish(response.Remote.Branch, function(branch) {
+              if (branch.name !== 'HEAD') {
                 for (remoteIndex = 0; remoteIndex < repo.remotes.length; remoteIndex++) {
-                  if (repo.remotes[remoteIndex].name === response.Remote.Branch[index].remoteName) {
-                    repo.remotes[remoteIndex].branches.push(response.Remote.Branch[index].name);
+                  if (repo.remotes[remoteIndex].name === branch.remoteName) {
+                    repo.remotes[remoteIndex].branches.push(branch.name);
                   }
                 }
               }
-            }
+            });
           }
           result.resolve(repo);
         }, function(reject) {
@@ -245,9 +241,6 @@
       var featureType = layer.get('metadata').name;
       var url = layer.get('metadata').url + '/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=DescribeLayer&layers=' +
           featureType;
-      if (SERVER_SERVICE_USE_PROXY) {
-        url = '/proxy/?url=' + encodeURIComponent(url);
-      }
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
         // TODO: Refactor once there is a proper DescribeLayer parser
@@ -266,7 +259,6 @@
     this.getDataStoreName = function(layer) {
       var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
-      // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/layers/' + featureType + '.json';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
@@ -286,7 +278,6 @@
     this.getDataStore = function(layer, name) {
       var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
-      // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' + name +
           '.json';
       var deferredResponse = q.defer();
@@ -306,7 +297,6 @@
     this.getFeatureType = function(layer, dataStore) {
       var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
-      // TODO: Make this work with a proxy once it supports authentication
       var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' +
           dataStore.name + '/featuretypes/' + workspaceRoute.typeName + '.json';
       var deferredResponse = q.defer();

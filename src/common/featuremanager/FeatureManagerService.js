@@ -630,11 +630,8 @@
         wfsRequestTypePartial +
         '</wfs:Transaction>';
 
-    http_({
-      url: '/geoserver/wfs/WfsDispatcher',
-      method: 'POST',
-      data: wfsRequestData
-    }).success(function(data, status, headers, config) {
+    var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
+    http_.post(url, wfsRequestData).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
       if (postType === wfsPostTypes_.INSERT) {
         var x2js = new X2JS();

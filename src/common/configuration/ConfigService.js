@@ -1,7 +1,30 @@
 (function() {
   var module = angular.module('loom_config_service', []);
 
-  angular.module('loom').config(function($httpProvider) {
+  var service_ = null;
+
+  module.factory('httpRequestInterceptor', function($cookieStore) {
+    return {
+      request: function(config) {
+        if (goog.isDefAndNotNull(config) &&
+            (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
+          config.headers['X-CSRFToken'] = service_.csrfToken;
+        }
+        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0) {
+          var configCopy = $.extend(true, {}, config);
+          var proxy = service_.configuration.proxy;
+          if (goog.isDefAndNotNull(proxy)) {
+            configCopy.url = proxy + encodeURIComponent(configCopy.url);
+          }
+          return configCopy;
+        }
+        return config;
+      }
+    };
+  });
+
+  module.config(function($httpProvider) {
+    $httpProvider.interceptors.push('httpRequestInterceptor');
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   });
 
@@ -9,6 +32,7 @@
     this.configuration = {};
 
     this.$get = function($window, $http, $cookies, $location) {
+      service_ = this;
       this.configuration = {
         about: {
           title: 'New Map',
@@ -46,9 +70,13 @@
         ],
         userprofilename: 'Anonymous',
         userprofileemail: '',
+        username: '',
+        authStatus: 401,
         id: 0,
-        proxy: '/proxy?url='
+        proxy: '/proxy/?url='
       };
+
+      console.log('HTTP defaults: ', $http.defaults);
 
       if (goog.isDefAndNotNull($window.config)) {
         goog.object.extend(this.configuration, $window.config, {});
@@ -56,6 +84,7 @@
       this.username = this.configuration.username;
       this.user_profile_name = this.configuration.userprofilename;
       this.user_profile_email = this.configuration.userprofileemail;
+      this.user_name = this.configuration.username;
       this.proxy = this.configuration.proxy;
       this.csrfToken = $cookies.csrftoken;
 
@@ -64,6 +93,10 @@
       }
 
       return this;
+    };
+
+    this.isAuthenticated = function() {
+      return service_.configuration.authStatus == 200;
     };
   });
 }());

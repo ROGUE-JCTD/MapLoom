@@ -10,6 +10,7 @@
   var dialogService_ = null;
   var geogitService_ = null;
   var translate_ = null;
+  var configService_ = null;
 
   module.provider('conflictService', function() {
     this.features = null;
@@ -23,7 +24,7 @@
     this.transaction = null;
     this.mergeBranch = null;
 
-    this.$get = function($rootScope, $location, $translate, diffService, pulldownService,
+    this.$get = function($rootScope, $location, $translate, diffService, pulldownService, configService,
                          featureDiffService, mapService, dialogService, geogitService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
@@ -32,6 +33,7 @@
       dialogService_ = dialogService;
       geogitService_ = geogitService;
       translate_ = $translate;
+      configService_ = configService;
       service_ = this;
       return this;
     };
@@ -164,6 +166,8 @@
           var commitOptions = new GeoGitCommitOptions();
           commitOptions.all = true;
           commitOptions.message = service_.buildMergeMessage(response, service_.mergeBranch, true);
+          commitOptions.authorName = configService_.configuration.userprofilename;
+          commitOptions.authorEmail = configService_.configuration.userprofileemail;
           service_.transaction.command('commit', commitOptions).then(function() {
             // commit successful
             service_.transaction.finalize().then(function() {

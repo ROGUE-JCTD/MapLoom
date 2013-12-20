@@ -4,7 +4,7 @@
 
   module.directive('loomHistoryDiff',
       function($rootScope, historyService, $translate, geogitService, diffService,
-               pulldownService, dialogService, $http, $window) {
+               pulldownService, dialogService, $window) {
         return {
           templateUrl: 'history/partial/historydiff.tpl.html',
           link: function(scope, element, attrs) {

@@ -4,7 +4,14 @@
   // Private Variables
   var synchronizationLinks_ = [];
   var nextLinkId_ = 0;
-  var service_, dialogService_, rootScope_, geogitService_, q_, translate_, conflictService_ = null;
+  var service_ = null;
+  var dialogService_ = null;
+  var rootScope_ = null;
+  var geogitService_ = null;
+  var q_ = null;
+  var translate_ = null;
+  var conflictService_ = null;
+  var configService_ = null;
   var syncing = false;
   var numSyncingLinks = 0;
   var syncTimeout = null;
@@ -63,13 +70,14 @@
   };
 
   module.provider('synchronizationService', function() {
-    this.$get = function($rootScope, $q, $translate, dialogService, geogitService, conflictService) {
+    this.$get = function($rootScope, $q, $translate, dialogService, geogitService, conflictService, configService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
       geogitService_ = geogitService;
       conflictService_ = conflictService;
       translate_ = $translate;
+      configService_ = configService;
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
         goog.array.forEach(synchronizationLinks_, function(link) {
@@ -147,6 +155,8 @@
         var pullOptions = new GeoGitPullOptions();
         pullOptions.ref = link.getRemoteBranch() + ':' + link.getLocalBranch();
         pullOptions.remoteName = link.getRemote().name;
+        pullOptions.authorName = configService_.configuration.userprofilename;
+        pullOptions.authorEmail = configService_.configuration.userprofileemail;
         transaction.command('pull', pullOptions).then(function(pullResult) {
           var pushOptions = new GeoGitPushOptions();
           pushOptions.ref = link.getLocalBranch() + ':' + link.getRemoteBranch();

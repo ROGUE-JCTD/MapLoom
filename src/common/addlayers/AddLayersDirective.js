@@ -3,7 +3,7 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function(serverService, mapService, geogitService, $translate) {
+      function($rootScope, serverService, mapService, geogitService, $translate) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
@@ -60,7 +60,9 @@
             };
 
             scope.$on('layers-loaded', function() {
-              scope.$apply();
+              if (!scope.$$phase && !$rootScope.$$phase) {
+                scope.$apply();
+              }
             });
             var layerRemoved = function(event, layer) {
               var layers = scope.serverService.populateLayers(layer.get('metadata').serverId);

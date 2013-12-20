@@ -4,7 +4,7 @@
 
   module.directive('loomMerge',
       function($translate, geogitService, dialogService, notificationService,
-               conflictService, mapService, featureDiffService) {
+               conflictService, mapService, featureDiffService, configService) {
         return {
           templateUrl: 'merge/partials/merge.tpl.html',
           link: function(scope, element, attrs) {
@@ -36,12 +36,16 @@
                   var mergeOptions = new GeoGitMergeOptions();
                   mergeOptions.commit = scope.sourceBranch;
                   mergeOptions.noCommit = true;
+                  mergeOptions.authorName = configService.configuration.userprofilename;
+                  mergeOptions.authorEmail = configService.configuration.userprofileemail;
                   transaction.command('merge', mergeOptions).then(function(mergeResult) {
                     transaction.command('status').then(function(statusResult) {
                       var commitOptions = new GeoGitCommitOptions();
                       commitOptions.all = true;
                       commitOptions.message =
                           conflictService.buildMergeMessage(statusResult, scope.sourceBranch, false);
+                      commitOptions.authorName = configService.configuration.userprofilename;
+                      commitOptions.authorEmail = configService.configuration.userprofileemail;
                       transaction.command('commit', commitOptions).then(function(commitResponse) {
                         transaction.finalize().then(function() {
                           var leftName = scope.destinationBranch;

@@ -69,7 +69,7 @@
     'edit_geometry': 'Edit Geometry',
     'edit_attributes': 'Edit Attributes',
     'delete_feature': 'Delete Feature',
-    'feature_diff_error': 'Unable to retrieve all the differences for the feature.' +
+    'feature_diff_error': 'Unable to retrieve all the differences for the feature. ' +
         'Check network connection and try again.',
     'no_local_branches': 'Repository had no local branches.',
     'unable_to_get_branches': 'Unable to get the repository\'s branches. Try re-adding the layer.',
