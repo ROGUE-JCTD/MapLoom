@@ -135,7 +135,7 @@
     'must_create_feature': 'Debe crear un elemento antes de continuar.',
     'editing_geometry': 'Editando Geometria',
     'save_attributes': 'Guardar Atributos',
-    'invalid_fields': 'Existen campos invalidos {{valor}}. Debe solucionar estos problemas previo a poder guardar.',
+    'invalid_fields': 'Existen campos invalidos {{value}}. Debe solucionar estos problemas previo a poder guardar.',
     'add_feature': 'Añadir Elemento',
     'toggle_visibility': 'Modificar la Visibilidad',
     'remote_options': 'Opciones Remotas',
