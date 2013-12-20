@@ -76,8 +76,6 @@
         proxy: '/proxy/?url='
       };
 
-      console.log('HTTP defaults: ', $http.defaults);
-
       if (goog.isDefAndNotNull($window.config)) {
         goog.object.extend(this.configuration, $window.config, {});
       }
