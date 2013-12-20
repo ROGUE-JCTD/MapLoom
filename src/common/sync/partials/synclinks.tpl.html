@@ -20,14 +20,14 @@
         <div class="col-md-8 ellipsis">{{link.name}}</div>
         <div class="col-md-4">
           <div class="btn-group pull-left" stop-event="click">
-            <button ng-hide="link.continuous" ng-click="singleSync(link)" data-toggle="button" class="btn btn-xs btn-default">
+            <button ng-click="singleSync(link)" ng-disabled="link.continuous" data-toggle="button" class="btn btn-xs btn-default">
               <i class="glyphicon glyphicon-sort"></i>
             </button>
-            <div ng-show="link.continuous" ng-click="syncService.toggleAutoSync(link)" stop-event="click mousedown"
-                 class="btn btn-xs btn-default auto-sync-button" ng-class="{'sync-on': link.isSyncing}">
+            <div ng-click="syncService.toggleAutoSync(link)" stop-event="click mousedown"
+                 class="btn btn-xs btn-default" ng-class="{'sync-on': link.isSyncing}">
               <i class="glyphicon glyphicon-retweet"></i>
             </div>
-            <button type="button" class="btn btn-xs btn-default dropdown-toggle" ng-class="{'disabled': link.isSyncing}" data-toggle="dropdown">
+            <!--<button type="button" class="btn btn-xs btn-default dropdown-toggle" ng-class="{'disabled': link.isSyncing}" data-toggle="dropdown">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
@@ -44,7 +44,7 @@
                   <span translate="continuous">Continuous</span>
                 </a>
               </li>
-            </ul>
+            </ul>-->
           </div>
           <i ng-class="{'remote-up': link.getIsActive()}" class="glyphicon glyphicon-certificate remote pull-right"></i>
         </div>

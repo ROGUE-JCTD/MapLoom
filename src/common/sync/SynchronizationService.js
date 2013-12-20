@@ -12,6 +12,7 @@
   var translate_ = null;
   var conflictService_ = null;
   var configService_ = null;
+  var timeout_ = null;
   var syncing = false;
   var numSyncingLinks = 0;
   var syncTimeout = null;
@@ -24,12 +25,12 @@
       syncedLink.timeStamp = new Date().getTime() + syncedLink.syncInterval;
       synchronizationLinks_.sort(function(a, b) {return a.timeStamp - b.timeStamp;});
       if (syncTimeout !== null) {
-        syncTimeout = setTimeout(autoSync, syncInterval);
+        syncTimeout = timeout_(autoSync, syncInterval);
       }
     };
     var error = function(error) {
-      if (syncTimeout !== null) {
-        syncTimeout = setTimeout(autoSync, syncInterval);
+      if (syncTimeout !== null && goog.isDefAndNotNull(error) && error !== false) {
+        syncTimeout = timeout_(autoSync, syncInterval);
       }
     };
     for (var index = 0; index < synchronizationLinks_.length; index++) {
@@ -39,7 +40,7 @@
           if (link.timeStamp <= time) {
             service_.sync(link).then(success, error);
           } else {
-            syncTimeout = setTimeout(autoSync, syncInterval);
+            syncTimeout = timeout_(autoSync, syncInterval);
           }
         }
         break;
@@ -66,11 +67,12 @@
     for (var index = 0; index < synchronizationLinks_.length; index++) {
       checkStatus(synchronizationLinks_[index]);
     }
-    statusCheckTimeout = setTimeout(checkStatusAll, 60000);
+    statusCheckTimeout = timeout_(checkStatusAll, 60000);
   };
 
   module.provider('synchronizationService', function() {
-    this.$get = function($rootScope, $q, $translate, dialogService, geogitService, conflictService, configService) {
+    this.$get = function($timeout, $rootScope, $q, $translate, dialogService,
+                         geogitService, conflictService, configService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
@@ -78,6 +80,7 @@
       conflictService_ = conflictService;
       translate_ = $translate;
       configService_ = configService;
+      timeout_ = $timeout;
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
         goog.array.forEach(synchronizationLinks_, function(link) {
@@ -107,8 +110,9 @@
       link.id = nextLinkId_;
       nextLinkId_++;
       synchronizationLinks_.push(link);
+      checkStatus(link);
       if (!statusCheckTimeout) {
-        statusCheckTimeout = setTimeout(checkStatusAll, 60000);
+        statusCheckTimeout = timeout_(checkStatusAll, 60000);
       }
     };
 
@@ -135,11 +139,13 @@
     this.toggleAutoSync = function(link) {
       link.isSyncing = !link.isSyncing;
       if (link.isSyncing) {
+        link.continuous = true;
         numSyncingLinks++;
         if (!syncTimeout) {
-          syncTimeout = setTimeout(autoSync, syncInterval);
+          syncTimeout = timeout_(autoSync, syncInterval);
         }
       } else {
+        link.continuous = false;
         numSyncingLinks--;
         if (numSyncingLinks <= 0) {
           clearTimeout(syncTimeout);
@@ -179,8 +185,10 @@
         }, function(pullFailed) {
           if (goog.isObject(pullFailed) && goog.isDefAndNotNull(pullFailed.conflicts)) {
             var branch = link.getRemote().name + '/' + link.getRemoteBranch();
+            link.isSyncing = false;
             handleConflicts(pullFailed, transaction, link.getRepo().id, translate_('local'),
                 link.getRemote().name, branch);
+            result.reject(false);
           } else {
             dialogService_.error(translate_('error'), translate_('pull_unknown_error'));
             syncing = false;
@@ -218,6 +226,7 @@
           conflictService_.transaction = transaction;
           conflictService_.mergeBranch = mergeBranch;
           conflictService_.beginResolution();
+          syncing = false;
           break;
       }
     });
