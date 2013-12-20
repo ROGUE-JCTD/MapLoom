@@ -16,7 +16,9 @@
     "jquery-sortable": "~0.9.11",
     "blueimp-bootstrap-image-gallery": "3.0.1",
     "bootstrap3-datetimepicker": "~2.1.11",
-    "x2js": "*"
+    "bootstrap-sortable":"*",
+    "x2js": "*",
+    "angular-xeditable": "0.1.7"
   },
   "resolutions": {
     "angular": "1.2.0-rc.2"

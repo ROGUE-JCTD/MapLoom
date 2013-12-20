@@ -1,0 +1,47 @@
+<div class="modal-body">
+  <input id="filter-text" type="text">
+  <button id="filter-button" ng-click="filterTable()">Filter</button>
+  <button ng-click="clearFilter()">Clear</button>
+  <div class="panel panel-default">
+    <form editable-form name="tableviewform" onaftersave="saveTable()">
+      <table class="table-hover table-striped sortable">
+        <thead>
+        <tr>
+          <th>Bird</th>
+          <th>fecha_hora</th>
+          <th>City</th>
+          <th>evento</th>
+          <th>nivel_de_prioridad</th>
+          <th>situacion_actual</th>
+          <th>FID</th>
+          <th>fecha_hora</th>
+          <th>lugar</th>
+          <th>evento</th>
+          <th>nivel_de_prioridad</th>
+          <th>situacion_actual</th>
+          <th>FID</th>
+          <th>fecha_hora</th>
+          <th>lugar</th>
+          <th>evento</th>
+          <th>nivel_de_prioridad</th>
+          <th>situacion_actual</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="feature in layer.features" ng-show="feature.visible">
+          <td ng-repeat="property in feature.properties">
+            <span editable-text="property.value" e-form="tableviewform" e-style="width:160px">{{property.value}}</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+	  <button type="submit" class="btn btn-default" ng-show="tableviewform.$visible">Save</button>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">Edit Table</button>
+    <!--<button type="button" class="btn btn-default" ng-click="tableviewform.$hide()" ng-disabled="!tableviewform.$visible">Stop Editing</button>-->
+    <button type="button" class="btn btn-default" ng-click="toggleWordWrap()">Toggle Word Wrap</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Minimize</button>
+</div>

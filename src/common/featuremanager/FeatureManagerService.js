@@ -93,7 +93,7 @@
     };
 
     /**
-     * item: can be a feature, a layer containing fe
+     * item: can be a feature, a layer containing features, or a collection of layers
      */
     // layers, layer, feature
     this.show = function(item, position) {
