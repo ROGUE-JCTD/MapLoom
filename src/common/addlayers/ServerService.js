@@ -32,7 +32,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         url: 'fakeURL'
       });
 
-      this.getServer(id).layers = [
+      this.getServerById(id).layers = [
         {
           title: 'OpenStreetMap',
           added: false
@@ -54,29 +54,83 @@ var SERVER_SERVICE_USE_PROXY = true;
       return servers;
     };
 
-    this.getServer = function(indexOrName) {
-      if (!goog.isDefAndNotNull(indexOrName)) {
+    /**
+     * Note: the index of a server may change after the map is saved and loaded again. When try to use getServerById
+     *       which is the same as the index if the map has not be saved/loaded. GetServerByIndex should typically be
+     *       used if looking through the servers or when you are certain that the index is valid.
+     *       layer.get('metadata').serverId for example, returns ids and not index even though getIndex may work in
+     *       most cases.
+     */
+    this.getServerByIndex = function(index) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(index)) {
         throw ({
           name: 'serverService',
           level: 'High',
-          message: 'undefined server.',
+          message: 'undefined server index.',
           toString: function() {
             return this.name + ': ' + this.message;
           }
         });
       }
-      if (typeof indexOrName !== 'string') {
-        return servers[indexOrName];
-      } else if (!isNaN(parseInt(indexOrName, 10)) && (parseInt(indexOrName, 10).toString() === indexOrName)) {
-        // if it is a string that can be converted to an integer
-        return servers[parseInt(indexOrName, 10)];
-      } else {
-        for (var index = 0; index < servers.length; index += 1) {
-          if (servers[index].name.toLocaleLowerCase() === indexOrName.toLowerCase()) {
-            return servers[index];
+
+      if (index >= 0 && index < servers.length) {
+        server = servers[index];
+      }
+
+      //console.log('----[ returning server index: ', index, ', server: ', server);
+      return server;
+    };
+
+    this.getServerById = function(id) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(id)) {
+        throw ({
+          name: 'serverService',
+          level: 'High',
+          message: 'undefined server id.',
+          toString: function() {
+            return this.name + ': ' + this.message;
           }
+        });
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].id === id) {
+          server = servers[index];
+          break;
         }
       }
+
+      //console.log('----[ returning server id: ', id, ', server: ', server);
+      return server;
+    };
+
+    this.getServerByName = function(name) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(name)) {
+        throw ({
+          name: 'serverService',
+          level: 'High',
+          message: 'undefined server name.',
+          toString: function() {
+            return this.name + ': ' + this.message;
+          }
+        });
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].name.toLocaleLowerCase() === name.toLowerCase()) {
+          server = servers[index];
+          break;
+        }
+      }
+
+      //console.log('----[ returning server with name: ', name, ', server: ', server);
+      return server;
     };
 
     this.addServer = function(serverInfo) {

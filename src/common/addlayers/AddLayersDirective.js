@@ -11,12 +11,12 @@
 
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
             // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            scope.currentServerIndex = serverService.getServer('Local Geoserver').id;
+            scope.currentServerIndex = serverService.getServerByName('Local Geoserver').id;
 
             angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
 
             scope.addLayers = function() {
-              var currentServer = serverService.getServer(scope.currentServerIndex);
+              var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
               var layers = scope.serverService.populateLayers(scope.currentServerIndex);
 
               // if the server is not a typical server and instead the hardcoded ones

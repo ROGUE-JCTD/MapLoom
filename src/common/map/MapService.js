@@ -217,7 +217,7 @@
     };
 
     this.addLayer = function(config, doNotAddToMap) {
-      var server = serverService_.getServer(config.source);
+      var server = serverService_.getServerByIndex(config.source);
       console.log('server for layer: ', server);
       var layer = null;
 
@@ -303,7 +303,7 @@
     this.addBaseLayer = function(title, doNotAddToMap) {
       var layer = null;
 
-      var serverId = serverService_.getServer('OpenStreetMap').id;
+      var serverId = serverService_.getServerByName('OpenStreetMap').id;
       console.log('____ serverId for baselayer: ', serverId);
 
       if (title === 'OpenStreetMap') {
@@ -393,7 +393,7 @@
       //TODO: hardcoded base layer
       cfg.map.layers.push({
         name: 'OpenStreetMap',
-        source: serverService_.getServer('OpenStreetMap').id.toString(),
+        source: serverService_.getServerByName('OpenStreetMap').id.toString(),
         title: 'OpenStreetMap'
       });
       */

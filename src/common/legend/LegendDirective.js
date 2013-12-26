@@ -31,6 +31,15 @@
                 }, 350);
               }
             };
+
+            scope.getLegendUrl = function(layer) {
+              var url = null;
+              var server = serverService.getServerById(layer.get('metadata').serverId);
+              url = server.url + '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=' +
+                  layer.get('metadata').name + '&transparent=true&legend_options=fontColor:0xFFFFFF;' +
+                  'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
+              return url;
+            };
           }
         };
       });
