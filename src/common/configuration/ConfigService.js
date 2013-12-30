@@ -14,7 +14,9 @@
           var configCopy = $.extend(true, {}, config);
           var proxy = service_.configuration.proxy;
           if (goog.isDefAndNotNull(proxy)) {
-            configCopy.url = proxy + encodeURIComponent(configCopy.url);
+            // NOTE: temporarily disable proxy so that we get the auth header until we fix it properly
+            //configCopy.url = proxy + encodeURIComponent(configCopy.url);
+            //console.log('==================================================');
           }
           return configCopy;
         }
