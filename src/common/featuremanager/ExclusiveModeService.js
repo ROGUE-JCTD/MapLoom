@@ -4,6 +4,7 @@
   var title_ = '';
   var buttons_ = [];
   var pulldownService_ = null;
+  var enabled_ = false;
 
   module.provider('exclusiveModeService', function() {
     this.$get = function(pulldownService) {
@@ -27,9 +28,14 @@
       return buttons_[1];
     };
 
+    this.isEnabled = function() {
+      return enabled_;
+    };
+
     this.startExclusiveMode = function(title, buttonOne, buttonTwo) {
       title_ = title;
       buttons_ = [buttonOne, buttonTwo];
+      enabled_ = true;
       angular.element('#pulldown-menu').collapse('hide');
       pulldownService_.toggleEnabled = false;
       setTimeout(function() {
@@ -40,6 +46,7 @@
     this.endExclusiveMode = function() {
       angular.element('#exclusive-mode-container').collapse('hide');
       pulldownService_.toggleEnabled = true;
+      enabled_ = false;
       setTimeout(function() {
         angular.element('#pulldown-menu').collapse('show');
         title_ = '';

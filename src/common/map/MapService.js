@@ -615,8 +615,8 @@
       return map;
     };
 
-    this.selectFeature = function(geom, crs) {
-      this.editLayer.clear();
+    this.selectFromGeom = function(geom, crs) {
+      this.clearSelectedFeature();
       var newFeature = new ol.Feature();
       var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
       newFeature.setGeometry(newGeom);
@@ -625,6 +625,12 @@
       select.select(this.map, [[newFeature]], [this.editLayer], false);
       this.map.addInteraction(select);
       this.map.addLayer(this.editLayer);
+    };
+
+    this.selectFeature = function(feature) {
+      select = new ol.interaction.Select();
+      select.select(this.map, [[feature]], [this.editLayer], false);
+      this.map.addInteraction(select);
     };
 
     this.clearSelectedFeature = function() {

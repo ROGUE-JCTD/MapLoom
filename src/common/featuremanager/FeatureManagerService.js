@@ -36,6 +36,15 @@
       dialogService_ = dialogService;
       registerOnMapClick($rootScope, $compile);
 
+      mapService_.editLayer.on(ol.layer.VectorEventType.ADD, function() {
+        if (exclusiveModeService_.isEnabled()) {
+          mapService_.map.removeInteraction(draw_);
+          mapService_.selectFeature(mapService_.editLayer.getFeatures()[0]);
+          modify_ = new ol.interaction.Modify();
+          mapService_.map.addInteraction(modify_);
+        }
+      });
+
       overlay_ = new ol.Overlay({
         insertFirst: false,
         element: document.getElementById('info-box')
@@ -202,7 +211,7 @@
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
-          mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+          mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         } else {
           mapService_.clearSelectedFeature();
         }
@@ -345,6 +354,7 @@
     };
 
     this.endFeatureInsert = function(save, properties, coords) {
+      exclusiveModeService_.endExclusiveMode();
       if (save) {
         var propertyXmlPartial = '';
         var featureGML = '';
@@ -389,13 +399,13 @@
           }
         });
         issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos);
-        mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+        mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       } else {
+        mapService_.map.removeInteraction(draw_);
         service_.hide();
       }
+      mapService_.map.removeInteraction(modify_);
       enabled_ = true;
-      mapService_.map.removeInteraction(draw_);
-      exclusiveModeService_.endExclusiveMode();
       rootScope_.$broadcast('endFeatureInsert', save);
     };
 
@@ -403,11 +413,11 @@
       rootScope_.$broadcast('startGeometryEdit');
       exclusiveModeService_.startExclusiveMode(translate_('editing_geometry'),
           exclusiveModeService_.button(translate_('save_btn'), function() {
+            exclusiveModeService_.endExclusiveMode();
             service_.endGeometryEditing(true);
-            exclusiveModeService_.endExclusiveMode();
           }), exclusiveModeService_.button(translate_('cancel_btn'), function() {
-            service_.endGeometryEditing(false);
             exclusiveModeService_.endExclusiveMode();
+            service_.endGeometryEditing(false);
           }));
       modify_ = new ol.interaction.Modify();
       mapService_.map.addInteraction(modify_);
@@ -446,7 +456,7 @@
         // discard changes
         // TODO: Figure out how to use the original feature stored on a modified feature to reset
         mapService_.clearSelectedFeature();
-        mapService_.selectFeature(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+        mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
       rootScope_.$broadcast('endGeometryEdit', save);
       mapService_.map.removeInteraction(modify_);
