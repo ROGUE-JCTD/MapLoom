@@ -15,6 +15,7 @@
           var proxy = service_.configuration.proxy;
           if (goog.isDefAndNotNull(proxy)) {
             // NOTE: temporarily disable proxy so that we get the auth header until we fix it properly
+
             //configCopy.url = proxy + encodeURIComponent(configCopy.url);
             //console.log('==================================================');
           }
