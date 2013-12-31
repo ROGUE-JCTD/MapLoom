@@ -380,6 +380,7 @@
           } else {
             featureGML = getGeometryGMLFromFeature(feature);
             newPos = feature.getGeometry().getCoordinates();
+            mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
           }
         } else {
           featureGML = getGeometryGMLFromFeature(feature);
@@ -389,17 +390,17 @@
           } else if (feature.getGeometry().getType() == 'multipolygon') {
             newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
           }
+          mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         }
         propertyXmlPartial += '<feature:' + selectedItem_.geometry_name + '>' + featureGML + '</feature:' +
             selectedItem_.geometry_name + '>';
 
         goog.array.forEach(properties, function(property, index) {
-          if (properties[index][1] !== selectedItemProperties_[index][1]) {
+          if (properties[index][1] !== selectedItemProperties_[index][1] && property[1] !== '') {
             propertyXmlPartial += '<feature:' + property[0] + '>' + property[1] + '</feature:' + property[0] + '>';
           }
         });
         issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos);
-        mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       } else {
         mapService_.map.removeInteraction(draw_);
         service_.hide();
