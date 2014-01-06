@@ -80,7 +80,11 @@
             scope.save = function() {
               featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
               featureDiffService.feature.olFeature.set('change', DiffColorMap.MERGED);
-              conflictService.resolveConflict(featureDiffService.getMerges());
+              var merges = featureDiffService.getMerges();
+              var geomattributename = featureDiffService.merged.geometry.attributename;
+              var geomMergeValue = merges[geomattributename];
+              conflictService.resolveConflict(featureDiffService.getMerges(),
+                  (featureDiffService.merged.geometry.changetype === 'REMOVED' ? geomMergeValue : null));
               featureDiffService.clear();
               scope.leftPanel = false;
               scope.rightPanel = false;

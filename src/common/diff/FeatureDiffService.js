@@ -129,10 +129,21 @@
       this.merged.bounds = panel.bounds;
       this.merged.olFeature.setGeometry(panel.olFeature.getGeometry());
       this.merged.olFeature.set('MapLoomChange', panel.olFeature.get('MapLoomChange'));
+      if (this.merged.geometry.changetype === 'REMOVED') {
+        this.merged.attributes = $.extend(true, [], panel.attributes);
+      }
       rootScope_.$broadcast('merge-feature-modified');
     };
 
     this.chooseAttribute = function(index, panel) {
+      if (goog.isDefAndNotNull(service_.merged.geometry)) {
+        if (goog.isDefAndNotNull(service_.merged.geometry.changetype)) {
+          if (service_.merged.geometry.changetype === 'REMOVED') {
+            return;
+          }
+        }
+      }
+
       var type = this.merged.attributes[index].type;
       this.merged.attributes[index] = $.extend(true, {}, panel.attributes[index]);
       this.merged.attributes[index].type = type;

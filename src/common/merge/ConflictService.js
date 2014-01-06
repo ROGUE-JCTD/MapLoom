@@ -56,8 +56,9 @@
       this.currentFeature = this.features[index];
     };
 
-    this.resolveConflict = function(merges) {
+    this.resolveConflict = function(merges, removed) {
       this.currentFeature.resolved = true;
+      this.currentFeature.removed = removed;
       this.currentFeature.merges = merges;
       diffService_.resolveFeature(this.currentFeature);
     };
@@ -201,28 +202,53 @@
     } else {
       var conflict = conflictList.pop();
 
-      var resolveConflict = {
-        path: conflict.id,
-        ours: service_.ours,
-        theirs: service_.theirs,
-        merges: conflict.merges
-      };
-
-      geogitService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {
-        var resolveConflictOptions = new GeoGitResolveConflictOptions();
-        resolveConflictOptions.path = conflict.id;
-        resolveConflictOptions.objectid = response.data;
-        service_.transaction.command('resolveconflict', resolveConflictOptions).then(function() {
-          // success
-          commitInternal(conflictList, conflictsInError);
+      if (goog.isDefAndNotNull(conflict.removed)) {
+        var checkoutOptions = new GeoGitCheckoutOptions();
+        checkoutOptions.path = conflict.id;
+        if (conflict.removed === '__OURS__') {
+          checkoutOptions.ours = true;
+        } else {
+          checkoutOptions.theirs = true;
+        }
+        service_.transaction.command('checkout', checkoutOptions).then(function() {
+          var addOptions = new GeoGitAddOptions();
+          addOptions.path = conflict.id.split('/')[0];
+          service_.transaction.command('add', addOptions).then(function() {
+            // add successful
+            commitInternal(conflictList, conflictsInError);
+          }, function(reject) {
+            commitInternal(conflictList, conflictsInError + 1);
+            console.log('ERROR: Failed to add resolved conflicts to the tree: ', conflict, reject);
+          });
         }, function(reject) {
           commitInternal(conflictList, conflictsInError + 1);
-          console.log('ERROR: Failed to resolve the conflict: ', conflict, reject);
+          console.log('ERROR: Failed to checkout conflicted feature: ', conflict, reject);
         });
-      }, function(reject) {
-        commitInternal(conflictList, conflictsInError + 1);
-        console.log('ERROR: Failed to merge the conflicted feature: ', conflict, reject);
-      });
+
+      } else {
+        var resolveConflict = {
+          path: conflict.id,
+          ours: service_.ours,
+          theirs: service_.theirs,
+          merges: conflict.merges
+        };
+
+        geogitService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {
+          var resolveConflictOptions = new GeoGitResolveConflictOptions();
+          resolveConflictOptions.path = conflict.id;
+          resolveConflictOptions.objectid = response.data;
+          service_.transaction.command('resolveconflict', resolveConflictOptions).then(function() {
+            // success
+            commitInternal(conflictList, conflictsInError);
+          }, function(reject) {
+            commitInternal(conflictList, conflictsInError + 1);
+            console.log('ERROR: Failed to resolve the conflict: ', conflict, reject);
+          });
+        }, function(reject) {
+          commitInternal(conflictList, conflictsInError + 1);
+          console.log('ERROR: Failed to merge the conflicted feature: ', conflict, reject);
+        });
+      }
     }
   }
 
