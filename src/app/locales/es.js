@@ -65,6 +65,7 @@
     'merged_feature': 'Elemento Fusionada',
     'location_lon_lat': 'Ubicacion ( lon, lat )',
     'show_history': 'Mostrar Historial',
+    'show_table': 'es_Show Table',
     'show_pics': 'Mostrar Imagenes',
     'edit_geometry': 'Editar Geometria',
     'edit_attributes': 'Editar Atributos',

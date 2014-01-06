@@ -65,6 +65,7 @@
     'merged_feature': 'Merged Feature',
     'location_lon_lat': 'Location ( lon, lat )',
     'show_history': 'Show History',
+    'show_table': 'Show Table',
     'show_pics': 'Show Photos',
     'edit_geometry': 'Edit Geometry',
     'edit_attributes': 'Edit Attributes',

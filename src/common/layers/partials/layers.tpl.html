@@ -10,6 +10,11 @@
           {{layer.get('metadata').label}}
         </div>
         <div class="layer-buttons">
+          <span ng-click="tableViewService.showTable(layer)" stop-event="click mousedown"
+                tooltip-placement="top" tooltip="{{'show_table' | translate}}" class="btn btn-xs btn-default"
+                tooltip-append-to-body="true" ng-show="layer.get('metadata').editable">
+            <i class="glyphicon glyphicon-list"></i>
+          </span>
           <span ng-show="isGeogit(layer)" ng-click="showHistory(layer)" stop-event="click mousedown"
                 tooltip-placement="top" tooltip="{{'show_history' | translate}}" class="btn btn-xs btn-default"
                 tooltip-append-to-body="true">

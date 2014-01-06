@@ -4,7 +4,7 @@
 
   module.directive('loomLayers',
       function($rootScope, mapService, pulldownService, historyService, featureManagerService, dialogService,
-               $translate) {
+               $translate, tableViewService) {
         return {
           restrict: 'C',
           replace: true,
@@ -12,6 +12,7 @@
           link: function(scope) {
             scope.mapService = mapService;
             scope.featureManagerService = featureManagerService;
+            scope.tableViewService = tableViewService;
 
             scope.toggleVisibility = function(layer) {
               layer.setVisible(!layer.get('visible'));

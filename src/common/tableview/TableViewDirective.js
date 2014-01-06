@@ -17,7 +17,7 @@
   });
 
   module.directive('loomTableView',
-      function(tableFilter, mapService) {
+      function(tableFilter, mapService, $http, tableViewService) {
         return {
           restrict: 'C',
           templateUrl: 'tableview/partial/tableview.tpl.html',
@@ -28,7 +28,7 @@
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
 
               var contentHeight = containerHeight - headerHeight;
-              //if conatainerHeight is 0 then the modal is closed so we shouldn't resize
+              //if conatainerHeight is 0 then the modal is closed so we shouldn't bother resizing
               if (containerHeight === 0) {
                 return;
               }
@@ -58,139 +58,19 @@
               }
             };
 
-            //placeholder data for testing
-            var feature1 = {
-              visible: true,
-              properties: [
-                {value: 'lark'},
-                {value: '2'},
-                {value: 'Austin'},
-                {value: 'velociraptor escape'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: '1'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: 'FID'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'}
-              ]
-            };
-            var feature2 = {
-              visible: true,
-              properties: [
-                {value: 'albatross'},
-                {value: '3'},
-                {value: 'London'},
-                {value: 'zombie outbreak'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: '2'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: 'FID'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'}
-              ]
-            };
-            var feature3 = {
-              visible: true,
-              properties: [
-                {value: 'gull'},
-                {value: '7'},
-                {value: 'San Fransisco'},
-                {value: 'meteor impact'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: '3'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: 'FID'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'}
-              ]
-            };
-            var feature4 = {
-              visible: true,
-              properties: [
-                {value: 'sparrow'},
-                {value: '29'},
-                {value: 'Buenos Aires'},
-                {value: ''},
-                {value: 'How good is the PlayStation 4? Ask me in five years. Ask me after Naughty Dogs next couple ' +
-                      'of games, after I figure out whether God of War is headed in the right direction'},
-                {value: 'situacion_actual'},
-                {value: '4'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: 'FID'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'}
-              ]
-            };
-            var feature5 = {
-              visible: true,
-              properties: [
-                {value: 'frigate'},
-                {value: '4'},
-                {value: 'Johannesburg'},
-                {value: 'kaiju attack'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: '5'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'nivel_de_prioridad'},
-                {value: 'situacion_actual'},
-                {value: 'FID'},
-                {value: 'fecha_hora'},
-                {value: 'lugar'},
-                {value: 'evento'},
-                {value: 'How good is the PlayStation 4? Ask me in five years. Ask me after Naughty Dogs next couple ' +
-                      'of games, after I figure out whether God of War is headed in the right direction, after I ' +
-                      'learn whether it has become unfathomable to play a console game without livestreaming it.'},
-                {value: 'situacion_actual'}
-              ]
-            };
-            var layer = {
-              features: [feature1, feature2, feature3, feature4, feature5]
-            };
+            var featureList = tableViewService.featureList;
+            var attributes = tableViewService.attributeNameList;
 
             scope.filterTable = function() {
               var filterText = angular.element('#filter-text')[0].value;
 
-              for (var feat in layer.features) {
-                layer.features[feat].visible = false;
+              for (var feat in featureList) {
+                featureList[feat].visible = false;
 
-                for (var prop in layer.features[feat].properties) {
+                for (var prop in featureList[feat].properties) {
 
-                  if (tableFilter(layer.features[feat].properties[prop].value, filterText) !== '') {
-                    layer.features[feat].visible = true;
+                  if (tableFilter(featureList[feat].properties[prop], filterText) !== '') {
+                    featureList[feat].visible = true;
                     break;
                   }
                 }
@@ -199,20 +79,27 @@
 
             scope.clearFilter = function() {
               angular.element('#filter-text')[0].value = '';
-              for (var feat in layer.features) {
-                layer.features[feat].visible = true;
+              for (var feat in featureList) {
+                featureList[feat].visible = true;
               }
-              //scope.layer = jQuery.extend(true, {}, layer);
             };
 
-            scope.layer = layer;
+            $('#table-view-window').on('hidden.bs.modal', function(e) {
+              tableViewService.featureList = [];
+              tableViewService.attributeNameList = [];
+            });
+            $('#table-view-window').on('show.bs.modal', function(e) {
+              scope.featureList = tableViewService.featureList;
+              scope.attributes = tableViewService.attributeNameList;
+            });
+
+            scope.featureList = featureList;
+            scope.attributes = attributes;
 
             scope.saveTable = function() {
-              console.log('todo: save table', mapService.map.getLayers());
-              console.log('todo: save table', mapService.map.getFeatures);
-
-              //mapService.map.getFeatures({layers: mapService.getFeatureLayers()});
+              //todo: save the table
             };
+
           }
         };
       });

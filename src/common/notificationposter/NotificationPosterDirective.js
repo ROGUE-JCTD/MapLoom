@@ -22,8 +22,6 @@
               '      class="btn btn-default">Drag Zoom</button>' +
               '    <button type="button" ng-click="addModal()"' +
               '      class="btn btn-default">Modal</button>' +
-              '    <button type="button" data-target="#table-view-window" ' +
-              '      data-toggle="modal" class="btn btn-default">Table</button>' +
               '    <button type="button" ng-click="localize()"' +
               '      class="btn btn-default">Switch Language</button>' +
               '    <button type="button" ng-click="refreshService.refreshLayers()"' +
