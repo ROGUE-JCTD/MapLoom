@@ -21,9 +21,8 @@
             });
 
             scope.showFeatureHistory = function() {
-              var layer = featureManagerService.getSelectedItemLayer();
-              if (goog.isDefAndNotNull(layer.layer)) {
-                layer = layer.layer;
+              var layer = featureManagerService.getSelectedLayer();
+              if (goog.isDefAndNotNull(layer)) {
                 var metadata = layer.get('metadata');
                 if (goog.isDefAndNotNull(metadata)) {
                   if (goog.isDefAndNotNull(metadata.isGeoGit) && metadata.isGeoGit) {

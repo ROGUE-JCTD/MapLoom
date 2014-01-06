@@ -407,6 +407,7 @@
                     });
                     metadata.isGeoGit = true;
                     metadata.geogitStore = dataStore.name;
+                    metadata.repoName = repoName;
                   } else {
                     metadata.isGeoGit = false;
                   }

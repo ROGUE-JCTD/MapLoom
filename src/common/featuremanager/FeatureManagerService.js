@@ -477,7 +477,7 @@
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
-          if (properties[index][1] !== selectedItemProperties_[index][1]) {
+          if (properties[index][1] !== selectedItemProperties_[index][1] && property[1] !== '') {
             propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
                 '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
           }
