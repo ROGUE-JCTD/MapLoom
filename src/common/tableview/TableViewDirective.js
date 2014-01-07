@@ -58,19 +58,19 @@
               }
             };
 
-            var featureList = tableViewService.featureList;
-            var attributes = tableViewService.attributeNameList;
+            scope.featureList = tableViewService.featureList;
+            scope.attributes = tableViewService.attributeNameList;
 
             scope.filterTable = function() {
               var filterText = angular.element('#filter-text')[0].value;
 
-              for (var feat in featureList) {
-                featureList[feat].visible = false;
+              for (var feat in scope.featureList) {
+                scope.featureList[feat].visible = false;
 
-                for (var prop in featureList[feat].properties) {
+                for (var prop in scope.featureList[feat].properties) {
 
-                  if (tableFilter(featureList[feat].properties[prop], filterText) !== '') {
-                    featureList[feat].visible = true;
+                  if (tableFilter(scope.featureList[feat].properties[prop], filterText) !== '') {
+                    scope.featureList[feat].visible = true;
                     break;
                   }
                 }
@@ -79,8 +79,8 @@
 
             scope.clearFilter = function() {
               angular.element('#filter-text')[0].value = '';
-              for (var feat in featureList) {
-                featureList[feat].visible = true;
+              for (var feat in scope.featureList) {
+                scope.featureList[feat].visible = true;
               }
             };
 
@@ -92,9 +92,9 @@
               scope.featureList = tableViewService.featureList;
               scope.attributes = tableViewService.attributeNameList;
             });
-
-            scope.featureList = featureList;
-            scope.attributes = attributes;
+            $('#table-view-window').on('shown.bs.modal', function(e) {
+              $.bootstrapSortable(false);
+            });
 
             scope.saveTable = function() {
               //todo: save the table
