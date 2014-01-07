@@ -21,6 +21,7 @@
     'loom_sync',
     'loom_legend',
     'loom_utils',
-    'loom_refresh'
+    'loom_refresh',
+    'loom_test'
   ]);
 }());
