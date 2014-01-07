@@ -312,7 +312,7 @@
           var json = x2js.xml_str2json(response.data);
           var schema = [];
 
-          goog.array.forEach(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
+          forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
             schema[obj._name] = obj;
             if (goog.isDefAndNotNull(obj.simpleType)) {
               schema[obj._name]._type = 'simpleType';
