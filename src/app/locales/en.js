@@ -7,7 +7,7 @@
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
     'remove_layer': 'Remove Layer',
-    'attributes': 'Atributes',
+    'attributes': 'Attributes',
     'local_geoserver': 'Local Geoserver',
     'filter_layers': 'Filter Layers',
     'add_new_server': 'Add New Server',
@@ -148,7 +148,12 @@
     'sure_remove_layer': 'Are you sure that you want to remove this layer?',
     'pull_unknown_error': 'An unknown error occurred when pulling from the remote.  Please try again.',
     'local': 'Local',
-    'pull_conflicts': 'Pull Conflicts'
+    'pull_conflicts': 'Pull Conflicts',
+    'feature_id': 'Feature ID',
+    'table_view': 'Table View',
+    'filter_table': 'Filter',
+    'clear_table_filter': 'Clear',
+    'word_wrap': 'Toggle Word Wrap'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

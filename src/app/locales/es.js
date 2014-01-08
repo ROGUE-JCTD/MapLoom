@@ -148,7 +148,12 @@
     'sure_remove_layer': 'Esta seguro de querer eliminar esta capa?',
     'pull_unknown_error': 'Un error desconocido ocurrio al realizar el retiro del remoto. Favor intentar nuevamente.',
     'local': 'Local',
-    'pull_conflicts': 'Extraer Conflictos'
+    'pull_conflicts': 'Extraer Conflictos',
+    'feature_id': 'es_Feature ID',
+    'table_view': 'es_Table View',
+    'filter_table': 'es_Filter',
+    'clear_table_filter': 'es_Clear',
+    'word_wrap': 'es_Toggle Word Wrap'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

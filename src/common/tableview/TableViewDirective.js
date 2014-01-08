@@ -15,7 +15,7 @@
   });
 
   module.directive('loomTableView',
-      function(tableFilter, mapService, $http, tableViewService) {
+      function(tableFilter, mapService, $http, tableViewService, $translate) {
         return {
           restrict: 'C',
           templateUrl: 'tableview/partial/tableview.tpl.html',

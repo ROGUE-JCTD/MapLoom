@@ -36,12 +36,13 @@
         var index = layer.get('metadata').name.split(':')[1];
         for (var feat in json.FeatureCollection.member) {
           var feature = {visible: true, properties: []};
+          feature.properties.push(json.FeatureCollection.member[feat][index]['_gml:id']);
           for (var attr in service_.attributeNameList) {
             if (!goog.isDef(json.FeatureCollection.member[feat][index][service_.attributeNameList[attr]])) {
-              feature.properties[attr] = '';
+              feature.properties.push('');
             } else {
-              feature.properties[attr] =
-                  json.FeatureCollection.member[feat][index][service_.attributeNameList[attr]].toString();
+              feature.properties.push(
+                  json.FeatureCollection.member[feat][index][service_.attributeNameList[attr]].toString());
             }
           }
           service_.featureList[feat] = feature;

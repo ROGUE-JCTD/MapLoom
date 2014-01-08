@@ -1,12 +1,13 @@
 <div class="modal-body">
   <input id="filter-text" type="text">
-  <button id="filter-button" ng-click="filterTable()">Filter</button>
-  <button ng-click="clearFilter()">Clear</button>
+  <button id="filter-button" ng-click="filterTable()">{{'filter_table' | translate}}</button>
+  <button ng-click="clearFilter()">{{'clear_table_filter' | translate}}</button>
   <div class="panel panel-default">
       <table class="table-hover table-striped sortable">
         <thead>
         <tr>
-          <th ng-repeat="attr in attributes track by $index">{{attr}}</th>
+          <th>{{'feature_id' | translate}}</th>
+          <th ng-repeat="attr in attributes">{{attr}}</th>
         </tr>
         </thead>
 
@@ -23,6 +24,6 @@
 <div class="modal-footer">
     <!--<button type="button" class="btn btn-default" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">Edit Table</button>-->
     <!--<button type="button" class="btn btn-default" ng-click="tableviewform.$hide()" ng-disabled="!tableviewform.$visible">Stop Editing</button>-->
-    <button type="button" class="btn btn-default" ng-click="toggleWordWrap()">Toggle Word Wrap</button>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-default" ng-click="toggleWordWrap()">{{'word_wrap' | translate}}</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate}}</button>
 </div>
