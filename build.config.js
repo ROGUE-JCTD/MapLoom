@@ -90,9 +90,7 @@ module.exports = {
       'vendor/blueimp-gallery/js/jquery-blueimp-gallery.js',
       'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js',
 
-      'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js',
-      'vendor/angular-xeditable/dist/js/xeditable.js'//,
-      //'vendor/angular-xeditable/dist/js/xeditable.min.js'
+      'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js'
     ],
     css: [
       'vendor/ol3/ol.css',
@@ -103,8 +101,7 @@ module.exports = {
       'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
 
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-      'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
-      'vendor/angular-xeditable/dist/css/xeditable.css'
+      'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css'
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

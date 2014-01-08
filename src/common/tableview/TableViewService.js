@@ -32,7 +32,7 @@
           service_.attributeNameList.push(layer.get('metadata').schema[i]._name);
         }
 
-        var index = layer.get('metadata').label;
+        var index = layer.get('metadata').name.split(':')[1];
         for (var feat in json.FeatureCollection.member) {
           var feature = {visible: true, properties: []};
           for (var attr in service_.attributeNameList) {
