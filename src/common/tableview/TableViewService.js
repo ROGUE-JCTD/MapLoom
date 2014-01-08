@@ -26,7 +26,8 @@
         var json = x2js.xml_str2json(response.data);
 
         for (var i in layer.get('metadata').schema) {
-          if (layer.get('metadata').schema[i]._name == 'geom' || layer.get('metadata').schema[i]._name == 'the_geom') {
+          //if the type starts with gml rather than xsd then this is the geometry so we will skip it
+          if (layer.get('metadata').schema[i]._type.split(':')[0] === 'gml') {
             continue;
           }
           service_.attributeNameList.push(layer.get('metadata').schema[i]._name);

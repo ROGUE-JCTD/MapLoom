@@ -39,9 +39,8 @@
             {{'show_history' | translate}}
           </a>
         </div>
-        <!--todo: translate-->
         <div>
-          <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">Attributes</label>
+          <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' | translate}}</label>
           <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
             <ul class="list-group">
               <li class="list-group-item" ng-repeat="attribute in attrList">{{attribute}}</li>

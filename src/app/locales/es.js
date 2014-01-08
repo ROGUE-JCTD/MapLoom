@@ -7,6 +7,7 @@
     'add_layer_btn': 'Añadir Capa',
     'add_layers': 'Añadir Capas',
     'remove_layer': 'Retirar la Capa',
+    'attributes': 'Atributos',
     'local_geoserver': 'Geoserver Locales',
     'filter_layers': 'Capas Filtrantes',
     'add_new_server': 'Añadir Servidor Nuevo',

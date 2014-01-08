@@ -7,11 +7,9 @@
       //converting the input and filter strings to lower case for a case insensitive filtering
       var inputLower = input.toLowerCase(),
           filterLower = filter.toLowerCase();
-      console.log('lower case business', inputLower, filterLower);
       if (inputLower.indexOf(filterLower) !== -1) {
         out = input;
       }
-      console.log('table filter out', out);
       return out;
     };
   });

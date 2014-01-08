@@ -7,6 +7,7 @@
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
     'remove_layer': 'Remove Layer',
+    'attributes': 'Atributes',
     'local_geoserver': 'Local Geoserver',
     'filter_layers': 'Filter Layers',
     'add_new_server': 'Add New Server',
