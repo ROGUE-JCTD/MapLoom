@@ -59,6 +59,19 @@
               historyService.setTitle($translate('history_for', {value: layer.get('metadata').label}));
               historyService.getHistory(layer);
             };
+
+            scope.attrList = [];
+            scope.fillAttrList = function(layer) {
+              scope.attrList = [];
+
+              for (var i in layer.get('metadata').schema) {
+                if (layer.get('metadata').schema[i]._name == 'geom' ||
+                    layer.get('metadata').schema[i]._name == 'the_geom') {
+                  continue;
+                }
+                scope.attrList.push(layer.get('metadata').schema[i]._name);
+              }
+            };
           }
         };
       }
