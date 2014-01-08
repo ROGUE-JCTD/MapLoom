@@ -271,12 +271,16 @@
           },
           source: new ol.source.TileWMS({
             url: server.url,
-            params: {'LAYERS': config.name},
+            params: {
+              'LAYERS': config.name,
+              'BUFFER': 15
+            },
             getFeatureInfoOptions: {
               'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
               'params': {
                 'INFO_FORMAT': 'application/json',
-                'FEATURE_COUNT': 50
+                'FEATURE_COUNT': 50,
+                'BUFFER': 15
               }
             }
           })
