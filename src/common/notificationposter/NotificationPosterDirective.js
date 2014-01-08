@@ -3,7 +3,7 @@
 
   module.directive('loomNotificationPoster',
       function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService,
-          $translate, refreshService) {
+          $translate, refreshService, testService) {
         return{
           restrict: 'C',
           replace: true,
@@ -26,6 +26,10 @@
               '      class="btn btn-default">Switch Language</button>' +
               '    <button type="button" ng-click="refreshService.refreshLayers()"' +
               '      class="btn btn-default">Refresh Layers</button>' +
+              '    <button type="button" ng-click="testStart()"' +
+              '      class="btn btn-default">Start Test</button>' +
+              '    <button type="button" ng-click="testStop()"' +
+              '      class="btn btn-default">Stop Test</button>' +
               '  </div>' +
               '</div>',
           // The linking function will add behavior to the template
@@ -55,6 +59,13 @@
                 }
               });
             }
+
+            scope.testStart = function() {
+              testService.start();
+            };
+            scope.testStop = function() {
+              testService.stop();
+            };
 
             scope.addNotification = addNotification;
 

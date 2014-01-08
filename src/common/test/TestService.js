@@ -1,4 +1,94 @@
 (function() {
+
+  'use strict';
+  jQuery.base64 = (function($) {
+    var _PADCHAR = '=',
+        _ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+        _VERSION = '1.0';
+
+    function _getbyte64(s, i) {
+      var idx = _ALPHA.indexOf(s.charAt(i));
+      if (idx === -1) {
+        throw'Cannot decode base64';
+      }
+      return idx;
+    }
+
+    function _decode(s) {
+      var pads = 0, i, b10, imax = s.length, x = [];
+      s = String(s);
+      if (imax === 0) {
+        return s;
+      }
+      if (imax % 4 !== 0) {
+        throw'Cannot decode base64';
+      }
+      if (s.charAt(imax - 1) === _PADCHAR) {
+        pads = 1;
+        if (s.charAt(imax - 2) === _PADCHAR) {
+          pads = 2;
+        }
+        imax -= 4;
+      }
+      for (i = 0; i < imax; i += 4) {
+        b10 = (_getbyte64(s, i) << 18) | (_getbyte64(s, i + 1) << 12) |
+            (_getbyte64(s, i + 2) << 6) | _getbyte64(s, i + 3);
+        x.push(String.fromCharCode(b10 >> 16, (b10 >> 8) & 255, b10 & 255));
+      }
+      switch (pads) {
+        case 1:
+          b10 = (_getbyte64(s, i) << 18) | (_getbyte64(s, i + 1) << 12) | (_getbyte64(s, i + 2) << 6);
+          x.push(String.fromCharCode(b10 >> 16, (b10 >> 8) & 255));
+          break;
+        case 2:
+          b10 = (_getbyte64(s, i) << 18) | (_getbyte64(s, i + 1) << 12);
+          x.push(String.fromCharCode(b10 >> 16));
+          break;
+      }
+      return x.join('');
+    }
+
+    function _getbyte(s, i) {
+      var x = s.charCodeAt(i);
+      if (x > 255) {
+        throw'INVALID_CHARACTER_ERR: DOM Exception 5';
+      }
+      return x;
+    }
+
+    function _encode(s) {
+      if (arguments.length !== 1) {
+        throw'SyntaxError: exactly one argument required';
+      }
+      s = String(s);
+      var i, b10, x = [], imax = s.length - s.length % 3;
+      if (s.length === 0) {
+        return s;
+      }
+      for (i = 0; i < imax; i += 3) {
+        b10 = (_getbyte(s, i) << 16) | (_getbyte(s, i + 1) << 8) | _getbyte(s, i + 2);
+        x.push(_ALPHA.charAt(b10 >> 18));
+        x.push(_ALPHA.charAt((b10 >> 12) & 63));
+        x.push(_ALPHA.charAt((b10 >> 6) & 63));
+        x.push(_ALPHA.charAt(b10 & 63));
+      }
+      switch (s.length - imax) {
+        case 1:
+          b10 = _getbyte(s, i) << 16;
+          x.push(_ALPHA.charAt(b10 >> 18) + _ALPHA.charAt((b10 >> 12) & 63) + _PADCHAR + _PADCHAR);
+          break;
+        case 2:
+          b10 = (_getbyte(s, i) << 16) | (_getbyte(s, i + 1) << 8);
+          x.push(_ALPHA.charAt(b10 >> 18) + _ALPHA.charAt((b10 >> 12) & 63) + _ALPHA.charAt((b10 >> 6) & 63) +
+              _PADCHAR);
+          break;
+      }
+      return x.join('');
+    }
+
+    return{decode: _decode, encode: _encode, VERSION: _VERSION};
+  }(jQuery));
+
   var module = angular.module('loom_test_service', []);
 
   var service_ = null;
@@ -11,52 +101,54 @@
   var runCounter = 0;
   var dateLastRun = null;
 
+  var config = {
+
+    // which part of the map to select a random point from
+    latMin: -90,
+    latMax: 90,
+    lonMin: -180,
+    lonMax: 180,
+
+    // how far to zoom in / out
+    zoomMin: 0,
+    zoomMax: 14,
+
+    // how often to run in milliseconds
+    frequency: 1000,
+
+    // if set and greater than zero, run will only run these many times and then automatically stop
+    runCounterMax: 0,
+
+    // username and password to connect to geoserver when making a Wfs Transaction
+    username: 'admin',
+    password: 'admin',
+
+    // when true, in addition to moving the camera
+    createFeature: true,
+
+    // when createFeature is true, createFeatureConcurrentCount number of features will be created at once.
+    // default is 1 causing only 1 feature creation per timer trigger
+    createFeatureConcurrentCount: 5,
+
+    // name of the layer to to which features will be added
+    layerName: 'canchas_de_futbol', //'incidentes_copeco',
+
+    // projection of the layer
+    layerProjection: 'EPSG:900913',
+
+    // name of the column to which a log msg will be written to when a feature is placed
+    attributeName: 'comentarios',
+
+    // this string gets prepended to the date and run count and features'
+    // attributeName value will be set to the result
+    attributeValuePrefix: 'TestModule',
+
+    // if teh geometry attribute type is not geom, it can be set here. for example, 'the_geom'
+    geomAttributeName: 'geom'
+  };
+
   module.provider('testService', function() {
-    this.config = {
 
-      // which part of the map to select a random point from
-      latMin: -90,
-      latMax: 90,
-      lonMin: -180,
-      lonMax: 180,
-
-      // how far to zoom in / out
-      zoomMin: 0,
-      zoomMax: 14,
-
-      // how often to run in milliseconds
-      frequency: 10000,
-
-      // if set and greater than zero, run will only run these many times and then automatically stop
-      runCounterMax: 0,
-
-      // username and password to connect to geoserver when making a Wfs Transaction
-      username: 'admin',
-      password: 'admin',
-
-      // when true, in addition to moving the camera
-      createFeature: true,
-
-      // when createFeature is true, createFeatureConcurrentCount number of features will be created at once.
-      // default is 1 causing only 1 feature creation per timer trigger
-      createFeatureConcurrentCount: 5,
-
-      // name of the layer to to which features will be added
-      layerName: 'canchas_de_futbol', //'incidentes_copeco',
-
-      // projection of the layer
-      layerProjection: 'EPSG:900913',
-
-      // name of the column to which a log msg will be written to when a feature is placed
-      attributeName: 'comentarios',
-
-      // this string gets prepended to the date and run count and features'
-      // attributeName value will be set to the result
-      attributeValuePrefix: 'TestModule',
-
-      // if teh geometry attribute type is not geom, it can be set here. for example, 'the_geom'
-      geomAttributeName: 'geom'
-    };
     this.$get = function(mapService, $http) {
       service_ = this;
       mapService_ = mapService;
@@ -104,10 +196,7 @@
     point.transform(transform);
 
     return {
-      center: {
-        lon: point.getCoordinates()[0],
-        lat: point.getCoordinates()[1]
-      },
+      center: point.getCoordinates(),
       zoom: zoom
     };
   }
@@ -149,7 +238,11 @@
     dateLastRun = new Date();
 
     var view = getRandomView();
-    mapService_.map.getView().getView2D().setCenter(view.center.lon, view.center.lat);
+    var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+    var zoom = ol.animation.zoom({resolution: mapService_.map.getView().getView2D().getResolution()});
+    mapService_.map.beforeRender(pan, zoom);
+    mapService_.map.getView().getView2D().setCenter(view.center);
+    mapService_.map.getView().getView2D().setZoom(view.zoom);
 
     if (config.createFeature) {
       var concurrentCompletedCount = 0;
@@ -164,7 +257,7 @@
 
       for (var i = 0; i < config.createFeatureConcurrentCount; i += 1) {
         // if we are creating features, only set timer after previous create completes
-        createFeature(view.center.lon, view.center.lat, successFunc);
+        createFeature(view.center[0], view.center[1], successFunc);
       }
     } else {
       // when in only move map mode, set timer again.
@@ -174,7 +267,6 @@
   }
 
   function createFeature(lon, lat, callback_success, callback_error) {
-
     if (config.username && config.password && (typeof config.headerData === 'undefined')) {
       config.headerData = {
         'Content-Type': 'text/xml;charset=utf-8',
@@ -192,7 +284,7 @@
             // if a feature was inserted, post succeeded
             if (data.indexOf('<wfs:totalInserted>1</wfs:totalInserted>') !== -1) {
               console.log('---- createFeature success @ ' + dateLastRun + '. runCounter: ' + runCounter +
-                  ' post duration: ', (Date.now() - timeInMillies), ', response: ', response);
+                  ' post duration: ', (Date.now() - timeInMillies), ', response: ', data);
 
               if (callback_success) {
                 callback_success();
