@@ -83,7 +83,7 @@
               var merges = featureDiffService.getMerges();
               var geomattributename = featureDiffService.merged.geometry.attributename;
               var geomMergeValue = merges[geomattributename];
-              conflictService.resolveConflict(featureDiffService.getMerges(),
+              conflictService.resolveConflict(merges,
                   (featureDiffService.merged.geometry.changetype === 'REMOVED' ? geomMergeValue : null));
               featureDiffService.clear();
               scope.leftPanel = false;

@@ -66,6 +66,9 @@
       logOptions.firstParentOnly = 'true';
       var metadata = service_.layer.get('metadata');
       if (goog.isDefAndNotNull(metadata)) {
+        if (goog.isDefAndNotNull(metadata.branchName)) {
+          logOptions.until = metadata.branchName;
+        }
         if (goog.isDefAndNotNull(metadata.repoId) && goog.isDefAndNotNull(metadata.nativeName)) {
           service_.repoId = metadata.repoId;
           if (!goog.isDefAndNotNull(service_.pathFilter)) {

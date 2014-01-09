@@ -205,7 +205,7 @@
       if (goog.isDefAndNotNull(conflict.removed)) {
         var checkoutOptions = new GeoGitCheckoutOptions();
         checkoutOptions.path = conflict.id;
-        if (conflict.removed === '__OURS__') {
+        if (conflict.removed.ours === true) {
           checkoutOptions.ours = true;
         } else {
           checkoutOptions.theirs = true;

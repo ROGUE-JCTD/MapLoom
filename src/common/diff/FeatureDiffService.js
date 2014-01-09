@@ -187,20 +187,20 @@
     this.getMerges = function() {
       var merges = {};
       if (service_.merged.geometry == service_.left.geometry) {
-        merges[service_.merged.geometry.attributename] = '__OURS__';
+        merges[service_.merged.geometry.attributename] = {ours: true};
       } else if (service_.merged.geometry == service_.right.geometry) {
-        merges[service_.merged.geometry.attributename] = '__THEIRS__';
+        merges[service_.merged.geometry.attributename] = {theirs: true};
       } else {
-        merges[service_.merged.geometry.attributename] = service_.merged.geometry;
+        merges[service_.merged.geometry.attributename] = {value: service_.merged.geometry};
       }
 
       for (var i = 0; i < service_.merged.attributes.length; i++) {
         if (service_.attributesEqual(service_.merged.attributes[i], service_.left.attributes[i])) {
-          merges[service_.merged.attributes[i].attributename] = '__OURS__';
+          merges[service_.merged.attributes[i].attributename] = {ours: true};
         } else if (service_.attributesEqual(service_.merged.attributes[i], service_.right.attributes[i])) {
-          merges[service_.merged.attributes[i].attributename] = '__THEIRS__';
+          merges[service_.merged.attributes[i].attributename] = {thiers: true};
         } else {
-          merges[service_.merged.attributes[i].attributename] = service_.merged.attributes[i].newvalue;
+          merges[service_.merged.attributes[i].attributename] = {value: service_.merged.attributes[i].newvalue};
         }
       }
 
@@ -359,20 +359,20 @@
               if (goog.isDefAndNotNull(feature.merges)) {
                 var geomattributename = panel.geometry.attributename;
                 var geomMergeValue = feature.merges[geomattributename];
-                if (geomMergeValue === '__OURS__') {
+                if (geomMergeValue.ours === true) {
                   service_.chooseGeometry(service_.left);
-                } else if (geomMergeValue === '__THEIRS__') {
+                } else if (geomMergeValue.theirs === true) {
                   service_.chooseGeometry(service_.right);
                 }
                 for (var i = 0; i < service_.merged.attributes.length; i++) {
                   var attributename = service_.merged.attributes[i].attributename;
                   var mergeValue = feature.merges[attributename];
-                  if (mergeValue === '__OURS__') {
+                  if (mergeValue.ours === true) {
                     // 'ours' is default and already picked.
-                  } else if (mergeValue === '__THEIRS__') {
+                  } else if (mergeValue.theirs === true) {
                     service_.chooseAttribute(i, service_.right);
                   } else {
-                    service_.merged.attributes[i].newvalue = mergeValue;
+                    service_.merged.attributes[i].newvalue = mergeValue.value;
                     service_.updateChangeType(service_.merged.attributes[i]);
                   }
                 }
