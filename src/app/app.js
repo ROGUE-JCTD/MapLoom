@@ -14,7 +14,7 @@
     console.log('---- app.js.run');
   });
 
-  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService) {
+  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService) {
     console.log('---- ngBoilerplate.controller.');
 
     $scope.$on('$stateChangeSuccess', function(event, toState) {
@@ -24,6 +24,14 @@
     });
 
     $scope.mapService = mapService;
+  });
+
+  module.provider('debugService', function() {
+    this.$get = function() {
+      return this;
+    };
+
+    this.showDebugButtons = false;
   });
 
   module.config(function($translateProvider) {

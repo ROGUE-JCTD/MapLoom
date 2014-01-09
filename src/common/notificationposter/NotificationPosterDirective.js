@@ -3,13 +3,13 @@
 
   module.directive('loomNotificationPoster',
       function($rootScope, notificationService, diffService, mapService, dialogService, $timeout, pulldownService,
-          $translate, refreshService, testService) {
+          $translate, refreshService, testService, debugService) {
         return{
           restrict: 'C',
           replace: true,
           scope: true,
           template: '<div class="panel flat">' +
-              '  <div class="btn-group">' +
+              '  <div class="btn-group" ng-show="debugService.showDebugButtons">' +
               '    <button type="button" ng-click="switchCoords()"' +
               '      class="btn btn-default">Switch Coords</button>' +
               '    <button type="button" ng-click="addNotification()"' +
@@ -36,6 +36,7 @@
           link: function(scope) { //Unused: element, attrs
             scope.mapService = mapService;
             scope.refreshService = refreshService;
+            scope.debugService = debugService;
 
             function addNotification() {
               notificationService.addNotification({
