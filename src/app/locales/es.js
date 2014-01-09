@@ -66,7 +66,7 @@
     'merged_feature': 'Elemento Fusionada',
     'location_lon_lat': 'Ubicacion ( lon, lat )',
     'show_history': 'Mostrar Historial',
-    'show_table': 'es_Show Table',
+    'show_table': 'Mostrar Tabla',
     'show_pics': 'Mostrar Imagenes',
     'edit_geometry': 'Editar Geometria',
     'edit_attributes': 'Editar Atributos',
@@ -149,11 +149,11 @@
     'pull_unknown_error': 'Un error desconocido ocurrio al realizar el retiro del remoto. Favor intentar nuevamente.',
     'local': 'Local',
     'pull_conflicts': 'Extraer Conflictos',
-    'feature_id': 'es_Feature ID',
-    'table_view': 'es_Table View',
-    'filter_table': 'es_Filter',
-    'clear_table_filter': 'es_Clear',
-    'word_wrap': 'es_Toggle Word Wrap'
+    'feature_id': 'Elemento ID',
+    'table_view': 'Vista de Tabla',
+    'filter_table': 'Filtrar',
+    'clear_table_filter': 'Limpiar',
+    'word_wrap': 'Ajuste de línea de alternancia'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
