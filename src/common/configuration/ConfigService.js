@@ -87,7 +87,6 @@
       this.user_name = this.configuration.username;
       this.proxy = this.configuration.proxy;
       this.csrfToken = $cookies.csrftoken;
-      this.currentLanguage = this.configuration.currentLanguage;
 
       if (goog.isDefAndNotNull(this.configuration.map.zoom) && this.configuration.map.zoom === 0) {
         this.configuration.map.zoom = 1;

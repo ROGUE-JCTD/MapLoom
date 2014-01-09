@@ -431,7 +431,7 @@
         console.log('====[ map.save great success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         console.log('----[ ERROR: map.save failed! ', data, status, headers, config);
-        dialogService_.error(translate_('save_failed'), translate_('map_save_failed') + status + '.');
+        dialogService_.error(translate_('save_failed'), translate_('map_save_failed', {value: status}));
       });
     };
 

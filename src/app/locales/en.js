@@ -158,7 +158,7 @@
     'abstract': 'Abstract',
     'save_this_map': 'Save this map.',
     'save_failed': 'Save failed',
-    'map_save_failed': 'Map save failed with the following status'
+    'map_save_failed': 'Map save failed with the following status: {{value}}.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
