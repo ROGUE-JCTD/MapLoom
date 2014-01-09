@@ -72,7 +72,6 @@
         username: 'anonymous',
         userprofilename: 'Anonymous',
         userprofileemail: '',
-        username: '',
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url='
