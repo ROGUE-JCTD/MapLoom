@@ -17,7 +17,11 @@
   var numSyncingLinks = 0;
   var syncTimeout = null;
   var statusCheckTimeout = null;
-  var syncInterval = 15000; // In milliseconds
+  var syncInterval = 30000; // In milliseconds
+
+  var maxPullFails = 20;
+  var numPullFails = 0;
+  var errorMessageOn = false;
 
   var autoSync = function() {
     var time = new Date().getTime();
@@ -164,6 +168,7 @@
         pullOptions.authorName = configService_.configuration.userprofilename;
         pullOptions.authorEmail = configService_.configuration.userprofileemail;
         transaction.command('pull', pullOptions).then(function(pullResult) {
+          numPullFails = 0;
           var pushOptions = new GeoGitPushOptions();
           pushOptions.ref = link.getLocalBranch() + ':' + link.getRemoteBranch();
           pushOptions.remoteName = link.getRemote().name;
@@ -190,7 +195,18 @@
                 link.getRemote().name, branch);
             result.reject(false);
           } else {
-            dialogService_.error(translate_('error'), translate_('pull_unknown_error'));
+            numPullFails++;
+            if (numPullFails >= maxPullFails && !errorMessageOn) {
+              errorMessageOn = true;
+              dialogService_.error(translate_('error'), translate_('pull_unknown_error'),
+                  [translate_('btn_ok')], false).then(function(button) {
+                switch (button) {
+                  case 0:
+                    errorMessageOn = false;
+                    numPullFails = 0;
+                }
+              });
+            }
             syncing = false;
             result.reject(pullFailed);
             transaction.abort();

@@ -146,7 +146,8 @@
     'toggle_legend': 'Toggle Legend',
     'refresh_layers': 'Refresh Layers',
     'sure_remove_layer': 'Are you sure that you want to remove this layer?',
-    'pull_unknown_error': 'An unknown error occurred when pulling from the remote.  Please try again.',
+    'pull_unknown_error': 'Pull has failed multiple times, perhaps the remote is not available at the moment.' +
+        ' Please try again later.',
     'local': 'Local',
     'pull_conflicts': 'Pull Conflicts',
     'feature_id': 'Feature ID',

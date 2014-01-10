@@ -146,7 +146,8 @@
     'toggle_legend': 'Modificar la Descripcion',
     'refresh_layers': 'Refrescar Capas',
     'sure_remove_layer': 'Esta seguro de querer eliminar esta capa?',
-    'pull_unknown_error': 'Un error desconocido ocurrio al realizar el retiro del remoto. Favor intentar nuevamente.',
+    'pull_unknown_error': 'Tire ha fallado varias veces, tal vez el control remoto no está disponible en este momento' +
+        '. Por favor, inténtelo de nuevo más tarde.',
     'local': 'Local',
     'pull_conflicts': 'Extraer Conflictos',
     'feature_id': 'Elemento ID',
