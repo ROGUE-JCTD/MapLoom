@@ -85,7 +85,14 @@
     <div id="pulldown-shadow">
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
-            <em id="map-name">{{ mapService.title || "New Map"}}<i class="glyphicon pull-right" data-target="#saveMap" ng-class="{'hide': !configService.username}" data-toggle="modal"></i></em>
+          <em id="map-name">{{ mapService.title || "New Map"}}
+            <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
+               tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
+               ng-class="{'hide': !configService.username}" data-toggle="modal"></i>
+            <i id="refreshButton" class="glyphicon pull-right" ng-click="refreshService.refreshLayers()"
+               tooltip-placement="bottom" tooltip="{{'refresh_layers' | translate}}" tooltip-append-to-body="true"
+               ng-class="{'refreshing-map': refreshService.autoRefresh}"></i>
+          </em>
           <span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>
         </div>
       </div>

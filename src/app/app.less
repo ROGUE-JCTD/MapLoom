@@ -134,9 +134,21 @@ hr {
     cursor: pointer;
   }
 
-  i:before{
+  #saveButton:before{
     content: @saveIcon;
+    padding-left: 5px;
   }
+  #refreshButton:before{
+    content: @refreshIcon;
+    padding: 2px;
+  }
+}
+
+.refreshing-map {
+  color: @refreshIconColor !important;
+  background-color: @mainHeaderColor;
+  border-radius: 3px;
+  padding-bottom: 4px;
 }
 
 /* Overwriting these because the default rounded corners didn't look quite right */

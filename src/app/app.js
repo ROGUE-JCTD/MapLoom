@@ -14,17 +14,19 @@
     console.log('---- app.js.run');
   });
 
-  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService) {
-    console.log('---- ngBoilerplate.controller.');
+  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
+                                                refreshService) {
+        console.log('---- ngBoilerplate.controller.');
 
-    $scope.$on('$stateChangeSuccess', function(event, toState) {
-      if (angular.isDefined(toState.data.pageTitle)) {
-        $scope.pageTitle = toState.data.pageTitle;
-      }
-    });
+        $scope.$on('$stateChangeSuccess', function(event, toState) {
+          if (angular.isDefined(toState.data.pageTitle)) {
+            $scope.pageTitle = toState.data.pageTitle;
+          }
+        });
 
-    $scope.mapService = mapService;
-  });
+        $scope.mapService = mapService;
+        $scope.refreshService = refreshService;
+      });
 
   module.provider('debugService', function() {
     this.$get = function() {
