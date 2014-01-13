@@ -198,7 +198,7 @@
         if (service_.attributesEqual(service_.merged.attributes[i], service_.left.attributes[i])) {
           merges[service_.merged.attributes[i].attributename] = {ours: true};
         } else if (service_.attributesEqual(service_.merged.attributes[i], service_.right.attributes[i])) {
-          merges[service_.merged.attributes[i].attributename] = {thiers: true};
+          merges[service_.merged.attributes[i].attributename] = {theirs: true};
         } else {
           merges[service_.merged.attributes[i].attributename] = {value: service_.merged.attributes[i].newvalue};
         }
