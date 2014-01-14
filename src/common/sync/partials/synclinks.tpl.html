@@ -24,7 +24,7 @@
               <i class="glyphicon glyphicon-sort"></i>
             </button>
             <div ng-click="syncService.toggleAutoSync(link)" stop-event="click mousedown"
-                 class="btn btn-xs btn-default" ng-class="{'sync-on': link.isSyncing}">
+                 class="btn btn-xs btn-default" ng-class="{'sync-on': link.continuous}">
               <i class="glyphicon glyphicon-retweet"></i>
             </div>
             <!--<button type="button" class="btn btn-xs btn-default dropdown-toggle" ng-class="{'disabled': link.isSyncing}" data-toggle="dropdown">

@@ -53,16 +53,13 @@
   };
 
   var checkStatus = function(link) {
-    geogitService_.beginTransaction(link.getRepo().id).then(function(transaction) {
-      var fetchOptions = new GeoGitFetchOptions();
-      fetchOptions.remote = link.getRemote().name;
-      transaction.command('fetch', fetchOptions).then(function() {
-        link.getRemote().active = true;
-        transaction.abort();
-      }, function() {
-        link.getRemote().active = false;
-        transaction.abort();
-      });
+    var remoteOptions = new GeoGitRemoteOptions();
+    remoteOptions.remoteName = link.getRemote().name;
+    remoteOptions.ping = true;
+    geogitService_.command(link.getRepo().id, 'remote', remoteOptions).then(function(response) {
+      link.getRemote().active = response.ping.success;
+    }, function() {
+      link.getRemote().active = false;
     });
   };
 
@@ -178,6 +175,7 @@
               syncing = false;
               result.resolve(link);
             }, function(endTransactionFailed) {
+              // TODO: Check for endTransaction conflicts
               syncing = false;
               result.reject(endTransactionFailed);
               transaction.abort();
@@ -188,6 +186,15 @@
             transaction.abort();
           });
         }, function(pullFailed) {
+          var showMessage = false;
+          var message = '';
+          if (goog.isObject(pullFailed) && pullFailed.status === 502) {
+            if (link.continuous) {
+              service_.toggleAutoSync(link);
+              showMessage = true;
+              message = 'pull_timeout_error';
+            }
+          }
           if (goog.isObject(pullFailed) && goog.isDefAndNotNull(pullFailed.conflicts)) {
             var branch = link.getRemote().name + '/' + link.getRemoteBranch();
             link.isSyncing = false;
@@ -195,10 +202,21 @@
                 link.getRemote().name, branch);
             result.reject(false);
           } else {
-            numPullFails++;
-            if (numPullFails >= maxPullFails && !errorMessageOn) {
+            if (!errorMessageOn) {
+              if (link.continuous) {
+                numPullFails++;
+                if (numPullFails >= maxPullFails) {
+                  showMessage = true;
+                  message = 'pull_multiple_error';
+                }
+              } else if (message === '') {
+                showMessage = true;
+                message = 'pull_unknown_error';
+              }
+            }
+            if (showMessage) {
               errorMessageOn = true;
-              dialogService_.error(translate_('error'), translate_('pull_unknown_error'),
+              dialogService_.error(translate_('error'), translate_(message),
                   [translate_('btn_ok')], false).then(function(button) {
                 switch (button) {
                   case 0:

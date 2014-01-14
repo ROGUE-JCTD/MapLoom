@@ -146,8 +146,12 @@
     'toggle_legend': 'Toggle Legend',
     'refresh_layers': 'Refresh Layers',
     'sure_remove_layer': 'Are you sure that you want to remove this layer?',
-    'pull_unknown_error': 'Pull has failed multiple times, perhaps the remote is not available at the moment.' +
+    'pull_unknown_error': 'An unknown error occurred when pulling from the remote.  Please try again.',
+    'pull_multiple_error': 'Pull has failed multiple times, perhaps the remote is not available at the moment.' +
         ' Please try again later.',
+    'pull_timeout_error': 'Pull is taking longer than normal, this could be caused by the server being overloaded so' +
+        ' in an effort to let the server catch up we are stopping auto-sync. Please wait before resuming auto-sync so' +
+        ' the server can catch up.',
     'local': 'Local',
     'pull_conflicts': 'Pull Conflicts',
     'feature_id': 'Feature ID',

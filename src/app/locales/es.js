@@ -146,8 +146,13 @@
     'toggle_legend': 'Modificar la Descripcion',
     'refresh_layers': 'Refrescar Capas',
     'sure_remove_layer': 'Esta seguro de querer eliminar esta capa?',
-    'pull_unknown_error': 'Tire ha fallado varias veces, tal vez el control remoto no está disponible en este momento' +
-        '. Por favor, inténtelo de nuevo más tarde.',
+    'pull_unknown_error': 'Un error desconocido ocurrio al realizar el retiro del remoto. Favor intentar nuevamente.',
+    'pull_multiple_error': 'Tire ha fallado varias veces, tal vez el control remoto no está disponible en este' +
+        ' momento . Por favor, inténtelo de nuevo más tarde.',
+    'pull_timeout_error': 'Tire está tomando más tiempo de lo normal, esto podría deberse a que el servidor se' +
+        ' sobrecargue por lo que en un esfuerzo por dejar que la captura del servidor hasta que se detiene la' +
+        ' sincronización automática. Por favor, espere antes de reanudar la sincronización automática para que el' +
+        ' servidor pueda ponerse al día.',
     'local': 'Local',
     'pull_conflicts': 'Extraer Conflictos',
     'feature_id': 'Elemento ID',

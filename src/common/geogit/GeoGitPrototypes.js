@@ -129,6 +129,7 @@ var GeoGitRemoteOptions = function() {
   this.remoteURL = null;
   this.username = null;
   this.password = null;
+  this.ping = null;
 };
 
 var GeoGitBranchOptions = function() {
