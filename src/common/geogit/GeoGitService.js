@@ -22,7 +22,8 @@
       } else {
         deferredResponse.reject(response.data.response.error);
       }
-    }, function(reject) {
+    }, function(reject, status, headers, config) {
+      console.log('Issue Request was rejected', reject, status, headers, config);
       deferredResponse.reject(reject);
     }, function(update) {
       deferredResponse.update(update);
