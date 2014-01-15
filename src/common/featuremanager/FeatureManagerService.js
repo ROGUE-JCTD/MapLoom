@@ -174,7 +174,8 @@
         if (getItemType(selectedItem_) === 'feature' &&
             goog.isDefAndNotNull(selectedItem_) &&
             goog.isDefAndNotNull(selectedItem_.properties) &&
-            goog.isDefAndNotNull(selectedItem_.properties.fotos)) {
+            goog.isDefAndNotNull(selectedItem_.properties.fotos) &&
+            selectedItem_.properties.fotos !== '') {
 
           pics = JSON.parse(selectedItem_.properties.fotos);
 
