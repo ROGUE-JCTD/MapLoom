@@ -10,7 +10,8 @@
             (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
-        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0) {
+        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0 &&
+            config.url.indexOf('WfsDispatcher') < 0) {
           var configCopy = $.extend(true, {}, config);
           var proxy = service_.configuration.proxy;
           if (goog.isDefAndNotNull(proxy)) {
