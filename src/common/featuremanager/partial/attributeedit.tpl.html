@@ -2,10 +2,10 @@
   <div class="top-fade"></div>
   <div class="bottom-fade"></div>
   <form name="editfeatureform" class="form wrapper">
-    <div class="form-group" ng-if="coordinates">
+    <!--<div class="form-group" ng-if="coordinates">
         <label for="latLonEdit" class="control-label custom-control-label">{{'location_lon_lat' | translate}}</label>
         <latloneditor id="latLonEdit" coord-display="coordDisplay" geom="coordinates"></latloneditor>
-    </div>
+    </div>-->
     <div class="form-group" ng-repeat="prop in properties">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
         <div ng-switch on="prop.type">
@@ -24,6 +24,9 @@
             <input ng-model="prop[1]" type="text" class="form-control" disabled/>
           </div>
           <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
+          </div>
+          <div ng-switch-when="xsd:integer" ng-class="{'has-error': !prop.valid}">
             <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
           </div>
           <div ng-switch-when="xsd:double" ng-class="{'has-error': !prop.valid}">
