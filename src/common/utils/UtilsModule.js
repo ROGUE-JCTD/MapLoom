@@ -105,7 +105,8 @@
       scope: {
         dateObject: '=dateObject',
         dateKey: '=dateKey',
-        editable: '@editable'
+        editable: '@editable',
+        defaultDate: '=defaultDate'
       },
       link: function(scope, element, attrs) {
         if (!goog.isDefAndNotNull(scope.editable)) {
@@ -124,25 +125,27 @@
         var updateDateTime = function() {
           var newDate = new Date();
           var date = element.find('.datepicker').data('DateTimePicker').getDate();
-          newDate.setFullYear(date.year(), date.month(), date.date());
-          if (scope.time === 'true' && scope.seperateTime === 'true') {
-            var time = element.find('.timepicker').data('DateTimePicker').getDate();
-            if (goog.isDefAndNotNull(time)) {
-              newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
+          if (goog.isDefAndNotNull(date)) {
+            newDate.setFullYear(date.year(), date.month(), date.date());
+            if (scope.time === 'true' && scope.seperateTime === 'true') {
+              var time = element.find('.timepicker').data('DateTimePicker').getDate();
+              if (goog.isDefAndNotNull(time)) {
+                newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
+              } else {
+                newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
+              }
             } else {
               newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
             }
-          } else {
-            newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
-          }
-          if (!scope.$$phase && !$rootScope.$$phase) {
-            scope.$apply(function() {
+            if (!scope.$$phase && !$rootScope.$$phase) {
+              scope.$apply(function() {
+                scope.dateObject[scope.dateKey] = newDate.toISOString();
+                scope.disabledText = newDate.toISOString();
+              });
+            } else {
               scope.dateObject[scope.dateKey] = newDate.toISOString();
               scope.disabledText = newDate.toISOString();
-            });
-          } else {
-            scope.dateObject[scope.dateKey] = newDate.toISOString();
-            scope.disabledText = newDate.toISOString();
+            }
           }
         };
 
@@ -155,6 +158,12 @@
           pickDate: false,
           language: $translate.uses()
         };
+
+        if (scope.defaultDate) {
+          var defaultDate = new Date();
+          dateOptions.defaultDate = defaultDate;
+          timeOptions.defaultDate = defaultDate;
+        }
 
         if (goog.isDefAndNotNull(scope.dateObject[scope.dateKey])) {
           dateOptions.defaultDate = scope.dateObject[scope.dateKey];
@@ -169,6 +178,7 @@
             element.find('.timepicker').on('change.dp', updateDateTime);
           }
           if (goog.isDefAndNotNull(dateOptions.defaultDate)) {
+            updateDateTime();
             var date = moment(new Date(dateOptions.defaultDate));
             date.lang($translate.uses());
             scope.disabledText = date.format('L') + ' ' + date.format('LT');
