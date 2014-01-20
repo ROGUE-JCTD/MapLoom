@@ -203,15 +203,15 @@
       restrict: 'E',
       template: '<div ng-class="{\'has-error\': !geom.valid}" class="form-group">' +
           /*'<div class="input-group">' +
-          '<div class="input-group-btn">' +
-          '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
-          '<span class="caret"></span>' +
-          '</button>' +
-          '<ul id="display-list" class="dropdown-menu">' +
-          '<li ng-repeat="display in coordinateDisplays">' +
-          '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
-          '</ul>' +
-          '</div>' +*/
+         '<div class="input-group-btn">' +
+         '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
+         '<span class="caret"></span>' +
+         '</button>' +
+         '<ul id="display-list" class="dropdown-menu">' +
+         '<li ng-repeat="display in coordinateDisplays">' +
+         '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
+         '</ul>' +
+         '</div>' +*/
           '<input ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
           /*'</div>' +*/
           '</div>',
@@ -248,6 +248,10 @@
             return false;
           }
           if (split.length === 4) {
+            for (var index = 0; index < 3; index++) {
+              split[index] = split[index].replace(/[^\d\.]/g, '');
+            }
+            clean(split, '');
             var newPos = parseInt(split[0], 10) + ((parseInt(split[1], 10) +
                 (parseFloat(split[2]) / 60)) / 60);
             if (newPos < 0 || newPos > upperBounds) {
@@ -267,8 +271,8 @@
           var split = scope.coordinates.replace(/[^\dEWewNSns\.]/g, ' ').split(' ');
           clean(split, '');
           var valid = false;
-          if (split.length === 8) {
-            var split2 = split.splice(0, 4);
+          var split2 = split.splice(0, 4);
+          if (split.length === 4) {
             if (split[3].toUpperCase() === 'S' || split[3].toUpperCase() === 'N') {
               valid = validateDMS('lat', split);
               if (valid === true && (split2[3].toUpperCase() === 'W' || split2[3].toUpperCase() === 'E')) {
@@ -276,7 +280,7 @@
               } else {
                 valid = false;
               }
-            } else {
+            } else if (split[3].toUpperCase() === 'W' || split[3].toUpperCase() === 'E') {
               valid = validateDMS('lon', split);
               if (valid === true && (split2[3].toUpperCase() === 'S' || split2[3].toUpperCase() === 'N')) {
                 valid = validateDMS('lat', split2);
