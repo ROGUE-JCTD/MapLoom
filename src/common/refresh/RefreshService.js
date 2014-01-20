@@ -47,6 +47,12 @@
                 options.showGeometryChanges = true;
                 options.show = 1000;
                 geogitService_.command(layer.get('metadata').repoId, 'diff', options).then(function(diffResponse) {
+                  //this needs to be stored in a seperate var here so it doesn't get overwriten before it is needed
+                  var oldCommitId = layer.get('metadata').repoCommitId;
+                  layer.get('metadata').repoCommitId = idResponse;
+                  if (!goog.isDefAndNotNull(diffResponse.Feature)) {
+                    return;
+                  }
                   if (goog.isDef(diffResponse.nextPage)) {
                     dialogService_.warn(translate_('warning'), translate_('too_many_changes_refresh', {value: 1000}));
                   }
@@ -103,8 +109,6 @@
                       notificationText += removed + ' ' + translate_('removed');
                     }
                     notificationText += ' ' + translate_('in_lower_case') + ' ' + layer.get('metadata').label;
-                    //this needs to be stored in a seperate var here so it doesn't get overwriten before it is needed
-                    var oldCommitId = layer.get('metadata').repoCommitId;
 
                     notificationService_.addNotification({
                       text: notificationText,
@@ -126,7 +130,6 @@
                         $('#feature-diff-dialog').modal('show');
                       }
                     });
-                    layer.get('metadata').repoCommitId = idResponse;
                   }
                 });
               });
