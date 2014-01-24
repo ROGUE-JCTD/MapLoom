@@ -80,7 +80,8 @@
               forEachArrayish(response.commit, function(commit) {
                 var json = null;
                 try {
-                  json = JSON.parse(commit.message);
+                  var message = commit.message.replace(/&quot;/g, '"');
+                  json = JSON.parse(message);
                   var added = json[metadata.nativeName]['added'];
                   var removed = json[metadata.nativeName]['removed'];
                   var modified = json[metadata.nativeName]['modified'];
