@@ -208,7 +208,9 @@
       //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
         if (!(layer.source_ instanceof ol.source.OSM) && goog.isDefAndNotNull(layer.get('metadata')) &&
-            !(layer.get('metadata').hidden) && !(layer.get('metadata').differences_layer)) {
+            (layer.get('visible')) && // don't return layers that are not visible
+            !(layer.get('metadata').hidden) &&  // don't get 'internal' layers such as the feature modify vector layer
+            !(layer.get('metadata').differences_layer)) {
           layers.push(layer);
         }
       });
