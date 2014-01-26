@@ -314,7 +314,7 @@
           exclusiveModeService_.button(translate_('done_btn'), function() {
             if (mapService_.editLayer.getFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
-                  [translate_('ok_btn')], false).then(function(button) {
+                  [translate_('btn_ok')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     break;
