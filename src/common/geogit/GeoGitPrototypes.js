@@ -173,4 +173,5 @@ var GeoGitLogOptions = function() {
   this.show = null;
   this.firstParentOnly = null;
   this.summarize = null;
+  this.returnRange = null;
 };

@@ -14,7 +14,7 @@
     this.title = 'History';
     this.currentPage = 0;
     this.nextPage = false;
-    this.entriesPerPage = 30;
+    this.entriesPerPage = 10;
     this.layer = null;
     this.repoId = null;
     this.pathFilter = null;
@@ -64,6 +64,7 @@
       logOptions.show = service_.entriesPerPage;
       logOptions.page = service_.currentPage;
       logOptions.firstParentOnly = 'true';
+      logOptions.summarize = true;
       var metadata = service_.layer.get('metadata');
       if (goog.isDefAndNotNull(metadata)) {
         if (goog.isDefAndNotNull(metadata.branchName)) {
@@ -78,43 +79,24 @@
           geogitService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
             if (goog.isDefAndNotNull(response.commit)) {
               forEachArrayish(response.commit, function(commit) {
-                var json = null;
-                try {
-                  var message = commit.message.replace(/&quot;/g, '"');
-                  json = JSON.parse(message);
-                  var added = json[metadata.nativeName]['added'];
-                  var removed = json[metadata.nativeName]['removed'];
-                  var modified = json[metadata.nativeName]['modified'];
-                  if (!goog.isDefAndNotNull(added)) {
-                    added = 0;
-                  }
-                  if (!goog.isDefAndNotNull(removed)) {
-                    removed = 0;
-                  }
-                  if (!goog.isDefAndNotNull(modified)) {
-                    modified = 0;
-                  }
-                  var totalChanges = added + removed + modified;
-                  commit.summary = {
-                    added: {width: added / totalChanges * 100 + '%'},
-                    modified: {width: modified / totalChanges * 100 + '%'},
-                    removed: {width: removed / totalChanges * 100 + '%'}
-                  };
-
-                } catch (e) {
-                  // Generate random summaries for commits that don't have one. (Debug purposes)
-                  /*var max = 5;
-                  var min = 0;
-                  var added = Math.floor(Math.random() * (max - min + 1)) + min;
-                  var modified = Math.floor(Math.random() * (max - min + 1)) + min;
-                  var removed = Math.floor(Math.random() * (max - min + 1)) + min;
-                  var totalChanges = added + removed + modified;
-                  commit.summary = {
-                    added: {width: added / totalChanges * 100 + '%'},
-                    modified: {width: modified / totalChanges * 100 + '%'},
-                    removed: {width: removed / totalChanges * 100 + '%'}
-                  };*/
+                var added = 0;
+                var modified = 0;
+                var removed = 0;
+                if (goog.isDefAndNotNull(commit.adds)) {
+                  added = commit.adds;
                 }
+                if (goog.isDefAndNotNull(commit.modifies)) {
+                  modified = commit.modifies;
+                }
+                if (goog.isDefAndNotNull(commit.removes)) {
+                  removed = commit.removes;
+                }
+                var totalChanges = added + removed + modified;
+                commit.summary = {
+                  added: {width: added / totalChanges * 100 + '%'},
+                  modified: {width: modified / totalChanges * 100 + '%'},
+                  removed: {width: removed / totalChanges * 100 + '%'}
+                };
               });
               if (goog.isArray(response.commit)) {
                 service_.log = service_.log.concat(response.commit);

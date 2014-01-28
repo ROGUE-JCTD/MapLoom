@@ -45,7 +45,7 @@
               logOptions.untilTime = startTime < endTime ? endTime : startTime;
               logOptions.sinceTime = startTime < endTime ? startTime : endTime;
               logOptions.path = historyService.pathFilter;
-              logOptions.summarize = true;
+              logOptions.returnRange = true;
               // TODO: Add the since option to specify branch name
               //logOptions.since = historyService.layer.get('metadata').branchName;
               geogitService.command(historyService.repoId, 'log', logOptions).then(function(response) {
