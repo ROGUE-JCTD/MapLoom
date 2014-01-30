@@ -307,7 +307,6 @@
 
   module.filter('stripWhiteSpace', function() {
     return function(str) {
-      console.log('stripWhiteSpace2');
       if (goog.isDefAndNotNull(str)) {
         return goog.string.removeAll(goog.string.collapseWhitespace(str), ' ');
       } else {
