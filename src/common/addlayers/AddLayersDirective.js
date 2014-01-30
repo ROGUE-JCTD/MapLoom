@@ -9,48 +9,37 @@
           link: function(scope, element) {
             scope.serverService = serverService;
 
+            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
+            scope.setCurrentServerIndex = function(serverIndex) {
+              scope.currentServerIndex = serverIndex;
+              serverService.populateLayersConfig(serverIndex);
+            };
+
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
             // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            scope.currentServerIndex = serverService.getServerByName('Local Geoserver').id;
+            scope.setCurrentServerIndex(serverService.getServerByName('Local Geoserver').id);
 
-            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
-
-            scope.addLayers = function() {
+            scope.addLayers = function(layersConfig) {
               var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
-              var layers = scope.serverService.populateLayers(scope.currentServerIndex);
+              //var layers = scope.serverService.populateLayersConfig(scope.currentServerIndex);
 
               // if the server is not a typical server and instead the hardcoded ones
-              if (currentServer.type === 'fakeType') {
-                if (layers[0].add) {
-                  mapService.addBaseLayer(layers[0].title);
-                  layers[0].add = false;
-                  layers[0].added = true;
-                }
-                if (layers[1].add) {
-                  mapService.addBaseLayer(layers[1].title);
-                  layers[1].add = false;
-                  layers[1].added = true;
-                }
-                if (layers[2].add) {
-                  mapService.addBaseLayer(layers[2].title);
-                  layers[2].add = false;
-                  layers[2].added = true;
-                }
-              } else {
-                var length = layers.length;
-                for (var index = 0; index < length; index += 1) {
-                  var layer = layers[index];
-                  if (layer.add) {
-                    var config = {
-                      source: scope.currentServerIndex,
-                      title: layer.title,
-                      name: layer.name
-                    };
-                    mapService.addLayer(config);
+              console.log('---- addLayers. currentServer: ', currentServer, ', layersConfig', layersConfig);
+              var length = layersConfig.length;
+              for (var index = 0; index < length; index += 1) {
+                var config = layersConfig[index];
+                console.log(config);
+                if (config.add) {
+                  var slimConfig = {
+                    source: scope.currentServerIndex,
+                    title: config.title,
+                    name: config.name,
+                    sourceParams: config.sourceParams
+                  };
+                  mapService.addLayer(slimConfig);
 
-                    layer.add = false;
-                    layer.added = true;
-                  }
+                  config.add = false;
+                  config.added = true;
                 }
               }
             };
@@ -64,13 +53,13 @@
                 scope.$apply();
               }
             });
+
             var layerRemoved = function(event, layer) {
-              var layers = scope.serverService.populateLayers(layer.get('metadata').serverId);
-              var length = layers.length;
-              for (var index = 0; index < length; index++) {
-                var serverLayer = layers[index];
-                if (serverLayer.title === layer.get('metadata').label) {
-                  serverLayer.added = false;
+              var layersConfig = scope.serverService.getLayersConfig(layer.get('metadata').serverId);
+              for (var index = 0; index < layersConfig.length; index++) {
+                var config = layersConfig[index];
+                if (config.title === layersConfig.get('metadata').label) {
+                  config.added = false;
                   return;
                 }
               }

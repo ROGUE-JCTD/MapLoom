@@ -8,14 +8,14 @@
             <span class="caret right-and-center"></span>
           </button>
           <ul id="server-list" class="dropdown-menu col-md-12">
-            <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="selectServer($index)">{{server.name}}</a></li>
+            <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="setCurrentServerIndex($index)">{{server.name}}</a></li>
             <li class="divider"></li>
             <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
           </ul>
         </div>
         <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
                 type="button" ng-class="{'disabled': currentServerIndex==1}"
-                ng-click="serverService.refreshLayers(currentServerIndex)" class="btn btn-default">
+                ng-click="serverService.refreshLayersConfig(currentServerIndex)" class="btn btn-default">
           <i class="glyphicon glyphicon-repeat"></i>
         </button>
       </div>
@@ -26,16 +26,16 @@
     <hr>
     <div class="form-group">
       <ul id="layer-list" class="list-group">
-        <li ng-repeat="layer in layers = serverService.populateLayers(currentServerIndex) | filter:{added:'false'} | filter:filterLayers"
+        <li ng-repeat="layerConfig in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:{added:'false'} | filter:filterLayers"
             class="list-group-item">
           <div class="row">
             <div class="col-xs-2">
-              <div class="loom-check-button btn btn-xs" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
+              <div class="loom-check-button btn btn-xs" ng-model="layerConfig.add" btn-checkbox btn-checkbox-true="true"
                    btn-checkbox-false="false">
-                <i class="glyphicon" ng-class="{'glyphicon-unchecked': !layer.add, 'glyphicon-check': layer.add}"></i>
+                <i class="glyphicon" ng-class="{'glyphicon-unchecked': !layerConfig.add, 'glyphicon-check': layerConfig.add}"></i>
               </div>
             </div>
-            <div class="ellipsis">{{layer.title}}</div>
+            <div class="ellipsis">{{layerConfig.title}}</div>
           </div>
         </li>
       </ul>
@@ -44,6 +44,6 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
-  <button type="button" class="btn btn-primary" ng-click="addLayers()" data-dismiss="modal"
+  <button type="button" class="btn btn-primary" ng-click="addLayers(layersConfig)" data-dismiss="modal"
     translate="add_btn">Add</button>
 </div>

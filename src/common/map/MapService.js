@@ -207,7 +207,10 @@
 
       //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
-        if (!(layer.source_ instanceof ol.source.OSM) && goog.isDefAndNotNull(layer.get('metadata')) &&
+        if (!(layer.source_ instanceof ol.source.OSM) &&
+            !(layer.source_ instanceof ol.source.BingMaps) &&
+            !(layer.source_ instanceof ol.source.MapQuestOSM) &&
+            goog.isDefAndNotNull(layer.get('metadata')) &&
             (layer.get('visible')) && // don't return layers that are not visible
             !(layer.get('metadata').hidden) &&  // don't get 'internal' layers such as the feature modify vector layer
             !(layer.get('metadata').differences_layer)) {
@@ -219,6 +222,7 @@
     };
 
     this.addLayer = function(config, doNotAddToMap) {
+      //console.log('server for layer: ', server);
       var server = serverService_.getServerByIndex(config.source);
       console.log('server for layer: ', server);
       var layer = null;
@@ -231,15 +235,32 @@
           },
           source: new ol.source.OSM()
         });
-      } else if (server.ptype === 'gxp_omapquestsource') {
+      } else if (server.ptype === 'gxp_bingsource') {
 
-        var source = null;
+        var sourceParams = {
+          key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+          imagerySet: 'Aerial'
+        };
 
-        if (config.name === 'osm') {
-          source = new ol.source.MapQuestOSM();
-        } else if (config.name === 'naip') {
-          source = new ol.source.MapQuestOpenAerial();
+        if (goog.isDefAndNotNull(config.sourceParams)) {
+          goog.object.extend(sourceParams, config.sourceParams);
         }
+
+        console.log(sourceParams, config.sourceParams, {});
+
+        layer = new ol.layer.Tile({
+          metadata: {
+            serverId: server.id,
+            label: config.title
+          },
+          source: new ol.source.BingMaps(sourceParams)
+        });
+      } else if (server.ptype === 'gxp_googlesource') {
+        console.log('====[ Error: google source not implemeted');
+      } else if (server.ptype === 'gxp_mapquestsource') {
+
+        //TODO: type changed to just mapquest
+        var source = new ol.source.MapQuestOSM(config.sourceParams);
 
         if (goog.isDefAndNotNull(source)) {
           layer = new ol.layer.Tile({
@@ -292,17 +313,23 @@
         //console.log(geogitService_);
       }
 
-      // convert source id to a number. even though geonode gives it as a string, it wants it back as number
-      config.source = parseInt(config.source, 10);
 
-      // store the config objected used to create this layer so that when we sa
-      layer.get('metadata').config = config;
+      if (goog.isDefAndNotNull(layer)) {
+        // convert source id to a number. even though geonode gives it as a string, it wants it back as number
+        config.source = parseInt(config.source, 10);
 
+        var meta = layer.get('metadata');
+        meta.config = config;
+        //goog.object.extend(meta, config, {});
+        //layer.set('metadata', meta);
 
-      if (!goog.isDefAndNotNull(doNotAddToMap) && goog.isDefAndNotNull(layer)) {
-        this.map.addLayer(layer);
+        if (!goog.isDefAndNotNull(doNotAddToMap)) {
+          this.map.addLayer(layer);
+        }
+      } else {
+        console.log('====[Error: could not load layer: ', config);
       }
-
+      console.log('---addLayer layer', layer);
       return layer;
     };
 
@@ -391,7 +418,7 @@
           projection: service_.getProjection(),
           layers: []
         },
-        sources: serverService_.getServers()
+        sources: []
       };
 
       /*
@@ -403,6 +430,11 @@
         title: 'OpenStreetMap'
       });
       */
+
+      goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
+        console.log('saving server: ', server);
+        cfg.sources.push(server.config);
+      });
 
       // -- save layers
       goog.array.forEach(service_.map.getLayers().getArray(), function(layer, key, obj) {
@@ -454,26 +486,10 @@
         });
 
         goog.array.forEach(ordered, function(serverInfo, index, obj) {
-          var server = serverService_.addServer(serverInfo);
-
-          //TODO: test
-          if (server.name === 'OpenStreetMap') {
-            server.layers = [
-              {
-                title: 'OpenStreetMap',
-                added: true
-              },
-              {
-                title: 'MapQuestImagery',
-                added: false
-              },
-              {
-                title: 'MapQuestOSM',
-                added: false
-              }
-            ];
-          }
+          serverService_.addServer(serverInfo);
         });
+
+        serverService_.configDefaultServers();
 
         goog.array.forEach(this.configuration.map.layers, function(layerInfo, index, obj) {
           if (goog.isDefAndNotNull(layerInfo.name)) {
