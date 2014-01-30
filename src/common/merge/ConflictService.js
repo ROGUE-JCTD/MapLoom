@@ -90,58 +90,38 @@
     };
 
     this.buildMergeMessage = function(status, mergeBranch, useConflicts) {
-      var message = {};
-      message.merge_branch = mergeBranch;
+      var i = 0;
+      var layer = null;
+      var message = 'Merged branch \'' + mergeBranch + '\' ';
       if (goog.isDefAndNotNull(status.staged)) {
-
-        forEachArrayish(status.staged, function(entry) {
-          var layer = null;
-          if (goog.isDefAndNotNull(entry.path) && entry.path.length > 0) {
-            layer = entry.path.split('/')[0];
-          } else {
-            layer = entry.newPath.split('/')[0];
-          }
-          if (!goog.isDefAndNotNull(message[layer])) {
-            message[layer] = {};
-          }
-          switch (entry.changeType) {
-            case 'ADDED':
-              if (!goog.isDefAndNotNull(message[layer].added)) {
-                message[layer].added = 0;
-              }
-              message[layer].added++;
-              break;
-            case 'REMOVED':
-              if (!goog.isDefAndNotNull(message[layer].removed)) {
-                message[layer].removed = 0;
-              }
-              message[layer].removed++;
-              break;
-            case 'MODIFIED':
-              if (!goog.isDefAndNotNull(message[layer].modified)) {
-                message[layer].modified = 0;
-              }
-              message[layer].modified++;
-              break;
-          }
-        });
+        var changes = {};
         if (goog.isDefAndNotNull(useConflicts) && useConflicts === true) {
           for (i = 0; i < service_.features.length; i++) {
             var feature = service_.features[i];
             if (feature.change === 'CONFLICT') {
-              var layer = feature.id.split('/')[0];
-              if (!goog.isDefAndNotNull(message[layer])) {
-                message[layer] = {};
+              layer = feature.id.split('/')[0];
+              if (!goog.isDefAndNotNull(changes[layer])) {
+                changes[layer] = {};
               }
-              if (!goog.isDefAndNotNull(message[layer].conflicted)) {
-                message[layer].conflicted = [];
+              if (!goog.isDefAndNotNull(changes[layer].conflicted)) {
+                changes[layer].conflicted = [];
               }
-              message[layer].conflicted.push(feature.id);
+              changes[layer].conflicted.push(feature.id);
             }
           }
         }
+
+        for (var key in changes) {
+          layer = changes[key];
+          message += '\nConflicts in \'' + key + '\': ';
+          for (i = 0; i < layer.conflicted.length; i++) {
+            message += '\n' + layer.conflicted[i];
+          }
+          message += '\n';
+        }
       }
-      return JSON.stringify(message);
+      message += 'via MapLoom';
+      return message;
     };
   });
 
