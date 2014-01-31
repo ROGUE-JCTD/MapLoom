@@ -18,6 +18,8 @@
     this.layer = null;
     this.repoId = null;
     this.pathFilter = null;
+    this.fetchingHistory = false;
+    this.historyTransaction = 0;
 
     this.$get = function($rootScope, $translate, geogitService, pulldownService, dialogService) {
       rootScope_ = $rootScope;
@@ -30,20 +32,28 @@
     };
 
     this.getHistory = function(layer, pathFilter) {
-      service_.clearHistory();
-      service_.pathFilter = pathFilter;
-      if (goog.isDefAndNotNull(layer)) {
-        service_.layer = layer;
+      if (service_.fetchingHistory === false) {
+        service_.historyTransaction++;
+        service_.clearHistory();
+        service_.fetchingHistory = true;
+        service_.pathFilter = pathFilter;
+        if (goog.isDefAndNotNull(layer)) {
+          service_.layer = layer;
+        }
+        getHistoryInternal();
       }
-      getHistoryInternal();
     };
 
     this.getMoreHistory = function() {
-      service_.currentPage++;
-      getHistoryInternal();
+      if (service_.fetchingHistory === false) {
+        service_.fetchingHistory = true;
+        service_.currentPage++;
+        getHistoryInternal();
+      }
     };
 
     this.clearHistory = function() {
+      service_.fetchingHistory = false;
       service_.log = [];
       service_.currentPage = 0;
       service_.nextPage = false;
@@ -65,6 +75,7 @@
       logOptions.page = service_.currentPage;
       logOptions.firstParentOnly = 'true';
       logOptions.summarize = true;
+      var thisTransaction = service_.historyTransaction;
       var metadata = service_.layer.get('metadata');
       if (goog.isDefAndNotNull(metadata)) {
         if (goog.isDefAndNotNull(metadata.branchName)) {
@@ -77,6 +88,10 @@
           }
           logOptions.path = service_.pathFilter;
           geogitService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
+            if (service_.fetchingHistory === false || thisTransaction != service_.historyTransaction) {
+              // History was cleared, we don't want this data anymore
+              return;
+            }
             if (goog.isDefAndNotNull(response.commit)) {
               forEachArrayish(response.commit, function(commit) {
                 var added = 0;
@@ -111,7 +126,13 @@
             } else {
               service_.nextPage = false;
             }
+            service_.fetchingHistory = false;
           }, function(reject) {
+            if (service_.fetchingHistory === false || thisTransaction != service_.historyTransaction) {
+              // History was cleared, we don't want this data anymore
+              return;
+            }
+            service_.fetchingHistory = false;
             console.log('History failed: ', reject);
             dialogService_.error(translate_('error'), translate_('history_failed'));
           });
