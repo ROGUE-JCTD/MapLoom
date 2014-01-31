@@ -167,10 +167,18 @@
     this.updateChangeType = function(attribute) {
       if (goog.isDefAndNotNull(attribute.oldvalue)) {
         if (goog.isDefAndNotNull(attribute.newvalue)) {
-          if (attribute.oldvalue !== attribute.newvalue) {
-            attribute.changetype = 'MODIFIED';
+          if (attribute.type === 'xsd:dateTime') {
+            if ((new Date(attribute.oldvalue)).toISOString() !== (new Date(attribute.newvalue)).toISOString()) {
+              attribute.changetype = 'MODIFIED';
+            } else {
+              attribute.changetype = 'NO_CHANGE';
+            }
           } else {
-            attribute.changetype = 'NO_CHANGE';
+            if (attribute.oldvalue !== attribute.newvalue) {
+              attribute.changetype = 'MODIFIED';
+            } else {
+              attribute.changetype = 'NO_CHANGE';
+            }
           }
         } else {
           attribute.changetype = 'REMOVED';
