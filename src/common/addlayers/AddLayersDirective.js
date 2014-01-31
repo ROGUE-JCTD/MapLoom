@@ -54,6 +54,14 @@
               }
             });
 
+            function onResize() {
+              var height = $(window).height();
+              element.children('.modal-body').css('max-height', (height - 200).toString() + 'px');
+            }
+
+            onResize();
+
+            $(window).resize(onResize);
             var layerRemoved = function(event, layer) {
               var layersConfig = scope.serverService.getLayersConfig(layer.get('metadata').serverId);
               for (var index = 0; index < layersConfig.length; index++) {
