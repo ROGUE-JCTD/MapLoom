@@ -92,7 +92,7 @@
     this.buildMergeMessage = function(status, mergeBranch, useConflicts) {
       var i = 0;
       var layer = null;
-      var message = 'Merged branch \'' + mergeBranch + '\' ';
+      var message = 'Merged branch \'' + mergeBranch + '\'.';
       if (goog.isDefAndNotNull(status.staged)) {
         var changes = {};
         if (goog.isDefAndNotNull(useConflicts) && useConflicts === true) {
@@ -112,15 +112,15 @@
         }
 
         for (var key in changes) {
+          message += ' ';
           layer = changes[key];
-          message += '\nConflicts in \'' + key + '\': ';
+          message += 'Conflicts in \'' + key + '\': ';
           for (i = 0; i < layer.conflicted.length; i++) {
-            message += '\n' + layer.conflicted[i];
+            message += (i > 0 ? ', ' : '') + layer.conflicted[i];
           }
-          message += '\n';
+          message += '.';
         }
       }
-      message += 'via MapLoom';
       return message;
     };
   });

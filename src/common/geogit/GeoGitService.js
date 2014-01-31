@@ -92,10 +92,10 @@
               if (goog.isArray(options[property])) {
                 for (var i = 0; i < options[property].length; i++) {
                   var element = options[property][i];
-                  URL += '&' + trimmed + '=' + element;
+                  URL += '&' + trimmed + '=' + encodeURIComponent(element);
                 }
               } else {
-                URL += '&' + trimmed + '=' + options[property];
+                URL += '&' + trimmed + '=' + encodeURIComponent(options[property]);
               }
             }
           }
