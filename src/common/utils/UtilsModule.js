@@ -43,6 +43,8 @@
           clone.style.width = element[0].style.width;
           clone.value = element[0].value;
           var height = (clone.scrollHeight + 2);
+          clone.value = 'single';
+          height += 34 - (clone.scrollHeight + 2);
           if (height !== scope.prevHeight) {
             element[0].style.height = height + 'px';
             scope.prevHeight = height;
