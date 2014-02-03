@@ -33,7 +33,8 @@
                   }
                 }
               } else {
-                scope.geometryChanged = scope.panel.getGeometry() === featureDiffService.merged.getGeometry();
+                scope.geometryChanged = scope.panel.getGeometry() === featureDiffService.merged.getGeometry() &&
+                    scope.panel.geometry.changetype === featureDiffService.merged.geometry.changetype;
                 for (i = 0; i < scope.panel.attributes.length; i++) {
                   attr = scope.panel.attributes[i];
                   if (featureDiffService.attributesEqual(attr, featureDiffService.merged.attributes[i]) &&
