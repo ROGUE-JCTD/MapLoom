@@ -34,6 +34,8 @@
                 }
               } else {
                 scope.geometryChanged = scope.panel.getGeometry() === featureDiffService.merged.getGeometry() &&
+                    goog.isDefAndNotNull(scope.panel.geometry) &&
+                    goog.isDefAndNotNull(featureDiffService.merged.geometry) &&
                     scope.panel.geometry.changetype === featureDiffService.merged.geometry.changetype;
                 for (i = 0; i < scope.panel.attributes.length; i++) {
                   attr = scope.panel.attributes[i];

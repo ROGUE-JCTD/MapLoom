@@ -92,7 +92,7 @@
     this.buildMergeMessage = function(status, mergeBranch, useConflicts) {
       var i = 0;
       var layer = null;
-      var message = 'Merged branch \'' + mergeBranch + '\'.';
+      var message = translate_('merged_branch', {'branch': mergeBranch}) + '.';
       if (goog.isDefAndNotNull(status.staged)) {
         var changes = {};
         if (goog.isDefAndNotNull(useConflicts) && useConflicts === true) {
@@ -112,15 +112,18 @@
         }
 
         for (var key in changes) {
-          message += ' ';
-          layer = changes[key];
-          message += 'Conflicts in \'' + key + '\': ';
-          for (i = 0; i < layer.conflicted.length; i++) {
-            message += (i > 0 ? ', ' : '') + layer.conflicted[i];
+          if (changes.hasOwnProperty(key)) {
+            message += ' ';
+            layer = changes[key];
+            message += translate_('conflicts_in', {'layer': key}) + ': ';
+            for (i = 0; i < layer.conflicted.length; i++) {
+              message += (i > 0 ? ', ' : '') + layer.conflicted[i];
+            }
+            message += '.';
           }
-          message += '.';
         }
       }
+      message += ' ' + translate_('applied_via_maploom');
       return message;
     };
   });

@@ -129,7 +129,7 @@
       this.merged.bounds = panel.bounds;
       this.merged.olFeature.setGeometry(panel.olFeature.getGeometry());
       this.merged.olFeature.set('MapLoomChange', panel.olFeature.get('MapLoomChange'));
-      if (this.merged.geometry.changetype === 'REMOVED') {
+      if (this.left.geometry.changetype === 'REMOVED' || this.right.geometry.changetype === 'REMOVED') {
         this.merged.attributes = $.extend(true, [], panel.attributes);
       }
       rootScope_.$broadcast('merge-feature-modified');
