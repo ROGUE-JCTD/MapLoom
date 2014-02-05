@@ -38,9 +38,10 @@
               mapService.map.getLayers().insertAt(length - endIndex, layer);
             };
 
-            scope.filterHiddenLayers = function(layer) {
+            scope.filterInternalLayers = function(layer) {
               return !(!goog.isDefAndNotNull(layer.get('metadata')) ||
-                  (goog.isDefAndNotNull(layer.get('metadata').hidden) && layer.get('metadata').hidden));
+                  (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
+                      layer.get('metadata').vectorEditLayer));
             };
 
             scope.isGeogit = function(layer) {

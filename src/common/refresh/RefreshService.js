@@ -34,7 +34,7 @@
     //recursive helper function for refreshLayers
     function refresh(mapService) {
       if (service_.autoRefresh) {
-        var layers = mapService.getFeatureLayers();
+        var layers = mapService.getLayers();
         forEachArrayish(layers, function(layer) {
           if (goog.isDefAndNotNull(layer.get('metadata').isGeoGit)) {
             if (layer.get('metadata').isGeoGit === true) {

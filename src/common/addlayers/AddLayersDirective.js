@@ -38,7 +38,6 @@
                   mapService.addLayer(slimConfig);
 
                   config.add = false;
-                  config.added = true;
                 }
               }
             };
@@ -47,12 +46,31 @@
               scope.currentServerIndex = index;
             };
 
+            scope.filterAddedLayers = function(layerConfig) {
+              var show = true;
+              //Note: this function can get called a lot.
+              var layers = mapService.getLayers(false, false, false);
+              for (var index = 0; index < layers.length; index++) {
+                var layer = layers[index];
+                if (goog.isDefAndNotNull(layer.get('metadata')) &&
+                    goog.isDefAndNotNull(layer.get('metadata').config)) {
+                  var conf = layer.get('metadata').config;
+                  if (conf.source === scope.currentServerIndex) {
+                    if (conf.name === layerConfig.name) {
+                      show = false;
+                      break;
+                    }
+                  }
+                }
+              }
+              return show;
+            };
+
             scope.$on('layers-loaded', function() {
               if (!scope.$$phase && !$rootScope.$$phase) {
                 scope.$apply();
               }
             });
-
             function onResize() {
               var height = $(window).height();
               element.children('.modal-body').css('max-height', (height - 200).toString() + 'px');

@@ -2,7 +2,7 @@
      arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer"
      arrangeable-placeholder='<div class="placeholder"></div>'>
   <div class="panel"
-       ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterHiddenLayers">
+       ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterInternalLayers">
     <div class="panel-heading layer-heading" data-toggle="collapse" ng-click="fillAttrList(layer)"
          data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').label | stripWhiteSpace}}">
       <div class="row">

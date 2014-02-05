@@ -173,41 +173,30 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (server.ptype === 'gxp_bingsource') {
         server.layersConfig = [
-          {title: 'BingRoad', name: 'BingRoad', sourceParams: {imagerySet: 'Road'}, added: false, add: false},
-          {title: 'BingAerial', name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}, added: false, add: false},
-          {title: 'BingAerialWithLabels', name: 'BingAerialWithLabels',
-            sourceParams: {imagerySet: 'AerialWithLabels'}, added: false, add: false},
-          {title: 'BingCollinsBart', name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'},
-            added: false, add: false},
-          {title: 'BingSurvey', name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'},
-            added: false, add: false}
+          {title: 'BingRoad', name: 'BingRoad', sourceParams: {imagerySet: 'Road'}},
+          {title: 'BingAerial', name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}},
+          {title: 'BingAerialWithLabels', name: 'BingAerialWithLabels', sourceParams: {imagerySet: 'AerialWithLabels'}},
+          {title: 'BingCollinsBart', name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
+          {title: 'BingSurvey', name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
         ];
 
       } else if (server.ptype === 'gxp_mapquestsource') {
         server.layersConfig = [
-          {title: 'MapQuestSat', name: 'MapQuestSat', sourceParams: {layer: 'sat'},
-            added: false, add: false},
-          {title: 'MapQuestHybrid', name: 'MapQuestHybrid',
-            sourceParams: {layer: 'hyb'},
-            added: false, add: false},
-          {title: 'MapQuestOSM', name: 'MapQuestOSM',
-            sourceParams: {layer: 'osm'},
-            added: false, add: false}
+          {title: 'MapQuestSat', name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
+          {title: 'MapQuestHybrid', name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
+          {title: 'MapQuestOSM', name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
         ];
       } else if (!goog.isDefAndNotNull(server.layersConfig) && goog.isDefAndNotNull(server.url)) {
-        console.log('Sending GetCapabilities.server: ', server, ', index:', index);
+        console.log('---- Sending GetCapabilities.server: ', server, ', index:', index);
         server.layersConfig = [];
         var parser = new ol.parser.ogc.WMSCapabilities();
         var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
         http_.get(url).then(function(xhr) {
           if (xhr.status == 200) {
             var response = parser.read(xhr.data);
-            if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
+            if (goog.isDefAndNotNull(response.capability) &&
+                goog.isDefAndNotNull(response.capability.layers)) {
               server.layersConfig = response.capability.layers;
-
-              for (var index = 0; index < server.layersConfig.length; index += 1) {
-                server.layersConfig[index].added = false;
-              }
               rootScope_.$broadcast('layers-loaded');
             }
           } else {
@@ -236,25 +225,6 @@ var SERVER_SERVICE_USE_PROXY = true;
           if (xhr.status == 200) {
             var response = parser.read(xhr.data);
             if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
-              var addedLayersConfig = [];
-              var index;
-              for (index = 0; index < server.layersConfig.length; index += 1) {
-                if (server.layersConfig[index].added) {
-                  addedLayersConfig.push(server.layersConfig[index]);
-                }
-              }
-              var newLayersConfig = response.capability.layers;
-              for (index = 0; index < newLayersConfig.length; index += 1) {
-                for (var subIndex = 0; subIndex < addedLayersConfig.length; subIndex += 1) {
-                  if (addedLayersConfig[subIndex].title === newLayersConfig[index].title) {
-                    newLayersConfig[index].added = true;
-                    break;
-                  }
-                }
-                if (!goog.isDefAndNotNull(newLayersConfig[index].added)) {
-                  newLayersConfig[index].added = false;
-                }
-              }
               server.layersConfig = newLayersConfig;
               rootScope_.$broadcast('layers-loaded');
             }

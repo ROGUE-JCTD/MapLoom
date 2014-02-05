@@ -8,7 +8,7 @@
     <div id="legend-container" class="panel">
         <!--<div id="legend-panel-heading" class="panel-heading">Legend</div>-->
         <div id="legend-panel" class="panel in legend-panel-body">
-            <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getFeatureLayers()">
+            <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getLayers();">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
                     data-target="{{'#' + layer.get('metadata').label + 'legend'}}">{{layer.get('metadata').label}}
                 </div>

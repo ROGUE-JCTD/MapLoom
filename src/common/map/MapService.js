@@ -18,7 +18,7 @@
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
-        hidden: true
+        vectorEditLayer: true
       },
       source: new ol.source.Vector({
         parser: null
@@ -166,7 +166,7 @@
     };
 
     this.dumpTileCache = function(layerToDump) {
-      var layers = this.getFeatureLayers();
+      var layers = this.getLayers(); //Note: does not get hidden or imagery layers
       forEachArrayish(layers, function(layer) {
         if (goog.isDefAndNotNull(layer.getTileSource)) {
           var metadata = layer.get('metadata');
@@ -208,23 +208,51 @@
       view.fitExtent(extent, map.getSize());
     };
 
-    this.getFeatureLayers = function() {
+    this.getLayers = function(includeHidden, includeImagery) {
       var layers = [];
 
-      //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
-        if (!(layer.source_ instanceof ol.source.OSM) &&
-            !(layer.source_ instanceof ol.source.BingMaps) &&
-            !(layer.source_ instanceof ol.source.MapQuestOSM) &&
-            goog.isDefAndNotNull(layer.get('metadata')) &&
-            (layer.get('visible')) && // don't return layers that are not visible
-            !(layer.get('metadata').hidden) &&  // don't get 'internal' layers such as the feature modify vector layer
-            !(layer.get('metadata').differences_layer)) {
-          layers.push(layer);
+
+        // if not an internal layer and not difference layer
+        if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
+            !(layer.get('metadata').vectorEditLayer) &&
+            !(layer.get('metadata').differencesLayer)) {
+
+          // if it is imagery
+          if (service_.layerIsImagery(layer)) {
+            // if we want imagery
+            if (goog.isDefAndNotNull(includeImagery) && includeImagery) {
+              if (layer.get('visible')) {
+                layers.push(layer);
+              } else {
+                // if we want hidden
+                if (goog.isDefAndNotNull(includeHidden) && includeHidden) {
+                  layers.push(layer);
+                }
+              }
+            }
+          } else {
+            if (layer.get('visible')) {
+              layers.push(layer);
+            } else {
+              // if we want hidden
+              if (goog.isDefAndNotNull(includeHidden) && includeHidden) {
+                layers.push(layer);
+              }
+            }
+          }
         }
       });
 
       return layers;
+    };
+
+    this.layerIsImagery = function(layer) {
+      if ((layer.source_ instanceof ol.source.OSM) ||
+          (layer.source_ instanceof ol.source.BingMaps) ||
+          (layer.source_ instanceof ol.source.MapQuestOSM)) {
+        return true;
+      }
     };
 
     this.addLayer = function(config, doNotAddToMap) {
