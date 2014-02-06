@@ -142,6 +142,10 @@
 
       this.map = this.createMap();
       this.editLayer = createVectorEditLayer();
+
+      // must always have a local geoserver. if not, something has gone wrong
+      var localServer = serverService_.getServerLocalGeoserver();
+      serverService_.populateLayersConfig(serverService_.getServerIndex(localServer.id));
       return this;
     };
 
@@ -504,23 +508,69 @@
     };
 
     this.loadLayers = function() {
-      console.log('=======[[ using this.configuration: ', this.configuration);
+      console.log('=======[[ using this.configuration: ', service_.configuration);
 
       var layers = [];
 
-      if (goog.isDefAndNotNull(this.configuration) &&
-          goog.isDefAndNotNull(this.configuration.sources) &&
-          goog.isDefAndNotNull(this.configuration.map) &&
-          goog.isDefAndNotNull(this.configuration.map.layers)) {
+      if (goog.isDefAndNotNull(service_.configuration) &&
+          goog.isDefAndNotNull(service_.configuration.sources) &&
+          goog.isDefAndNotNull(service_.configuration.map) &&
+          goog.isDefAndNotNull(service_.configuration.map.layers)) {
 
-        //TODO: would it always be ordered already?
-        var ordered = new Array(this.configuration.sources.length);
-        goog.object.forEach(this.configuration.sources, function(serverInfo, key, obj) {
+        var ordered = new Array(service_.configuration.sources.length);
+        console.log('this.configuration.sources: ', service_.configuration.sources);
+        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
 
-        goog.array.forEach(ordered, function(serverInfo, index, obj) {
-          serverService_.addServer(serverInfo);
+        // if a server has the same url as another server, do not add the server and update layers pointing to the
+        // duplicate server to point to the existing server. geonode passes in duplicate servers when creating
+        // a map from a layer
+        var orderedUnique = new Array(ordered.length);
+        goog.array.forEach(ordered, function(serverInfo, key, obj) {
+
+          if (goog.isDefAndNotNull(serverInfo.url)) {
+            var foundServerIndex = null;
+
+            for (var index = 0; index < orderedUnique.length; index++) {
+              var server = orderedUnique[index];
+              if (goog.isDefAndNotNull(server)) {
+                if (goog.isDefAndNotNull(server.url)) {
+                  if (server.url === serverInfo.url) {
+                    foundServerIndex = index;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if (goog.isDefAndNotNull(foundServerIndex)) {
+              var foundServer = orderedUnique[foundServerIndex];
+              console.log('====[ Warning: skipping source/server as it has the same URL as existingServer.' +
+                  ' serverInfo: ', serverInfo, ', foundServer: ', foundServer);
+
+              // update any layer's source that is using this duplicate server to the existing server
+              for (var index2 = 0; index2 < service_.configuration.map.layers.length; index2++) {
+                var layer = service_.configuration.map.layers[index2];
+                if (layer.source === key.toString()) {
+                  console.log('====[ Note: updating layer source from old:', layer.source,
+                      ', to new: ', foundServerIndex, ', layer: ', layer);
+                  layer.source = foundServerIndex.toString();
+                }
+              }
+            } else {
+              orderedUnique[key] = serverInfo;
+            }
+          } else {
+            orderedUnique[key] = serverInfo;
+          }
+        });
+
+        goog.array.forEach(orderedUnique, function(serverInfo, index, obj) {
+          // if there was a duplicate server, an index in the ordered array will be undefined
+          if (goog.isDefAndNotNull(serverInfo)) {
+            serverService_.addServer(serverInfo);
+          }
         });
 
         serverService_.configDefaultServers();
@@ -532,12 +582,51 @@
             console.log('====[ Error: cannot add a layer without a name: ', layerInfo);
           }
         });
+
       } else {
         console.log('invalid config object, cannot load map: ', this.configuration);
         alert('invalid config object, cannot load map');
       }
 
       return layers;
+    };
+
+    // Note: when a layer is added to a map through the add layers dialog, the title of the layer returned
+    //       from getcapabilities is used. As a result, when a map is saved, it has a title and when it is
+    //       opened again the title is passed in. This is not the case, however, when a map is created from
+    //       a layer in geonode. The layer has a name but not a title. The following segment tries to update
+    //       the title of the layer if a layer added to the ap doesn't have one.
+    this.updateLayerTitles = function(serverIndex) {
+
+      var server = serverService_.getServerByIndex(serverIndex);
+
+      var layers = service_.getLayers(true, true); // get hidden and imagery layers as well
+
+      console.log('server: ', server, ', layers: ', layers);
+
+      for (var index = 0; index < server.layersConfig.length; index++) {
+        var layerConfig = server.layersConfig[index];
+        console.log('A1');
+        for (var index2 = 0; index2 < layers.length; index2++) {
+          console.log('A2');
+          var layer = layers[index2];
+          var layerMetadate = layer.get('metadata');
+          if (goog.isDefAndNotNull(layerMetadate) &&
+              goog.isDefAndNotNull(layerMetadate.config)) {
+            console.log('A3');
+
+            var conf = layerMetadate.config;
+            if (conf.source === serverIndex) {
+              console.log('A4');
+              if (conf.name === layerConfig.name) {
+                conf.title = layerConfig.title;
+                layer.label = layerConfig.title;
+                console.log('##### updated title: ', layerConfig.title, layer);
+              }
+            }
+          }
+        }
+      }
     };
 
     this.switchMousePosCoordFormat = function() {

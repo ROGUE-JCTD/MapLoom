@@ -17,11 +17,10 @@
 
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
             // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            scope.setCurrentServerIndex(serverService.getServerByName('Local Geoserver').id);
+            scope.setCurrentServerIndex(serverService.getServerLocalGeoserver().id);
 
             scope.addLayers = function(layersConfig) {
               var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
-              //var layers = scope.serverService.populateLayersConfig(scope.currentServerIndex);
 
               // if the server is not a typical server and instead the hardcoded ones
               console.log('---- addLayers. currentServer: ', currentServer, ', layersConfig', layersConfig);
@@ -49,7 +48,7 @@
             scope.filterAddedLayers = function(layerConfig) {
               var show = true;
               //Note: this function can get called a lot.
-              var layers = mapService.getLayers(false, false, false);
+              var layers = mapService.getLayers();
               for (var index = 0; index < layers.length; index++) {
                 var layer = layers[index];
                 if (goog.isDefAndNotNull(layer.get('metadata')) &&
