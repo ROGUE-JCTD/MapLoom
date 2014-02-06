@@ -78,18 +78,6 @@
             onResize();
 
             $(window).resize(onResize);
-            var layerRemoved = function(event, layer) {
-              var layersConfig = scope.serverService.getLayersConfig(layer.get('metadata').serverId);
-              for (var index = 0; index < layersConfig.length; index++) {
-                var config = layersConfig[index];
-                if (config.title === layersConfig.get('metadata').label) {
-                  config.added = false;
-                  return;
-                }
-              }
-            };
-
-            scope.$on('layerRemoved', layerRemoved);
           }
         };
       }

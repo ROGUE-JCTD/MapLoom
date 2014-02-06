@@ -358,7 +358,10 @@
 
         var meta = layer.get('metadata');
         meta.config = config;
-        meta.nameUniqueAndSafe = meta.name.replace(/\t/g, '_tab_').replace(/\s/g, '_space_').replace(/:/g, '_col_');
+        // replace all special characters in the name of the layer with two '_' chars. this name can be used as
+        // target id, element id, attrib, etc without running into issues. it is also prepended with serverid
+        // so that multiple layers with the same exact name from different servers resolve to a unique id
+        meta.nameUniqueAndSafe = ('server' + meta.serverId + '_' + meta.name).replace(/[^a-zA-Z0-9]/g, '__');
 
         if (!goog.isDefAndNotNull(doNotAddToMap)) {
           this.map.addLayer(layer);
