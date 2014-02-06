@@ -75,7 +75,6 @@
       counter--;
       if (counter === 0) {
         if (service_.compatibleRepos.length > 1) {
-          // Do something
           $('#remoteSelectDialog').modal('toggle');
         } else if (service_.compatibleRepos.length < 1) {
           service_.verificationResult.reject(translate_('no_compatible_repos'));
@@ -203,20 +202,25 @@
           options.newName = service_.remoteName;
           options.remoteName = service_.selectedRemote.name;
         }
-        var url = service_.remoteURL;
+        var url = service_.remoteURL.substr('http://'.length);
         var index = url.lastIndexOf('/') + 1;
         if (index === url.length) {
           url = url.slice(0, url.length - 1);
           index = url.lastIndexOf('/') + 1;
         }
-        var info = url.slice(index);
-        var splitinfo = info.split(':');
-        var extraPath = '';
-        if (splitinfo.length > 1) {
-          var temp = encodeURIComponent(encodeURIComponent(splitinfo[0])) + ':' +
-              encodeURIComponent(encodeURIComponent(splitinfo[1]));
-          url = url.replace(info, temp);
+        var splitinfo = [];
+        if (index > 0) {
+          var info = url.slice(index);
+          splitinfo = info.split(':');
+          if (splitinfo.length > 1) {
+            console.log(splitinfo);
+            var temp = encodeURIComponent(encodeURIComponent(splitinfo[0])) + ':' +
+                encodeURIComponent(encodeURIComponent(splitinfo[1]));
+            url = url.replace(info, temp);
+          }
         }
+        url = 'http://' + url;
+        var extraPath = '';
         if (splitinfo[0] === 'geoserver') {
           extraPath = '/geogit';
         } else if (splitinfo[0] !== 'geogit') {
@@ -227,14 +231,13 @@
           if (!goog.isDefAndNotNull(response.data.repositories)) {
             checkCompatiblity(url, service_.verificationResult);
           } else {
-            // TODO: Check all repos at that endpoint
             counter = response.data.repositories.length;
             var successFunc = function(url) {
               service_.compatibleRepos.push(url);
-              multipleCompatibleRepos(counter);
+              multipleCompatibleRepos();
             };
             var rejectFunc = function() {
-              multipleCompatibleRepos(counter);
+              multipleCompatibleRepos();
             };
             for (var index = 0; index < response.data.repositories.length; index++) {
               var repo = response.data.repositories[index];
