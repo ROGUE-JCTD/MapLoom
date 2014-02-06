@@ -3,86 +3,48 @@
   var module = angular.module('loom_syncconfig_directive', []);
 
   module.directive('loomSyncconfig',
-      function($q, $translate, geogitService) {
+      function($q, $translate, remoteService, geogitService) {
         return {
           templateUrl: 'sync/partials/syncconfig.tpl.html',
-          link: function(scope) {
+          link: function(scope, element) {
             scope.geogitService = geogitService;
+            scope.remoteService = remoteService;
 
             angular.element('#remote-name')[0].attributes.placeholder.value = $translate('repo_name');
             angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate('repo_username');
             angular.element('#remotePassword')[0].attributes.placeholder.value = $translate('repo_password');
 
-            scope.$on('translation_change', function() {
-              scope.selectedText = '*' + $translate('new_remote');
+            scope.finish = function(save) {
+              if (save) {
+                element.find('#loading').toggleClass('hidden');
+                var result = $q.defer();
+                remoteService.finishRemoteOperation(save, result);
+                result.promise.then(function() {
+                  remoteService.editing = false;
+                  element.find('#loading').toggleClass('hidden');
+                });
+              } else {
+                remoteService.finishRemoteOperation(save);
+              }
+            };
+
+            scope.$watch('remoteService.selectedRepo', function() {
+              if (goog.isDefAndNotNull(remoteService.selectedRepo)) {
+                var logOptions = new GeoGitLogOptions();
+                logOptions.returnRange = true;
+                geogitService.command(remoteService.selectedRepo.id, 'log', logOptions).then(function(logInfo) {
+                  if (logInfo.success === true) {
+                    remoteService.selectedRepoInitialCommit = logInfo.sinceCommit.id;
+                  }
+                });
+              }
             });
 
-            var reset = function() {
-              scope.selectedRepo = null;
-              scope.selectedRemote = null;
-              scope.selectedText = '*' + $translate('new_remote');
-              scope.remoteName = null;
-              scope.remoteURL = null;
-              scope.remoteUsername = '';
-              scope.remotePassword = '';
-            };
-            reset();
-            scope.selectRemote = function(remote) {
-              if (remote === null) {
-                scope.selectedText = '*' + $translate('new_remote');
-              } else {
-                scope.selectedText = remote.name;
-              }
-              scope.selectedRemote = remote;
-            };
-            scope.addRemote = function(name, url, username, password) {
-              var index = url.lastIndexOf('/') + 1;
-              var info = url.slice(index);
-              var splitinfo = info.split(':');
-              var temp = encodeURIComponent(encodeURIComponent(splitinfo[0])) + ':' +
-                  encodeURIComponent(encodeURIComponent(splitinfo[1]));
-              url = url.replace(info, temp);
-              var options = new GeoGitRemoteOptions();
-              options.remoteName = name;
-              options.remoteURL = url;
-              if (username !== '') {
-                options.username = username;
-              }
-              if (password !== '') {
-                options.password = password;
-              }
-              var result = $q.defer();
-              geogitService.command(scope.selectedRepo.id, 'remote', options).then(function() {
-                var fetchOptions = new GeoGitFetchOptions();
-                fetchOptions.remote = name;
-                geogitService.command(scope.selectedRepo.id, 'fetch', fetchOptions).then(function() {
-                  geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
-                  result.promise.then(function(repo) {
-                    for (var index = 0; index < repo.remotes.length; index++) {
-                      if (repo.remotes[index].name === name) {
-                        repo.remotes[index].active = true;
-                        scope.$broadcast('remoteAdded', repo);
-                      }
-                    }
-                  });
-                }, function() {
-                  geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
-                });
-              });
-            };
-            scope.removeRemote = function(remote) {
-              var options = new GeoGitRemoteOptions();
-              options.remoteName = remote.name;
-              options.remove = true;
-              var result = $q.defer();
-              geogitService.command(scope.selectedRepo.id, 'remote', options).then(function() {
-                geogitService.loadRemotesAndBranches(scope.selectedRepo, result);
-                scope.selectedRemote = null;
-                scope.selectedText = '*' + $translate('new_remote');
-              });
-            };
+            scope.$on('translation_change', function() {
+              remoteService.selectedText = '*' + $translate('new_remote');
+            });
 
-            scope.$on('repoRemoved', reset);
+            scope.$on('repoRemoved', remoteService.reset);
           }
         };
       }

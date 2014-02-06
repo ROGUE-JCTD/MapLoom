@@ -130,6 +130,9 @@ var GeoGitRemoteOptions = function() {
   this.username = null;
   this.password = null;
   this.ping = null;
+  this.update = null;
+  this.newName = null;
+  this.verbose = null;
 };
 
 var GeoGitBranchOptions = function() {

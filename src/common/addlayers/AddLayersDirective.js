@@ -28,7 +28,6 @@
               var length = layersConfig.length;
               for (var index = 0; index < length; index += 1) {
                 var config = layersConfig[index];
-                console.log(config);
                 if (config.add) {
                   var slimConfig = {
                     source: scope.currentServerIndex,

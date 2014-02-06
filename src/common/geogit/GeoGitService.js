@@ -151,11 +151,13 @@
       }
       var remoteOptions = new GeoGitRemoteOptions();
       remoteOptions.list = true;
+      remoteOptions.verbose = true;
       service_.command(repo.id, 'remote', remoteOptions).then(function(response) {
         if (goog.isDefAndNotNull(response.Remote)) {
           var remoteId = 0;
           forEachArrayish(response.Remote, function(remote) {
-            repo.remotes.push({name: remote.name, branches: [], id: remoteId, active: false});
+            repo.remotes.push({name: remote.name, url: remote.url, username: remote.username, branches: [],
+              id: remoteId, active: false});
             remoteId++;
           });
         }

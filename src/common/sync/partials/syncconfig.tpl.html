@@ -1,3 +1,15 @@
+<div id="loading" class="hidden">
+  <div class="loading">
+    <!-- We make this div spin -->
+    <div class="spinner">
+      <!-- Mask of the quarter of circle -->
+      <div class="mask">
+        <!-- Inner masked circle -->
+        <div class="maskedCircle"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal-body">
   <form name="remoteform" class="form-horizontal">
     <div class="form-group">
@@ -5,67 +17,68 @@
         <label class="control-label"><span translate="repo"></span>: </label>
       </div>
       <div class="col-md-10">
-        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.repos">
+        <select class="form-control" ng-model="remoteService.selectedRepo" required ng-options="repo.name for repo in geogitService.repos" ng-disabled="remoteService.editing">
         </select>
       </div>
     </div>
-    <div class="form-group" ng-show="selectedRepo">
+    <div class="form-group" ng-show="remoteService.selectedRepo">
       <div class="col-md-2">
         <label class="control-label"><span translate="remote"></span>: </label>
       </div>
       <div class="col-md-5">
         <div class="btn-group custom-width-100">
-          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
-            <span class="pull-left"> {{selectedText}} </span>
+          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown" ng-disabled="remoteService.editing">
+            <span class="pull-left"> {{remoteService.selectedText}} </span>
             <span class="caret right-and-center"></span>
           </button>
           <ul class="dropdown-menu server-list col-md-12">
-            <li ng-repeat="remote in selectedRepo.remotes"><a ng-click="selectRemote(remote)">{{remote.name}}</a></li>
+            <li ng-repeat="remote in remoteService.selectedRepo.remotes"><a ng-click="remoteService.selectRemote(remote)">{{remote.name}}</a></li>
             <li class="divider"></li>
-            <li><a ng-click="selectRemote(null)" translate="add_remote">Add Remote</a></li>
+            <li><a ng-click="remoteService.selectRemote(null)" translate="new_remote">New Remote</a></li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="form-group" ng-show="selectedRepo && !selectedRemote" ng-class="{'has-error': !remoteform.remotename.$valid}">
+    <hr>
+    <div class="form-group" ng-show="remoteService.selectedRepo" ng-class="{'has-error': !remoteform.remotename.$valid}">
       <div class="col-md-2">
-        <label class="control-label"><span translate="repo_name"></span>: </label>
+        <label class="control-label"><span translate="remote_name"></span>: </label>
       </div>
       <div class="col-md-10">
-        <input id="remote-name" name="remotename" ng-model="remoteName" ng-minlength="1" type="text" class="form-control" placeholder="{{'repo_name' | translate}}" required>
+        <input id="remote-name" name="remotename" ng-model="remoteService.remoteName" ng-minlength="1" type="text" class="form-control" placeholder="{{'remote_name' | translate}}" required  ng-disabled="!remoteService.editing && remoteService.selectedRemote">
       </div>
     </div>
-    <div class="form-group" ng-show="selectedRepo && !selectedRemote" ng-class="{'has-error': !remoteform.remoteurl.$valid}">
+    <div class="form-group" ng-show="remoteService.selectedRepo" ng-class="{'has-error': !remoteform.remoteurl.$valid}">
       <div class="col-md-2">
         <label class="control-label"><span translate="repo_url"></span>: </label>
       </div>
       <div class="col-md-10">
-        <input name="remoteurl" ng-model="remoteURL" type="url" class="form-control" placeholder="http://url/geoserver/geogit/workspace:datastore" required>
+        <input name="remoteurl" ng-model="remoteService.remoteURL" type="url" class="form-control" placeholder="http://url/geoserver/geogit/workspace:datastore" required ng-disabled="!remoteService.editing && remoteService.selectedRemote">
       </div>
     </div>
-    <div class="form-group" ng-show="selectedRepo && !selectedRemote">
+    <div class="form-group" ng-show="remoteService.selectedRepo">
       <div class="col-md-2">
         <label class="control-label"><span translate="repo_username"></span>: </label>
       </div>
       <div class="col-md-4">
-        <input id="remoteUsername" type="text" class="form-control" placeholder="{{'repo_username' | translate}}">
+        <input id="remoteUsername" type="text" ng-model="remoteService.remoteUsername" class="form-control" placeholder="{{'repo_username' | translate}}" ng-disabled="!remoteService.editing && remoteService.selectedRemote">
       </div>
       <div class="col-md-2">
         <label class="control-label"><span translate="repo_password"></span>: </label>
       </div>
       <div class="col-md-4">
-        <input id="remotePassword" type="password" class="form-control" placeholder="{{'repo_password' | translate}}">
+        <input id="remotePassword" type="password" ng-model="remoteService.remotePassword" class="form-control" placeholder="{{'repo_password' | translate}}" ng-disabled="!remoteService.editing && remoteService.selectedRemote">
       </div>
     </div>
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" ng-hide="selectedRemote" ng-class="{'disabled': !remoteform.$valid}"
-          class="btn btn-default" ng-click="addRemote(remoteName, remoteURL, remoteUsername, remotePassword)"
-          translate="add_btn">Add
+  <button type="button" ng-show="remoteService.selectedRemote && !remoteService.editing" class="btn btn-default" ng-click="remoteService.startEditing()" translate="edit_btn">
+    Edit
   </button>
-  <button type="button" ng-show="selectedRemote" class="btn btn-danger" ng-click="removeRemote(selectedRemote)"
+  <button type="button" ng-show="remoteService.selectedRemote && !remoteService.editing" class="btn btn-danger" ng-click="remoteService.removeRemote()"
           translate="remove_btn">Remove
   </button>
-  <button type="button" class="btn btn-default" data-dismiss="modal" translate="done_btn">Done</button>
+  <button type="button" class="btn btn-default" ng-show="remoteService.editing || !remoteService.selectedRemote" ng-disabled="!remoteform.$valid" translate="save_btn" ng-click="finish(true)">Save</button>
+  <button type="button" class="btn btn-default" ng-show="remoteService.editing" ng-click="finish(false)" translate="cancel_btn">Cancel</button>
 </div>

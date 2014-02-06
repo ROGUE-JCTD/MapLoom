@@ -31,6 +31,8 @@
     'new_remote': 'New Remote',
     'add_remote': 'Add Remote',
     'repo_name': 'Repo Name',
+    'remote_name': 'Remote Name',
+    'edit_btn': 'Edit',
     'repo_url': 'URL',
     'repo_username': 'Username',
     'repo_password': 'Password',
@@ -169,7 +171,24 @@
     'abstract': 'Abstract',
     'save_this_map': 'Save this map.',
     'save_failed': 'Save failed',
-    'map_save_failed': 'Map save failed with the following status: {{value}}.'
+    'map_save_failed': 'Map save failed with the following status: {{value}}.',
+    'fetch': 'Fetch',
+    'fetch_error': 'There was an error trying to fetch from the remote, please try again later.',
+    'fetch_timeout': 'Fetch is taking longer than it should, its possible that it is still working so' +
+        ' wait a moment before trying again.',
+    'repo_not_compatible': 'The specifed repository is not a compatible remote with your repository.',
+    'not_a_repo': 'The specified endpoint isn\'t a repository.',
+    'could_not_connect': 'Failed to connect to the specified endpoint.',
+    'remote_add_success': '{{value}} was successfully added.',
+    'remote_edit_success': '{{value}} was successfully changed.',
+    'remote_remove': 'Are you sure you want to remove this remote?',
+    'no_compatible_repos': 'There were no compatible repositories found at the given url.',
+    'continue_btn': 'Continue',
+    'remote_already_exists': 'The specified remote already exists on this repo.',
+    'remote_add_error': 'There was an error trying to add your remote.',
+    'remote_edit_error': 'There was an error trying to edit your remote.',
+    'multiple_compatible_repos': 'There were multiple compatible repositories found. Please choose the one you wish' +
+        ' to use.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

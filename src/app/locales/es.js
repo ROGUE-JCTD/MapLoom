@@ -31,6 +31,8 @@
     'new_remote': 'Nuevo Remoto',
     'add_remote': 'Añadir Remoto',
     'repo_name': 'Nombre',
+    'remote_name': 'Nombre Remoto',
+    'edit_btn': 'Editar',
     'repo_url': 'URL',
     'repo_username': 'Nombre de Usuario',
     'repo_password': 'Contraseña',
@@ -170,7 +172,24 @@
     'abstract': 'es_Abstract',
     'save_this_map': 'es_Save this map.',
     'save_failed': 'es_Save failed',
-    'map_save_failed': 'es_Map save failed with the following status: {{value}}.'
+    'map_save_failed': 'es_Map save failed with the following status: {{value}}.',
+    'fetch': 'es_Fetch',
+    'fetch_error': 'Hubo un error al tratar de buscar desde el control remoto, por favor intente de nuevo más tarde.',
+    'fetch_timeout': 'Fetch está tomando más tiempo de lo que debería, es posible que todavía está trabajando así ' +
+        'que espere un momento antes de volver a intentarlo.',
+    'repo_not_compatible': 'El repositorio specifed no es un mando a distancia compatible con tu repositorio.',
+    'not_a_repo': 'El punto final especificado no es un repositorio.',
+    'could_not_connect': 'Error al conectar con el punto final especificado.',
+    'remote_add_success': '{{value}} se ha agregado correctamente',
+    'remote_edit_success': '{{value}} se ha cambiado correctamente.',
+    'remote_remove': 'Está seguro que desea eliminar este mando a distancia?',
+    'no_compatible_repos': 'No hubo repositorios compatibles se encuentran en la url dada.',
+    'continue_btn': 'Continuar',
+    'remote_already_exists': 'El remoto especificado ya existe en este repo.',
+    'remote_add_error': 'Hubo un error al tratar de agregar el control remoto.',
+    'remote_edit_error': 'Hubo un error al tratar de editar su control remoto.',
+    'multiple_compatible_repos': 'Hubo múltiples repositorios compatibles encontrados. Por favor, elija la que' +
+        ' desee utilizar.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

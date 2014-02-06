@@ -23,11 +23,11 @@
               scope.sourceBranch = null;
               scope.destinationBranch = null;
               element.closest('.modal').modal('hide');
-              $('#loading').addClass('hidden');
+              element.find('#loading').addClass('hidden');
             };
 
             scope.onMerge = function() {
-              $('#loading').toggleClass('hidden');
+              element.find('#loading').toggleClass('hidden');
               var repoId = scope.selectedRepoId;
               geogitService.beginTransaction(repoId).then(function(transaction) {
                 var checkoutOptions = new GeoGitCheckoutOptions();
