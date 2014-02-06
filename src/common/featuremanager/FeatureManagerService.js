@@ -397,7 +397,10 @@
             selectedItem_.geometry_name + '>';
 
         goog.array.forEach(properties, function(property, index) {
-          if (properties[index][1] !== selectedItemProperties_[index][1] && property[1] !== '') {
+          if (property[1] === '') {
+            property[1] = null;
+          }
+          if (properties[index][1] !== selectedItemProperties_[index][1]) {
             propertyXmlPartial += '<feature:' + property[0] + '>' + property[1] + '</feature:' + property[0] + '>';
           }
         });
@@ -478,7 +481,10 @@
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
-          if (properties[index][1] !== selectedItemProperties_[index][1] && property[1] !== '') {
+          if (property[1] === '') {
+            property[1] = null;
+          }
+          if (properties[index][1] !== selectedItemProperties_[index][1]) {
             propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
                 '</wfs:Name><wfs:Value>' + property[1] + '</wfs:Value></wfs:Property>';
           }
