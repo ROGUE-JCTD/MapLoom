@@ -165,14 +165,20 @@
       dragZoomActive = true;
     };
 
-    this.dumpTileCache = function() {
+    this.dumpTileCache = function(layerToDump) {
       var layers = this.getFeatureLayers();
       forEachArrayish(layers, function(layer) {
         if (goog.isDefAndNotNull(layer.getTileSource)) {
-          var tileSource = layer.getTileSource();
-          if (goog.isDefAndNotNull(tileSource)) {
-            if (goog.isDefAndNotNull(tileSource.updateParams)) {
-              tileSource.updateParams({_dc: new Date().getTime()});
+          var metadata = layer.get('metadata');
+          if (goog.isDefAndNotNull(metadata)) {
+            if (goog.isDefAndNotNull(layerToDump) && layerToDump !== metadata.name) {
+              return;
+            }
+            var tileSource = layer.getTileSource();
+            if (goog.isDefAndNotNull(tileSource)) {
+              if (goog.isDefAndNotNull(tileSource.updateParams)) {
+                tileSource.updateParams({_dc: new Date().getTime()});
+              }
             }
           }
         }

@@ -69,6 +69,8 @@
     this.leftName = null;
     this.rightName = null;
     this.schema = null;
+    this.undoable = false;
+    this.layer = null;
 
     this.$get = function($rootScope, mapService, geogitService, dialogService, $translate) {
       service_ = this;
@@ -122,6 +124,8 @@
       service_.leftName = null;
       service_.rightName = null;
       service_.schema = null;
+      service_.layer = null;
+      service_.undoable = false;
     };
 
     this.chooseGeometry = function(panel) {
@@ -192,6 +196,26 @@
       }
     };
 
+    this.getOursId = function() {
+      return ours_;
+    };
+
+    this.getTheirsId = function() {
+      return theirs_;
+    };
+
+    this.getAncestorId = function() {
+      return ancestor_;
+    };
+
+    this.getMergedId = function() {
+      return merged_;
+    };
+
+    this.getRepoId = function() {
+      return repoId_;
+    };
+
     this.getMerges = function() {
       var merges = {};
       if (service_.merged.geometry == service_.left.geometry) {
@@ -239,6 +263,7 @@
           if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
             var splitFeature = feature.id.split('/');
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+              service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
                 service_.schema = layer.get('metadata').schema;
               }
@@ -314,6 +339,9 @@
           if (item.geometry !== true) {
             if (!goog.isDefAndNotNull(item.newvalue)) {
               item.newvalue = item.oldvalue;
+              if (item.changetype === 'REMOVED' && feature.change !== 'REMOVED') {
+                item.newvalue = null;
+              }
             }
             panel.attributes.push(item);
           } else {

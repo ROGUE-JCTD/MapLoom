@@ -8,6 +8,7 @@
   var dialogService_ = null;
   var rootScope_ = null;
   var geogitService_ = null;
+  var historyService_ = null;
   var q_ = null;
   var translate_ = null;
   var conflictService_ = null;
@@ -72,12 +73,13 @@
   };
 
   module.provider('synchronizationService', function() {
-    this.$get = function($timeout, $rootScope, $q, $translate, dialogService,
+    this.$get = function($timeout, $rootScope, $q, $translate, dialogService, historyService,
                          geogitService, conflictService, configService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
       geogitService_ = geogitService;
+      historyService_ = historyService;
       conflictService_ = conflictService;
       translate_ = $translate;
       configService_ = configService;
@@ -173,6 +175,7 @@
           transaction.command('push', pushOptions).then(function() {
             transaction.finalize().then(function() {
               syncing = false;
+              historyService_.refreshHistory();
               result.resolve(link);
             }, function(endTransactionFailed) {
               // TODO: Check for endTransaction conflicts

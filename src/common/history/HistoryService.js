@@ -12,7 +12,6 @@
   module.provider('historyService', function() {
     this.log = [];
     this.title = 'History';
-    this.currentPage = 0;
     this.nextPage = false;
     this.entriesPerPage = 10;
     this.layer = null;
@@ -47,15 +46,23 @@
     this.getMoreHistory = function() {
       if (service_.fetchingHistory === false) {
         service_.fetchingHistory = true;
-        service_.currentPage++;
         getHistoryInternal();
+      }
+    };
+
+    this.refreshHistory = function(layerName) {
+      if (goog.isDefAndNotNull(service_.layer) && service_.fetchingHistory === false) {
+        if (goog.isDefAndNotNull(layerName) && service_.layer.get('metadata').name !== layerName) {
+          return;
+        }
+        service_.fetchingHistory = true;
+        getHistoryInternal(true);
       }
     };
 
     this.clearHistory = function() {
       service_.fetchingHistory = false;
       service_.log = [];
-      service_.currentPage = 0;
       service_.nextPage = false;
       service_.layer = null;
       service_.repoId = null;
@@ -68,11 +75,19 @@
     };
   });
 
-  function getHistoryInternal() {
+  function getHistoryInternal(_refresh) {
+    var refresh = _refresh;
+    if (!goog.isDefAndNotNull(refresh)) {
+      refresh = false;
+    }
     if (goog.isDefAndNotNull(service_.layer)) {
       var logOptions = new GeoGitLogOptions();
-      logOptions.show = service_.entriesPerPage;
-      logOptions.page = service_.currentPage;
+      if (refresh && service_.log.length > 0) {
+        // for refresh we will limit the log by specifying since and until
+        logOptions.show = 1000;
+      } else {
+        logOptions.show = service_.entriesPerPage;
+      }
       logOptions.firstParentOnly = 'true';
       logOptions.summarize = true;
       var thisTransaction = service_.historyTransaction;
@@ -80,6 +95,12 @@
       if (goog.isDefAndNotNull(metadata)) {
         if (goog.isDefAndNotNull(metadata.branchName)) {
           logOptions.until = metadata.branchName;
+        }
+        if (service_.log.length > 0 && !refresh) {
+          logOptions.until = getFirstParent(service_.log[service_.log.length - 1]);
+        }
+        if (refresh && service_.log.length > 0) {
+          logOptions.since = service_.log[0].id;
         }
         if (goog.isDefAndNotNull(metadata.repoId) && goog.isDefAndNotNull(metadata.nativeName)) {
           service_.repoId = metadata.repoId;
@@ -113,18 +134,36 @@
                   removed: {width: removed / totalChanges * 100 + '%'}
                 };
               });
+              var numCommits = 0;
               if (goog.isArray(response.commit)) {
-                service_.log = service_.log.concat(response.commit);
+                if (refresh) {
+                  // Insert the array at the beginning of the log
+                  Array.prototype.splice.apply(service_.log, [0, 0].concat(response.commit));
+                  numCommits = response.commit.length;
+                } else {
+                  service_.log = service_.log.concat(response.commit);
+                }
               } else {
-                service_.log.push(response.commit);
+                if (refresh) {
+                  service_.log.splice(0, 0, response.commit);
+                  numCommits = 1;
+                } else {
+                  service_.log.push(response.commit);
+                }
               }
-              pulldownService_.showHistoryPanel();
               rootScope_.$broadcast('history_fetched');
+              if (refresh) {
+                rootScope_.$broadcast('history-refreshed', numCommits);
+              } else {
+                pulldownService_.showHistoryPanel();
+              }
             }
-            if (goog.isDefAndNotNull(response.nextPage)) {
-              service_.nextPage = response.nextPage;
-            } else {
-              service_.nextPage = false;
+            if (!refresh) {
+              if (goog.isDefAndNotNull(response.nextPage)) {
+                service_.nextPage = response.nextPage;
+              } else {
+                service_.nextPage = false;
+              }
             }
             service_.fetchingHistory = false;
           }, function(reject) {
@@ -139,6 +178,17 @@
         }
       }
     }
+  }
+
+  function getFirstParent(commit) {
+    if (goog.isDefAndNotNull(commit.parents) && goog.isDefAndNotNull(commit.parents.id)) {
+      if (goog.isArray(commit.parents.id)) {
+        return commit.parents.id[0];
+      } else {
+        return commit.parents.id;
+      }
+    }
+    return null;
   }
 
 }());

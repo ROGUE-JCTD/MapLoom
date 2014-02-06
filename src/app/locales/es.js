@@ -189,7 +189,16 @@
     'remote_add_error': 'Hubo un error al tratar de agregar el control remoto.',
     'remote_edit_error': 'Hubo un error al tratar de editar su control remoto.',
     'multiple_compatible_repos': 'Hubo múltiples repositorios compatibles encontrados. Por favor, elija la que' +
-        ' desee utilizar.'
+        ' desee utilizar.',
+    'undo_changes': 'Deshacer Cambios',
+    'newer_feature_version': 'Este elemento se ha modificado desde la presente notificación fue publicada. ' +
+        '¿Quieres comparar con la versión más reciente?',
+    'undo_successful': 'Deshacer Exitosa',
+    'undo_no_changes': 'El deshacer resultó en ningún cambio.',
+    'fixed_feature': 'Elemento Fijo',
+    'undo_conflicts': 'Deshacer Conflictos',
+    'changes_undone': 'Los cambios en el elemento se ha deshecho con éxito.',
+    'reverted_changes_to_feature': 'Revertidos los cambios realizados en {{feature}}.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

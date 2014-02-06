@@ -6,6 +6,7 @@
   var mapService_ = null;
   var rootScope_ = null;
   var translate_ = null;
+  var historyService_ = null;
   var http_ = null;
   var exclusiveModeService_ = null;
   var dialogService_ = null;
@@ -25,11 +26,13 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, $translate, mapService, $compile, $http, exclusiveModeService, dialogService) {
+    this.$get = function($rootScope, $translate, mapService, $compile, $http, exclusiveModeService, dialogService,
+                         historyService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
+      historyService_ = historyService;
       translate_ = $translate;
       http_ = $http;
       exclusiveModeService_ = exclusiveModeService;
@@ -649,6 +652,7 @@
         '</wfs:Transaction>';
 
     var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
+    var layerName = selectedLayer_.get('metadata').name;
     http_.post(url, wfsRequestData).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
       if (postType === wfsPostTypes_.INSERT) {
@@ -669,7 +673,8 @@
       if (postType === wfsPostTypes_.DELETE) {
         service_.hide();
       }
-      mapService_.dumpTileCache();
+      historyService_.refreshHistory(layerName);
+      mapService_.dumpTileCache(layerName);
     }).error(function(data, status, headers, config) {
       console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
     });

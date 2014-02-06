@@ -188,7 +188,16 @@
     'remote_add_error': 'There was an error trying to add your remote.',
     'remote_edit_error': 'There was an error trying to edit your remote.',
     'multiple_compatible_repos': 'There were multiple compatible repositories found. Please choose the one you wish' +
-        ' to use.'
+        ' to use.',
+    'undo_changes': 'Undo Changes',
+    'newer_feature_version': 'This feature has been modified since this notification was posted.' +
+        '  Would you like to compare with the newest version?',
+    'undo_successful': 'Undo Successful',
+    'undo_no_changes': 'The merge resulted in no changes.',
+    'fixed_feature': 'Fixed Feature',
+    'undo_conflicts': 'Undo Conflicts',
+    'changes_undone': 'The changes to the feature have been successfully undone.',
+    'reverted_changes_to_feature': 'Reverted changes made to {{feature}}.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

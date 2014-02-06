@@ -3,6 +3,7 @@
 
   var mapService_ = null;
   var dialogService_ = null;
+  var historyService_ = null;
   var translate_ = null;
   var notificationService_ = null;
   var geogitService_ = null;
@@ -10,11 +11,12 @@
   var service_ = null;
 
   module.provider('refreshService', function() {
-    this.$get = function(mapService, $translate, notificationService, geogitService,
+    this.$get = function(mapService, $translate, notificationService, geogitService, historyService,
         dialogService, featureDiffService) {
       mapService_ = mapService;
       notificationService_ = notificationService;
       geogitService_ = geogitService;
+      historyService_ = historyService;
       dialogService_ = dialogService;
       translate_ = $translate;
       featureDiffService_ = featureDiffService;
@@ -32,7 +34,6 @@
     //recursive helper function for refreshLayers
     function refresh(mapService) {
       if (service_.autoRefresh) {
-        mapService.dumpTileCache();
         var layers = mapService.getFeatureLayers();
         forEachArrayish(layers, function(layer) {
           if (goog.isDefAndNotNull(layer.get('metadata').isGeoGit)) {
@@ -60,17 +61,10 @@
                   //calculate how many were added, modded, or deleted
                   var added = 0, modified = 0, removed = 0;
                   var featureList = [];
-                  var fidlist = [];
 
                   forEachArrayish(diffResponse.Feature, function(feature) {
                     //check if the feature is in this layer, if not then skip it
-                    if (feature.id.split('/')[0] === layer.get('metadata').label) {
-                      if (goog.array.contains(fidlist, feature.id)) {
-                        console.log('Duplicate features detected: ', options, diffResponse);
-                      } else {
-                        fidlist.push(feature.id);
-                      }
-
+                    if (feature.id.split('/')[0] === layer.get('metadata').nativeName) {
                       featureList.push(feature);
 
                       switch (feature.change) {
@@ -110,6 +104,9 @@
                     }
                     notificationText += ' ' + translate_('in_lower_case') + ' ' + layer.get('metadata').label;
 
+                    mapService.dumpTileCache(layer.get('metadata').name);
+                    historyService_.refreshHistory(layer.get('metadata').name);
+
                     notificationService_.addNotification({
                       text: notificationText,
                       read: false,
@@ -121,13 +118,42 @@
                         }
                       ],
                       callback: function(feature) {
-                        featureDiffService_.leftName = 'old';
-                        featureDiffService_.rightName = 'new';
-                        featureDiffService_.setFeature(
-                            feature.original, oldCommitId,
-                            idResponse, oldCommitId,
-                            null, layer.get('metadata').repoId);
-                        $('#feature-diff-dialog').modal('show');
+                        // check to see if there is a newer version of this feature
+                        var logOptions = new GeoGitLogOptions();
+                        logOptions.firstParentOnly = true;
+                        logOptions.path = feature.original.id;
+                        logOptions.show = 1;
+                        logOptions.until = layer.get('metadata').branchName;
+                        logOptions.since = idResponse;
+                        var doFeatureDiff = function(commitId) {
+                          featureDiffService_.undoable = true;
+                          featureDiffService_.leftName = 'old';
+                          featureDiffService_.rightName = 'new';
+                          featureDiffService_.setFeature(
+                              feature.original, oldCommitId,
+                              commitId, oldCommitId,
+                              null, layer.get('metadata').repoId);
+                          $('#feature-diff-dialog').modal('show');
+                        };
+                        geogitService_.command(layer.get('metadata').repoId, 'log', logOptions)
+                            .then(function(response) {
+                              if (goog.isDefAndNotNull(response.commit)) {
+                                dialogService_.warn(translate_('warning'), translate_('newer_feature_version'),
+                                    [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
+                                  switch (button) {
+                                    case 0:
+                                      doFeatureDiff(response.commit.id);
+                                      break;
+                                    case 1:
+                                      doFeatureDiff(idResponse);
+                                      break;
+                                  }
+                                });
+                              } else {
+                                doFeatureDiff(idResponse);
+                              }
+                            }, function(reject) {
+                            });
                       }
                     });
                   }

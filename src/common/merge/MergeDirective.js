@@ -3,7 +3,7 @@
   var module = angular.module('loom_merge_directive', []);
 
   module.directive('loomMerge',
-      function($translate, geogitService, dialogService, notificationService,
+      function($translate, geogitService, dialogService, notificationService, historyService,
                conflictService, mapService, featureDiffService, configService) {
         return {
           templateUrl: 'merge/partials/merge.tpl.html',
@@ -62,6 +62,7 @@
                               }
                             ],
                             callback: function(feature) {
+                              featureDiffService.undoable = true;
                               featureDiffService.leftName = leftName;
                               featureDiffService.rightName = rightName;
                               featureDiffService.setFeature(
@@ -72,6 +73,7 @@
                             }
                           });
                           scope.cancel();
+                          historyService.refreshHistory();
                           mapService.dumpTileCache();
                         }, function(endTransactionFailure) {
                           if (goog.isObject(endTransactionFailure) &&

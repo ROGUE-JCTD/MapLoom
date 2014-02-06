@@ -5,6 +5,7 @@
   var featureDiffService_ = null;
   var diffService_ = null;
   var pulldownService_ = null;
+  var historyService_ = null;
   var service_ = null;
   var mapService_ = null;
   var dialogService_ = null;
@@ -24,11 +25,12 @@
     this.transaction = null;
     this.mergeBranch = null;
 
-    this.$get = function($rootScope, $location, $translate, diffService, pulldownService, configService,
+    this.$get = function($rootScope, $location, $translate, diffService, pulldownService, configService, historyService,
                          featureDiffService, mapService, dialogService, geogitService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
       featureDiffService_ = featureDiffService;
+      historyService_ = historyService;
       mapService_ = mapService;
       dialogService_ = dialogService;
       geogitService_ = geogitService;
@@ -132,6 +134,7 @@
     var fid = feature.layer + '/' + feature.feature;
     for (var i = 0; i < service_.features.length; i++) {
       if (fid === service_.features[i].id) {
+        featureDiffService_.undoable = false;
         featureDiffService_.leftName = service_.ourName;
         featureDiffService_.rightName = service_.theirName;
         featureDiffService_.setFeature(
@@ -160,6 +163,7 @@
               service_.transaction = null;
               service_.abort();
               pulldownService_.defaultMode();
+              historyService_.refreshHistory();
               mapService_.dumpTileCache();
             }, function(endTransactionFailure) {
               if (goog.isObject(endTransactionFailure) &&

@@ -19,6 +19,13 @@
               }
             });
 
+            scope.$on('history-refreshed', function(event, numInserted) {
+              if (raw.scrollTop !== 0) {
+                var height = scrollPane.find('.list-group-item')[0].offsetHeight - 1;
+                raw.scrollTop = raw.scrollTop + height * numInserted;
+              }
+            });
+
             function updateVariables(newLog, oldLog) {
               if (goog.isDefAndNotNull(oldLog) && oldLog.length === 0) {
                 $timeout(function() {

@@ -19,8 +19,7 @@
               <div ng-switch-when="xsd:dateTime" ng-class="{
                         'attr-added': attribute.changetype == 'ADDED',
                         'attr-modified': attribute.changetype == 'MODIFIED',
-                        'attr-removed' : attribute.chantetype == 'REMOVED',
-                        'attr-removed' : panel.geometry.changetype == 'REMOVED'
+                        'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                       }">
                 <datetimepicker ng-disabled="!isMergePanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
                                 seperate-time="false" date-object="attribute" date-key="'newvalue'"></datetimepicker>
@@ -40,8 +39,7 @@
                 <input ng-model="attribute.newvalue" type="text" class="form-control attr-none" disabled ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.chantetype == 'REMOVED',
-                      'attr-removed' : panel.geometry.changetype == 'REMOVED',
+                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED',
                       'form-control' : attribute.editable
                     }"/>
               </div>
@@ -51,8 +49,7 @@
                        ng-change="validateInteger(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.chantetype == 'REMOVED',
-                      'attr-removed' : panel.geometry.changetype == 'REMOVED'
+                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }"/>
               </div>
               <div ng-switch-when="xsd:double" ng-class="{'has-error': !attribute.valid}">
@@ -61,8 +58,7 @@
                        ng-change="validateDouble(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.chantetype == 'REMOVED',
-                      'attr-removed' : panel.geometry.changetype == 'REMOVED'
+                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }"/>
               </div>
               <input ng-switch-default ng-model="attribute.newvalue" type="text" class="form-control attr-none"
@@ -70,8 +66,7 @@
                      ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.chantetype == 'REMOVED',
-                      'attr-removed' : panel.geometry.changetype == 'REMOVED'
+                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }">
             </div>
   </span>

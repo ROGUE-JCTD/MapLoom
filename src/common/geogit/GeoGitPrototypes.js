@@ -167,7 +167,7 @@ var GeoGitDiffOptions = function() {
 var GeoGitLogOptions = function() {
   this.limit = null;
   this.offset = null;
-  this.paths = null;
+  this.path = null;
   this.since = null;
   this.until = null;
   this.sinceTime = null;
@@ -177,4 +177,14 @@ var GeoGitLogOptions = function() {
   this.firstParentOnly = null;
   this.summarize = null;
   this.returnRange = null;
+};
+
+var GeoGitRevertFeatureOptions = function() {
+  this.authorName = null;
+  this.authorEmail = null;
+  this.commitMessage = null;
+  this.mergeMessage = null;
+  this.oldCommitId = null;
+  this.newCommitId = null;
+  this.path = null;
 };

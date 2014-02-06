@@ -20,4 +20,8 @@
 <div class="modal-footer">
   <button type="button" class="btn btn-default" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
   <button ng-if="editable" type="button" class="btn btn-primary" ng-click="save()">{{'save_btn' | translate}}</button>
+  <button ng-if="featureDiffService.undoable" ng-disabled="!undoEnabled" type="button" class="btn btn-danger pull-left" ng-click="undoChanges()"><i
+      class="glyphicon glyphicon-remove"></i> {{'undo_changes' | translate}}
+  </button>
+
 </div>
