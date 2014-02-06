@@ -10,9 +10,9 @@
         <div id="legend-panel" class="panel in legend-panel-body">
             <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getLayers();">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
-                    data-target="{{'#' + layer.get('metadata').label + 'legend'}}">{{layer.get('metadata').label}}
+                    data-target="{{'#' + layer.get('metadata').title + 'legend'}}">{{layer.get('metadata').title}}
                 </div>
-                <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('metadata').label + 'legend'}}">
+                <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('metadata').title + 'legend'}}">
                     <img ng-src="{{getLegendUrl(layer)}}">
                 </div>
             </div>

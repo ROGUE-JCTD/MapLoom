@@ -12,7 +12,7 @@
       <ul class="list-group list-group-info-box">
         <li ng-repeat="layerInfo in featureManagerService.getSelectedItem()" class="list-group-item-info-box"
             ng-click="featureManagerService.show(layerInfo)">
-          <div>{{layerInfo.layer.get('metadata').label}}</div>
+          <div>{{layerInfo.layer.get('metadata').title}}</div>
         </li>
       </ul>
     </div>

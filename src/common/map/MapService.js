@@ -269,7 +269,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            label: config.title
+            title: config.title
           },
           source: new ol.source.OSM()
         });
@@ -289,7 +289,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            label: config.title
+            title: config.title
           },
           source: new ol.source.BingMaps(sourceParams)
         });
@@ -304,7 +304,7 @@
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
-              label: config.title
+              title: config.title
             },
             source: source
           });
@@ -326,7 +326,7 @@
           metadata: {
             serverId: server.id,
             url: goog.isDefAndNotNull(url) ? url : undefined,
-            label: config.title,
+            title: config.title,
             name: config.name,
             editable: true
           },
@@ -358,8 +358,7 @@
 
         var meta = layer.get('metadata');
         meta.config = config;
-        //goog.object.extend(meta, config, {});
-        //layer.set('metadata', meta);
+        meta.nameUniqueAndSafe = meta.name.replace(/\t/g, '_tab_').replace(/\s/g, '_space_').replace(/:/g, '_col_');
 
         if (!goog.isDefAndNotNull(doNotAddToMap)) {
           this.map.addLayer(layer);
@@ -381,7 +380,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.OSM()
         });
@@ -389,7 +388,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.MapQuestOpenAerial()
         });
@@ -397,7 +396,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.MapQuestOSM()
         });
@@ -483,7 +482,7 @@
         /*{
           name: layer.getSource().getParams().LAYERS,
           source: layer.get('metadata').serverId.toString(),
-          title: layer.get('label')
+          title: layer.get('title')
         }*/
       });
 
@@ -620,7 +619,7 @@
               console.log('A4');
               if (conf.name === layerConfig.name) {
                 conf.title = layerConfig.title;
-                layer.label = layerConfig.title;
+                layer.title = layerConfig.title;
                 console.log('##### updated title: ', layerConfig.title, layer);
               }
             }

@@ -57,7 +57,7 @@
             };
 
             scope.showHistory = function(layer) {
-              historyService.setTitle($translate('history_for', {value: layer.get('metadata').label}));
+              historyService.setTitle($translate('history_for', {value: layer.get('metadata').title}));
               historyService.getHistory(layer);
             };
 

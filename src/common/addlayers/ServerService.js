@@ -248,35 +248,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
     };
-    /*
-    // Note: when a layer is added to a map through the add layers dialog, the title of the layer returned
-    //       from getcapabilities is used. As a result, when a map is saved, it has a title and when it is
-    //       opened again the title is passed in. This is not the case, however, when a map is created from
-    //       a layer in geonode. The layer has a name but not a title. The following segment tries to update
-    //       the title of the layer if a layer added to the ap doesn't have one.
-    this.updateLayerTitles = function(serverIndex, layersConfig) {
-
-      var layers = mapService_.getLayers(true, true); // get hidden and imagery layers as well
-
-      for (var index = 0; index < layersConfig.length; index++) {
-        var layerConfig = layersConfig[index];
-        for (var index2 = 0; index2 < layers.length; index2++) {
-          var layer = layers[index2];
-          var layerMetadate = layer.get('metadata');
-          if (goog.isDefAndNotNull(layerMetadate) &&
-              goog.isDefAndNotNull(layerMetadate.config)) {
-            var conf = layerMetadate.config;
-            if (conf.source === serverIndex) {
-              if (conf.name === layerConfig.name) {
-                conf.title = layerConfig.title;
-                layer.label = layerConfig.title;
-              }
-            }
-          }
-        }
-      }
-    };
-    */
 
   });
 }());
