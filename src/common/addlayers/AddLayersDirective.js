@@ -47,8 +47,7 @@
 
             scope.filterAddedLayers = function(layerConfig) {
               var show = true;
-              //Note: this function can get called a lot.
-              var layers = mapService.getLayers();
+              var layers = mapService.getLayers(true, true);
               for (var index = 0; index < layers.length; index++) {
                 var layer = layers[index];
                 if (goog.isDefAndNotNull(layer.get('metadata')) &&

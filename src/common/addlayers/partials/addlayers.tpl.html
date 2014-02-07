@@ -14,8 +14,8 @@
           </ul>
         </div>
         <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
-                type="button" ng-class="{'disabled': currentServerIndex==1}"
-                ng-click="serverService.refreshLayersConfig(currentServerIndex)" class="btn btn-default">
+                type="button"
+                ng-click="serverService.populateLayersConfig(currentServerIndex, true)" class="btn btn-default">
           <i class="glyphicon glyphicon-repeat"></i>
         </button>
       </div>

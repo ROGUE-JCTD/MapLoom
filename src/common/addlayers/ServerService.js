@@ -217,10 +217,14 @@ var SERVER_SERVICE_USE_PROXY = true;
             {title: 'MapQuestHybrid', name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
             {title: 'MapQuestOSM', name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
           ];
+        } else if (server.ptype === 'gxp_osmsource') {
+          server.layersConfig = [
+            {title: 'OpenStreetMap', name: 'mapnik'}
+          ];
         } else {
           console.log('---- Sending GetCapabilities.server: ', server, ', index:', index);
           if (!goog.isDefAndNotNull(server.url)) {
-            dialogService_.error(translate_('error'), translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+            dialogService_.error(translate_('error'), translate_('server_url_not_specified'));
             return;
           }
 
