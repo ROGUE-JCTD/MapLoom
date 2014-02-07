@@ -237,17 +237,14 @@ var SERVER_SERVICE_USE_PROXY = true;
                   goog.isDefAndNotNull(response.capability.layers)) {
                 server.layersConfig = response.capability.layers;
                 rootScope_.$broadcast('layers-loaded', index);
-
-                // catch a rare case when layer doesn't have a title
-                //service_.updateLayerTitles(index, server.layersConfig);
               }
             } else {
               dialogService_.error(translate_('error'),
-                  translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+                  translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
             }
           }, function(xhr) {
             dialogService_.error(translate_('error'),
-                translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
           });
         }
       }
