@@ -1,3 +1,15 @@
+<div id="loading" class="hidden">
+  <div class="loading">
+    <!-- We make this div spin -->
+    <div class="spinner">
+      <!-- Mask of the quarter of circle -->
+      <div class="mask">
+        <!-- Inner masked circle -->
+        <div class="maskedCircle"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal-body">
   <form name="syncform" class="form-horizontal">
     <div class="form-group" ng-class="{'has-error': !syncform.syncname.$valid}">
@@ -37,7 +49,7 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
+  <button type="button" class="btn btn-default" translate="close_btn" ng-click="dismiss()">Close</button>
   <button type="button" class="btn btn-primary"
           ng-click="createLink(name, selectedRepo, selectedRemote, localBranch, remoteBranch)"
           ng-class="{'disabled': !syncform.$valid}" translate="add_btn">Add</button>

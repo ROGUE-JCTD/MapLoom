@@ -199,7 +199,9 @@
     'fixed_feature': 'Elemento Fijo',
     'undo_conflicts': 'Deshacer Conflictos',
     'changes_undone': 'Los cambios en el elemento se ha deshecho con éxito.',
-    'reverted_changes_to_feature': 'Revertidos los cambios realizados en {{feature}}.'
+    'reverted_changes_to_feature': 'Revertidos los cambios realizados en {{feature}}.',
+    'remote_not_fetched': 'Parecería como si el mando a distancia que ha seleccionado no ha sido traidos del.' +
+        ' Ahora vamos a tratar de ir a buscar los datos que necesita para crear vínculos.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

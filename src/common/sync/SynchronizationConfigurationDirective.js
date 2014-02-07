@@ -28,6 +28,13 @@
               }
             };
 
+            var parentModal = element.closest('.modal');
+            var closeModal = function(event, element) {
+              if (parentModal[0] === element[0]) {
+                remoteService.reset();
+              }
+            };
+
             scope.$watch('remoteService.selectedRepo', function() {
               if (goog.isDefAndNotNull(remoteService.selectedRepo)) {
                 var logOptions = new GeoGitLogOptions();
@@ -45,6 +52,7 @@
             });
 
             scope.$on('repoRemoved', remoteService.reset);
+            scope.$on('modal-closed', closeModal);
           }
         };
       }

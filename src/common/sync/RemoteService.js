@@ -8,6 +8,7 @@
   var service_;
   var dialogService_;
   var geogitService_;
+  var synchronizationService_;
 
   var counter = 0;
 
@@ -25,7 +26,7 @@
     this.compatibleRepos = [];
     this.selectedRepoInitialCommit = null;
 
-    this.$get = function($rootScope, $http, $q, $translate, dialogService, geogitService) {
+    this.$get = function($rootScope, $http, $q, $translate, dialogService, geogitService, synchronizationService) {
       q_ = $q;
       rootScope_ = $rootScope;
       translate_ = $translate;
@@ -33,6 +34,7 @@
       service_ = this;
       dialogService_ = dialogService;
       geogitService_ = geogitService;
+      synchronizationService_ = synchronizationService;
 
       service_.selectedText = '*' + $translate('new_remote');
 
@@ -114,6 +116,7 @@
             var result = q_.defer();
             geogitService_.command(service_.selectedRepo.id, 'remote', options).then(function() {
               geogitService_.loadRemotesAndBranches(service_.selectedRepo, result);
+              synchronizationService_.remoteRemoved(service_.selectedRepo, service_.selectedRemote);
               service_.selectRemote(null);
             });
             break;
@@ -148,7 +151,7 @@
             for (var index = 0; index < repo.remotes.length; index++) {
               if (repo.remotes[index].name === service_.remoteName) {
                 repo.remotes[index].active = true;
-                rootScope_.$broadcast('remoteAdded', repo);
+                rootScope_.$broadcast('remoteAdded', repo, service_.remoteName);
               }
             }
             dialogService_.open(translate_('remote'), successMessage, [translate_('btn_ok')], false);

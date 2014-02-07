@@ -10,7 +10,7 @@
           templateUrl: 'sync/partials/synclinks.tpl.html',
           link: function(scope) {
             scope.syncService = synchronizationService;
-            var createDefaultLinks = function(event, repo) {
+            var createDefaultLinks = function(event, repo, remote) {
               var localMaster = false;
               var index;
               for (index = 0; index < repo.branches.length; index++) {
@@ -20,7 +20,8 @@
                 }
               }
               for (index = 0; index < repo.remotes.length; index++) {
-                if (repo.remotes[index].branches.length > 0) {
+                if (repo.remotes[index].branches.length > 0 && (!goog.isDefAndNotNull(remote) ||
+                    remote === repo.remotes[index].name)) {
                   for (var branchIndex = 0; branchIndex < repo.remotes[index].branches.length; branchIndex++) {
                     if (repo.remotes[index].branches[branchIndex] === 'master' && localMaster) {
                       scope.syncService.addLink(new SynchronizationLink(repo.name + ':' + repo.remotes[index].name,

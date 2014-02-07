@@ -86,11 +86,15 @@
       timeout_ = $timeout;
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
+        var linksToRemove = [];
         goog.array.forEach(synchronizationLinks_, function(link) {
           if (link.getRepo().id === repo.id) {
-            service_.removeLink(link.id);
+            linksToRemove.push(link.id);
           }
         });
+        for (var index = 0; index < linksToRemove.length; index++) {
+          service_.removeLink(linksToRemove[index]);
+        }
       });
       return this;
     };
@@ -105,7 +109,7 @@
 
     this.addLink = function(link) {
       for (var index = 0; index < synchronizationLinks_.length; index++) {
-        if (synchronizationLinks_[index].equals(link)) {
+        if (synchronizationLinks_[index].equals(link) || link.name === synchronizationLinks_[index].name) {
           dialogService_.open(translate_('add_sync'), translate_('link_already_exists'), [translate_('btn_ok')], false);
           return;
         }
@@ -132,6 +136,18 @@
           clearTimeout(statusCheckTimeout);
           statusCheckTimeout = null;
         }
+      }
+    };
+
+    this.remoteRemoved = function(repo, remote) {
+      var linksToRemove = [];
+      goog.array.forEach(synchronizationLinks_, function(link) {
+        if (link.getRepo().id === repo.id && link.getRemote().name === remote.name) {
+          linksToRemove.push(link.id);
+        }
+      });
+      for (var index = 0; index < linksToRemove.length; index++) {
+        service_.removeLink(linksToRemove[index]);
       }
     };
 
