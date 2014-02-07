@@ -52,7 +52,7 @@
 
     this.refreshHistory = function(layerName) {
       if (goog.isDefAndNotNull(service_.layer) && service_.fetchingHistory === false) {
-        if (goog.isDefAndNotNull(layerName) && service_.layer.get('metadata').name !== layerName) {
+        if (goog.isDefAndNotNull(layerName) && service_.layer.get('metadata').uniqueID !== layerName) {
           return;
         }
         service_.fetchingHistory = true;

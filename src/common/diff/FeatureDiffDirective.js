@@ -99,7 +99,7 @@
 
             scope.undoChanges = function() {
               var branch = featureDiffService.layer.get('metadata').branchName;
-              var layerName = featureDiffService.layer.get('metadata').name;
+              var layerName = featureDiffService.layer.get('metadata').uniqueID;
               var options = new GeoGitRevertFeatureOptions();
               options.authorName = configService.configuration.userprofilename;
               options.authorEmail = configService.configuration.userprofileemail;

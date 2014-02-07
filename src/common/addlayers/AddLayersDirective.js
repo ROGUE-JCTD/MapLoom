@@ -20,10 +20,10 @@
             scope.setCurrentServerIndex(serverService.getServerLocalGeoserver().id);
 
             scope.addLayers = function(layersConfig) {
-              var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
+              // var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
 
               // if the server is not a typical server and instead the hardcoded ones
-              console.log('---- addLayers. currentServer: ', currentServer, ', layersConfig', layersConfig);
+              // console.log('---- addLayers. currentServer: ', currentServer, ', layersConfig', layersConfig);
               var length = layersConfig.length;
               for (var index = 0; index < length; index += 1) {
                 var config = layersConfig[index];
