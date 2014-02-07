@@ -104,8 +104,8 @@
                     }
                     notificationText += ' ' + translate_('in_lower_case') + ' ' + layer.get('metadata').title;
 
-                    mapService.dumpTileCache(layer.get('metadata').name);
-                    historyService_.refreshHistory(layer.get('metadata').name);
+                    mapService.dumpTileCache(layer.get('metadata').uniqueID);
+                    historyService_.refreshHistory(layer.get('metadata').uniqueID);
 
                     notificationService_.addNotification({
                       text: notificationText,

@@ -175,7 +175,7 @@
         if (goog.isDefAndNotNull(layer.getTileSource)) {
           var metadata = layer.get('metadata');
           if (goog.isDefAndNotNull(metadata)) {
-            if (goog.isDefAndNotNull(layerToDump) && layerToDump !== metadata.name) {
+            if (goog.isDefAndNotNull(layerToDump) && layerToDump !== metadata.uniqueID) {
               return;
             }
             var tileSource = layer.getTileSource();
@@ -260,9 +260,8 @@
     };
 
     this.addLayer = function(config, doNotAddToMap) {
-      //console.log('server for layer: ', server);
       var server = serverService_.getServerByIndex(config.source);
-      console.log('server for layer: ', server);
+      //console.log('server for layer: ', server);
       var layer = null;
 
       if (server.ptype === 'gxp_osmsource') {
@@ -284,7 +283,7 @@
           goog.object.extend(sourceParams, config.sourceParams);
         }
 
-        console.log(sourceParams, config.sourceParams, {});
+        // console.log(sourceParams, config.sourceParams, {});
 
         layer = new ol.layer.Tile({
           metadata: {
@@ -346,7 +345,7 @@
             }
           })
         });
-        console.log('new layer: ', layer);
+        // console.log('new layer: ', layer);
         geogitService_.isGeoGit(layer);
         //console.log(geogitService_);
       }
@@ -358,10 +357,8 @@
 
         var meta = layer.get('metadata');
         meta.config = config;
-        // replace all special characters in the name of the layer with two '_' chars. this name can be used as
-        // target id, element id, attrib, etc without running into issues. it is also prepended with serverid
-        // so that multiple layers with the same exact name from different servers resolve to a unique id
-        meta.nameUniqueAndSafe = ('server' + meta.serverId + '_' + meta.name).replace(/[^a-zA-Z0-9]/g, '__');
+        // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
+        meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
         if (!goog.isDefAndNotNull(doNotAddToMap)) {
           this.map.addLayer(layer);
@@ -369,7 +366,7 @@
       } else {
         console.log('====[Error: could not load layer: ', config);
       }
-      console.log('---addLayer layer', layer);
+      // console.log('---addLayer layer', layer);
       return layer;
     };
 

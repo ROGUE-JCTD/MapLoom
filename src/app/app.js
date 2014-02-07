@@ -11,13 +11,10 @@
   ]);
 
   module.run(function run() {
-    console.log('---- app.js.run');
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
                                                 refreshService) {
-        console.log('---- ngBoilerplate.controller.');
-
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;

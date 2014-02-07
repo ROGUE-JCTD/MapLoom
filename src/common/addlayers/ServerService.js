@@ -190,7 +190,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.populateLayersConfig = function(index, force) {
       var server = servers[index];
-      console.log('---- populateLayersConfig. server', server);
+      // console.log('---- populateLayersConfig. server', server);
 
       if (!goog.isDefAndNotNull(server)) {
         return;

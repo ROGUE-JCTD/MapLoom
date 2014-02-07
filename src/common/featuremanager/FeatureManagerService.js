@@ -653,7 +653,7 @@
         '</wfs:Transaction>';
 
     var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
-    var layerName = selectedLayer_.get('metadata').name;
+    var layerName = selectedLayer_.get('metadata').uniqueID;
     http_.post(url, wfsRequestData).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
       if (postType === wfsPostTypes_.INSERT) {
