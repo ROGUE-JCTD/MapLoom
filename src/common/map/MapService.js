@@ -18,7 +18,7 @@
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
-        hidden: true
+        vectorEditLayer: true
       },
       source: new ol.source.Vector({
         parser: null
@@ -142,6 +142,10 @@
 
       this.map = this.createMap();
       this.editLayer = createVectorEditLayer();
+
+      // must always have a local geoserver. if not, something has gone wrong
+      var localServer = serverService_.getServerLocalGeoserver();
+      serverService_.populateLayersConfig(serverService_.getServerIndex(localServer.id));
       return this;
     };
 
@@ -166,7 +170,7 @@
     };
 
     this.dumpTileCache = function(layerToDump) {
-      var layers = this.getFeatureLayers();
+      var layers = this.getLayers(); //Note: does not get hidden or imagery layers
       forEachArrayish(layers, function(layer) {
         if (goog.isDefAndNotNull(layer.getTileSource)) {
           var metadata = layer.get('metadata');
@@ -208,23 +212,51 @@
       view.fitExtent(extent, map.getSize());
     };
 
-    this.getFeatureLayers = function() {
+    this.getLayers = function(includeHidden, includeImagery) {
       var layers = [];
 
-      //TODO: do a better job at removing all layers except those that have a feature type.
       this.map.getLayers().forEach(function(layer) {
-        if (!(layer.source_ instanceof ol.source.OSM) &&
-            !(layer.source_ instanceof ol.source.BingMaps) &&
-            !(layer.source_ instanceof ol.source.MapQuestOSM) &&
-            goog.isDefAndNotNull(layer.get('metadata')) &&
-            (layer.get('visible')) && // don't return layers that are not visible
-            !(layer.get('metadata').hidden) &&  // don't get 'internal' layers such as the feature modify vector layer
-            !(layer.get('metadata').differences_layer)) {
-          layers.push(layer);
+
+        // if not an internal layer and not difference layer
+        if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
+            !(layer.get('metadata').vectorEditLayer) &&
+            !(layer.get('metadata').differencesLayer)) {
+
+          // if it is imagery
+          if (service_.layerIsImagery(layer)) {
+            // if we want imagery
+            if (goog.isDefAndNotNull(includeImagery) && includeImagery) {
+              if (layer.get('visible')) {
+                layers.push(layer);
+              } else {
+                // if we want hidden
+                if (goog.isDefAndNotNull(includeHidden) && includeHidden) {
+                  layers.push(layer);
+                }
+              }
+            }
+          } else {
+            if (layer.get('visible')) {
+              layers.push(layer);
+            } else {
+              // if we want hidden
+              if (goog.isDefAndNotNull(includeHidden) && includeHidden) {
+                layers.push(layer);
+              }
+            }
+          }
         }
       });
 
       return layers;
+    };
+
+    this.layerIsImagery = function(layer) {
+      if ((layer.source_ instanceof ol.source.OSM) ||
+          (layer.source_ instanceof ol.source.BingMaps) ||
+          (layer.source_ instanceof ol.source.MapQuestOSM)) {
+        return true;
+      }
     };
 
     this.addLayer = function(config, doNotAddToMap) {
@@ -237,7 +269,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            label: config.title
+            title: config.title
           },
           source: new ol.source.OSM()
         });
@@ -257,7 +289,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            label: config.title
+            title: config.title
           },
           source: new ol.source.BingMaps(sourceParams)
         });
@@ -272,7 +304,7 @@
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
-              label: config.title
+              title: config.title
             },
             source: source
           });
@@ -294,7 +326,7 @@
           metadata: {
             serverId: server.id,
             url: goog.isDefAndNotNull(url) ? url : undefined,
-            label: config.title,
+            title: config.title,
             name: config.name,
             editable: true
           },
@@ -326,8 +358,10 @@
 
         var meta = layer.get('metadata');
         meta.config = config;
-        //goog.object.extend(meta, config, {});
-        //layer.set('metadata', meta);
+        // replace all special characters in the name of the layer with two '_' chars. this name can be used as
+        // target id, element id, attrib, etc without running into issues. it is also prepended with serverid
+        // so that multiple layers with the same exact name from different servers resolve to a unique id
+        meta.nameUniqueAndSafe = ('server' + meta.serverId + '_' + meta.name).replace(/[^a-zA-Z0-9]/g, '__');
 
         if (!goog.isDefAndNotNull(doNotAddToMap)) {
           this.map.addLayer(layer);
@@ -349,7 +383,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.OSM()
         });
@@ -357,7 +391,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.MapQuestOpenAerial()
         });
@@ -365,7 +399,7 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: serverId,
-            label: title
+            title: title
           },
           source: new ol.source.MapQuestOSM()
         });
@@ -451,7 +485,7 @@
         /*{
           name: layer.getSource().getParams().LAYERS,
           source: layer.get('metadata').serverId.toString(),
-          title: layer.get('label')
+          title: layer.get('title')
         }*/
       });
 
@@ -476,23 +510,69 @@
     };
 
     this.loadLayers = function() {
-      console.log('=======[[ using this.configuration: ', this.configuration);
+      console.log('=======[[ using this.configuration: ', service_.configuration);
 
       var layers = [];
 
-      if (goog.isDefAndNotNull(this.configuration) &&
-          goog.isDefAndNotNull(this.configuration.sources) &&
-          goog.isDefAndNotNull(this.configuration.map) &&
-          goog.isDefAndNotNull(this.configuration.map.layers)) {
+      if (goog.isDefAndNotNull(service_.configuration) &&
+          goog.isDefAndNotNull(service_.configuration.sources) &&
+          goog.isDefAndNotNull(service_.configuration.map) &&
+          goog.isDefAndNotNull(service_.configuration.map.layers)) {
 
-        //TODO: would it always be ordered already?
-        var ordered = new Array(this.configuration.sources.length);
-        goog.object.forEach(this.configuration.sources, function(serverInfo, key, obj) {
+        var ordered = new Array(service_.configuration.sources.length);
+        console.log('this.configuration.sources: ', service_.configuration.sources);
+        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
 
-        goog.array.forEach(ordered, function(serverInfo, index, obj) {
-          serverService_.addServer(serverInfo);
+        // if a server has the same url as another server, do not add the server and update layers pointing to the
+        // duplicate server to point to the existing server. geonode passes in duplicate servers when creating
+        // a map from a layer
+        var orderedUnique = new Array(ordered.length);
+        goog.array.forEach(ordered, function(serverInfo, key, obj) {
+
+          if (goog.isDefAndNotNull(serverInfo.url)) {
+            var foundServerIndex = null;
+
+            for (var index = 0; index < orderedUnique.length; index++) {
+              var server = orderedUnique[index];
+              if (goog.isDefAndNotNull(server)) {
+                if (goog.isDefAndNotNull(server.url)) {
+                  if (server.url === serverInfo.url) {
+                    foundServerIndex = index;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if (goog.isDefAndNotNull(foundServerIndex)) {
+              var foundServer = orderedUnique[foundServerIndex];
+              console.log('====[ Warning: skipping source/server as it has the same URL as existingServer.' +
+                  ' serverInfo: ', serverInfo, ', foundServer: ', foundServer);
+
+              // update any layer's source that is using this duplicate server to the existing server
+              for (var index2 = 0; index2 < service_.configuration.map.layers.length; index2++) {
+                var layer = service_.configuration.map.layers[index2];
+                if (layer.source === key.toString()) {
+                  console.log('====[ Note: updating layer source from old:', layer.source,
+                      ', to new: ', foundServerIndex, ', layer: ', layer);
+                  layer.source = foundServerIndex.toString();
+                }
+              }
+            } else {
+              orderedUnique[key] = serverInfo;
+            }
+          } else {
+            orderedUnique[key] = serverInfo;
+          }
+        });
+
+        goog.array.forEach(orderedUnique, function(serverInfo, index, obj) {
+          // if there was a duplicate server, an index in the ordered array will be undefined
+          if (goog.isDefAndNotNull(serverInfo)) {
+            serverService_.addServer(serverInfo);
+          }
         });
 
         serverService_.configDefaultServers();
@@ -504,6 +584,7 @@
             console.log('====[ Error: cannot add a layer without a name: ', layerInfo);
           }
         });
+
       } else {
         console.log('invalid config object, cannot load map: ', this.configuration);
         alert('invalid config object, cannot load map');

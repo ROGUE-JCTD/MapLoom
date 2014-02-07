@@ -8,10 +8,10 @@ var SERVER_SERVICE_USE_PROXY = true;
   var servers = [];
 
   var rootScope_ = null;
+  var service_ = null;
   var dialogService_ = null;
   var translate_ = null;
   var http_ = null;
-  var service_ = null;
 
   module.provider('serverService', function() {
     this.$get = function($rootScope, $http, $location, $translate, dialogService) {
@@ -132,6 +132,31 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
+    this.getServerIndex = function(id) {
+      if (!goog.isDefAndNotNull(id)) {
+        throw ({
+          name: 'serverService',
+          level: 'High',
+          message: 'undefined server id.',
+          toString: function() {
+            return this.name + ': ' + this.message;
+          }
+        });
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].id === id) {
+          return index;
+        }
+      }
+
+      return -1;
+    };
+
+    this.getServerLocalGeoserver = function() {
+      return service_.getServerByName('Local Geoserver');
+    };
+
     this.addServer = function(serverInfo) {
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
@@ -163,111 +188,66 @@ var SERVER_SERVICE_USE_PROXY = true;
       return servers[serverIndex].layersConfig;
     };
 
-    this.populateLayersConfig = function(index) {
+    this.populateLayersConfig = function(index, force) {
       var server = servers[index];
       console.log('---- populateLayersConfig. server', server);
 
       if (!goog.isDefAndNotNull(server)) {
-        return [];
+        return;
       }
 
-      if (server.ptype === 'gxp_bingsource') {
-        server.layersConfig = [
-          {title: 'BingRoad', name: 'BingRoad', sourceParams: {imagerySet: 'Road'}, added: false, add: false},
-          {title: 'BingAerial', name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}, added: false, add: false},
-          {title: 'BingAerialWithLabels', name: 'BingAerialWithLabels',
-            sourceParams: {imagerySet: 'AerialWithLabels'}, added: false, add: false},
-          {title: 'BingCollinsBart', name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'},
-            added: false, add: false},
-          {title: 'BingSurvey', name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'},
-            added: false, add: false}
-        ];
+      if (!goog.isDefAndNotNull(server.layersConfig) ||
+          (goog.isDefAndNotNull(force) && force)) {
 
-      } else if (server.ptype === 'gxp_mapquestsource') {
-        server.layersConfig = [
-          {title: 'MapQuestSat', name: 'MapQuestSat', sourceParams: {layer: 'sat'},
-            added: false, add: false},
-          {title: 'MapQuestHybrid', name: 'MapQuestHybrid',
-            sourceParams: {layer: 'hyb'},
-            added: false, add: false},
-          {title: 'MapQuestOSM', name: 'MapQuestOSM',
-            sourceParams: {layer: 'osm'},
-            added: false, add: false}
-        ];
-      } else if (!goog.isDefAndNotNull(server.layersConfig) && goog.isDefAndNotNull(server.url)) {
-        console.log('Sending GetCapabilities.server: ', server, ', index:', index);
+        // clear out list of layers
         server.layersConfig = [];
-        var parser = new ol.parser.ogc.WMSCapabilities();
-        var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-        http_.get(url).then(function(xhr) {
-          if (xhr.status == 200) {
-            var response = parser.read(xhr.data);
-            if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
-              server.layersConfig = response.capability.layers;
 
-              for (var index = 0; index < server.layersConfig.length; index += 1) {
-                server.layersConfig[index].added = false;
-              }
-              rootScope_.$broadcast('layers-loaded');
-            }
-          } else {
-            dialogService_.error(translate_('error'),
-                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
-            server.layersConfig = [];
+        if (server.ptype === 'gxp_bingsource') {
+          server.layersConfig = [
+            {title: 'BingRoad', name: 'BingRoad', sourceParams: {imagerySet: 'Road'}},
+            {title: 'BingAerial', name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}},
+            {title: 'BingAerialWithLabels', name: 'BingAerialWithLabels',
+              sourceParams: {imagerySet: 'AerialWithLabels'}},
+            {title: 'BingCollinsBart', name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
+            {title: 'BingSurvey', name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
+          ];
+        } else if (server.ptype === 'gxp_mapquestsource') {
+          server.layersConfig = [
+            {title: 'MapQuestSat', name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
+            {title: 'MapQuestHybrid', name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
+            {title: 'MapQuestOSM', name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
+          ];
+        } else {
+          console.log('---- Sending GetCapabilities.server: ', server, ', index:', index);
+          if (!goog.isDefAndNotNull(server.url)) {
+            dialogService_.error(translate_('error'), translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+            return;
           }
-        }, function(xhr) {
-          dialogService_.error(translate_('error'),
-              translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
-          server.layersConfig = [];
-        });
+
+          var parser = new ol.parser.ogc.WMSCapabilities();
+          var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
+          http_.get(url).then(function(xhr) {
+            if (xhr.status == 200) {
+              var response = parser.read(xhr.data);
+              if (goog.isDefAndNotNull(response.capability) &&
+                  goog.isDefAndNotNull(response.capability.layers)) {
+                server.layersConfig = response.capability.layers;
+                rootScope_.$broadcast('layers-loaded', index);
+
+                // catch a rare case when layer doesn't have a title
+                //service_.updateLayerTitles(index, server.layersConfig);
+              }
+            } else {
+              dialogService_.error(translate_('error'),
+                  translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+            }
+          }, function(xhr) {
+            dialogService_.error(translate_('error'),
+                translate_('server_url_not_specified') + ' (' + xhr.status + ')');
+          });
+        }
       }
-      console.log(server.layersConfig);
-      return server.layersConfig;
     };
 
-    this.refreshLayersConfig = function(index) {
-      console.log('---- refreshLayersConfig. index: ', index);
-      var server = servers[index];
-      if (goog.isDefAndNotNull(server) && goog.isDefAndNotNull(server.layersConfig)) {
-        var parser = new ol.parser.ogc.WMSCapabilities();
-
-        var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-        http_.get(url).then(function(xhr) {
-          if (xhr.status == 200) {
-            var response = parser.read(xhr.data);
-            if (goog.isDefAndNotNull(response.capability) && goog.isDefAndNotNull(response.capability.layers)) {
-              var addedLayersConfig = [];
-              var index;
-              for (index = 0; index < server.layersConfig.length; index += 1) {
-                if (server.layersConfig[index].added) {
-                  addedLayersConfig.push(server.layersConfig[index]);
-                }
-              }
-              var newLayersConfig = response.capability.layers;
-              for (index = 0; index < newLayersConfig.length; index += 1) {
-                for (var subIndex = 0; subIndex < addedLayersConfig.length; subIndex += 1) {
-                  if (addedLayersConfig[subIndex].title === newLayersConfig[index].title) {
-                    newLayersConfig[index].added = true;
-                    break;
-                  }
-                }
-                if (!goog.isDefAndNotNull(newLayersConfig[index].added)) {
-                  newLayersConfig[index].added = false;
-                }
-              }
-              server.layersConfig = newLayersConfig;
-              rootScope_.$broadcast('layers-loaded');
-            }
-          } else {
-            dialogService_.error(translate_('error'),
-                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
-          }
-        }, function(xhr) {
-          dialogService_.error(translate_('error'),
-              translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
-        });
-      }
-      return server.layersConfig;
-    };
   });
 }());

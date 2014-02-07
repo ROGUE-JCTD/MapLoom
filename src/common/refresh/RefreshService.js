@@ -34,7 +34,7 @@
     //recursive helper function for refreshLayers
     function refresh(mapService) {
       if (service_.autoRefresh) {
-        var layers = mapService.getFeatureLayers();
+        var layers = mapService.getLayers();
         forEachArrayish(layers, function(layer) {
           if (goog.isDefAndNotNull(layer.get('metadata').isGeoGit)) {
             if (layer.get('metadata').isGeoGit === true) {
@@ -102,7 +102,7 @@
                     if (removed > 0) {
                       notificationText += removed + ' ' + translate_('removed');
                     }
-                    notificationText += ' ' + translate_('in_lower_case') + ' ' + layer.get('metadata').label;
+                    notificationText += ' ' + translate_('in_lower_case') + ' ' + layer.get('metadata').title;
 
                     mapService.dumpTileCache(layer.get('metadata').name);
                     historyService_.refreshHistory(layer.get('metadata').name);

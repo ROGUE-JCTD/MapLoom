@@ -26,7 +26,7 @@
     <hr>
     <div class="form-group">
       <ul id="layer-list" class="list-group">
-        <li ng-repeat="layerConfig in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:{added:'false'} | filter:filterLayers"
+        <li ng-repeat="layerConfig in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:filterLayers | filter:filterAddedLayers"
             class="list-group-item">
           <div class="row">
             <div class="col-xs-2">

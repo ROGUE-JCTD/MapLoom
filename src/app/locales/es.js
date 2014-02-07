@@ -43,6 +43,7 @@
     'error': 'Error',
     'warning': 'Advertencia',
     'failed_get_capabilities': 'No se encontraron capacidades: ',
+    'server_url_not_specified': 'No se especifica url del servidor',
     'fixed': 'ARREGLADO',
     'adds': 'Adiciones',
     'modifications': 'Modificaciones',

@@ -545,7 +545,7 @@
 
         service_.hide();
 
-        var layers = mapService_.getFeatureLayers();
+        var layers = mapService_.getLayers();
 
         mapService_.map.getFeatureInfo({
           pixel: evt.getPixel(),

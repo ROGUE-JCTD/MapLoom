@@ -2,12 +2,12 @@
      arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer"
      arrangeable-placeholder='<div class="placeholder"></div>'>
   <div class="panel"
-       ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterHiddenLayers">
+       ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterInternalLayers">
     <div class="panel-heading layer-heading" data-toggle="collapse" ng-click="fillAttrList(layer)"
-         data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').label | stripWhiteSpace}}">
+         data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').nameUniqueAndSafe}}">
       <div class="row">
         <div class="layer-title ellipsis">
-          {{layer.get('metadata').label}}
+          {{layer.get('metadata').title}}
         </div>
         <div class="layer-buttons">
           <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <div id="{{layer.get('metadata').label | stripWhiteSpace}}" class="panel-collapse collapse">
+    <div id="{{layer.get('metadata').nameUniqueAndSafe}}" class="panel-collapse collapse">
       <div class="panel-body layer-inner-panel">
         <div class="btn-group btn-group-justified">
           <a type="button" ng-click="tableViewService.showTable(layer)" ng-show="layer.get('metadata').editable"
