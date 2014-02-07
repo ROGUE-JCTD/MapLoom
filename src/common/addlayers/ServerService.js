@@ -232,7 +232,7 @@ var SERVER_SERVICE_USE_PROXY = true;
               if (goog.isDefAndNotNull(response.capability) &&
                   goog.isDefAndNotNull(response.capability.layers)) {
                 server.layersConfig = response.capability.layers;
-                rootScope_.$broadcast('layers-loaded');
+                rootScope_.$broadcast('layers-loaded', index);
 
                 // catch a rare case when layer doesn't have a title
                 //service_.updateLayerTitles(index, server.layersConfig);
