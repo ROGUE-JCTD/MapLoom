@@ -80,6 +80,8 @@ module.exports = {
       'vendor/closure-library/closure/goog/deps.js',
       //'vendor/ol3/ol.js'
       //'vendor/ol3/ol-simple.js',
+      'vendor/proj4js/proj4js-compressed.js',
+      'vendor/proj4js/defs/*',
       'vendor/ol3/ol-whitespace.js',
 
       //-- files for image gallery

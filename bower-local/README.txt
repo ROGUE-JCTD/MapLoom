@@ -1,0 +1,1 @@
+These are dependencies that are not available currently through bower.  When these packages become available, they should be removed from this folder.

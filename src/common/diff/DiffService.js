@@ -58,6 +58,13 @@
                 stroke: new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
               })
             ]
+          }),
+          new ol.style.Rule({
+            filter: '(geometryType("linestring") || geometryType("multilinestring"))',
+            symbolizers: [
+              new ol.style.Fill({color: ol.expr.parse('change.fill'), opacity: 0.5}),
+              new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
+            ]
           })
         ]})
       });
