@@ -457,8 +457,8 @@
         new ol.style.Rule({
           filter: '(geometryType("linestring") || geometryType("multilinestring"))',
           symbolizers: [
-            new ol.style.Fill({color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0}),
-            new ol.style.Stroke({color: ol.expr.parse('MapLoomChange.fill')})
+            new ol.style.Stroke({width: 7, color: ol.expr.parse('MapLoomChange.stroke'), opacity: 1.0}),
+            new ol.style.Stroke({width: 5, color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0})
           ]
         })
       ]})

@@ -66,7 +66,7 @@
               diffOptions.show = 1000;
               diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.Feature)) {
-                  if (goog.isDefAndNotNull(response.nextPage) && response.nextPage == 'true') {
+                  if (goog.isDefAndNotNull(response.nextPage) && response.nextPage === true) {
                     dialogService.warn($translate('warning'),
                         $translate('too_many_changes'), [$translate('btn_ok')]);
                   } else {
