@@ -362,10 +362,9 @@
         var geom = ol.parser.WKT.read(panel.getGeometry());
 
         var localCrs = crs_;
-        // TODO: This needs to be an EPSG code, reading GCS_WGS_1984 fails.
-        //if (goog.isDefAndNotNull(panel.geometry.crs)) {
-        //  localCrs = panel.geometry.crs;
-        //}
+        if (goog.isDefAndNotNull(panel.geometry.crs)) {
+          localCrs = panel.geometry.crs;
+        }
         if (goog.isDefAndNotNull(localCrs)) {
           var transform = ol.proj.getTransform(localCrs, panel.map.getView().getView2D().getProjection());
           geom.transform(transform);
