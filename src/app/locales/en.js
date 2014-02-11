@@ -200,7 +200,8 @@
     'changes_undone': 'The changes to the feature have been successfully undone.',
     'reverted_changes_to_feature': 'Reverted changes made to {{feature}}.',
     'remote_not_fetched': 'It would appear as though the remote you selected has not' +
-        ' been fetched from. We will now attempt to fetch the data you need to create links.'
+        ' been fetched from. We will now attempt to fetch the data you need to create links.',
+    'latlon_confirm': '{{value}} is the interpreted value of your coordinates. Is this correct?'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

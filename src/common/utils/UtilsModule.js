@@ -202,18 +202,18 @@
     return {
       restrict: 'E',
       template: '<div ng-class="{\'has-error\': !geom.valid}" class="form-group">' +
-          /*'<div class="input-group">' +
-         '<div class="input-group-btn">' +
-         '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
-         '<span class="caret"></span>' +
-         '</button>' +
-         '<ul id="display-list" class="dropdown-menu">' +
-         '<li ng-repeat="display in coordinateDisplays">' +
-         '<a ng-click="selectDisplay($index)">{{display}}</a></li>' +
-         '</ul>' +
-         '</div>' +*/
+          '<div class="input-group">' +
+          '<div class="input-group-btn">' +
+          '<button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">' +
+          '<span class="caret"></span>' +
+          '</button>' +
+          '<ul id="display-list" class="dropdown-menu">' +
+          '<li ng-repeat="display in coordinateDisplays">' +
+          '<a ng-click="selectDisplay(display)">{{display}}</a></li>' +
+          '</ul>' +
+          '</div>' +
           '<input ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
-          /*'</div>' +*/
+          '</div>' +
           '</div>',
       replace: true,
       scope: {
@@ -221,15 +221,26 @@
         coordDisplay: '=coordDisplay'
       },
       link: function(scope) {
-        scope.coordinateDisplays = coordinateDisplays;
-        if (scope.coordDisplay === coordinateDisplays.DMS) {
-          scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coords);
-        } else if (scope.coordDisplay === coordinateDisplays.DD) {
-          scope.coordinates = ol.coordinate.createStringXY(scope.geom.coords, settings.DDPrecision);
+        if (scope.geom.projection !== 'EPSG:4326') {
+          scope.coordinateDisplays = ['Other'];
+        } else {
+          scope.coordinateDisplays = coordinateDisplays;
         }
 
-        scope.selectDisplay = function(index) {
-          scope.coordDisplay = coordinateDisplays[index];
+        var setUpCoordinates = function() {
+          if (scope.coordDisplay.value === coordinateDisplays.DMS) {
+            scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coords);
+          } else {
+            scope.coordinates = ol.coordinate.toStringXY(scope.geom.coords, settings.DDPrecision);
+          }
+        };
+
+        setUpCoordinates();
+
+        scope.selectDisplay = function(display) {
+          scope.coordDisplay.value = display;
+          setUpCoordinates();
+          scope.validate();
         };
 
         var validateDMS = function(name, split) {
@@ -247,11 +258,13 @@
           } else {
             return false;
           }
+          for (var index = 0; index < 2; index++) {
+            split[index] = split[index].replace(/[^\d]/g, '');
+          }
+          var decimal = split[2].substr(split[2].indexOf('.') + 1).replace(/[^\d]/g, '');
+          split[2] = split[2].substr(0, split[2].indexOf('.') + 1) + decimal;
+          clean(split, '');
           if (split.length === 4) {
-            for (var index = 0; index < 3; index++) {
-              split[index] = split[index].replace(/[^\d\.]/g, '');
-            }
-            clean(split, '');
             var newPos = parseInt(split[0], 10) + ((parseInt(split[1], 10) +
                 (parseFloat(split[2]) / 60)) / 60);
             if (newPos < 0 || newPos > upperBounds) {
@@ -267,29 +280,68 @@
           return true;
         };
 
+        var validateCoords = function(name, value, checkBounds) {
+          var bounds;
+          var coordIndex;
+          var negate = value.indexOf('-') === 0;
+          if (name === 'lon') {
+            bounds = 180;
+            coordIndex = 0;
+          } else if (name === 'lat') {
+            bounds = 90;
+            coordIndex = 1;
+          } else {
+            return false;
+          }
+          var decimal = value.substr(value.indexOf('.') + 1).replace(/[^\d]/g, '');
+          value = parseFloat(value.substr(0, value.indexOf('.') + 1).replace(/[^\d\.]/g, '') + decimal);
+          if (checkBounds && (value < 0 || value > bounds)) {
+            return false;
+          }
+          if (negate) {
+            value = -value;
+          }
+          scope.geom.coords[coordIndex] = value;
+          return true;
+        };
+
         scope.validate = function() {
-          var split = scope.coordinates.replace(/[^\dEWewNSns\.]/g, ' ').split(' ');
-          clean(split, '');
           var valid = false;
-          var split2 = split.splice(0, 4);
-          if (split.length === 4) {
-            if (split[3].toUpperCase() === 'S' || split[3].toUpperCase() === 'N') {
-              valid = validateDMS('lat', split);
-              if (valid === true && (split2[3].toUpperCase() === 'W' || split2[3].toUpperCase() === 'E')) {
-                valid = validateDMS('lon', split2);
-              } else {
-                valid = false;
+          var split;
+          if (scope.coordDisplay.value === scope.coordinateDisplays.DMS) {
+            split = scope.coordinates.replace(/[^\dEWewNSns\.]/g, ' ').split(' ');
+            clean(split, '');
+            var split2 = split.splice(0, 4);
+            if (split.length === 4) {
+              if (split[3].toUpperCase() === 'S' || split[3].toUpperCase() === 'N') {
+                valid = validateDMS('lat', split);
+                if (valid === true && (split2[3].toUpperCase() === 'W' || split2[3].toUpperCase() === 'E')) {
+                  valid = validateDMS('lon', split2);
+                } else {
+                  valid = false;
+                }
+              } else if (split[3].toUpperCase() === 'W' || split[3].toUpperCase() === 'E') {
+                valid = validateDMS('lon', split);
+                if (valid === true && (split2[3].toUpperCase() === 'S' || split2[3].toUpperCase() === 'N')) {
+                  valid = validateDMS('lat', split2);
+                } else {
+                  valid = false;
+                }
               }
-            } else if (split[3].toUpperCase() === 'W' || split[3].toUpperCase() === 'E') {
-              valid = validateDMS('lon', split);
-              if (valid === true && (split2[3].toUpperCase() === 'S' || split2[3].toUpperCase() === 'N')) {
-                valid = validateDMS('lat', split2);
-              } else {
-                valid = false;
+            }
+          } else {
+            split = scope.coordinates.replace(/[^\d-\.]/g, ' ').split(' ');
+            clean(split, '');
+            if (split.length === 2) {
+              valid = validateCoords('lon', split[0], scope.coordDisplay.value === scope.coordinateDisplays.DD);
+              if (valid) {
+                valid = validateCoords('lat', split[1], scope.coordDisplay.value === scope.coordinateDisplays.DD);
               }
             }
           }
           scope.geom.valid = valid;
+          scope.geom.changed = true;
+          scope.geom.originalText = scope.coordinates;
         };
       }
     };

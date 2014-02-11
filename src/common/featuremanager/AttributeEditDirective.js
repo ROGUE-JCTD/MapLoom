@@ -9,8 +9,7 @@
           templateUrl: 'featuremanager/partial/attributeedit.tpl.html',
           link: function(scope, element) {
             scope.featureManagerService = featureManagerService;
-            scope.coordDisplay = coordinateDisplays.DMS;
-            scope.$on('startAttributeEdit', function(event, geometry, properties, inserting) {
+            scope.$on('startAttributeEdit', function(event, geometry, projection, properties, inserting) {
               scope.properties = new Array(properties.length);
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
@@ -25,7 +24,13 @@
                 scope.properties[index].valid = true;
               });
               if (geometry.type.toLowerCase() == 'point') {
-                scope.coordinates = {coords: goog.array.clone(geometry.coordinates), valid: true};
+                if (projection === 'EPSG:4326') {
+                  scope.coordDisplay = {value: coordinateDisplays.DMS};
+                } else {
+                  scope.coordDisplay = {value: 'Other'};
+                }
+                scope.coordinates = {coords: goog.array.clone(geometry.coordinates), valid: true,
+                  projection: projection};
               }
               scope.inserting = inserting;
               $('#attribute-edit-dialog').modal('toggle');
@@ -63,6 +68,22 @@
               if (numErrors > 0) {
                 dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
                     [$translate('btn_ok')], false);
+                return;
+              } else if (goog.isDefAndNotNull(scope.coordinates) && scope.coordinates.changed &&
+                  scope.coordDisplay.value === coordinateDisplays.DMS &&
+                  ol.coordinate.toStringHDMS(scope.coordinates.coords) !== scope.coordinates.originalText) {
+                dialogService.open($translate('location_lon_lat'), $translate('latlon_confirm',
+                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords)}), [$translate('yes_btn'),
+                      $translate('no_btn')], false).then(function(button) {
+                  switch (button) {
+                    case 0: {
+                      featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
+                          scope.coordinates.coords);
+                      reset();
+                      $('#attribute-edit-dialog').modal('toggle');
+                    }
+                  }
+                });
                 return;
               }
               featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,

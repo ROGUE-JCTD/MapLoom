@@ -473,7 +473,7 @@
     };
 
     this.startAttributeEditing = function(inserting) {
-      rootScope_.$broadcast('startAttributeEdit', selectedItem_.geometry,
+      rootScope_.$broadcast('startAttributeEdit', selectedItem_.geometry, selectedLayer_.get('metadata').projection,
           selectedItemProperties_, inserting);
     };
 
