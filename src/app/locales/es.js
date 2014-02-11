@@ -202,7 +202,10 @@
     'reverted_changes_to_feature': 'Revertidos los cambios realizados en {{feature}}.',
     'remote_not_fetched': 'Parecería como si el mando a distancia que ha seleccionado no ha sido traidos del.' +
         ' Ahora vamos a tratar de ir a buscar los datos que necesita para crear vínculos.',
-    'latlon_confirm': '{{value}} es el valor interpretado de sus coordenadas. ¿Esto es correcto?'
+    'latlon_confirm': '{{value}} es el valor interpretado de sus coordenadas. ¿Esto es correcto?',
+    'degree_minute_second': 'Grados Minutos Segundos',
+    'decimal_degrees': 'Grados Decimales',
+    'other': 'Otro'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

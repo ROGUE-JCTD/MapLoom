@@ -1,6 +1,7 @@
 var coordinateDisplays = {
-  DMS: 'Degrees Minutes Seconds',
-  DD: 'Decimal Degrees'
+  DMS: 'degree_minute_second',
+  DD: 'decimal_degrees',
+  Other: 'other'
 };
 
 var settings = {

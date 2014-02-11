@@ -10,6 +10,7 @@
       <label class="control-label custom-control-label">{{prop[0]}}</label>
       <div ng-switch on="prop.type">
         <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop" date-key="1" default-date="inserting"></datetimepicker>
+        <datetimepicker ng-switch-when="xsd:date" date-object="prop" date-key="1" default-date="inserting" time="false"></datetimepicker>
         <div ng-switch-when="simpleType" class="input-group">
           <div class="input-group-btn" ng-class="{'dropup': $last}">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">

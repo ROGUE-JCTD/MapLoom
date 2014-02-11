@@ -209,7 +209,7 @@
           '</button>' +
           '<ul id="display-list" class="dropdown-menu">' +
           '<li ng-repeat="display in coordinateDisplays">' +
-          '<a ng-click="selectDisplay(display)">{{display}}</a></li>' +
+          '<a ng-click="selectDisplay(display)" translate="{{display}}"></a></li>' +
           '</ul>' +
           '</div>' +
           '<input ng-model="coordinates" type="text" class="form-control" ng-change="validate()"/>' +
@@ -222,9 +222,9 @@
       },
       link: function(scope) {
         if (scope.geom.projection !== 'EPSG:4326') {
-          scope.coordinateDisplays = ['Other'];
+          scope.coordinateDisplays = [coordinateDisplays.Other];
         } else {
-          scope.coordinateDisplays = coordinateDisplays;
+          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD];
         }
 
         var setUpCoordinates = function() {
@@ -308,7 +308,7 @@
         scope.validate = function() {
           var valid = false;
           var split;
-          if (scope.coordDisplay.value === scope.coordinateDisplays.DMS) {
+          if (scope.coordDisplay.value === coordinateDisplays.DMS) {
             split = scope.coordinates.replace(/[^\dEWewNSns\.]/g, ' ').split(' ');
             clean(split, '');
             var split2 = split.splice(0, 4);
@@ -333,9 +333,9 @@
             split = scope.coordinates.replace(/[^\d-\.]/g, ' ').split(' ');
             clean(split, '');
             if (split.length === 2) {
-              valid = validateCoords('lon', split[0], scope.coordDisplay.value === scope.coordinateDisplays.DD);
+              valid = validateCoords('lon', split[0], scope.coordDisplay.value === coordinateDisplays.DD);
               if (valid) {
-                valid = validateCoords('lat', split[1], scope.coordDisplay.value === scope.coordinateDisplays.DD);
+                valid = validateCoords('lat', split[1], scope.coordDisplay.value === coordinateDisplays.DD);
               }
             }
           }

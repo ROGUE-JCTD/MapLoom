@@ -27,7 +27,7 @@
                 if (projection === 'EPSG:4326') {
                   scope.coordDisplay = {value: coordinateDisplays.DMS};
                 } else {
-                  scope.coordDisplay = {value: 'Other'};
+                  scope.coordDisplay = {value: coordinateDisplays.Other};
                 }
                 scope.coordinates = {coords: goog.array.clone(geometry.coordinates), valid: true,
                   projection: projection};
