@@ -75,7 +75,8 @@
         userprofileemail: '',
         authStatus: 401,
         id: 0,
-        proxy: '/proxy/?url='
+        proxy: '/proxy/?url=',
+        nominatimUrl: 'http://nominatim.openstreetmap.org'
       };
 
       if (goog.isDefAndNotNull($window.config)) {

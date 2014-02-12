@@ -1,0 +1,39 @@
+<div class="panel flat" id="search-panel">
+  <div class="panel-heading">
+    <em>
+      <form ng-submit="performSearch()">
+        <div class="input-group input-group-sm">
+          <input type="text" ng-change="clearResults()" ng-model="searchQuery" class="search-box form-control" placeholder="{{'search' | translate}}">
+                <span class="input-group-btn">
+                  <a class="btn btn-default" ng-click="performSearch()" type="button">
+                    <div id="search-loading" ng-show="searchInProgress">
+                      <div class="loading">
+                        <!-- We make this div spin -->
+                        <div class="spinner">
+                          <!-- Mask of the quarter of circle -->
+                          <div class="mask">
+                            <!-- Inner masked circle -->
+                            <div class="maskedCircle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <i ng-if="!displayingResults()" class="glyphicon glyphicon-search"></i>
+                    <i ng-if="displayingResults()" class="glyphicon glyphicon-remove"></i>
+                  </a>
+                </span>
+        </div>
+      </form>
+    </em>
+  </div>
+  <div id="search-results-panel" class="search-content panel-collapse collapse">
+    <div id="search-collapse-group" class="panel-group">
+      <ul class="list-group">
+        <li class="list-group-item" ng-click="resultClicked(result)"
+            ng-repeat="result in searchResults" tooltip-popup-delay="500" tooltip-placement="right" tooltip-append-to-body="true" tooltip="{{result.name}}">
+          <span class="ellipsis search-result-name">{{result.name}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

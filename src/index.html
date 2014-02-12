@@ -43,6 +43,7 @@
         userprofileemail: {% if user.is_authenticated %} "{{ user.profile.email }}" {% else %} undefined {% endif %},
         currentLanguage: "{{language|default:'en'}}",
         proxy: "/proxy/?url=",
+        nominatimUrl: "http://nominatim.openstreetmap.org",
         printService: "{{GEOSERVER_BASE_URL}}pdf/",
         /* The URL to a REST map configuration service.  This service
          * provides listing and, with an authenticated user, saving of
@@ -73,7 +74,6 @@
 </script>
 <% } %>
 
-
 </head>
 <body>
 <% if (!(typeof django === 'undefined') && (django)) { %>
@@ -85,7 +85,8 @@
     <div id="pulldown-shadow">
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
-          <em id="map-name">{{ mapService.title || "New Map"}}
+          <em id="map-name">
+            <div class="map-title-text ellipsis">{{ mapService.title || "New Map"}}</div>
             <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
                tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
                ng-class="{'hide': !configService.username}" data-toggle="modal"></i>
@@ -96,6 +97,7 @@
           <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
         </div>
       </div>
+      <div class="loom-search"></div>
       <div id="pulldown-menu" class="panel-group in">
         <div id="pulldown-content">
           <div class="panel" ng-show="notificationsPanel">

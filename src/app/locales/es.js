@@ -205,7 +205,11 @@
     'latlon_confirm': '{{value}} es el valor interpretado de sus coordenadas. ¿Esto es correcto?',
     'degree_minute_second': 'Grados Minutos Segundos',
     'decimal_degrees': 'Grados Decimales',
-    'other': 'Otro'
+    'other': 'Otro',
+    'search': 'Búsqueda',
+    'search_no_results': 'No hay resultados que coincidan con la consulta de búsqueda.',
+    'search_error_status': 'Buscar fallado con el código de respuesta ({{status}}).',
+    'search_error': 'Se ha producido un error desconocido mientras se realiza la búsqueda.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

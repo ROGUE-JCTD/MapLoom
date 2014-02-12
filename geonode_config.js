@@ -4,6 +4,7 @@ var conf = {
   'userprofilename':'bobby',
   'userprofileemail':'bobby@bob.com',
   'proxy':'/proxy/?url=',
+  'nominatimUrl':'http://nominatim.openstreetmap.org',
   'printService':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/pdf/',
   'rest':'/maps/',
   'ajaxLoginUrl':'/account/ajax_login',

@@ -23,6 +23,7 @@
     'loom_table_view',
     'loom_utils',
     'loom_refresh',
+    'loom_search',
     'loom_test'
   ]);
 }());
