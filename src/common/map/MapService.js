@@ -220,7 +220,7 @@
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').differencesLayer)) {
+            !(layer.get('metadata').internalLayer)) {
 
           // if it is imagery
           if (service_.layerIsImagery(layer)) {

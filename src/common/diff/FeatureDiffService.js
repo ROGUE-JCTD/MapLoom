@@ -50,8 +50,8 @@
         featurePanel.map.removeLayer(layer);
       });
       newLayers.forEach(function(layer) {
-        if (!goog.isDefAndNotNull(layer.get('metadata').differencesLayer) ||
-            !layer.get('metadata').differencesLayer) {
+        if (!goog.isDefAndNotNull(layer.get('metadata').internalLayer) ||
+            !layer.get('metadata').internalLayer) {
           featurePanel.map.addLayer(layer);
         }
       });

@@ -37,7 +37,7 @@
       difflayer_ = new ol.layer.Vector({
         metadata: {
           title: translate_('differences'),
-          differencesLayer: true
+          internalLayer: true
         },
         source: new ol.source.Vector({
           parser: null

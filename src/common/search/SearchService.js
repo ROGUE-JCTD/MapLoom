@@ -5,13 +5,39 @@
   var q_ = null;
   var configService_ = null;
   var mapService_ = null;
+  var searchlayer_ = null;
 
   module.provider('searchService', function() {
-    this.$get = function($http, $q, configService, mapService) {
+    this.$get = function($rootScope, $http, $q, $translate, configService, mapService) {
       httpService_ = $http;
       q_ = $q;
       configService_ = configService;
       mapService_ = mapService;
+
+      searchlayer_ = new ol.layer.Vector({
+        metadata: {
+          title: $translate('search'),
+          internalLayer: true
+        },
+        source: new ol.source.Vector({
+          parser: null
+        }),
+        style: new ol.style.Style({rules: [
+          new ol.style.Rule({
+            filter: 'geometryType("point")',
+            symbolizers: [
+              new ol.style.Shape({size: 8,
+                fill: new ol.style.Fill({color: '#D6AF38', opacity: 1}),
+                stroke: new ol.style.Stroke({color: '#000000'})
+              })
+            ]
+          })
+        ]})
+      });
+
+      $rootScope.$on('translation_change', function() {
+        searchlayer_.get('metadata').title = $translate('search');
+      });
 
       return this;
     };
@@ -56,6 +82,23 @@
       });
 
       return promise.promise;
+    };
+
+    this.populateSearchLayer = function(results) {
+      searchlayer_.clear();
+      mapService_.map.removeLayer(searchlayer_);
+      mapService_.map.addLayer(searchlayer_);
+      forEachArrayish(results, function(result) {
+        var olFeature = new ol.Feature();
+        olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',
+            mapService_.map.getView().getView2D().getProjection())));
+        searchlayer_.addFeatures([olFeature]);
+      });
+    };
+
+    this.clearSearchLayer = function() {
+      searchlayer_.clear();
+      mapService_.map.removeLayer(searchlayer_);
     };
   });
 }());

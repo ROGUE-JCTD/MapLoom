@@ -34,10 +34,11 @@
             scope.clearResults = function() {
               scope.searchResults = [];
               $('#search-results-panel').collapse('hide');
+              searchService.clearSearchLayer();
             };
 
             scope.displayingResults = function() {
-              return scope.searchResults.length > 1;
+              return scope.searchResults.length > 0;
             };
 
             scope.performSearch = function() {
@@ -58,10 +59,12 @@
                     dialogService.open($translate('search'), $translate('search_no_results'));
                   } else if (results.length === 1) {
                     zoomToResult(results[0]);
+                    searchService.populateSearchLayer(results);
                   } else {
                     $timeout(function() {
                       $('#search-results-panel').collapse('show');
                     }, 1);
+                    searchService.populateSearchLayer(results);
                   }
                   scope.searchInProgress = false;
                 }, function(_status) {
