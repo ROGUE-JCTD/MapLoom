@@ -63,7 +63,7 @@
                   } else {
                     $timeout(function() {
                       $('#search-results-panel').collapse('show');
-                    }, 1);
+                    }, 10);
                     searchService.populateSearchLayer(results);
                   }
                   scope.searchInProgress = false;
