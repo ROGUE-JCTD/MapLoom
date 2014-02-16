@@ -215,7 +215,8 @@
     'cancel_feature': 'Cancelar Función',
     'add_to_feature': 'Agregar a la Función',
     'remove_from_feature': 'Eliminar de Función',
-    'draw': 'Dibujar'
+    'draw': 'Dibujar',
+    'zoom_to_data': 'Enfocar a los datos'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

@@ -16,6 +16,11 @@
                 ng-class="{'disabled': (!layer.get('visible') || !layer.get('metadata').schema)}">
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
+          <span ng-click="mapService.zoomToLayerFeatures(layer)" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'zoom_to_data' | translate}}"
+                stop-event="click mousedown" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-resize-small"></i>
+          </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
                 tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"
                 class="btn btn-xs btn-default layer-visible-button" ng-class="{'layer-visible': layer.get('visible')}">

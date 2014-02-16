@@ -188,6 +188,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       return servers[serverIndex].layersConfig;
     };
 
+    this.getLayerConfig = function(serverIndex, layerName) {
+      var layersConfig = service_.getLayersConfig(serverIndex);
+      var layerConfig = null;
+
+      for (var index = 0; index < layersConfig.length; index += 1) {
+        if (layersConfig[index].name === layerName) {
+          layerConfig = layersConfig[index];
+          break;
+        }
+      }
+
+      console.log('---- ServerService.getLayerConfig: ', layerConfig);
+      return layerConfig;
+    };
+
     this.populateLayersConfig = function(index, force) {
       var server = servers[index];
       // console.log('---- populateLayersConfig. server', server);
@@ -236,6 +251,7 @@ var SERVER_SERVICE_USE_PROXY = true;
               if (goog.isDefAndNotNull(response.capability) &&
                   goog.isDefAndNotNull(response.capability.layers)) {
                 server.layersConfig = response.capability.layers;
+                console.log('---- populateLayersConfig. server', server);
                 rootScope_.$broadcast('layers-loaded', index);
               }
             } else {

@@ -201,6 +201,8 @@
     };
 
     this.zoomToExtent = function(extent, animate, map) {
+      console.log('---- MapService.zoomToExtent. extent: ', extent);
+
       if (!goog.isDefAndNotNull(animate)) {
         animate = true;
       }
@@ -209,7 +211,7 @@
       }
       var view = map.getView().getView2D();
 
-      if (extent === undefined) {
+      if (!goog.isDefAndNotNull(extent)) {
         extent = view.getProjection().getExtent();
       }
 
@@ -220,6 +222,104 @@
       }
 
       view.fitExtent(extent, map.getSize());
+    };
+
+    this.zoomToLayerFeatures = function(layer) {
+      if (!goog.isDefAndNotNull(layer)) {
+        return;
+      }
+
+      if (goog.isDefAndNotNull(layer.get('metadata').editable) &&
+          layer.get('metadata').editable) {
+        var layerTypeName = layer.get('metadata').name;
+        var url = layer.get('metadata').url + '/ows?service=wps&version=1.0.0';
+
+        var wpsPostData = '' +
+            '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" ' +
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                'xmlns="http://www.opengis.net/wps/1.0.0" ' +
+                'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ' +
+                'xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" ' +
+                'xmlns:ogc="http://www.opengis.net/ogc" ' +
+                'xmlns:wcs="http://www.opengis.net/wcs/1.1.1" ' +
+                'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+                'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ' +
+                'http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">' +
+            '<ows:Identifier>gs:Bounds</ows:Identifier>' +
+            '<wps:DataInputs>' +
+            '<wps:Input>' +
+            '<ows:Identifier>features</ows:Identifier>' +
+            '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
+            '<wps:Body>' +
+            '<wfs:GetFeature service="WFS" version="1.0.0" outputFormat="GML2" ' +
+                'xmlns:geonode="http://www.geonode.org/">' +
+            '<wfs:Query typeName="' + layerTypeName + '"/>' +
+            '</wfs:GetFeature>' +
+            '</wps:Body>' +
+            '</wps:Reference>' +
+            '</wps:Input>' +
+            '</wps:DataInputs>' +
+            '<wps:ResponseForm>' +
+            '<wps:RawDataOutput>' +
+            '<ows:Identifier>bounds</ows:Identifier>' +
+            '</wps:RawDataOutput>' +
+            '</wps:ResponseForm>' +
+            '</wps:Execute>';
+
+        httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
+          //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
+          var x2js = new X2JS();
+          var json = x2js.xml_str2json(data);
+          var lower = json.BoundingBox.LowerCorner.toString().split(' ');
+          var upper = json.BoundingBox.UpperCorner.toString().split(' ');
+          var bounds = [JSON.parse(lower[0], 10),
+                        JSON.parse(lower[1], 10),
+                        JSON.parse(upper[0], 10),
+                        JSON.parse(upper[1], 10)];
+          //console.log('------- [[ bounds: ', bounds);
+          var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
+              ol.proj.get('EPSG:900913'));
+          var extent900913 = ol.extent.transform(bounds, transform);
+          service_.zoomToExtent(extent900913);
+        }).error(function(data, status, headers, config) {
+          console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
+          service_.zoomToLayerExtent(layer);
+        });
+
+      } else {
+        // dealing with an non vector layer
+        service_.zoomToLayerExtent(layer);
+      }
+    };
+
+    this.zoomToLayerExtent = function(layer) {
+      var extent900913 = null;
+
+      if (service_.layerIsImagery(layer)) {
+        extent900913 = layer.getSource().getExtent();
+      } else {
+        var metadata = layer.get('metadata');
+
+        if (goog.isDefAndNotNull(metadata) &&
+            goog.isDefAndNotNull(metadata.serverId) &&
+            goog.isDefAndNotNull(metadata.name) &&
+            goog.isDefAndNotNull(metadata.projection)) {
+
+          var serverIndex = serverService_.getServerIndex(metadata.serverId);
+          var layerConfig = serverService_.getLayerConfig(serverIndex, metadata.name);
+
+          if (goog.isDefAndNotNull(layerConfig)) {
+            var bbox = layerConfig.bbox['EPSG:4326'].bbox;
+            // reorder the coordinates to get minx, miny, maxx, maxy
+            var bounds = [bbox[1], bbox[0], bbox[3], bbox[2]];
+            var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.projection),
+                ol.proj.get('EPSG:900913'));
+            extent900913 = ol.extent.transform(bounds, transform);
+          }
+        }
+      }
+
+      service_.zoomToExtent(extent900913);
     };
 
     this.getLayers = function(includeHidden, includeImagery) {

@@ -214,7 +214,8 @@
     'cancel_feature': 'Cancel Feature',
     'add_to_feature': 'Add To Feature',
     'remove_from_feature': 'Remove From Feature',
-    'draw': 'Draw'
+    'draw': 'Draw',
+    'zoom_to_data': 'Zoom to data'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
