@@ -34,6 +34,63 @@
       translate_ = $translate;
       q_ = $q;
       service_ = this;
+      var diffStyle = (function() {
+        return function(feature, resolution) {
+          var styles = {};
+          var change = $.extend(true, [], feature.get('change'));
+          change.fill.push(0.5);
+          change.stroke.push(1);
+          styles['Polygon'] = [
+            new ol.style.Style({
+              fill: new ol.style.Fill({
+                color: change.fill
+              })
+            }),
+            new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                color: change.stroke
+              })
+            })
+          ];
+          styles['MultiPolygon'] = styles['Polygon'];
+
+          styles['LineString'] = [
+            new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                color: change.stroke,
+                width: 7
+              })
+            }),
+            new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                color: change.fill,
+                width: 5
+              })
+            })
+          ];
+          styles['MultiLineString'] = styles['LineString'];
+
+          styles['Point'] = [
+            new ol.style.Style({
+              image: new ol.style.Circle({
+                radius: 12,
+                fill: new ol.style.Fill({
+                  color: change.fill
+                }),
+                stroke: new ol.style.Stroke({
+                  color: change.stroke
+                })
+              })
+            })
+          ];
+          styles['MultiPoint'] = styles['Point'];
+
+          styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+
+          return styles[feature.getGeometry().getType()];
+        };
+      })();
+
       difflayer_ = new ol.layer.Vector({
         metadata: {
           title: translate_('differences'),
@@ -42,31 +99,7 @@
         source: new ol.source.Vector({
           parser: null
         }),
-        style: new ol.style.Style({rules: [
-          new ol.style.Rule({
-            filter: '(geometryType("polygon") || geometryType("multipolygon"))',
-            symbolizers: [
-              new ol.style.Fill({color: ol.expr.parse('change.fill'), opacity: 0.5}),
-              new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
-            ]
-          }),
-          new ol.style.Rule({
-            filter: '(geometryType("point") || geometryType("multipoint"))',
-            symbolizers: [
-              new ol.style.Shape({size: 20,
-                fill: new ol.style.Fill({color: ol.expr.parse('change.fill'), opacity: 0.5}),
-                stroke: new ol.style.Stroke({color: ol.expr.parse('change.stroke')})
-              })
-            ]
-          }),
-          new ol.style.Rule({
-            filter: '(geometryType("linestring") || geometryType("multilinestring"))',
-            symbolizers: [
-              new ol.style.Stroke({width: 7, color: ol.expr.parse('change.stroke'), opacity: 0.5}),
-              new ol.style.Stroke({width: 5, color: ol.expr.parse('change.fill'), opacity: 0.5})
-            ]
-          })
-        ]})
+        styleFunction: diffStyle
       });
       rootScope.$on('translation_change', function() {
         difflayer_.get('metadata').title = translate_('differences');
@@ -95,7 +128,7 @@
       service_.oldName = oldName;
       service_.newName = newName;
       service_.features = _changeList;
-      difflayer_.clear();
+      difflayer_.getSource().clear();
       mapService_.map.removeLayer(difflayer_);
       mapService_.map.addLayer(difflayer_);
       if (goog.isDefAndNotNull(_changeList)) {
@@ -115,7 +148,7 @@
             }
           });
 
-          var geom = ol.parser.WKT.read(change.geometry);
+          var geom = WKT.read(change.geometry);
           if (goog.isDefAndNotNull(crs)) {
             var transform = ol.proj.getTransform(crs, mapService_.map.getView().getView2D().getProjection());
             geom.transform(transform);
@@ -123,7 +156,7 @@
           var olFeature = new ol.Feature();
           olFeature.set('change', DiffColorMap[change.change]);
           olFeature.setGeometry(geom);
-          difflayer_.addFeatures([olFeature]);
+          difflayer_.getSource().addFeature(olFeature);
           change.olFeature = olFeature;
           var splitFeature = change.id.split('/');
           var feature = {

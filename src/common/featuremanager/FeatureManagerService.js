@@ -7,7 +7,7 @@
   var rootScope_ = null;
   var translate_ = null;
   var historyService_ = null;
-  var http_ = null;
+  var httpService_ = null;
   var exclusiveModeService_ = null;
   var dialogService_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
@@ -34,16 +34,20 @@
       mapService_ = mapService;
       historyService_ = historyService;
       translate_ = $translate;
-      http_ = $http;
+      httpService_ = $http;
       exclusiveModeService_ = exclusiveModeService;
       dialogService_ = dialogService;
       registerOnMapClick($rootScope, $compile);
 
-      mapService_.editLayer.on(ol.layer.VectorEventType.ADD, function() {
+      mapService_.editLayer.getSource().on(ol.source.VectorEventType.ADDFEATURE, function() {
         if (exclusiveModeService_.isEnabled()) {
           mapService_.map.removeInteraction(draw_);
-          mapService_.selectFeature(mapService_.editLayer.getFeatures()[0]);
-          modify_ = new ol.interaction.Modify();
+          mapService_.addSelect();
+          if (goog.isNull(modify_)) {
+            modify_ = new ol.interaction.Modify({featureOverlay: mapService_.featureOverlay});
+          } else {
+            modify_.setMap(mapService_.map);
+          }
           mapService_.map.addInteraction(modify_);
         }
       });
@@ -315,7 +319,7 @@
       enabled_ = false;
       exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
           exclusiveModeService_.button(translate_('done_btn'), function() {
-            if (mapService_.editLayer.getFeatures().length < 1) {
+            if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false).then(function(button) {
                 switch (button) {
@@ -324,7 +328,7 @@
                 }
               });
             } else {
-              var feature = mapService_.editLayer.getFeatures()[0];
+              var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
               selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
               var newGeom = transformGeometry(selectedItem_.geometry,
                   mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
@@ -349,10 +353,10 @@
       });
       selectedItemProperties_ = props;
       selectedLayer_ = layer;
-      geometryType = geometryType.split(':')[1].replace('PropertyType', '').toLowerCase();
+      geometryType = geometryType.split(':')[1].replace('PropertyType', '');
       selectedItem_ = {geometry: {type: geometryType}, geometry_name: geometryName, properties: {}};
       mapService_.map.addLayer(mapService_.editLayer);
-      draw_ = new ol.interaction.Draw({layer: mapService_.editLayer, type: geometryType});
+      draw_ = new ol.interaction.Draw({source: mapService_.editLayer.getSource(), type: geometryType});
       mapService_.map.addInteraction(draw_);
       rootScope_.$broadcast('startFeatureInsert');
     };
@@ -363,7 +367,7 @@
         var propertyXmlPartial = '';
         var featureGML = '';
         var newPos;
-        var feature = mapService_.editLayer.getFeatures()[0];
+        var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
         if (goog.isDefAndNotNull(coords)) {
           // Check if either of the coordinates we changed in the attribute editing process
           if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
@@ -388,11 +392,13 @@
           }
         } else {
           featureGML = getGeometryGMLFromFeature(feature);
-          if (feature.getGeometry().getType() == 'multilinestring') {
-            newPos = feature.getGeometry().getComponents()[0].getCoordinates();
+          if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
+            newPos = feature.getGeometry().getCoordinates()[0];
             newPos = newPos[Math.floor(newPos.length / 2)];
-          } else if (feature.getGeometry().getType() == 'multipolygon') {
-            newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
+          } else if (feature.getGeometry().getType().toLowerCase() == 'polygon') {
+            newPos = feature.getGeometry().getCoordinates()[0][0];
+          } else if (feature.getGeometry().getType().toLowerCase() == 'multipolygon') {
+            newPos = feature.getGeometry().getCoordinates()[0][0][0];
           }
           mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         }
@@ -413,6 +419,9 @@
         mapService_.map.removeInteraction(draw_);
         service_.hide();
       }
+      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
+        mapService_.featureOverlay.getFeatures().clear();
+      }
       mapService_.map.removeInteraction(modify_);
       enabled_ = true;
       rootScope_.$broadcast('endFeatureInsert', save);
@@ -428,7 +437,11 @@
             exclusiveModeService_.endExclusiveMode();
             service_.endGeometryEditing(false);
           }));
-      modify_ = new ol.interaction.Modify();
+      if (goog.isNull(modify_)) {
+        modify_ = new ol.interaction.Modify({featureOverlay: mapService_.featureOverlay});
+      } else {
+        modify_.setMap(mapService_.map);
+      }
       mapService_.map.addInteraction(modify_);
       enabled_ = false;
     };
@@ -436,38 +449,40 @@
     this.endGeometryEditing = function(save) {
       if (save) {
         // actually save the geom
-        var feature = mapService_.editLayer.getFeatures()[0];
-        if (feature.original_) {
-          // Feature was modified so we need to save the changes
-          var featureGML = getGeometryGMLFromFeature(feature);
-          // Finish constructing the partial that will be sent in the post request
-          var partial = '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
-              '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
-          // Transform the geometry so that we can get the new Decimal Degrees to display in the info-box
-          var coords = null;
-          var newPos = null;
-          if (feature.getGeometry().getType() == 'point') {
-            coords = feature.getGeometry().getCoordinates();
-            var transformedGeom = transformGeometry({type: 'point', coordinates: coords},
-                mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
-            coords = transformedGeom.getCoordinates();
-            newPos = feature.getGeometry().getCoordinates();
-          } else if (feature.getGeometry().getType() == 'multilinestring') {
-            newPos = feature.getGeometry().getComponents()[0].getCoordinates();
-            newPos = newPos[Math.floor(newPos.length / 2)];
-          } else if (feature.getGeometry().getType() == 'multipolygon') {
-            newPos = feature.getGeometry().getComponents()[0].getRings()[0].getCoordinates()[0];
-          }
-          // Issue the request
-          issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos);
+        var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
+        // Feature was modified so we need to save the changes
+        var featureGML = getGeometryGMLFromFeature(feature);
+        // Finish constructing the partial that will be sent in the post request
+        var partial = '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
+            '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
+        // Transform the geometry so that we can get the new Decimal Degrees to display in the info-box
+        var coords = null;
+        var newPos = null;
+        if (feature.getGeometry().getType().toLowerCase() == 'point') {
+          coords = feature.getGeometry().getCoordinates();
+          var transformedGeom = transformGeometry({type: 'point', coordinates: coords},
+              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+          coords = transformedGeom.getCoordinates();
+          newPos = feature.getGeometry().getCoordinates();
+        } else if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
+          newPos = feature.getGeometry().getCoordinates()[0];
+          newPos = newPos[Math.floor(newPos.length / 2)];
+        } else if (feature.getGeometry().getType().toLowerCase() == 'polygon') {
+          newPos = feature.getGeometry().getCoordinates()[0][0];
+        } else if (feature.getGeometry().getType().toLowerCase() == 'multipolygon') {
+          newPos = feature.getGeometry().getCoordinates()[0][0][0];
         }
+        // Issue the request
+        issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos);
       } else {
         // discard changes
-        // TODO: Figure out how to use the original feature stored on a modified feature to reset
         mapService_.clearSelectedFeature();
         mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
       rootScope_.$broadcast('endGeometryEdit', save);
+      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
+        mapService_.featureOverlay.getFeatures().clear();
+      }
       mapService_.map.removeInteraction(modify_);
       enabled_ = true;
     };
@@ -502,7 +517,7 @@
             var newGeom = transformGeometry({type: 'point', coordinates: coords},
                 selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
             // We also need to update the vector feature so that it is in the new position
-            var feature = mapService_.editLayer.getFeatures()[0];
+            var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
             feature.setGeometry(newGeom);
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request
@@ -545,49 +560,50 @@
 
         service_.hide();
 
+        var view = mapService_.map.getView().getView2D();
         var layers = mapService_.getLayers();
+        var completed = 0;
 
-        mapService_.map.getFeatureInfo({
-          pixel: evt.getPixel(),
-          layers: layers,
-          success: function(featureInfoByLayer) {
-            //console.log('loomFeatureInfoBox.map.getFeatureInfo.success', featureInfoByLayer);
+        var infoPerLayer = [];
 
-            var infoPerLayer = [];
+        // wait for all get feature infos to retun before proceeding.
+        var getFeatureInfoCompleted = function() {
+          completed += 1;
 
-            featureInfoByLayer.forEach(function(elm, index) {
-              try {
-                var layerInfo = JSON.parse(elm);
-
-                if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
-                  layerInfo.layer = layers[index];
-                  goog.array.insert(infoPerLayer, layerInfo);
-                }
-              } catch (e) {}
-            });
-            //console.log('-- infoPerLayer: ', infoPerLayer);
-
+          if (completed === layers.length) {
             if (infoPerLayer.length > 0) {
-              service_.show(infoPerLayer, evt.getCoordinate());
-            } else {
-              service_.hide();
+              service_.show(infoPerLayer, evt.coordinate);
+            }
+          } else {
+            service_.hide();
+          }
+        };
+
+        goog.array.forEach(layers, function(layer, index) {
+          var source = layer.getSource();
+          var url = source.getGetFeatureInfoUrl(evt.coordinate, view.getResolution(), view.getProjection(),
+              {
+                'INFO_FORMAT': 'application/json',
+                'FEATURE_COUNT': 5
+              });
+
+          //console.log('___ url: ', url);
+
+          httpService_.get(url).then(function(response) {
+            var layerInfo = {};
+            layerInfo.features = response.data.features;
+
+            if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
+              layerInfo.layer = layers[index];
+              goog.array.insert(infoPerLayer, layerInfo);
             }
 
-            // since setMode changes variables in service potentially used by directives,
-            // trigger any watches so that they can update
-            rootScope_.$broadcast('feature-info-click');
-          },
-          error: function() {
-            console.log('====[ ERROR: loomFeatureInfoBox.map.getFeatureInfo.error');
-            throw ({
-              name: 'featureInfoBox',
-              level: 'High',
-              message: 'map.getFeatureInfo failed!',
-              toString: function() {
-                return this.name + ': ' + this.message;
-              }
-            });
-          }
+            //console.log('-- infoPerLayer: ', infoPerLayer);
+            getFeatureInfoCompleted();
+          }, function(reject) {
+            getFeatureInfoCompleted();
+            console.log('getFeatureInfo failed for layer: ', layer, ', reject response: ', reject);
+          });
         });
       }
     });
@@ -654,7 +670,7 @@
 
     var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
     var layerName = selectedLayer_.get('metadata').uniqueID;
-    http_.post(url, wfsRequestData).success(function(data, status, headers, config) {
+    httpService_.post(url, wfsRequestData).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
       if (postType === wfsPostTypes_.INSERT) {
         var x2js = new X2JS();
@@ -684,7 +700,7 @@
   function getGeometryGMLFromFeature(feature) {
     // TODO: Find a better way to write geometry to GML or a better way to parse it
     // Write the feature to GML
-    var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
+    /*var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
       featureType: selectedLayer_.get('metadata').nativeName});
     var featureGML = writer.write({features: [feature]},
         {srsName: mapService_.map.getView().getView2D().getProjection().getCode()});
@@ -697,6 +713,31 @@
     var originalString = featureGML.substring(0, startIndex);
     var newString = originalString + ' xmlns:gml="http://www.opengis.net/gml"';
     featureGML = featureGML.replace(originalString, newString);
+    return featureGML;*/
+    var featureGML = '';
+    if (feature.getGeometry().getType().toLowerCase() == 'point') {
+      featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
+          feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') +
+          '</gml:pos></gml:Point>';
+    } else if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
+      featureGML = '<gml:MultiCurve xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:curveMember><gml:LineString>' +
+          '<gml:posList>' + feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') + '</gml:posList>' +
+          '</gml:LineString></gml:curveMember></gml:MultiCurve>';
+    } else if (feature.getGeometry().getType().toLowerCase() == 'polygon') {
+      featureGML = '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+          '<gml:exterior><gml:LinearRing><gml:posList>' +
+          feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') + '</gml:posList>' +
+          '</gml:LinearRing></gml:exterior></gml:Polygon>';
+    } else if (feature.getGeometry().getType().toLowerCase() == 'multipolygon') {
+      featureGML = '<gml:MultiSurface xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:surfaceMember><gml:Polygon>' +
+          '<gml:exterior><gml:LinearRing><gml:posList>' +
+          feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') + '</gml:posList>' +
+          '</gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember></gml:MultiSurface>';
+    }
     return featureGML;
   }
 

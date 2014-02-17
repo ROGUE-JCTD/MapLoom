@@ -1,26 +1,26 @@
 var DiffColorMap = {
   ADDED: {
-    fill: '#00FF00',
-    stroke: '#006600'
+    fill: [0, 255, 0],
+    stroke: [0, 102, 0]
   },
   REMOVED: {
-    fill: '#FF0000',
-    stroke: '#660000'
+    fill: [255, 0, 0],
+    stroke: [102, 0, 0]
   },
   MODIFIED: {
-    fill: '#FFFF00',
-    stroke: '#666600'
+    fill: [255, 255, 0],
+    stroke: [102, 102, 0]
   },
   CONFLICT: {
-    fill: '#F87531',
-    stroke: '#964514'
+    fill: [248, 117, 49],
+    stroke: [150, 69, 20]
   },
   MERGED: {
-    fill: '#0000FF',
-    stroke: '#000066'
+    fill: [0, 0, 255],
+    stroke: [0, 0, 102]
   },
   NO_CHANGE: {
-    fill: '#FFFFFF',
-    stroke: '#666666'
+    fill: [255, 255, 255],
+    stroke: [102, 102, 102]
   }
 };

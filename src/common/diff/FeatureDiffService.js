@@ -33,7 +33,7 @@
       this.active = false;
       this.geometry = null;
       this.olFeature = null;
-      this.featureLayer.clear();
+      this.featureLayer.getSource().clear();
     };
 
     this.getGeometry = function() {
@@ -82,6 +82,7 @@
       var createMap = function(panel) {
         panel.map = new ol.Map({
           renderer: ol.RendererHint.CANVAS,
+          ol3Logo: false,
           view: new ol.View2D({
             center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
             zoom: 14,
@@ -275,12 +276,12 @@
         }
       });
 
-      var geom = ol.parser.WKT.read(feature.geometry);
+      var geom = WKT.read(feature.geometry);
       if (goog.isDefAndNotNull(crs_)) {
         var transform = ol.proj.getTransform(crs_, mapService_.map.getView().getView2D().getProjection());
         geom.transform(transform);
       }
-      var newBounds = geom.getBounds();
+      var newBounds = geom.getExtent();
       var x = newBounds[2] - newBounds[0];
       var y = newBounds[3] - newBounds[1];
       x *= 0.5;
@@ -359,7 +360,7 @@
           return 0;
         });
 
-        var geom = ol.parser.WKT.read(panel.getGeometry());
+        var geom = WKT.read(panel.getGeometry());
 
         var localCrs = crs_;
         if (goog.isDefAndNotNull(panel.geometry.crs)) {
@@ -372,9 +373,9 @@
         var olFeature = new ol.Feature();
         olFeature.set('MapLoomChange', DiffColorMap[panel.geometry.changetype]);
         olFeature.setGeometry(geom);
-        panel.featureLayer.addFeatures([olFeature]);
+        panel.featureLayer.getSource().addFeature(olFeature);
         panel.olFeature = olFeature;
-        var newBounds = geom.getBounds();
+        var newBounds = geom.getExtent();
         var x = newBounds[2] - newBounds[0];
         var y = newBounds[3] - newBounds[1];
         x *= 0.1;
@@ -433,35 +434,67 @@
   });
 
   function makeFeatureLayer() {
+    var featureStyle = (function() {
+      return function(feature, resolution) {
+        var styles = {};
+        var change = $.extend(true, [], feature.get('MapLoomChange'));
+        change.fill.push(1);
+        change.stroke.push(1);
+        styles['Polygon'] = [
+          new ol.style.Style({
+            fill: new ol.style.Fill({
+              color: change.fill
+            })
+          }),
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: change.stroke
+            })
+          })
+        ];
+        styles['MultiPolygon'] = styles['Polygon'];
+
+        styles['LineString'] = [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: change.stroke,
+              width: 7
+            })
+          }),
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: change.fill,
+              width: 5
+            })
+          })
+        ];
+        styles['MultiLineString'] = styles['LineString'];
+
+        styles['Point'] = [
+          new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 12,
+              fill: new ol.style.Fill({
+                color: change.fill
+              }),
+              stroke: new ol.style.Stroke({
+                color: change.stroke
+              })
+            })
+          })
+        ];
+        styles['MultiPoint'] = styles['Point'];
+
+        styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+        return styles[feature.getGeometry().getType()];
+      };
+    })();
+
     return new ol.layer.Vector({
       source: new ol.source.Vector({
         parser: null
       }),
-      style: new ol.style.Style({rules: [
-        new ol.style.Rule({
-          filter: '(geometryType("polygon") || geometryType("multipolygon"))',
-          symbolizers: [
-            new ol.style.Fill({color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0}),
-            new ol.style.Stroke({color: ol.expr.parse('MapLoomChange.stroke')})
-          ]
-        }),
-        new ol.style.Rule({
-          filter: '(geometryType("point") || geometryType("multipoint"))',
-          symbolizers: [
-            new ol.style.Shape({size: 20,
-              fill: new ol.style.Fill({color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0}),
-              stroke: new ol.style.Stroke({color: ol.expr.parse('MapLoomChange.stroke')})
-            })
-          ]
-        }),
-        new ol.style.Rule({
-          filter: '(geometryType("linestring") || geometryType("multilinestring"))',
-          symbolizers: [
-            new ol.style.Stroke({width: 7, color: ol.expr.parse('MapLoomChange.stroke'), opacity: 1.0}),
-            new ol.style.Stroke({width: 5, color: ol.expr.parse('MapLoomChange.fill'), opacity: 1.0})
-          ]
-        })
-      ]})
+      styleFunction: featureStyle
     });
   }
 

@@ -174,9 +174,15 @@
   <div class="loom-legend"></div>
   <div class="loom-exclusive-mode"></div>
   <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
-       tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
+             tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
     <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
       <i class="glyphicon glyphicon-globe"></i>
+    </div>
+  </div>
+  <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
+       tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
+    <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
+      <i class="glyphicon glyphicon-map-marker"></i>
     </div>
   </div>
 </div>

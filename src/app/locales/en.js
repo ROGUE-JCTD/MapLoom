@@ -208,7 +208,8 @@
     'search': 'Search',
     'search_no_results': 'No results matched the search query.',
     'search_error_status': 'Search failed with response code ({{status}}).',
-    'search_error': 'An unknown error occurred while performing the search.'
+    'search_error': 'An unknown error occurred while performing the search.',
+    'switch_coords': 'Switch Coordinate Display'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

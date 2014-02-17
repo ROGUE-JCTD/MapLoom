@@ -22,17 +22,19 @@
         source: new ol.source.Vector({
           parser: null
         }),
-        style: new ol.style.Style({rules: [
-          new ol.style.Rule({
-            filter: 'geometryType("point")',
-            symbolizers: [
-              new ol.style.Shape({size: 8,
-                fill: new ol.style.Fill({color: '#D6AF38', opacity: 1}),
-                stroke: new ol.style.Stroke({color: '#000000'})
+        styleFunction: function(feature, resolution) {
+          return [new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 8,
+              fill: new ol.style.Fill({
+                color: '#D6AF38'
+              }),
+              stroke: new ol.style.Stroke({
+                color: '#000000'
               })
-            ]
-          })
-        ]})
+            })
+          })];
+        }
       });
 
       $rootScope.$on('translation_change', function() {
@@ -85,19 +87,19 @@
     };
 
     this.populateSearchLayer = function(results) {
-      searchlayer_.clear();
+      searchlayer_.getSource().clear();
       mapService_.map.removeLayer(searchlayer_);
       mapService_.map.addLayer(searchlayer_);
       forEachArrayish(results, function(result) {
         var olFeature = new ol.Feature();
         olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',
             mapService_.map.getView().getView2D().getProjection())));
-        searchlayer_.addFeatures([olFeature]);
+        searchlayer_.getSource().addFeature(olFeature);
       });
     };
 
     this.clearSearchLayer = function() {
-      searchlayer_.clear();
+      searchlayer_.getSource().clear();
       mapService_.map.removeLayer(searchlayer_);
     };
   });

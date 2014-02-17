@@ -23,90 +23,28 @@
       source: new ol.source.Vector({
         parser: null
       }),
-      style: new ol.style.Style({
-        rules: [
-          new ol.style.Rule({
-            filter: 'renderIntent("selected")',
-            symbolizers: [
-              new ol.style.Shape({
-                fill: new ol.style.Fill({
-                  color: '#0099ff',
-                  opacity: 1
-                }),
-                stroke: new ol.style.Stroke({
-                  color: 'white',
-                  opacity: 0.75
-                }),
-                size: 14,
-                zIndex: 1
-              }),
-              new ol.style.Fill({
-                color: '#0099ff',
-                opacity: 0.5
-              }),
-              new ol.style.Stroke({
-                color: '#0099ff',
-                width: 3
-              })
-            ]
+      styleFunction: function(feature, resolution) {
+        return [new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: [0, 0, 255, 0.25]
           }),
-          new ol.style.Rule({
-            filter: 'renderIntent("temporary")',
-            symbolizers: [
-              new ol.style.Shape({
-                fill: new ol.style.Fill({
-                  color: '#0099ff',
-                  opacity: 1
-                }),
-                stroke: new ol.style.Stroke({
-                  color: 'white',
-                  opacity: 0.75
-                }),
-                size: 14,
-                zIndex: 1
-              })
-            ]
+          stroke: new ol.style.Stroke({
+            color: [0, 0, 255, 1],
+            width: 4
           }),
-          new ol.style.Rule({
-            filter: 'renderIntent("future")',
-            symbolizers: [
-              new ol.style.Shape({
-                fill: new ol.style.Fill({
-                  color: '#00ff33',
-                  opacity: 1
-                }),
-                stroke: new ol.style.Stroke({
-                  color: 'white',
-                  opacity: 0.75
-                }),
-                size: 14,
-                zIndex: 1
-              })
-            ]
-          })
-        ],
-        symbolizers: [
-          new ol.style.Shape({
+          image: new ol.style.Circle({
+            radius: 6,
             fill: new ol.style.Fill({
-              color: 'blue',
-              opacity: 0.4
+              color: [0, 0, 255, 0.25]
             }),
             stroke: new ol.style.Stroke({
-              color: 'blue',
-              width: 4
-            }),
-            size: 20
+              color: [0, 0, 255, 1],
+              width: 1.5
+            })
           }),
-          new ol.style.Fill({
-            color: 'blue',
-            opacity: 0.4
-          }),
-          new ol.style.Stroke({
-            color: 'blue',
-            width: 4
-          })
-        ]
-      })
+          zIndex: 1
+        })];
+      }
     });
   };
 
@@ -143,6 +81,73 @@
       this.map = this.createMap();
       this.editLayer = createVectorEditLayer();
 
+      var overlayStyle = (function() {
+        var styles = {};
+        styles['Polygon'] = [
+          new ol.style.Style({
+            fill: new ol.style.Fill({
+              color: [255, 255, 255, 0.5]
+            })
+          }),
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: [255, 255, 255, 1],
+              width: 6
+            })
+          }),
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: [0, 153, 255, 1],
+              width: 4
+            })
+          })
+        ];
+        styles['MultiPolygon'] = styles['Polygon'];
+
+        styles['LineString'] = [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: [255, 255, 255, 1],
+              width: 6
+            })
+          }),
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: [0, 153, 255, 1],
+              width: 4
+            })
+          })
+        ];
+        styles['MultiLineString'] = styles['LineString'];
+
+        styles['Point'] = [
+          new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 12,
+              fill: new ol.style.Fill({
+                color: [0, 153, 255, 0.75]
+              }),
+              stroke: new ol.style.Stroke({
+                color: [255, 255, 255, 1],
+                width: 1.5
+              })
+            }),
+            zIndex: 100000
+          })
+        ];
+        styles['MultiPoint'] = styles['Point'];
+
+        styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+
+        return function(feature, resolution) {
+          return styles[feature.getGeometry().getType()];
+        };
+      })();
+
+      this.featureOverlay = new ol.FeatureOverlay({
+        styleFunction: overlayStyle
+      });
+
       // must always have a local geoserver. if not, something has gone wrong
       var localServer = serverService_.getServerLocalGeoserver();
       serverService_.populateLayersConfig(serverService_.getServerIndex(localServer.id));
@@ -172,13 +177,13 @@
     this.dumpTileCache = function(layerToDump) {
       var layers = this.getLayers(); //Note: does not get hidden or imagery layers
       forEachArrayish(layers, function(layer) {
-        if (goog.isDefAndNotNull(layer.getTileSource)) {
+        if (goog.isDefAndNotNull(layer.getSource)) {
           var metadata = layer.get('metadata');
           if (goog.isDefAndNotNull(metadata)) {
             if (goog.isDefAndNotNull(layerToDump) && layerToDump !== metadata.uniqueID) {
               return;
             }
-            var tileSource = layer.getTileSource();
+            var tileSource = layer.getSource();
             if (goog.isDefAndNotNull(tileSource)) {
               if (goog.isDefAndNotNull(tileSource.updateParams)) {
                 tileSource.updateParams({_dc: new Date().getTime()});
@@ -187,7 +192,6 @@
           }
         }
       });
-      this.map.render();
     };
 
     this.zoomToExtent = function(extent, animate, map) {
@@ -252,11 +256,13 @@
     };
 
     this.layerIsImagery = function(layer) {
-      if ((layer.source_ instanceof ol.source.OSM) ||
+      if (((layer.source_ instanceof ol.source.OSM) ||
           (layer.source_ instanceof ol.source.BingMaps) ||
-          (layer.source_ instanceof ol.source.MapQuestOSM)) {
+          (layer.source_ instanceof ol.source.MapQuest))) {
         return true;
       }
+
+      return false;
     };
 
     this.addLayer = function(config, doNotAddToMap) {
@@ -295,9 +301,7 @@
       } else if (server.ptype === 'gxp_googlesource') {
         console.log('====[ Error: google source not implemeted');
       } else if (server.ptype === 'gxp_mapquestsource') {
-
-        //TODO: type changed to just mapquest
-        var source = new ol.source.MapQuestOSM(config.sourceParams);
+        var source = new ol.source.MapQuest(config.sourceParams);
 
         if (goog.isDefAndNotNull(source)) {
           layer = new ol.layer.Tile({
@@ -334,7 +338,9 @@
             params: {
               'LAYERS': config.name,
               'BUFFER': 15
-            },
+            }
+            /*  TODO: OL3 FIXME
+            ,
             getFeatureInfoOptions: {
               'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
               'params': {
@@ -342,7 +348,7 @@
                 'FEATURE_COUNT': 50,
                 'BUFFER': 15
               }
-            }
+            }*/
           })
         });
         // console.log('new layer: ', layer);
@@ -599,10 +605,12 @@
       }
 
       if (settings.coordinateDisplay === coordinateDisplays.DMS) {
-        this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.toStringHDMS);
-      } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
+        settings.coordinateDisplay = coordinateDisplays.DD;
         var precision = settings.DDPrecision;
         this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.createStringXY(precision));
+      } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
+        settings.coordinateDisplay = coordinateDisplays.DMS;
+        this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.toStringHDMS);
       }
     };
 
@@ -635,6 +643,7 @@
           new ol.interaction.DragRotate()
         ]),
         renderer: ol.RendererHint.CANVAS,
+        ol3Logo: false,
         target: 'map',
         view: new ol.View2D({
           center: this.configuration.map.center,
@@ -642,61 +651,6 @@
           maxZoom: 20
         })
       });
-
-      // Defines default vector style
-      ol.style.setDefault(new ol.style.Style({
-        rules: [
-          new ol.style.Rule({
-            filter: 'renderintent("selected")',
-            symbolizers: [
-              new ol.style.Fill({
-                color: '#ff0000',
-                opacity: 1
-              }),
-              new ol.style.Stroke({
-                color: '#000000',
-                opacity: 1,
-                width: 2
-              }),
-              new ol.style.Shape({
-                size: 10,
-                fill: new ol.style.Fill({
-                  color: '#ff0000',
-                  opacity: 1
-                }),
-                stroke: new ol.style.Stroke({
-                  color: '#000000',
-                  opacity: 1,
-                  width: 2
-                })
-              })
-            ]
-          })
-        ],
-        symbolizers: [
-          new ol.style.Fill({
-            color: '#ffff00',
-            opacity: 0.8
-          }),
-          new ol.style.Stroke({
-            color: '#ff8000',
-            opacity: 0.8,
-            width: 3
-          }),
-          new ol.style.Shape({
-            size: 10,
-            fill: new ol.style.Fill({
-              color: '#ffff00',
-              opacity: 0.8
-            }),
-            stroke: new ol.style.Stroke({
-              color: '#ff8000',
-              opacity: 0.8,
-              width: 3
-            })
-          })
-        ]
-      }));
 
       map.on('dragend', function() {
         if (dragZoomActive === false) {
@@ -726,21 +680,18 @@
       var newFeature = new ol.Feature();
       var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
       newFeature.setGeometry(newGeom);
-      this.editLayer.addFeatures([newFeature]);
-      select = new ol.interaction.Select();
-      select.select(this.map, [[newFeature]], [this.editLayer], false);
-      this.map.addInteraction(select);
+      this.editLayer.getSource().addFeature(newFeature);
+      this.addSelect();
       this.map.addLayer(this.editLayer);
     };
 
-    this.selectFeature = function(feature) {
-      select = new ol.interaction.Select();
-      select.select(this.map, [[feature]], [this.editLayer], false);
+    this.addSelect = function() {
+      select = new ol.interaction.Select({layer: this.editLayer, featureOverlay: this.featureOverlay});
       this.map.addInteraction(select);
     };
 
     this.clearSelectedFeature = function() {
-      this.editLayer.clear();
+      this.editLayer.getSource().clear();
       this.map.removeLayer(this.editLayer);
       this.map.removeInteraction(select);
     };
