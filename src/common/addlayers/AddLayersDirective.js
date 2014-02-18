@@ -41,10 +41,6 @@
               }
             };
 
-            scope.selectServer = function(index) {
-              scope.currentServerIndex = index;
-            };
-
             scope.filterAddedLayers = function(layerConfig) {
               var show = true;
               var layers = mapService.getLayers(true, true);
@@ -68,6 +64,10 @@
               if (!scope.$$phase && !$rootScope.$$phase) {
                 scope.$apply();
               }
+            });
+
+            scope.$on('server-added', function(event, id) {
+              scope.setCurrentServerIndex(id);
             });
 
             function onResize() {

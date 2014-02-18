@@ -39,7 +39,7 @@
           var styles = {};
           var change = $.extend(true, [], feature.get('change'));
           change.fill.push(0.5);
-          change.stroke.push(1);
+          change.stroke.push(0.5);
           styles['Polygon'] = [
             new ol.style.Style({
               fill: new ol.style.Fill({
