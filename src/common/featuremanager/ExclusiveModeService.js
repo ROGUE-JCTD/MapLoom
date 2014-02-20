@@ -5,10 +5,14 @@
   var buttons_ = [];
   var pulldownService_ = null;
   var enabled_ = false;
+  var geometryType_ = null;
+  var mapService_ = null;
 
   module.provider('exclusiveModeService', function() {
-    this.$get = function(pulldownService) {
+    this.$get = function(pulldownService, mapService) {
       pulldownService_ = pulldownService;
+      mapService_ = mapService;
+      this.addMode = false;
       return this;
     };
 
@@ -18,6 +22,10 @@
 
     this.getTitle = function() {
       return title_;
+    };
+
+    this.getType = function() {
+      return geometryType_;
     };
 
     this.getButtonOne = function() {
@@ -32,12 +40,20 @@
       return enabled_;
     };
 
-    this.startExclusiveMode = function(title, buttonOne, buttonTwo) {
+    this.isMultiType = function() {
+      if (goog.isDefAndNotNull(geometryType_)) {
+        return geometryType_.search(/Multi/g) > -1;
+      }
+      return false;
+    };
+
+    this.startExclusiveMode = function(title, buttonOne, buttonTwo, geometryType) {
       title_ = title;
       buttons_ = [buttonOne, buttonTwo];
       enabled_ = true;
       angular.element('#pulldown-menu').collapse('hide');
       pulldownService_.toggleEnabled = false;
+      geometryType_ = geometryType;
       setTimeout(function() {
         angular.element('#exclusive-mode-container').collapse('show');
       }, 350);
@@ -52,6 +68,23 @@
         title_ = '';
         buttons_ = [];
       }, 350);
+    };
+
+    this.addToFeature = function() {
+      if (!this.addMode) {
+        mapService_.removeModify();
+        mapService_.removeSelect();
+        console.log(geometryType_);
+        mapService_.addDraw(geometryType_);
+        this.addMode = true;
+      }
+    };
+
+    this.removeFromFeature = function() {
+      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
+        mapService_.editLayer.getSource().removeFeature(mapService_.featureOverlay.getFeatures().getAt(0));
+        mapService_.featureOverlay.removeFeature(mapService_.featureOverlay.getFeatures().getAt(0));
+      }
     };
   });
 }());

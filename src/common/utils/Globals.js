@@ -65,8 +65,10 @@ var transformGeometry = function(geometry, crsFrom, crsTo) {
       console.log(geometry.geometry.type, 'Not a valid geometry type');
     }
   }
-  var transform = ol.proj.getTransform(crsFrom, crsTo);
-  newGeom.transform(transform);
+  if (goog.isDefAndNotNull(crsFrom) && goog.isDefAndNotNull(crsTo)) {
+    var transform = ol.proj.getTransform(crsFrom, crsTo);
+    newGeom.transform(transform);
+  }
   return newGeom;
 };
 

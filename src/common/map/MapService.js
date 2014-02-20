@@ -14,6 +14,8 @@
   var dragZoomActive = false;
 
   var select = null;
+  var draw = null;
+  var modify = null;
 
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
@@ -685,15 +687,45 @@
       this.map.addLayer(this.editLayer);
     };
 
+    this.clearSelectedFeature = function() {
+      this.editLayer.getSource().clear();
+      this.map.removeLayer(this.editLayer);
+      this.removeSelect();
+    };
+
     this.addSelect = function() {
       select = new ol.interaction.Select({layer: this.editLayer, featureOverlay: this.featureOverlay});
       this.map.addInteraction(select);
     };
 
-    this.clearSelectedFeature = function() {
-      this.editLayer.getSource().clear();
-      this.map.removeLayer(this.editLayer);
+    this.addDraw = function(geometryType) {
+      draw = new ol.interaction.Draw({source: this.editLayer.getSource(), type: geometryType});
+      this.map.addInteraction(draw);
+    };
+
+    this.addModify = function() {
+      if (goog.isNull(modify)) {
+        modify = new ol.interaction.Modify({featureOverlay: this.featureOverlay});
+      } else {
+        modify.setMap(this.map);
+      }
+      this.map.addInteraction(modify);
+    };
+
+    this.removeSelect = function() {
       this.map.removeInteraction(select);
+    };
+
+    this.removeDraw = function() {
+      this.map.removeInteraction(draw);
+    };
+
+    this.removeModify = function() {
+      this.map.removeInteraction(modify);
+    };
+
+    this.hasSelectedFeature = function() {
+      return this.featureOverlay.getFeatures().getLength() > 0;
     };
   });
 
