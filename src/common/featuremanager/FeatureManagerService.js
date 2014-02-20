@@ -404,7 +404,12 @@
           }
         } else {
           featureGML = getGeometryGMLFromFeature(feature);
-          if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
+          if (feature.getGeometry().getType().toLowerCase() == 'multipoint') {
+            newPos = feature.getGeometry().getCoordinates()[0];
+          } else if (feature.getGeometry().getType().toLowerCase() == 'linestring') {
+            newPos = feature.getGeometry().getCoordinates();
+            newPos = newPos[Math.floor(newPos.length / 2)];
+          } else if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
             newPos = feature.getGeometry().getCoordinates()[0];
             newPos = newPos[Math.floor(newPos.length / 2)];
           } else if (feature.getGeometry().getType().toLowerCase() == 'polygon') {
@@ -506,6 +511,11 @@
               mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
           coords = transformedGeom.getCoordinates();
           newPos = feature.getGeometry().getCoordinates();
+        } else if (feature.getGeometry().getType().toLowerCase() == 'multipoint') {
+          newPos = feature.getGeometry().getCoordinates()[0];
+        } else if (feature.getGeometry().getType().toLowerCase() == 'linestring') {
+          newPos = feature.getGeometry().getCoordinates();
+          newPos = newPos[Math.floor(newPos.length / 2)];
         } else if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
           newPos = feature.getGeometry().getCoordinates()[0];
           newPos = newPos[Math.floor(newPos.length / 2)];
@@ -764,7 +774,9 @@
           feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') +
           '</gml:pos></gml:Point>';
     } else if (feature.getGeometry().getType().toLowerCase() == 'linestring') {
-      // TODO: Create GML partial for linestring
+      featureGML = '<gml:LineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:posList>' +
+          feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') + '</gml:posList></gml:LineString>';
     } else if (feature.getGeometry().getType().toLowerCase() == 'polygon') {
       featureGML = '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
           mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
@@ -772,7 +784,14 @@
           feature.getGeometry().getCoordinates().toString().replace(/,/g, ' ') + '</gml:posList>' +
           '</gml:LinearRing></gml:exterior></gml:Polygon>';
     } else if (feature.getGeometry().getType().toLowerCase() == 'multipoint') {
-      // TODO: Create GML partial for multipoint
+      featureGML = '<gml:MultiPoint xmlns:gml="http://www.opengis.net/gml" srsName="' +
+          mapService_.map.getView().getView2D().getProjection().getCode() + '">';
+      for (index = 0; index < feature.getGeometry().getCoordinates().length; index++) {
+        featureGML += '<gml:pointMember><gml:Point><gml:pos>' +
+            feature.getGeometry().getCoordinates()[index].toString().replace(/,/g, ' ') +
+            '</gml:pos></gml:Point></gml:pointMember>';
+      }
+      featureGML += '</gml:MultiPoint>';
     } else if (feature.getGeometry().getType().toLowerCase() == 'multilinestring') {
       featureGML = '<gml:MultiCurve xmlns:gml="http://www.opengis.net/gml" srsName="' +
           mapService_.map.getView().getView2D().getProjection().getCode() + '">';
