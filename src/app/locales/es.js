@@ -210,7 +210,11 @@
     'search_no_results': 'No hay resultados que coincidan con la consulta de búsqueda.',
     'search_error_status': 'Buscar fallado con el código de respuesta ({{status}}).',
     'search_error': 'Se ha producido un error desconocido mientras se realiza la búsqueda.',
-    'switch_coords': 'Cambie la visualización de coordenadas'
+    'switch_coords': 'Cambie la visualización de coordenadas',
+    'accept_feature': 'aceptar función',
+    'cancel_feature': 'cancelar función',
+    'add_to_feature': 'agregar a la función',
+    'remove_from_feature': 'eliminar de función'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

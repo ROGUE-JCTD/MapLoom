@@ -2,14 +2,14 @@
   <div id="exclusive-mode-panel" class="panel in">
     <div align="center"><h5>{{exclusiveModeService.getTitle()}}</h5></div>
     <button ng-click="exclusiveModeService.getButtonTwo().callback()" class="btn btn-sm btn-danger" tooltip-append-to-body="true"
-            tooltip-placement="bottom" tooltip="Cancel Feature"><i class="glyphicon glyphicon-remove"></i></button>
+            tooltip-placement="bottom" tooltip="{{exclusiveModeService.getButtonTwo().title}}"><i class="glyphicon glyphicon-remove"></i></button>
     <div ng-show="exclusiveModeService.isMultiType()" class="btn-group">
       <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-click="exclusiveModeService.addToFeature()"
-              tooltip-placement="bottom" tooltip="Add To Feature"><i class="glyphicon glyphicon-plus"></i></button>
+              tooltip-placement="bottom" tooltip="{{'add_to_feature' | translate}}"><i class="glyphicon glyphicon-plus"></i></button>
       <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-click="exclusiveModeService.removeFromFeature()"
-              tooltip-placement="bottom" tooltip="Remove Selected Geometry From Feature"><i class="glyphicon glyphicon-minus"></i></button>
+              tooltip-placement="bottom" tooltip="{{'remove_from_feature' | translate}}"><i class="glyphicon glyphicon-minus"></i></button>
     </div>
     <button ng-click="exclusiveModeService.getButtonOne().callback()" ng-class="{'pull-right': !exclusiveModeService.isMultiType()}" class="btn btn-sm btn-primary" tooltip-append-to-body="true"
-            tooltip-placement="bottom" tooltip="Accept Feature"><i class="glyphicon glyphicon-ok"></i></button>
+            tooltip-placement="bottom" tooltip="{{exclusiveModeService.getButtonOne().title}}"><i class="glyphicon glyphicon-ok"></i></button>
   </div>
 </div>

@@ -74,7 +74,6 @@
       if (!this.addMode) {
         mapService_.removeModify();
         mapService_.removeSelect();
-        console.log(geometryType_);
         mapService_.addDraw(geometryType_);
         this.addMode = true;
       }

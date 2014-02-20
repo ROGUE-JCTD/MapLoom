@@ -90,7 +90,7 @@
       selectedItemProperties_ = null;
       state_ = null;
       featureInfoPerLayer_ = [];
-      mapService_.clearSelectedFeature();
+      mapService_.clearEditLayer();
     };
 
     /**
@@ -213,9 +213,9 @@
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
-          mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+          mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         } else {
-          mapService_.clearSelectedFeature();
+          mapService_.clearEditLayer();
         }
 
         selectedItemProperties_ = props;
@@ -326,7 +326,7 @@
       });
       geometryType = geometryType.split(':')[1].replace('PropertyType', '');
       exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
-          exclusiveModeService_.button(translate_('done_btn'), function() {
+          exclusiveModeService_.button(translate_('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false).then(function(button) {
@@ -337,6 +337,7 @@
               });
             } else {
               mapService_.removeDraw();
+              mapService_.removeSelect();
               mapService_.removeModify();
               var feature;
               if (geometryType.search(/^Multi/g) > -1) {
@@ -359,8 +360,9 @@
               selectedItem_.geometry.coordinates = newGeom.getCoordinates();
               service_.startAttributeEditing(true);
             }
-          }), exclusiveModeService_.button(translate_('cancel_btn'), function() {
+          }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
             mapService_.removeDraw();
+            mapService_.removeSelect();
             mapService_.removeModify();
             service_.endFeatureInsert(false);
           }), geometryType);
@@ -400,7 +402,7 @@
           } else {
             featureGML = getGeometryGMLFromFeature(feature);
             newPos = feature.getGeometry().getCoordinates();
-            mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+            mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
           }
         } else {
           featureGML = getGeometryGMLFromFeature(feature);
@@ -417,7 +419,7 @@
           } else if (feature.getGeometry().getType().toLowerCase() == 'multipolygon') {
             newPos = feature.getGeometry().getCoordinates()[0][0][0];
           }
-          mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+          mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
         }
         propertyXmlPartial += '<feature:' + selectedItem_.geometry_name + '>' + featureGML + '</feature:' +
             selectedItem_.geometry_name + '>';
@@ -434,9 +436,6 @@
         issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos);
       } else {
         service_.hide();
-      }
-      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
-        mapService_.featureOverlay.getFeatures().clear();
       }
       enabled_ = true;
       rootScope_.$broadcast('endFeatureInsert', save);
@@ -457,7 +456,7 @@
         }
       }
       exclusiveModeService_.startExclusiveMode(translate_('editing_geometry'),
-          exclusiveModeService_.button(translate_('save_btn'), function() {
+          exclusiveModeService_.button(translate_('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false).then(function(button) {
@@ -470,10 +469,11 @@
               exclusiveModeService_.endExclusiveMode();
               service_.endGeometryEditing(true);
             }
-          }), exclusiveModeService_.button(translate_('cancel_btn'), function() {
+          }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
             exclusiveModeService_.endExclusiveMode();
             service_.endGeometryEditing(false);
           }), geometryType);
+      mapService_.addSelect();
       mapService_.addModify();
       enabled_ = false;
     };
@@ -528,13 +528,11 @@
         issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos);
       } else {
         // discard changes
-        mapService_.clearSelectedFeature();
-        mapService_.selectFromGeom(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+        mapService_.clearEditLayer();
+        mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
       }
       rootScope_.$broadcast('endGeometryEdit', save);
-      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
-        mapService_.featureOverlay.getFeatures().clear();
-      }
+      mapService_.removeSelect();
       mapService_.removeModify();
       enabled_ = true;
     };

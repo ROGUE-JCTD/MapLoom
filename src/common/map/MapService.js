@@ -50,6 +50,75 @@
     });
   };
 
+  var createFeatureOverlay = function() {
+    var overlayStyle = (function() {
+      var styles = {};
+      styles['Polygon'] = [
+        new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: [255, 255, 255, 0.5]
+          })
+        }),
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: [255, 255, 255, 1],
+            width: 6
+          })
+        }),
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: [0, 153, 255, 1],
+            width: 4
+          })
+        })
+      ];
+      styles['MultiPolygon'] = styles['Polygon'];
+
+      styles['LineString'] = [
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: [255, 255, 255, 1],
+            width: 6
+          })
+        }),
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: [0, 153, 255, 1],
+            width: 4
+          })
+        })
+      ];
+      styles['MultiLineString'] = styles['LineString'];
+
+      styles['Point'] = [
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 12,
+            fill: new ol.style.Fill({
+              color: [0, 153, 255, 0.75]
+            }),
+            stroke: new ol.style.Stroke({
+              color: [255, 255, 255, 1],
+              width: 1.5
+            })
+          }),
+          zIndex: 100000
+        })
+      ];
+      styles['MultiPoint'] = styles['Point'];
+
+      styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+
+      return function(feature, resolution) {
+        return styles[feature.getGeometry().getType()];
+      };
+    })();
+
+    return new ol.FeatureOverlay({
+      styleFunction: overlayStyle
+    });
+  };
+
   module.provider('mapService', function() {
     //$httpProvider, $interpolateProvider
     this.$get = function($translate, serverService, geogitService, $http,
@@ -82,73 +151,8 @@
 
       this.map = this.createMap();
       this.editLayer = createVectorEditLayer();
+      this.featureOverlay = createFeatureOverlay();
 
-      var overlayStyle = (function() {
-        var styles = {};
-        styles['Polygon'] = [
-          new ol.style.Style({
-            fill: new ol.style.Fill({
-              color: [255, 255, 255, 0.5]
-            })
-          }),
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: [255, 255, 255, 1],
-              width: 6
-            })
-          }),
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: [0, 153, 255, 1],
-              width: 4
-            })
-          })
-        ];
-        styles['MultiPolygon'] = styles['Polygon'];
-
-        styles['LineString'] = [
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: [255, 255, 255, 1],
-              width: 6
-            })
-          }),
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: [0, 153, 255, 1],
-              width: 4
-            })
-          })
-        ];
-        styles['MultiLineString'] = styles['LineString'];
-
-        styles['Point'] = [
-          new ol.style.Style({
-            image: new ol.style.Circle({
-              radius: 12,
-              fill: new ol.style.Fill({
-                color: [0, 153, 255, 0.75]
-              }),
-              stroke: new ol.style.Stroke({
-                color: [255, 255, 255, 1],
-                width: 1.5
-              })
-            }),
-            zIndex: 100000
-          })
-        ];
-        styles['MultiPoint'] = styles['Point'];
-
-        styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
-
-        return function(feature, resolution) {
-          return styles[feature.getGeometry().getType()];
-        };
-      })();
-
-      this.featureOverlay = new ol.FeatureOverlay({
-        styleFunction: overlayStyle
-      });
 
       // must always have a local geoserver. if not, something has gone wrong
       var localServer = serverService_.getServerLocalGeoserver();
@@ -677,23 +681,22 @@
       return map;
     };
 
-    this.selectFromGeom = function(geom, crs) {
+    this.addToEditLayer = function(geom, crs) {
       this.clearSelectedFeature();
       var newFeature = new ol.Feature();
       var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
       newFeature.setGeometry(newGeom);
       this.editLayer.getSource().addFeature(newFeature);
-      this.addSelect();
       this.map.addLayer(this.editLayer);
     };
 
-    this.clearSelectedFeature = function() {
+    this.clearEditLayer = function() {
       this.editLayer.getSource().clear();
       this.map.removeLayer(this.editLayer);
-      this.removeSelect();
     };
 
     this.addSelect = function() {
+      this.featureOverlay = createFeatureOverlay();
       select = new ol.interaction.Select({layer: this.editLayer, featureOverlay: this.featureOverlay});
       this.map.addInteraction(select);
     };
@@ -704,11 +707,7 @@
     };
 
     this.addModify = function() {
-      if (goog.isNull(modify)) {
-        modify = new ol.interaction.Modify({featureOverlay: this.featureOverlay});
-      } else {
-        modify.setMap(this.map);
-      }
+      modify = new ol.interaction.Modify({featureOverlay: this.featureOverlay});
       this.map.addInteraction(modify);
     };
 
