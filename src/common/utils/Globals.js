@@ -61,8 +61,22 @@ var transformGeometry = function(geometry, crsFrom, crsTo) {
     case 'multipolygon': {
       newGeom = new ol.geom.MultiPolygon($.extend(true, [], geometry.coordinates));
     } break;
+    case 'geometry': {
+      newGeom = new ol.geom.Geometry($.extend(true, [], geometry.coordinates));
+    } break;
+    case 'multigeometry': {
+      newGeom = new ol.geom.GeometryCollection($.extend(true, [], geometry.coordinates));
+    } break;
+    case 'geometrycollection': {
+      var geometries = [];
+      for (var index = 0; index < geometry.geometries.length; index++) {
+        geometries.push(transformGeometry(geometry.geometries[index]));
+      }
+      newGeom = new ol.geom.GeometryCollection($.extend(true, [], geometries));
+    } break;
     default: {
-      console.log(geometry.geometry.type, 'Not a valid geometry type');
+      console.log(geometry.type, 'Not a valid geometry type');
+      return;
     }
   }
   if (goog.isDefAndNotNull(crsFrom) && goog.isDefAndNotNull(crsTo)) {

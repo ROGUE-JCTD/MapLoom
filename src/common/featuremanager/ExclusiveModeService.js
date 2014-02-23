@@ -42,7 +42,7 @@
 
     this.isMultiType = function() {
       if (goog.isDefAndNotNull(geometryType_)) {
-        return geometryType_.search(/Multi/g) > -1;
+        return geometryType_.search(/Multi/g) > -1 ? true : geometryType_.toLowerCase() == 'geometrycollection';
       }
       return false;
     };
@@ -74,7 +74,11 @@
       if (!this.addMode) {
         mapService_.removeModify();
         mapService_.removeSelect();
-        mapService_.addDraw(geometryType_);
+        if (geometryType_.toLowerCase() == 'multigeometry' || geometryType_.toLowerCase() == 'geometrycollection') {
+          $('#drawSelectDialog').modal('toggle');
+        } else {
+          mapService_.addDraw(geometryType_);
+        }
         this.addMode = true;
       }
     };

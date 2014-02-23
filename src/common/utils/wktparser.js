@@ -31,9 +31,9 @@ var parseMultiPoint_ = function(str) {
   var parts = [];
   for (var i = 0, ii = points.length; i < ii; ++i) {
     point = points[i].replace(regExes.trimParens, '$1');
-    parts.push(parsePoint_.apply(this, [point]));
+    parts.push(parsePoint_.apply(this, [point]).getCoordinates());
   }
-  return ol.geom.MultiPoint.fromParts(parts);
+  return new ol.geom.MultiPoint(parts);
 };
 
 var parseMultiLineString_ = function(str) {
@@ -42,13 +42,13 @@ var parseMultiLineString_ = function(str) {
   var parts = [];
   for (var i = 0, ii = lines.length; i < ii; ++i) {
     line = lines[i].replace(regExes.trimParens, '$1');
-    parts.push(parseLineString_.apply(this, [line]));
+    parts.push(parseLineString_.apply(this, [line]).getCoordinates());
   }
-  return ol.geom.MultiLineString.fromParts(parts);
+  return new ol.geom.MultiLineString(parts);
 };
 
 var parsePolygon_ = function(str) {
-  var ring, linestring, linearring;
+  var ring, linestring;
   var rings = goog.string.trim(str).split(regExes.parenComma);
   var coordinates = [];
   for (var i = 0, ii = rings.length; i < ii; ++i) {
@@ -66,9 +66,9 @@ var parseMultiPolygon_ = function(str) {
   var parts = [];
   for (var i = 0, ii = polygons.length; i < ii; ++i) {
     polygon = polygons[i].replace(regExes.trimParens, '$1');
-    parts.push(parsePolygon_.apply(this, [polygon]));
+    parts.push(parsePolygon_.apply(this, [polygon]).getCoordinates());
   }
-  return ol.geom.MultiPolygon.fromParts(parts);
+  return new ol.geom.MultiPolygon(parts);
 };
 
 var parseGeometryCollection_ = function(str) {

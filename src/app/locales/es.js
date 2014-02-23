@@ -211,10 +211,11 @@
     'search_error_status': 'Buscar fallado con el código de respuesta ({{status}}).',
     'search_error': 'Se ha producido un error desconocido mientras se realiza la búsqueda.',
     'switch_coords': 'Cambie la visualización de coordenadas',
-    'accept_feature': 'aceptar función',
-    'cancel_feature': 'cancelar función',
-    'add_to_feature': 'agregar a la función',
-    'remove_from_feature': 'eliminar de función'
+    'accept_feature': 'Aceptar Función',
+    'cancel_feature': 'Cancelar Función',
+    'add_to_feature': 'Agregar a la Función',
+    'remove_from_feature': 'Eliminar de Función',
+    'draw': 'Dibujar'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

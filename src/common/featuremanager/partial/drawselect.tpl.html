@@ -1,0 +1,9 @@
+<div class="modal-body">
+  <div class="row"><p>Please select the geometry type you wish to draw.</p></div>
+  <br>
+  <select class="form-control" ng-model="drawType" required ng-options="type for type in geometryTypes">
+  </select>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" ng-click="mapService.addDraw(drawType)" data-dismiss="modal" ng-disabled="!drawType" translate="continue_btn">Continue</button>
+</div>

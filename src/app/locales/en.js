@@ -213,7 +213,8 @@
     'accept_feature': 'Accept Feature',
     'cancel_feature': 'Cancel Feature',
     'add_to_feature': 'Add To Feature',
-    'remove_from_feature': 'Remove From Feature'
+    'remove_from_feature': 'Remove From Feature',
+    'draw': 'Draw'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

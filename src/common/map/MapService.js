@@ -682,7 +682,7 @@
     };
 
     this.addToEditLayer = function(geom, crs) {
-      this.clearSelectedFeature();
+      this.clearEditLayer();
       var newFeature = new ol.Feature();
       var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
       newFeature.setGeometry(newGeom);
