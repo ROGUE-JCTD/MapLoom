@@ -3,14 +3,15 @@
 
   var service_ = null;
 
-  module.factory('httpRequestInterceptor', function($cookieStore) {
+  module.factory('httpRequestInterceptor', function($cookieStore, $location) {
     return {
       request: function(config) {
         if (goog.isDefAndNotNull(config) &&
             (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
-        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0) {
+        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0 &&
+            config.url.indexOf('http://' + $location.host()) < 0) {
           var configCopy = $.extend(true, {}, config);
           var proxy = service_.configuration.proxy;
           if (goog.isDefAndNotNull(proxy)) {
