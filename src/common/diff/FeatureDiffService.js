@@ -350,16 +350,6 @@
           }
         });
 
-        panel.attributes = panel.attributes.sort(function(a, b) {
-          if (a.attributename > b.attributename) {
-            return 1;
-          }
-          if (a.attributename < b.attributename) {
-            return -1;
-          }
-          return 0;
-        });
-
         var geom = WKT.read(panel.getGeometry());
 
         var localCrs = crs_;
