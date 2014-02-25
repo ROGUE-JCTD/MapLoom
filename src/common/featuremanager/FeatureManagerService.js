@@ -325,8 +325,12 @@
         }
       });
       geometryType = geometryType.split(':')[1].replace('PropertyType', '');
-      geometryType = geometryType.replace('Curve', 'LineString');
-      geometryType = geometryType.replace('Surface', 'Polygon');
+      if (settings.DescribeFeatureTypeVersion == '1.1.0') {
+        geometryType = geometryType.replace('Curve', 'Geometry');
+      } else if (settings.DescribeFeatureTypeVersion == '2.0.0') {
+        geometryType = geometryType.replace('Curve', 'LineString');
+        geometryType = geometryType.replace('Surface', 'Polygon');
+      }
       exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
           exclusiveModeService_.button(translate_('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {

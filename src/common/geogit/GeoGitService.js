@@ -306,7 +306,8 @@
       http.get(url).then(function(response) {
         response.data.featureType.workspace = workspaceRoute.workspace;
         var featureType = response.data.featureType;
-        url = layer.get('metadata').url + '/wfs?service=wfs&version=2.0.0&request=DescribeFeatureType&typeName=' +
+        url = layer.get('metadata').url + '/wfs?service=wfs&version=' + settings.DescribeFeatureTypeVersion +
+            '&request=DescribeFeatureType&typeName=' +
             workspaceRoute.typeName;
 
         http.get(url).then(function(response) {

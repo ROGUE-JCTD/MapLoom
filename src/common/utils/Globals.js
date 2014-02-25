@@ -6,7 +6,8 @@ var coordinateDisplays = {
 
 var settings = {
   coordinateDisplay: coordinateDisplays.DMS,
-  DDPrecision: 8
+  DDPrecision: 8,
+  DescribeFeatureTypeVersion: '1.1.0'
 };
 
 var forEachArrayish = function(arrayish, funct) {
