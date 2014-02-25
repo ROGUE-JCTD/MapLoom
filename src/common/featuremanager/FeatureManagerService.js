@@ -214,6 +214,8 @@
         if (getItemType(selectedItem_) === 'feature') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
           mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+          position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getAllFeatures()[0].getGeometry(),
+              position);
         } else {
           mapService_.clearEditLayer();
         }
@@ -772,24 +774,42 @@
     });
   }
 
-  function getNewPositionFromGeometry(geometry) {
+  function getNewPositionFromGeometry(geometry, clickPos) {
     var newPos;
     var geometryType = geometry.getType().toLowerCase();
     if (geometryType == 'point') {
       newPos = geometry.getCoordinates();
     } else if (geometryType == 'multipoint') {
+      if (clickPos) {
+        return clickPos;
+      }
       newPos = geometry.getCoordinates()[0];
     } else if (geometryType == 'linestring') {
+      if (clickPos) {
+        return clickPos;
+      }
       newPos = geometry.getCoordinates();
       newPos = newPos[Math.floor(newPos.length / 2)];
     } else if (geometryType == 'multilinestring') {
+      if (clickPos) {
+        return clickPos;
+      }
       newPos = geometry.getCoordinates()[0];
       newPos = newPos[Math.floor(newPos.length / 2)];
     } else if (geometryType == 'polygon') {
+      if (clickPos) {
+        return clickPos;
+      }
       newPos = geometry.getCoordinates()[0][0];
     } else if (geometryType == 'multipolygon') {
+      if (clickPos) {
+        return clickPos;
+      }
       newPos = geometry.getCoordinates()[0][0][0];
     } else if (geometryType == 'geometrycollection') {
+      if (clickPos) {
+        return clickPos;
+      }
       var geom = geometry.getGeometries()[0];
       geometryType = geom.getType().toLowerCase();
       if (geometryType == 'point') {
