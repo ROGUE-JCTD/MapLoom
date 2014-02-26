@@ -19,6 +19,7 @@
   var containerInstance_ = null;
   var overlay_ = null;
   var position_ = null;
+  var clickPosition_ = null;
   var enabled_ = true;
   var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
 
@@ -215,7 +216,7 @@
           selectedLayer_ = this.getSelectedItemLayer().layer;
           mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
           position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getAllFeatures()[0].getGeometry(),
-              position);
+              clickPosition_);
         } else {
           mapService_.clearEditLayer();
         }
@@ -331,8 +332,8 @@
         geometryType = geometryType.replace('Curve', 'Geometry');
       } else if (settings.DescribeFeatureTypeVersion == '2.0.0') {
         geometryType = geometryType.replace('Curve', 'LineString');
-        geometryType = geometryType.replace('Surface', 'Polygon');
       }
+      geometryType = geometryType.replace('Surface', 'Polygon');
       exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
           exclusiveModeService_.button(translate_('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
@@ -649,6 +650,7 @@
 
           if (completed === layers.length) {
             if (infoPerLayer.length > 0) {
+              clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
             }
           } else {
@@ -777,49 +779,32 @@
   function getNewPositionFromGeometry(geometry, clickPos) {
     var newPos;
     var geometryType = geometry.getType().toLowerCase();
+    if (!goog.isDefAndNotNull(clickPos)) {
+      clickPos = ol.extent.getCenter(geometry.getExtent());
+    }
     if (geometryType == 'point') {
-      newPos = geometry.getCoordinates();
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'multipoint') {
-      if (clickPos) {
-        return clickPos;
-      }
-      newPos = geometry.getCoordinates()[0];
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'linestring') {
-      if (clickPos) {
-        return clickPos;
-      }
-      newPos = geometry.getCoordinates();
-      newPos = newPos[Math.floor(newPos.length / 2)];
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'multilinestring') {
-      if (clickPos) {
-        return clickPos;
-      }
-      newPos = geometry.getCoordinates()[0];
-      newPos = newPos[Math.floor(newPos.length / 2)];
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'polygon') {
-      if (clickPos) {
+      if (geometry.containsCoordinate(clickPos)) {
         return clickPos;
       }
-      newPos = geometry.getCoordinates()[0][0];
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'multipolygon') {
-      if (clickPos) {
+      if (geometry.containsCoordinate(clickPos)) {
         return clickPos;
       }
-      newPos = geometry.getCoordinates()[0][0][0];
+      newPos = geometry.getClosestPoint(clickPos);
     } else if (geometryType == 'geometrycollection') {
-      if (clickPos) {
+      if (geometry.containsCoordinate(clickPos)) {
         return clickPos;
       }
-      var geom = geometry.getGeometries()[0];
-      geometryType = geom.getType().toLowerCase();
-      if (geometryType == 'point') {
-        newPos = geom.getCoordinates();
-      } else if (geometryType == 'linestring') {
-        newPos = geom.getCoordinates();
-        newPos = newPos[Math.floor(newPos.length / 2)];
-      } else if (geometryType == 'polygon') {
-        newPos = geom.getCoordinates()[0][0];
-      }
+      newPos = geometry.getClosestPoint(clickPos);
     }
     return newPos;
   }
