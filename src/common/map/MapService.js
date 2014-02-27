@@ -554,7 +554,13 @@
       service_.id = data.id;
     };
 
-    this.save = function() {
+    this.save = function(copy) {
+
+      if (goog.isDefAndNotNull(copy) && copy) {
+        // remove current map id so that it is saved as a new map.
+        service_.id = null;
+      }
+
       var cfg = {
         about: {
           abstract: service_.abstract,
@@ -570,16 +576,6 @@
         sources: []
       };
 
-      /*
-      // -- save base layer
-      //TODO: hardcoded base layer
-      cfg.map.layers.push({
-        name: 'OpenStreetMap',
-        source: serverService_.getServerByName('OpenStreetMap').id.toString(),
-        title: 'OpenStreetMap'
-      });
-      */
-
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
         console.log('saving server: ', server);
         cfg.sources.push(server.config);
@@ -591,17 +587,10 @@
         console.log('metadata: ', layer.get('metadata'));
         console.log('config: ', layer.get('metadata').config);
         cfg.map.layers.push(layer.get('metadata').config);
-        /*{
-          name: layer.getSource().getParams().LAYERS,
-          source: layer.get('metadata').serverId.toString(),
-          title: layer.get('title')
-        }*/
       });
 
       console.log('--- save.cfg: ', cfg);
-      console.log('--- save.cfg string: ', JSON.stringify(cfg));
 
-      console.log('+++++++[ token: ', cookiesService_.csrftoken);
       httpService_({
         url: service_.getSaveURL(),
         method: service_.getSaveHTTPMethod(),
@@ -611,9 +600,8 @@
         }
       }).success(function(data, status, headers, config) {
         service_.updateMap(data);
-        console.log('====[ map.save great success. ', data, status, headers, config);
+        console.log('----[ map.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
-        console.log('----[ ERROR: map.save failed! ', data, status, headers, config);
         dialogService_.error(translate_('save_failed'), translate_('map_save_failed', {value: status}));
       });
     };
