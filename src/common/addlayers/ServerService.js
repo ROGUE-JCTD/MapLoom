@@ -251,6 +251,7 @@ var SERVER_SERVICE_USE_PROXY = true;
               if (goog.isDefAndNotNull(response.capability) &&
                   goog.isDefAndNotNull(response.capability.layers)) {
                 server.layersConfig = response.capability.layers;
+                console.log(server.layersConfig);
                 console.log('---- populateLayersConfig. server', server);
                 rootScope_.$broadcast('layers-loaded', index);
               }
