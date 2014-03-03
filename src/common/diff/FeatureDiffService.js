@@ -312,7 +312,7 @@
           service_.merged.olFeature = new ol.Feature();
           service_.merged.olFeature.set('MapLoomChange', DiffColorMap[feature.change]);
           service_.merged.olFeature.setGeometry(geom);
-          service_.merged.featureLayer.addFeatures([service_.merged.olFeature]);
+          service_.merged.featureLayer.getSource().addFeature(service_.merged.olFeature);
           service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
           service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
           break;
