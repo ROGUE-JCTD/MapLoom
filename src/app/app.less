@@ -186,7 +186,8 @@ hr {
 
 .list-group-item {
 	background-color:@mainListItemColor;
-	border: 1px solid darken(@mainListItemColor, 5%);
+	border: 1px solid lighten(@mainListItemColor, 10%);
+    color: @mainListItemFontColor;
 }
 
 .notification-text {
@@ -243,4 +244,36 @@ textarea {
   width: inherit;
   font-size: inherit;
   line-height: inherit;
+}
+
+.popover {
+  max-width: 400px;
+  .z-index(@dialogLevel, 5);
+  .content-container {
+    overflow: hidden;
+    overflow-y: auto;
+    max-height: 200px;
+  }
+  .popover-label {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font: @featureInfoBoxLabelFont;
+    color: @featureInfoBoxLabelFontColor;
+    word-wrap: break-word;
+  }
+
+  .popover-value {
+    display: block;
+    margin: 0;
+    padding: 0 0 7px;
+    font: @featureInfoBoxValueFont;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+}
+
+.well {
+  background-color: darken(@defaultModalPanelColor, 5%);
+  border: 1px solid darken(@defaultModalPanelColor, 6%);
 }

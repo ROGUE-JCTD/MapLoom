@@ -217,7 +217,16 @@
     'add_to_feature': 'Agregar a la Función',
     'remove_from_feature': 'Eliminar de Función',
     'draw': 'Dibujar',
-    'zoom_to_data': 'Enfocar a los datos'
+    'zoom_to_data': 'Enfocar a los datos',
+    'show_layer_info': 'Mostrar información de las capas',
+    'workspace': 'Espacio de trabajo',
+    'featuretype': 'Tipo de funcion',
+    'keywords': 'Palabras clave',
+    'srs': 'SRS',
+    'server': 'Servidor',
+    'datastoretype': 'Tipo de almacen de datos',
+    'branch': 'Rama',
+    'layerinfo': 'Informacion de las Capas'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

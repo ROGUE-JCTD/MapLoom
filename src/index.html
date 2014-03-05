@@ -116,14 +116,12 @@
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#layer-manager-panel">
               <span translate="map_layers">Map Layers</span>
+              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-layer-dialog')"
+                   tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
             </div>
             <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
               <div class="loom-layers"></div>
-              <div align="center" class="panel-heading layer-heading" data-target="#add-layer-dialog"
-                   data-toggle="modal">
-                <i class="glyphicon glyphicon-plus-sign"></i>
-                {{'add_layer_btn' | translate}}
-              </div>
             </div>
           </div>
           <div class="panel" ng-show="syncPanel">
@@ -231,6 +229,10 @@
 </div>
 <div loom-modal id="table-view-window" modal-title="{{'table_view' | translate}}">
   <div class="loom-table-view" id="table-view">
+  </div>
+</div>
+<div loom-modal id="layerInfoDialog" modal-title="layerinfo">
+  <div loom-layer-info id="layer-info">
   </div>
 </div>
 <div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"

@@ -8,23 +8,69 @@
           replace: false,
           link: function(scope, element) {
 
-            var content = '<div class="layer-popover-content">' +
-                '<div class="layer-popover-label">' + 'Name' + ':</div>' +
-                '<div class="layer-popover-value">' + scope.layer.name + '</div>' +
-                '<div class="layer-popover-label">' + 'Title' + ':</div>' +
-                '<div class="layer-popover-value">' + scope.layer.title + '</div>' +
-                '<div class="layer-popover-label">' + 'FeatureType Name' + ':</div>' +
-                '<div class="layer-popover-value">' + scope.layer.nativeName + '</div>' +
-                '<div class="layer-popover-label">' + 'Abstract' + ':</div>' +
-                '<div class="layer-popover-value">' + scope.layer.abstract + '</div>' +
-                '<div class="layer-popover-label">' + 'Keywords' + ':</div>' +
-                '<div class="layer-popover-value">' + scope.layer.keywords.toString() + '</div>';
+            var safeName = function() {
+              if (goog.isDefAndNotNull(scope.layer.name)) {
+                var split = scope.layer.name.split(':');
+                return split[split.length - 1];
+              }
+              return '';
+            };
+
+            var safeTitle = function() {
+              if (goog.isDefAndNotNull(scope.layer.title)) {
+                return scope.layer.title;
+              }
+              return '';
+            };
+
+            var safeWorkspace = function() {
+              if (goog.isDefAndNotNull(scope.layer.prefix)) {
+                return scope.layer.prefix;
+              }
+              return '';
+            };
+
+            var safeAbstract = function() {
+              if (goog.isDefAndNotNull(scope.layer.abstract)) {
+                return scope.layer.abstract;
+              }
+              return '';
+            };
+
+            var buildKeywords = function() {
+              var keywords = '';
+              if (goog.isDefAndNotNull(scope.layer.keywords) && scope.layer.keywords.length > 0) {
+                keywords += scope.layer.keywords[0].value;
+                if (goog.isDefAndNotNull(scope.layer.keywords[0].vocabulary)) {
+                  keywords += ' (' + scope.layer.keywords[0].vocabulary + ')';
+                }
+                for (var index = 0; index < scope.layer.keywords.length; index++) {
+                  keywords += ', ' + scope.layer.keywords[index].value;
+                  if (goog.isDefAndNotNull(scope.layer.keywords[index].vocabulary)) {
+                    keywords += ' (' + scope.layer.keywords[index].vocabulary + ')';
+                  }
+                }
+              }
+              return keywords;
+            };
+
+            var content = '<div class="popover-label">' + $translate('server_name') + ':</div>' +
+                '<div class="popover-value">' + safeName() + '</div>' +
+                '<div class="popover-label">' + $translate('title') + ':</div>' +
+                '<div class="popover-value">' + safeTitle() + '</div>' +
+                '<div class="popover-label">' + $translate('workspace') + ':</div>' +
+                '<div class="popover-value">' + safeWorkspace() + '</div>' +
+                '<div class="popover-label">' + $translate('abstract') + ':</div>' +
+                '<div class="popover-value">' + safeAbstract() + '</div>' +
+                '<div class="popover-label">' + $translate('keywords') + ':</div>' +
+                '<div class="popover-value">' + buildKeywords() + '</div>';
 
             element.popover({
               trigger: 'manual',
               animation: false,
               html: true,
               content: content,
+              container: 'body',
               title: scope.layer.title
             });
 

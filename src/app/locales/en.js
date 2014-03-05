@@ -216,7 +216,16 @@
     'add_to_feature': 'Add To Feature',
     'remove_from_feature': 'Remove From Feature',
     'draw': 'Draw',
-    'zoom_to_data': 'Zoom to data'
+    'zoom_to_data': 'Zoom to data',
+    'show_layer_info': 'Show Layer Info',
+    'workspace': 'Workspace',
+    'featuretype': 'FeatureType',
+    'keywords': 'Keywords',
+    'srs': 'SRS',
+    'server': 'Server',
+    'datastoretype': 'Datastore Type',
+    'branch': 'Branch',
+    'layerinfo': 'Layer Info'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

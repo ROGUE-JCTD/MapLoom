@@ -109,6 +109,10 @@
               }
             };
 
+            scope.getLayerInfo = function(layer) {
+              $rootScope.$broadcast('getLayerInfo', layer);
+            };
+
             scope.$on('layers-loaded', function(event, serverIndex) {
               scope.updateLayerTitles(serverIndex);
             });

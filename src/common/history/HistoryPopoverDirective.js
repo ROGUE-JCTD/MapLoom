@@ -27,19 +27,18 @@
               return scope.commit.message;
             };
 
-            var content = '<div class="history-popover-content">' +
-                '<div class="history-popover-label">' + $translate('author_name') + ':</div>' +
-                '<div class="history-popover-value">' + safeName(scope.commit.author.name) + '</div>' +
-                '<div class="history-popover-label">' + $translate('author_email') + ':</div>' +
-                '<div class="history-popover-value">' + safeEmail(scope.commit.author.email) + '</div>' +
-                '<div class="history-popover-label">' + $translate('committer_name') + ':</div>' +
-                '<div class="history-popover-value">' + safeName(scope.commit.committer.name) + '</div>' +
-                '<div class="history-popover-label">' + $translate('committer_email') + ':</div>' +
-                '<div class="history-popover-value">' + safeEmail(scope.commit.committer.email) + '</div>' +
-                '<div class="history-popover-label">' + $translate('commit_time') + ':</div>' +
-                '<div class="history-popover-value">' + prettyTime(scope.commit.committer.timestamp) + '</div>' +
-                '<div class="history-popover-label">' + $translate('message') + ':</div>' +
-                '<div class="history-popover-value">' + prettyMessage() + '</div>';
+            var content = '<div class="popover-label">' + $translate('author_name') + ':</div>' +
+                '<div class="popover-value">' + safeName(scope.commit.author.name) + '</div>' +
+                '<div class="popover-label">' + $translate('author_email') + ':</div>' +
+                '<div class="popover-value">' + safeEmail(scope.commit.author.email) + '</div>' +
+                '<div class="popover-label">' + $translate('committer_name') + ':</div>' +
+                '<div class="popover-value">' + safeName(scope.commit.committer.name) + '</div>' +
+                '<div class="popover-label">' + $translate('committer_email') + ':</div>' +
+                '<div class="popover-value">' + safeEmail(scope.commit.committer.email) + '</div>' +
+                '<div class="popover-label">' + $translate('commit_time') + ':</div>' +
+                '<div class="popover-value">' + prettyTime(scope.commit.committer.timestamp) + '</div>' +
+                '<div class="popover-label">' + $translate('message') + ':</div>' +
+                '<div class="popover-value">' + prettyMessage() + '</div>';
 
             element.popover({
               trigger: 'manual',

@@ -1,4 +1,4 @@
-<div id="layerpanel-group" class="panel-group loom-arrangeable" arrangeable-handle="div.layer-heading"
+<div id="layerpanel-group" class="panel-group loom-arrangeable layer-container" arrangeable-handle="div.layer-heading"
      arrangeable-item-selector="div.panel" arrangeable-callback="reorderLayer"
      arrangeable-placeholder='<div class="placeholder"></div>'>
   <div class="panel"
@@ -16,11 +16,6 @@
                 ng-class="{'disabled': (!layer.get('visible') || !layer.get('metadata').schema)}">
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
-          <span ng-click="mapService.zoomToLayerFeatures(layer)" tooltip-append-to-body="true"
-                tooltip-placement="top" tooltip="{{'zoom_to_data' | translate}}"
-                stop-event="click mousedown" class="btn btn-xs btn-default">
-            <i class="glyphicon glyphicon-resize-small"></i>
-          </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
                 tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"
                 class="btn btn-xs btn-default layer-visible-button" ng-class="{'layer-visible': layer.get('visible')}">
@@ -32,30 +27,43 @@
     </div>
     <div id="{{layer.get('metadata').uniqueID}}" class="panel-collapse collapse">
       <div class="panel-body layer-inner-panel">
-        <div class="btn-group btn-group-justified">
-          <a type="button" ng-click="tableViewService.showTable(layer)" ng-show="layer.get('metadata').editable"
-             class="btn btn-xs btn-default">
-            <i class="glyphicon glyphicon-list"></i>
-            {{'show_table' | translate}}
-          </a>
-          <a type="button" ng-show="isGeogit(layer)" ng-click="showHistory(layer)"
-             class="btn btn-xs btn-default">
-            <i class="glyphicon glyphicon-time"></i>
-            {{'show_history' | translate}}
-          </a>
-        </div>
-        <div>
-          <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' | translate}}</label>
-          <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
-            <ul class="list-group">
-              <li class="list-group-item" ng-repeat="attribute in attrList">{{attribute}}</li>
-            </ul>
+        <div class="btn-group-wrap">
+          <div class="btn-group">
+            <a type="button" ng-click="mapService.zoomToLayerFeatures(layer)" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'zoom_to_data' | translate}}"
+               class="btn btn-sm btn-default">
+              <i class="glyphicon glyphicon-resize-small"></i>
+            </a>
+            <a type="button" ng-click="tableViewService.showTable(layer)" ng-show="layer.get('metadata').editable"
+               class="btn btn-sm btn-default" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'show_table' | translate}}">
+              <i class="glyphicon glyphicon-list"></i>
+            </a>
+            <a type="button" ng-show="isGeogit(layer)" ng-click="showHistory(layer)"
+               class="btn btn-sm btn-default" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'show_history' | translate}}">
+              <i class="glyphicon glyphicon-time"></i>
+            </a>
+            <a type="button" tooltip-append-to-body="true" ng-click="getLayerInfo(layer)"
+               tooltip-placement="top" tooltip="{{'show_layer_info' | translate}}"
+               class="btn btn-sm btn-default">
+              <i class="glyphicon glyphicon-info-sign"></i>
+            </a>
+            <a type="button" ng-click="removeLayer(layer)" id="remove-button"
+               class="btn btn-sm btn-default" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'remove_layer' | translate}}">
+              <i class="glyphicon glyphicon-trash"></i>
+            </a>
           </div>
         </div>
-        <button ng-click="removeLayer(layer)" id="remove-button" class="remove-layer-button btn btn-sm btn-block">
-          <i class="glyphicon glyphicon-minus-sign"></i>
-          <span translate="remove_layer"></span>
-        </button>
+        <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' |
+          translate}}</label>
+
+        <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="attribute in attrList">{{attribute}}</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

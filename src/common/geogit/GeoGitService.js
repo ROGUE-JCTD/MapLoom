@@ -418,7 +418,10 @@
                   metadata.projection = featureType.srs;
                   metadata.workspace = featureType.workspace;
                   metadata.nativeName = featureType.nativeName;
-
+                  metadata.abstract = featureType.abstract;
+                  metadata.keywords = featureType.keywords;
+                  metadata.dataStoreType = dataStore.type;
+                  rootScope.$broadcast('layerInfoLoaded', layer);
                   service_.getCommitId(layer).then(function(response) {
                     metadata.repoCommitId = response;
                   });

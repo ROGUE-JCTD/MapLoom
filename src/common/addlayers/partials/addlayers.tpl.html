@@ -27,7 +27,7 @@
     <div class="form-group layer-container">
       <ul id="layer-list" class="list-group">
         <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:filterLayers | filter:filterAddedLayers"
-            class="list-group-item loom-layerinfo-popover" ng-mouseenter="showPopover()" ng-mouseleave="hidePopover()">
+            class="list-group-item loom-layerinfo-popover" data-placement="left" ng-mouseenter="showPopover()" ng-mouseleave="hidePopover()">
           <div class="row">
             <div class="col-xs-2">
               <div class="loom-check-button btn btn-xs" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
