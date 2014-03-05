@@ -16,6 +16,7 @@
           },
           link: function(scope, element) {
             scope.featureDiffService = featureDiffService;
+            scope.authorsShown = false;
             function updateVariables(event, panel) {
               if (scope.hover) {
                 element.closest('.loom-panel-separator').addClass('hoverable');
@@ -49,6 +50,10 @@
               }
             }
 
+            var showAuthors = function() {
+              scope.authorsShown = true;
+            };
+
             scope.geometryArrowClick = function() {
               if (scope.hover) {
                 featureDiffService.chooseGeometry(scope.panel);
@@ -62,9 +67,15 @@
               }
             };
 
+            var initialize = function() {
+              updateVariables();
+              scope.authorsShown = false;
+            };
+
             scope.$on('merge-feature-modified', updateVariables);
-            scope.$on('feature-diff-performed', updateVariables);
+            scope.$on('feature-diff-performed', initialize);
             scope.$on('update-merge-feature', updateVariables);
+            scope.$on('authors-fetched', showAuthors);
           }
         };
       }

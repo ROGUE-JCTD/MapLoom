@@ -6,7 +6,10 @@
         return {
           restrict: 'C',
           replace: false,
-          link: function(scope, element) {
+          link: function(scope, element, attrs) {
+            if (!goog.isDefAndNotNull(scope.commit)) {
+              scope.commit = scope.$eval(attrs.commit);
+            }
             var safeName = function(name) {
               if (goog.isDefAndNotNull(name) && name.length > 0) {
                 return name;
@@ -45,17 +48,20 @@
               animation: false,
               html: true,
               content: content,
+              container: 'body',
               title: $translate('id') + ': ' + scope.commit.id
             });
 
-            scope.showPopover = function() {
+            element.mouseenter(function() {
+              console.log('show');
               if (element.closest('.collapsing').length === 0) {
                 element.popover('show');
               }
-            };
-            scope.hidePopover = function() {
+            });
+            element.mouseleave(function() {
+              console.log('hide');
               element.popover('hide');
-            };
+            });
           }
         };
       });

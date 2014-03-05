@@ -18,47 +18,6 @@
   var diffsInError_ = 0;
   var crs_ = null;
 
-  var FeaturePanel = function() {
-    this.map = null;
-    this.featureLayer = null;
-    this.attributes = [];
-    this.bounds = null;
-    this.active = false;
-    this.geometry = null;
-    this.olFeature = null;
-
-    this.clearFeature = function() {
-      this.attributes = [];
-      this.bounds = null;
-      this.active = false;
-      this.geometry = null;
-      this.olFeature = null;
-      this.featureLayer.getSource().clear();
-    };
-
-    this.getGeometry = function() {
-      if (goog.isDefAndNotNull(this.geometry)) {
-        return goog.isDefAndNotNull(this.geometry.newvalue) ? this.geometry.newvalue : this.geometry.oldvalue;
-      }
-      return null;
-    };
-
-    this.replaceLayers = function(newLayers) {
-      var featurePanel = this;
-      var layers = this.map.getLayers();
-      layers.forEach(function(layer) {
-        featurePanel.map.removeLayer(layer);
-      });
-      newLayers.forEach(function(layer) {
-        if (!goog.isDefAndNotNull(layer.get('metadata').internalLayer) ||
-            !layer.get('metadata').internalLayer) {
-          featurePanel.map.addLayer(layer);
-        }
-      });
-      this.map.addLayer(this.featureLayer);
-    };
-  };
-
   module.provider('featureDiffService', function() {
     this.title = 'Diffs';
     this.feature = null;
@@ -422,71 +381,6 @@
       });
     };
   });
-
-  function makeFeatureLayer() {
-    var featureStyle = (function() {
-      return function(feature, resolution) {
-        var styles = {};
-        var change = $.extend(true, [], feature.get('MapLoomChange'));
-        change.fill.push(1);
-        change.stroke.push(1);
-        styles['Polygon'] = [
-          new ol.style.Style({
-            fill: new ol.style.Fill({
-              color: change.fill
-            })
-          }),
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: change.stroke
-            })
-          })
-        ];
-        styles['MultiPolygon'] = styles['Polygon'];
-
-        styles['LineString'] = [
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: change.stroke,
-              width: 7
-            })
-          }),
-          new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: change.fill,
-              width: 5
-            })
-          })
-        ];
-        styles['MultiLineString'] = styles['LineString'];
-
-        styles['Point'] = [
-          new ol.style.Style({
-            image: new ol.style.Circle({
-              radius: 12,
-              fill: new ol.style.Fill({
-                color: change.fill
-              }),
-              stroke: new ol.style.Stroke({
-                color: change.stroke
-              })
-            })
-          })
-        ];
-        styles['MultiPoint'] = styles['Point'];
-
-        styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
-        return styles[feature.getGeometry().getType()];
-      };
-    })();
-
-    return new ol.layer.Vector({
-      source: new ol.source.Vector({
-        parser: null
-      }),
-      styleFunction: featureStyle
-    });
-  }
 
   function assignAttributeTypes(properties, editable) {
     if (goog.isDefAndNotNull(service_.schema)) {

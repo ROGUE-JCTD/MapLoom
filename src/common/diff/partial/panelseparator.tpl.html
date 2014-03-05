@@ -1,12 +1,12 @@
 <div>
   &nbsp;
-  <div class="map-arrow attribute-arrow">
+  <div class="map-arrow attribute-arrow" ng-class="{'authors-shown':authorsShown}">
     <span class="map-arrow-inner attribute-arrow-inner glyphicon {{icon}}" ng-click="geometryArrowClick()"
           ng-class="{'arrow-inactive':!geometryChanged}"></span>
   </div>
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
   <span ng-repeat="attribute in arrows" class="">
-    <div class="attribute-arrow">
+    <div class="attribute-arrow" ng-class="{'authors-shown':authorsShown}">
       <span class="attribute-arrow-inner glyphicon {{icon}}" ng-class="{'arrow-inactive':!attribute.active}"
             ng-click="arrowClick($index)"></span>
     </div>

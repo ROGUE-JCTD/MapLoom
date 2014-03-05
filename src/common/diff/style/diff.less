@@ -76,6 +76,11 @@
   overflow-y: auto;
 }
 
+.loom-feature-blame .modal-body {
+  overflow: hidden;
+  overflow-y: auto;
+}
+
 .panelContainer {
   display: table;
   border-spacing:3px;
@@ -83,7 +88,7 @@
   .panelRow {
     display: table-row;
 
-    .loom-feature-panel {
+    .loom-feature-panel, .loom-feature-blame-panel {
       width: 230px;
       background-color: @featurePanelColor;
       border: 1px solid darken(@featurePanelColor, 5%);
@@ -127,13 +132,6 @@
         height: 220px;
         background-color: darken(@featurePanelColor, 5%);
         border: 1px solid darken(@featurePanelColor, 10%);
-      }
-
-      .info-box-attribute-value {
-        height: 15px !important;
-        border-radius: 5px;
-        border: 1px solid #90adc7;
-        color: #000000;
       }
 
       input.attr-none {
@@ -206,6 +204,79 @@
           margin: 0;
         }
       }
+
+      .geom-author {
+        width: 220px !important;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        position: relative;
+        top: -1px;
+        border-top: 0 !important;
+        background-color: #85A3BE !important;
+      }
+
+      .info-box-author {
+        display: block;
+        width: 98% !important;
+        border-top: 0 !important;
+        position: relative;
+        top: -3px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        background-color: #85A3BE !important;
+      }
+    }
+
+    .loom-feature-blame-panel {
+      width: 500px;
+      background-color: inherit;
+      border: 0;
+      padding: 0;
+
+      .feature-panel {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      .map-loading {
+        width: 488px;
+        height: 220px;
+        left: 6px;
+      }
+
+      .preview-map {
+        width: 488px;
+      }
+
+      .geom-author {
+        width: 488px !important;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        position: relative;
+        top: -1px;
+        background-color: #85A3BE !important;
+      }
+
+      .blame-attribute-value {
+        display: block;
+        position: relative;
+        top: 2px;
+        input.attr-none[disabled] {
+          border-bottom-left-radius: 0px;
+          border-bottom-right-radius: 0px;
+        }
+      }
+      .info-box-author {
+        display: block;
+        width: 98% !important;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        background-color: #85A3BE !important;
+      }
+
+      .info-box-attribute {
+        margin-top: 6px;
+      }
     }
 
     .loom-panel-separator {
@@ -229,6 +300,11 @@
       .attribute-arrow {
         height: 49px;
         vertical-align: center;
+
+        &.authors-shown {
+          height: 83px;
+        }
+
         .attribute-arrow-inner {
           top: 18px;
           padding: 5px;
@@ -243,6 +319,10 @@
         position: relative;
         height: 220px;
         margin-top: 5px;
+
+        &.authors-shown {
+          height: 252px;
+        }
 
         .map-arrow-inner {
           position: absolute;

@@ -777,36 +777,13 @@
   }
 
   function getNewPositionFromGeometry(geometry, clickPos) {
-    var newPos;
-    var geometryType = geometry.getType().toLowerCase();
     if (!goog.isDefAndNotNull(clickPos)) {
       clickPos = ol.extent.getCenter(geometry.getExtent());
     }
-    if (geometryType == 'point') {
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'multipoint') {
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'linestring') {
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'multilinestring') {
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'polygon') {
-      if (geometry.containsCoordinate(clickPos)) {
-        return clickPos;
-      }
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'multipolygon') {
-      if (geometry.containsCoordinate(clickPos)) {
-        return clickPos;
-      }
-      newPos = geometry.getClosestPoint(clickPos);
-    } else if (geometryType == 'geometrycollection') {
-      if (geometry.containsCoordinate(clickPos)) {
-        return clickPos;
-      }
-      newPos = geometry.getClosestPoint(clickPos);
+    if (geometry.containsCoordinate(clickPos)) {
+      return clickPos;
     }
-    return newPos;
+    return geometry.getClosestPoint(clickPos);
   }
 
   function getGeometryGMLFromFeature(feature) {

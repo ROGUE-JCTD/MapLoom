@@ -103,6 +103,11 @@ var GeoGitFeatureDiffOptions = function() {
   this.all = null;
 };
 
+var GeoGitBlameOptions = function() {
+  this.path = null;
+  this.commit = null;
+};
+
 var GeoGitGetCommitGraphOptions = function() {
   this.depth = null;
   this.commitId = null;

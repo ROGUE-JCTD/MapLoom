@@ -3,8 +3,8 @@
   var module = angular.module('loom_feature_diff_directive', []);
 
   module.directive('loomFeatureDiff',
-      function($translate, featureDiffService, conflictService, configService, historyService,
-               notificationService, mapService, dialogService, geogitService) {
+      function($rootScope, $translate, featureDiffService, conflictService, configService, historyService,
+               notificationService, featureBlameService, mapService, dialogService, geogitService) {
         return {
           restrict: 'C',
           templateUrl: 'diff/partial/featurediff.tpl.html',
@@ -13,11 +13,13 @@
               scope.undoEnabled = true;
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
+              scope.notDelete = true;
               switch (featureDiffService.change) {
                 case 'ADDED':
                   scope.rightTitle = $translate('new_feature');
                   break;
                 case 'REMOVED':
+                  scope.notDelete = false;
                   scope.rightTitle = $translate('removed_feature');
                   break;
                 case 'MODIFIED':
@@ -37,7 +39,7 @@
                   break;
               }
               var width = 80 + getScrollbarWidth();
-              var numPanels = 0;
+              scope.numPanels = 0;
               scope.leftPanel = false;
               scope.mergePanel = false;
               scope.rightPanel = false;
@@ -45,26 +47,26 @@
               scope.rightSeparator = false;
               if (featureDiffService.left.active) {
                 width += 230;
-                numPanels += 1;
+                scope.numPanels += 1;
                 scope.leftPanel = true;
               }
               if (featureDiffService.merged.active) {
                 width += 230;
-                numPanels += 1;
+                scope.numPanels += 1;
                 scope.mergePanel = true;
               }
               if (featureDiffService.right.active) {
                 width += 230;
-                numPanels += 1;
+                scope.numPanels += 1;
                 scope.rightPanel = true;
               }
-              if (numPanels > 1) {
+              if (scope.numPanels > 1) {
                 scope.leftSeparator = true;
-                if (numPanels > 2) {
+                if (scope.numPanels > 2) {
                   scope.rightSeparator = true;
                 }
               }
-              width += (numPanels - 1) * 36;
+              width += (scope.numPanels - 1) * 36;
 
               element.closest('.modal-dialog').css('width', width);
             }
@@ -95,6 +97,48 @@
               scope.leftSeparator = false;
               scope.rightSeparator = false;
               element.closest('.modal').modal('hide');
+            };
+
+            scope.performBlame = function() {
+              var numPanels = scope.numPanels;
+              if (scope.mergePanel && featureDiffService.change !== 'MERGED') {
+                numPanels--;
+              }
+              var blameFunc = function(panel, id) {
+                var options = new GeoGitBlameOptions();
+                options.path = featureDiffService.feature.id;
+                options.commit = id;
+                featureBlameService.performBlame(featureDiffService.getRepoId(), options)
+                    .then(function(result) {
+                      forEachArrayish(result, function(attribute) {
+                        if (panel.geometry.attributename === attribute.name) {
+                          panel.geometry.commit = attribute.commit;
+                        } else {
+                          forEachArrayish(panel.attributes, function(panelAttribute) {
+                            if (panelAttribute.attributename === attribute.name) {
+                              panelAttribute.commit = attribute.commit;
+                            }
+                          });
+                        }
+                      });
+                      numPanels--;
+                      if (numPanels === 0) {
+                        $rootScope.$broadcast('authors-fetched');
+                      }
+                    }, function(reject) {
+                      console.log('ERROR: Blame Failure: ', options, reject);
+                      dialogService.error($translate('error'), $translate('undo_unknown_error'));
+                    });
+              };
+              if (scope.leftPanel) {
+                blameFunc(featureDiffService.left, featureDiffService.getOursId());
+              }
+              if (scope.rightPanel) {
+                blameFunc(featureDiffService.right, featureDiffService.getTheirsId());
+              }
+              if (scope.mergePanel && featureDiffService.change === 'MERGED') {
+                blameFunc(featureDiffService.merged, featureDiffService.getMergedId());
+              }
             };
 
             scope.undoChanges = function() {

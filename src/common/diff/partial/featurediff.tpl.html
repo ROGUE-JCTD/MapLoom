@@ -23,5 +23,9 @@
   <button ng-if="featureDiffService.undoable" ng-disabled="!undoEnabled" type="button" class="btn btn-danger pull-left" ng-click="undoChanges()"><i
       class="glyphicon glyphicon-remove"></i> {{'undo_changes' | translate}}
   </button>
+  <button ng-if="notDelete" type="button" class="btn btn-default pull-left"
+          ng-click="performBlame()"><i
+      class="glyphicon glyphicon-user"></i> Authors
+  </button>
 
 </div>

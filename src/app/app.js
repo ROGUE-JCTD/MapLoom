@@ -21,6 +21,16 @@
           }
         });
 
+        $('body').on('show.bs.modal', function(e) {
+          var modals = $('.modal.in');
+          var backdrops = $('.modal-backdrop');
+          for (var i = 0; i < modals.length; i++) {
+            modals.eq(i).css('z-index', 760 - (modals.length - i) * 20);
+            backdrops.eq(i).css('z-index', 750 - (modals.length - i) * 20);
+          }
+          $(e.target).css('z-index', 760);
+        });
+
         $scope.mapService = mapService;
         $scope.refreshService = refreshService;
       });
