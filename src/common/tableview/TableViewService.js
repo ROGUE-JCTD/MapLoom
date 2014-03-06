@@ -19,7 +19,7 @@
       service_.featureList = [];
       service_.attributeNameList = [];
 
-      var url = layer.get('metadata').url + '/wfs?service=wfs&version=2.0.0&request=GetFeature&typeNames=' +
+      var url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion + '&request=GetFeature&typeNames=' +
           layer.get('metadata').name;
       http_.get(url).then(function(response) {
         var x2js = new X2JS();

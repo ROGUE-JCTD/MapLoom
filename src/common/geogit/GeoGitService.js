@@ -242,7 +242,7 @@
 
     this.isNotLayerGroup = function(layer) {
       var featureType = layer.get('metadata').name;
-      var url = layer.get('metadata').url + '/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=DescribeLayer&layers=' +
+      var url = layer.get('metadata').url + '/wms?version=' + settings.WMSVersion + '&request=DescribeLayer&layers=' +
           featureType;
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
@@ -306,7 +306,7 @@
       http.get(url).then(function(response) {
         response.data.featureType.workspace = workspaceRoute.workspace;
         var featureType = response.data.featureType;
-        url = layer.get('metadata').url + '/wfs?service=wfs&version=' + settings.DescribeFeatureTypeVersion +
+        url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion +
             '&request=DescribeFeatureType&typeName=' +
             workspaceRoute.typeName;
 

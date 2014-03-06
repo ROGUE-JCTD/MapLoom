@@ -232,10 +232,10 @@
       if (goog.isDefAndNotNull(layer.get('metadata').editable) &&
           layer.get('metadata').editable) {
         var layerTypeName = layer.get('metadata').name;
-        var url = layer.get('metadata').url + '/ows?service=wps&version=1.0.0';
+        var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
 
         var wpsPostData = '' +
-            '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" ' +
+            '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +
                 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
                 'xmlns="http://www.opengis.net/wps/1.0.0" ' +
                 'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ' +
@@ -251,7 +251,7 @@
             '<ows:Identifier>features</ows:Identifier>' +
             '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
             '<wps:Body>' +
-            '<wfs:GetFeature service="WFS" version="1.0.0" outputFormat="GML2" ' +
+            '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '" outputFormat="GML2" ' +
                 'xmlns:geonode="http://www.geonode.org/">' +
             '<wfs:Query typeName="' + layerTypeName + '"/>' +
             '</wfs:GetFeature>' +

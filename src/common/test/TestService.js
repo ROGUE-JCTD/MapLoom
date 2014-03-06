@@ -216,7 +216,7 @@
         '<?xml version="1.0" encoding="UTF-8"?>' +
         '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs"' +
         ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-        'service= "WFS" version="1.1.0" ' +
+        'service= "WFS" version="' + settings.WFSVersion + '" ' +
         'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
         '<wfs:Insert>' +
         '<feature:' + config.layerName + ' xmlns:feature="http://www.geonode.org/">' +
