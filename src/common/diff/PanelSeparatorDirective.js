@@ -50,10 +50,6 @@
               }
             }
 
-            var showAuthors = function() {
-              scope.authorsShown = true;
-            };
-
             scope.geometryArrowClick = function() {
               if (scope.hover) {
                 featureDiffService.chooseGeometry(scope.panel);
@@ -75,7 +71,13 @@
             scope.$on('merge-feature-modified', updateVariables);
             scope.$on('feature-diff-performed', initialize);
             scope.$on('update-merge-feature', updateVariables);
-            scope.$on('authors-fetched', showAuthors);
+            scope.$on('show-authors', function() {
+              scope.authorsShown = true;
+            });
+
+            scope.$on('hide-authors', function() {
+              scope.authorsShown = false;
+            });
           }
         };
       }

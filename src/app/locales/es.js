@@ -197,6 +197,8 @@
         '¿Quieres comparar con la versión más reciente?',
     'undo_successful': 'Deshacer Exitosa',
     'undo_no_changes': 'El deshacer resultó en ningún cambio.',
+    'sure_undo_changes': '¿Está seguro que desea deshacer los cambios introducidos en este cometido? ' +
+        '(Nota: El cambio seguirá siendo una parte de la historia del elemento.)',
     'fixed_feature': 'Elemento Fijo',
     'undo_conflicts': 'Deshacer Conflictos',
     'changes_undone': 'Los cambios en el elemento se ha deshecho con éxito.',
@@ -226,7 +228,9 @@
     'server': 'Servidor',
     'datastoretype': 'Tipo de almacen de datos',
     'branch': 'Rama',
-    'layerinfo': 'Informacion de las Capas'
+    'layerinfo': 'Informacion de las Capas',
+    'author_fetch_failed': 'Un error desconocido ocurrió mientras que la determinación de los autores del elemento.',
+    'show_authors': 'Mostrar los Autores'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

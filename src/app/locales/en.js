@@ -196,6 +196,8 @@
         '  Would you like to compare with the newest version?',
     'undo_successful': 'Undo Successful',
     'undo_no_changes': 'The merge resulted in no changes.',
+    'sure_undo_changes': 'Are you sure you want to undo the changes introduced in this commit? ' +
+        '(Note: The change will still be a part of the feature\'s history.)',
     'fixed_feature': 'Fixed Feature',
     'undo_conflicts': 'Undo Conflicts',
     'changes_undone': 'The changes to the feature have been successfully undone.',
@@ -225,7 +227,9 @@
     'server': 'Server',
     'datastoretype': 'Datastore Type',
     'branch': 'Branch',
-    'layerinfo': 'Layer Info'
+    'layerinfo': 'Layer Info',
+    'author_fetch_failed': 'An unknown error occured while determining the authors of the feature.',
+    'show_authors': 'Show Authors'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

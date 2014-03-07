@@ -10,16 +10,17 @@
           templateUrl: 'diff/partial/featurediff.tpl.html',
           link: function(scope, element) {
             function updateVariables() {
+              scope.authorsLoaded = false;
+              scope.authorsShown = false;
+              scope.authorsDisabled = false;
               scope.undoEnabled = true;
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
-              scope.notDelete = true;
               switch (featureDiffService.change) {
                 case 'ADDED':
                   scope.rightTitle = $translate('new_feature');
                   break;
                 case 'REMOVED':
-                  scope.notDelete = false;
                   scope.rightTitle = $translate('removed_feature');
                   break;
                 case 'MODIFIED':
@@ -79,6 +80,9 @@
               scope.leftSeparator = false;
               scope.rightSeparator = false;
               scope.undoEnabled = true;
+              scope.authorsLoaded = false;
+              scope.authorsShown = false;
+              scope.authorsDisabled = false;
               element.closest('.modal').modal('hide');
             };
 
@@ -100,7 +104,43 @@
             };
 
             scope.performBlame = function() {
+              if (scope.authorsLoaded) {
+                if (scope.authorsShown) {
+                  $rootScope.$broadcast('hide-authors');
+                } else {
+                  $rootScope.$broadcast('show-authors');
+                }
+                return;
+              }
+              scope.authorsDisabled = true;
+              if (featureDiffService.change === 'ADDED' || featureDiffService.change === 'REMOVED') {
+                var id = featureDiffService.getTheirsId();
+                var options = new GeoGitLogOptions();
+                options.until = id;
+                options.show = 1;
+                var panel = featureDiffService.right;
+                geogitService.command(featureDiffService.getRepoId(), 'log', options).then(function(response) {
+                  if (goog.isDefAndNotNull(response.commit)) {
+                    forEachArrayish(panel.attributes, function(attribute) {
+                      attribute.commit = response.commit;
+                    });
+                    panel.geometry.commit = response.commit;
+                    scope.authorsDisabled = false;
+                    scope.authorsLoaded = true;
+                    $rootScope.$broadcast('show-authors');
+                  } else {
+                    dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                    scope.authorsDisabled = false;
+                  }
+                }, function(reject) {
+                  console.log('ERROR: Log Failure: ', options, reject);
+                  dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                  scope.authorsDisabled = false;
+                });
+                return;
+              }
               var numPanels = scope.numPanels;
+              var numFailed = 0;
               if (scope.mergePanel && featureDiffService.change !== 'MERGED') {
                 numPanels--;
               }
@@ -123,11 +163,22 @@
                       });
                       numPanels--;
                       if (numPanels === 0) {
-                        $rootScope.$broadcast('authors-fetched');
+                        scope.authorsDisabled = false;
+                        if (numFailed > 0) {
+                          dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                        } else {
+                          scope.authorsLoaded = true;
+                          $rootScope.$broadcast('show-authors');
+                        }
                       }
                     }, function(reject) {
+                      numPanels--;
+                      numFailed++;
                       console.log('ERROR: Blame Failure: ', options, reject);
-                      dialogService.error($translate('error'), $translate('undo_unknown_error'));
+                      if (numPanels === 0) {
+                        dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                        scope.authorsDisabled = false;
+                      }
                     });
               };
               if (scope.leftPanel) {
@@ -141,7 +192,15 @@
               }
             };
 
-            scope.undoChanges = function() {
+            scope.$on('show-authors', function() {
+              scope.authorsShown = true;
+            });
+
+            scope.$on('hide-authors', function() {
+              scope.authorsShown = false;
+            });
+
+            var undo = function() {
               var branch = featureDiffService.layer.get('metadata').branchName;
               var layerName = featureDiffService.layer.get('metadata').uniqueID;
               var options = new GeoGitRevertFeatureOptions();
@@ -195,6 +254,19 @@
                 dialogService.error($translate('error'), $translate('undo_unknown_error'));
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
+              });
+            };
+
+            scope.undoChanges = function() {
+              dialogService.warn($translate('warning'), $translate('sure_undo_changes'),
+                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                switch (button) {
+                  case 0:
+                    undo();
+                    break;
+                  case 1:
+                    break;
+                }
               });
             };
 

@@ -13,7 +13,7 @@
     </div>
   </div>
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
-  <input ng-if="authorsLoaded" value="{{computeAuthorString(panel.geometry)}}" type="text"
+  <input ng-if="authorsShown" value="{{computeAuthorString(panel.geometry)}}" type="text"
          class="form-control attr-none geom-author loom-history-popover"
          readOnly="readOnly" placeholder="" commit="panel.geometry.commit">
   <span ng-repeat="attribute in panel.attributes" class="">
@@ -72,7 +72,7 @@
                       'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }">
             </div>
-            <input ng-if="authorsLoaded" value="{{computeAuthorString(attribute)}}" type="text" readOnly="readOnly"
+            <input ng-if="authorsShown" value="{{computeAuthorString(attribute)}}" type="text" readOnly="readOnly"
                        class="info-box-author form-control attr-none loom-history-popover" placeholder="" commit="attribute.commit">
   </span>
 </div>

@@ -53,13 +53,11 @@
             });
 
             element.mouseenter(function() {
-              console.log('show');
               if (element.closest('.collapsing').length === 0) {
                 element.popover('show');
               }
             });
             element.mouseleave(function() {
-              console.log('hide');
               element.popover('hide');
             });
           }
