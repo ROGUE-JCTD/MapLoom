@@ -284,6 +284,16 @@
       }
   );
 
+  // This controller is necessary to hide the tooltip when the authors button is clicked.  The mouse leave doesn't get
+  // triggered due to the loading spinner covering it.  This causes the tooltip to get stuck on.
+  module.controller('authors-tooltip-controller', function($scope) {
+    $scope.onClick = function() {
+      //hide the tooltip
+      $scope.tt_isOpen = false;
+      $scope.performBlame();
+    };
+  });
+
   function handleConflicts(repoId, mergeFailure, transaction, dialogService, conflictService, translate, ourName,
                            theirName, scope, mergeBranch) {
     var myDialog = dialogService.warn(translate('undo_conflicts'), translate('conflicts_encountered'),

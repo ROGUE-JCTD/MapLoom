@@ -13,9 +13,12 @@
     </div>
   </div>
   <div id="preview-map-{{mapid}}" class="preview-map map"></div>
-  <input ng-if="authorsShown" value="{{computeAuthorString(panel.geometry)}}" type="text"
-         class="form-control attr-none geom-author loom-history-popover"
-         readOnly="readOnly" placeholder="" commit="panel.geometry.commit">
+  <div ng-if="authorsShown">
+    <input ng-if="!isConflictPanel" value="{{computeAuthorString(panel.geometry)}}" type="text" readOnly="readOnly"
+           class="geom-author form-control attr-none loom-history-popover" placeholder="" commit="panel.geometry.commit">
+    <input ng-if="isConflictPanel" value="--------------------------------------" type="text" readOnly="readOnly"
+           class="geom-author form-control attr-none" placeholder="">
+  </div>
   <span ng-repeat="attribute in panel.attributes" class="">
     <span class="info-box-attribute">{{attribute.attributename}}</span>
             <div ng-switch on="attribute.type">
@@ -24,12 +27,12 @@
                         'attr-modified': attribute.changetype == 'MODIFIED',
                         'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                       }">
-                <datetimepicker ng-disabled="!isMergePanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
+                <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
                                 seperate-time="false" date-object="attribute" date-key="'newvalue'"></datetimepicker>
               </div>
               <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable}">
                 <div ng-if="attribute.editable" class="input-group-btn">
-                  <button ng-disabled="!isMergePanel" type="button" class="btn btn-default dropdown-toggle attr-none"
+                  <button ng-disabled="!isConflictPanel" type="button" class="btn btn-default dropdown-toggle attr-none"
                           data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>
@@ -47,7 +50,7 @@
                     }"/>
               </div>
               <div ng-switch-when="xsd:int" ng-class="{'has-error': !attribute.valid}">
-                <input ng-disabled="!isMergePanel" ng-model="attribute.newvalue" type="text"
+                <input ng-disabled="!isConflictPanel" ng-model="attribute.newvalue" type="text"
                        class="form-control attr-none"
                        ng-change="validateInteger(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
@@ -56,7 +59,7 @@
                     }"/>
               </div>
               <div ng-switch-when="xsd:double" ng-class="{'has-error': !attribute.valid}">
-                <input ng-disabled="!isMergePanel" ng-model="attribute.newvalue" type="text"
+                <input ng-disabled="!isConflictPanel" ng-model="attribute.newvalue" type="text"
                        class="form-control attr-none"
                        ng-change="validateDouble(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
@@ -65,14 +68,18 @@
                     }"/>
               </div>
               <input ng-switch-default ng-model="attribute.newvalue" type="text" class="form-control attr-none"
-                     ng-disabled="!isMergePanel" placeholder=""
+                     ng-disabled="!isConflictPanel" placeholder=""
                      ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
                       'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }">
             </div>
-            <input ng-if="authorsShown" value="{{computeAuthorString(attribute)}}" type="text" readOnly="readOnly"
+            <div ng-if="authorsShown">
+              <input ng-if="!isConflictPanel" value="{{computeAuthorString(attribute)}}" type="text" readOnly="readOnly"
                        class="info-box-author form-control attr-none loom-history-popover" placeholder="" commit="attribute.commit">
+              <input ng-if="isConflictPanel" value="--------------------------------------" type="text" readOnly="readOnly"
+                     class="info-box-author form-control attr-none" placeholder="">
+            </div>
   </span>
 </div>

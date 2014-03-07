@@ -19,6 +19,18 @@
             var loadingtarget = '#loading-' + scope.mapid;
             function updateVariables() {
               scope.authorsShown = false;
+              scope.isMergePanel = scope.panel === featureDiffService.merged;
+              scope.isConflictPanel = scope.isMergePanel && featureDiffService.change !== 'MERGED';
+
+              if (scope.isMergePanel) {
+                scope.$watch('panel.attributes', function() {
+                  for (var i = 0; i < scope.panel.attributes.length; i++) {
+                    featureDiffService.updateChangeType(scope.panel.attributes[i]);
+                  }
+                  $rootScope.$broadcast('merge-feature-modified');
+                }, true);
+              }
+
               $timeout(function() {
                 scope.panel.map.setTarget(target);
                 mapService.zoomToExtent(scope.panel.bounds, false, scope.panel.map);
@@ -28,22 +40,11 @@
               }, 500);
             }
 
-            scope.isMergePanel = scope.panel === featureDiffService.merged;
-
-            if (scope.isMergePanel) {
-              scope.$watch('panel.attributes', function() {
-                for (var i = 0; i < scope.panel.attributes.length; i++) {
-                  featureDiffService.updateChangeType(scope.panel.attributes[i]);
-                }
-                $rootScope.$broadcast('merge-feature-modified');
-              }, true);
-            }
-
             scope.computeAuthorString = function(attribute) {
-              if (scope.isMergepanel && featureDiffService.change !== 'MERGED') {
+              if (scope.isConflictPanel) {
                 return '---------------------';
               }
-              if (goog.isDefAndNotNull(attribute.commit)) {
+              if (goog.isDefAndNotNull(attribute) && goog.isDefAndNotNull(attribute.commit)) {
                 var returnString = '';
                 returnString += attribute.commit.author.name + ' - ';
                 var date = new Date(attribute.commit.author.timestamp);

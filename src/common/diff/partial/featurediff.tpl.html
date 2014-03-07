@@ -27,10 +27,10 @@
               tooltip-placement="top" tooltip="{{'undo_changes' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-share-alt undo-button"></i>
       </button>
-      <button type="button" class="btn btn-default pull-left" ng-disabled="authorsDisabled"
-              ng-class="{'authors-shown':authorsShown}" ng-click="performBlame()"
+      <button type="button" class="btn btn-default pull-left authors-button" ng-disabled="authorsDisabled"
+              ng-class="{'authors-shown':authorsShown}" ng-click="onClick()" ng-controller="authors-tooltip-controller"
               tooltip-placement="top" tooltip="{{'show_authors' | translate}}" tooltip-append-to-body="true">
-        <div ng-if="authorsDisabled" id="authors-loading">
+        <div ng-show="authorsDisabled" id="authors-loading">
           <div class="loading">
             <!-- We make this div spin -->
             <div class="spinner">

@@ -10,6 +10,10 @@
             if (!goog.isDefAndNotNull(scope.commit)) {
               scope.commit = scope.$eval(attrs.commit);
             }
+            if (!goog.isDefAndNotNull(scope.commit)) {
+              element.popover('destroy');
+              return;
+            }
             var safeName = function(name) {
               if (goog.isDefAndNotNull(name) && name.length > 0) {
                 return name;
