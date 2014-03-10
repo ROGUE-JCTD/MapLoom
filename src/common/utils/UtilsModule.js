@@ -77,7 +77,8 @@
     return {
       restrict: 'E',
       template: '<div class="row">' +
-          '<div ng-show="(editable !== \'false\')" ng-class="{\'col-md-6\': (time === \'true\'),' +
+          '<div ng-show="(editable !== \'false\') && (date === \'true\')"' +
+          ' ng-class="{\'col-md-6\': (time === \'true\'),' +
           ' \'col-md-12\': (time === \'false\') || (seperateTime === \'false\')}">' +
           '<div class="form-group">' +
           '<div class="input-group date datepicker">' +
@@ -88,8 +89,9 @@
           '</div>' +
           '</div>' +
           '</div>' +
-          '<div ng-show="(editable !== \'false\') && (time === \'true\') && (seperateTime === \'true\')" +' +
-          'class="col-md-6">' +
+          '<div ng-show="(editable !== \'false\') && (time === \'true\') && ((seperateTime === \'true\') ||' +
+          ' (date === \'false\'))" ng-class="{\'col-md-6\': (date === \'true\' && seperateTime === \'true\'),' +
+          ' \'col-md-12\': (date === \'false\')}">' +
           '<div class="form-group">' +
           '<div class="input-group date timepicker">' +
           '<input type="text" class="form-control"/>' +
@@ -119,6 +121,11 @@
         } else {
           scope.time = attrs.time;
         }
+        if (!goog.isDefAndNotNull(attrs.date)) {
+          scope.date = 'true';
+        } else {
+          scope.date = attrs.date;
+        }
         if (!goog.isDefAndNotNull(attrs.seperateTime)) {
           scope.seperateTime = 'true';
         } else {
@@ -126,27 +133,44 @@
         }
         var updateDateTime = function() {
           var newDate = new Date();
-          var date = element.find('.datepicker').data('DateTimePicker').getDate();
+          var date = element.find('.datepicker').data('DateTimePicker');
           if (goog.isDefAndNotNull(date)) {
+            date = date.getDate();
             newDate.setFullYear(date.year(), date.month(), date.date());
-            if (scope.time === 'true' && scope.seperateTime === 'true') {
-              var time = element.find('.timepicker').data('DateTimePicker').getDate();
-              if (goog.isDefAndNotNull(time)) {
-                newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
-              } else {
-                newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
-              }
-            } else {
-              newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
-            }
-            if (!scope.$$phase && !$rootScope.$$phase) {
-              scope.$apply(function() {
+          }
+          var time = element.find('.timepicker').data('DateTimePicker');
+          if (goog.isDefAndNotNull(time)) {
+            time = time.getDate();
+            newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
+          }
+
+          if (!scope.$$phase && !$rootScope.$$phase) {
+            scope.$apply(function() {
+              if (time && date) {
                 scope.dateObject[scope.dateKey] = newDate.toISOString();
                 scope.disabledText = newDate.toISOString();
-              });
-            } else {
+              } else if (time) {
+                var timeString = newDate.toISOString().split('T')[1];
+                scope.dateObject[scope.dateKey] = timeString;
+                scope.disabledText = timeString;
+              } else if (date) {
+                var dateString = newDate.toISOString().split('T')[0];
+                scope.dateObject[scope.dateKey] = dateString;
+                scope.disabledText = dateString;
+              }
+            });
+          } else {
+            if (time && date) {
               scope.dateObject[scope.dateKey] = newDate.toISOString();
               scope.disabledText = newDate.toISOString();
+            } else if (time) {
+              var timeString = newDate.toISOString().split('T')[1];
+              scope.dateObject[scope.dateKey] = timeString;
+              scope.disabledText = timeString;
+            } else if (date) {
+              var dateString = newDate.toISOString().split('T')[0];
+              scope.dateObject[scope.dateKey] = dateString;
+              scope.disabledText = dateString;
             }
           }
         };
@@ -173,8 +197,10 @@
         }
 
         var setUpPickers = function() {
-          element.find('.datepicker').datetimepicker(dateOptions);
-          element.find('.datepicker').on('change.dp', updateDateTime);
+          if (scope.date === 'true') {
+            element.find('.datepicker').datetimepicker(dateOptions);
+            element.find('.datepicker').on('change.dp', updateDateTime);
+          }
           if (scope.time === 'true' && scope.seperateTime === 'true') {
             element.find('.timepicker').datetimepicker(timeOptions);
             element.find('.timepicker').on('change.dp', updateDateTime);
