@@ -56,7 +56,7 @@
               }
               var server = serverService.getServerById(scope.layer.get('metadata').serverId);
               scope.serverName = server.name;
-              $('#layerInfoDialog').modal('toggle');
+              element.closest('.modal').modal('toggle');
             });
 
           }
