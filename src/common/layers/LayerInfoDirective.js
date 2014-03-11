@@ -5,7 +5,7 @@
       function($translate, serverService) {
         return {
           templateUrl: 'layers/partials/layerinfo.tpl.html',
-          link: function(scope) {
+          link: function(scope, element) {
             var resetVariables = function() {
               scope.layer = null;
               scope.name = null;
