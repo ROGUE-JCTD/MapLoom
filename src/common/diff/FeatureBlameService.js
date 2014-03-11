@@ -27,7 +27,6 @@
         }
       }, function(reject) {
         //failed to get diff
-        console.log(reject);
         deferredResponse.reject(reject);
       });
       return deferredResponse.promise;

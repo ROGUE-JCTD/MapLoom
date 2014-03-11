@@ -260,12 +260,8 @@
             scope.undoChanges = function() {
               dialogService.warn($translate('warning'), $translate('sure_undo_changes'),
                   [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
-                switch (button) {
-                  case 0:
-                    undo();
-                    break;
-                  case 1:
-                    break;
+                if (button === 0) {
+                  undo();
                 }
               });
             };

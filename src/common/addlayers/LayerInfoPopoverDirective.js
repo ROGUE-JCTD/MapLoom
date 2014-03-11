@@ -73,15 +73,14 @@
               container: 'body',
               title: scope.layer.title
             });
-
-            scope.showPopover = function() {
+            element.mouseenter(function() {
               if (element.closest('.collapsing').length === 0) {
                 element.popover('show');
               }
-            };
-            scope.hidePopover = function() {
+            });
+            element.mouseleave(function() {
               element.popover('hide');
-            };
+            });
           }
         };
       });

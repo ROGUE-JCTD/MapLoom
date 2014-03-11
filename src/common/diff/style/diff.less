@@ -82,6 +82,11 @@
   overflow-y: auto;
 }
 
+.authors-visible .attribute-value-section input {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
 .panelContainer {
   display: table;
   border-spacing:3px;
@@ -99,7 +104,7 @@
       padding-top: 5px;
 
       &.merge-panel {
-        border: 6px solid #4E4B68;
+        border: 6px solid @mergePanelBorder;
         padding-top: 0px;
         padding-left: 5px;
         padding-right: 5px;
@@ -117,8 +122,8 @@
         height: 222px;
         left: 3px;
         z-index: 5000;
-        background-color: #90adc7;
-        border: 1px solid #88a3bd;
+        background-color: @featurePanelColor;
+        border: 1px solid darken(@featurePanelColor, 10%);
       }
 
       button, span.input-group-addon {
@@ -138,7 +143,7 @@
       input.attr-none {
         width: 98%;
         background-color: @featurePanelColor;
-        border: 1px solid darken(@featurePanelColor, 5%);
+        border: 1px solid darken(@featurePanelColor, 10%);
         cursor: auto;
 
         &[disabled] {
@@ -147,24 +152,24 @@
       }
 
       input.attr-modified {
-        background-color: #A6BD9F;
-        border: 1px solid #81977c;
+        background-color: @modifiedAttributeColor;
+        border: 1px solid darken(@modifiedAttributeColor, 15%);
       }
 
       input.attr-added {
-        background-color: #73BD9F;
-        border: 1px solid #549c7f;
+        background-color: @addedAttributeColor;
+        border: 1px solid darken(@addedAttributeColor, 10%);
       }
 
       input.attr-removed {
-        background-color: #A68A9F;
-        border: 1px solid #8d7186;
+        background-color: @removedAttributeColor;
+        border: 1px solid darken(@removedAttributeColor, 10%);
       }
 
       .attr-none input {
         width: 98%;
         background-color: @featurePanelColor;
-        border: 1px solid darken(@featurePanelColor, 5%);
+        border: 1px solid darken(@featurePanelColor, 10%);
         cursor: auto;
 
         &[disabled] {
@@ -173,22 +178,22 @@
       }
 
       .attr-modified input {
-        background-color: #A6BD9F;
-        border: 1px solid #81977c;
+        background-color: @modifiedAttributeColor;
+        border: 1px solid darken(@modifiedAttributeColor, 15%);
       }
 
       .attr-added input {
-        background-color: #73BD9F;
-        border: 1px solid #549c7f;
+        background-color: @addedAttributeColor;
+        border: 1px solid darken(@addedAttributeColor, 10%);
       }
 
       .attr-removed input {
-        background-color: #A68A9F;
-        border: 1px solid #8d7186;
+        background-color: @removedAttributeColor;
+        border: 1px solid darken(@removedAttributeColor, 10%);
       }
 
       .info-box-attribute {
-        color: #000000;
+        color: black;
         height: 15px !important;
       }
       .merge-select {
@@ -213,7 +218,7 @@
         position: relative;
         top: -1px;
         border-top: 0 !important;
-        background-color: #85A3BE !important;
+        background-color: darken(@featurePanelColor, 4%) !important;
       }
 
       .info-box-author {
@@ -221,10 +226,10 @@
         width: 98% !important;
         border-top: 0 !important;
         position: relative;
-        top: -3px;
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
-        background-color: #85A3BE !important;
+        background-color: darken(@featurePanelColor, 4%) !important;
+        border: 1px solid darken(@featurePanelColor, 10%) !important;
       }
     }
 

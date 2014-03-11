@@ -1,4 +1,4 @@
-<div class="feature-panel">
+<div class="feature-panel" ng-class="{'authors-visible':authorsShown}">
   {{title}}
   <div id="loading-{{mapid}}" class="map-loading">
     <div class="loading">
@@ -21,7 +21,7 @@
   </div>
   <span ng-repeat="attribute in panel.attributes" class="">
     <span class="info-box-attribute">{{attribute.attributename}}</span>
-            <div ng-switch on="attribute.type">
+            <div ng-switch on="attribute.type" class="attribute-value-section">
               <div ng-switch-when="xsd:dateTime" ng-class="{
                         'attr-added': attribute.changetype == 'ADDED',
                         'attr-modified': attribute.changetype == 'MODIFIED',
@@ -29,6 +29,24 @@
                       }">
                 <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
                                 seperate-time="false" date-object="attribute" date-key="'newvalue'"></datetimepicker>
+              </div>
+              <div ng-switch-when="xsd:date" ng-class="{
+                        'attr-added': attribute.changetype == 'ADDED',
+                        'attr-modified': attribute.changetype == 'MODIFIED',
+                        'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
+                      }">
+                <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none"
+                                editable="{{attribute.editable}}"
+                                seperate-time="false" date-object="attribute" date-key="'newvalue'" time="false"></datetimepicker>
+              </div>
+              <div ng-switch-when="xsd:time" ng-class="{
+                        'attr-added': attribute.changetype == 'ADDED',
+                        'attr-modified': attribute.changetype == 'MODIFIED',
+                        'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
+                      }">
+                <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none"
+                                editable="{{attribute.editable}}"
+                                seperate-time="false" date-object="attribute" date-key="'newvalue'" date="false"></datetimepicker>
               </div>
               <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable}">
                 <div ng-if="attribute.editable" class="input-group-btn">
