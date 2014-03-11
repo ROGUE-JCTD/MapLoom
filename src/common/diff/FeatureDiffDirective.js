@@ -12,7 +12,7 @@
             function updateVariables() {
               scope.authorsLoaded = false;
               scope.authorsShown = false;
-              scope.authorsDisabled = false;
+              scope.isLoading = false;
               scope.undoEnabled = true;
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
@@ -82,7 +82,7 @@
               scope.undoEnabled = true;
               scope.authorsLoaded = false;
               scope.authorsShown = false;
-              scope.authorsDisabled = false;
+              scope.isLoading = false;
               element.closest('.modal').modal('hide');
             };
 
@@ -112,7 +112,7 @@
                 }
                 return;
               }
-              scope.authorsDisabled = true;
+              scope.isLoading = true;
               if (featureDiffService.change === 'ADDED' || featureDiffService.change === 'REMOVED') {
                 var id = featureDiffService.getTheirsId();
                 var options = new GeoGitLogOptions();
@@ -125,17 +125,17 @@
                       attribute.commit = response.commit;
                     });
                     panel.geometry.commit = response.commit;
-                    scope.authorsDisabled = false;
+                    scope.isLoading = false;
                     scope.authorsLoaded = true;
                     $rootScope.$broadcast('show-authors');
                   } else {
                     dialogService.error($translate('error'), $translate('author_fetch_failed'));
-                    scope.authorsDisabled = false;
+                    scope.isLoading = false;
                   }
                 }, function(reject) {
                   console.log('ERROR: Log Failure: ', options, reject);
                   dialogService.error($translate('error'), $translate('author_fetch_failed'));
-                  scope.authorsDisabled = false;
+                  scope.isLoading = false;
                 });
                 return;
               }
@@ -163,7 +163,7 @@
                       });
                       numPanels--;
                       if (numPanels === 0) {
-                        scope.authorsDisabled = false;
+                        scope.isLoading = false;
                         if (numFailed > 0) {
                           dialogService.error($translate('error'), $translate('author_fetch_failed'));
                         } else {
@@ -177,7 +177,7 @@
                       console.log('ERROR: Blame Failure: ', options, reject);
                       if (numPanels === 0) {
                         dialogService.error($translate('error'), $translate('author_fetch_failed'));
-                        scope.authorsDisabled = false;
+                        scope.isLoading = false;
                       }
                     });
               };

@@ -160,7 +160,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.addServer = function(serverInfo) {
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
-      var server = {id: servers.length, ptype: 'gxp_olsource', config: serverInfo};
+      var server = {id: servers.length, ptype: 'gxp_olsource', config: serverInfo, populatingLayersConfig: false};
 
       goog.object.extend(server, serverInfo, {});
 
@@ -245,6 +245,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
           var parser = new ol.parser.ogc.WMSCapabilities();
           var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
+          server.populatingLayersConfig = true;
           http_.get(url).then(function(xhr) {
             if (xhr.status == 200) {
               var response = parser.read(xhr.data);
@@ -254,13 +255,16 @@ var SERVER_SERVICE_USE_PROXY = true;
                 console.log('---- populateLayersConfig. server', server);
                 rootScope_.$broadcast('layers-loaded', index);
               }
+              server.populatingLayersConfig = false;
             } else {
               dialogService_.error(translate_('error'),
                   translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+              server.populatingLayersConfig = false;
             }
           }, function(xhr) {
             dialogService_.error(translate_('error'),
                 translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+            server.populatingLayersConfig = false;
           });
         }
       }

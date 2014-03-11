@@ -1,5 +1,7 @@
 (function() {
-  var module = angular.module('loom_utils', []);
+  var module = angular.module('loom_utils', [
+    'loom_loading_directive'
+  ]);
 
   module.directive('stopEvent', function() {
     return {

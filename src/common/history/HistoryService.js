@@ -8,6 +8,7 @@
   var pulldownService_ = null;
   var dialogService_ = null;
   var translate_ = null;
+  var q_ = null;
 
   module.provider('historyService', function() {
     this.log = [];
@@ -20,13 +21,14 @@
     this.fetchingHistory = false;
     this.historyTransaction = 0;
 
-    this.$get = function($rootScope, $translate, geogitService, pulldownService, dialogService) {
+    this.$get = function($q, $rootScope, $translate, geogitService, pulldownService, dialogService) {
       rootScope_ = $rootScope;
       service_ = this;
       geogitService_ = geogitService;
       pulldownService_ = pulldownService;
       dialogService_ = dialogService;
       translate_ = $translate;
+      q_ = $q;
       return this;
     };
 
@@ -39,8 +41,9 @@
         if (goog.isDefAndNotNull(layer)) {
           service_.layer = layer;
         }
-        getHistoryInternal();
+        return getHistoryInternal();
       }
+      return null;
     };
 
     this.getMoreHistory = function() {
@@ -76,6 +79,7 @@
   });
 
   function getHistoryInternal(_refresh) {
+    var deferredResponse = q_.defer();
     var refresh = _refresh;
     if (!goog.isDefAndNotNull(refresh)) {
       refresh = false;
@@ -111,6 +115,7 @@
           geogitService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
             if (service_.fetchingHistory === false || thisTransaction != service_.historyTransaction) {
               // History was cleared, we don't want this data anymore
+              deferredResponse.reject();
               return;
             }
             if (goog.isDefAndNotNull(response.commit)) {
@@ -166,18 +171,28 @@
               }
             }
             service_.fetchingHistory = false;
+            deferredResponse.resolve(0);
           }, function(reject) {
             if (service_.fetchingHistory === false || thisTransaction != service_.historyTransaction) {
               // History was cleared, we don't want this data anymore
+              deferredResponse.reject();
               return;
             }
             service_.fetchingHistory = false;
             console.log('History failed: ', reject);
             dialogService_.error(translate_('error'), translate_('history_failed'));
+            deferredResponse.reject();
           });
+        } else {
+          deferredResponse.reject();
         }
+      } else {
+        deferredResponse.reject();
       }
+    } else {
+      deferredResponse.reject();
     }
+    return deferredResponse.promise;
   }
 
   function getFirstParent(commit) {

@@ -17,6 +17,7 @@
     </div>
   </div>
 </div>
+
 <div class="modal-footer">
   <button type="button" class="btn btn-default pull-right" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
   <button ng-if="editable" type="button" class="btn btn-primary pull-right" ng-click="save()">{{'save_btn' | translate}}</button>
@@ -27,22 +28,11 @@
               tooltip-placement="top" tooltip="{{'undo_changes' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-share-alt undo-button"></i>
       </button>
-      <button type="button" class="btn btn-default pull-left authors-button" ng-disabled="authorsDisabled"
+      <button type="button" class="btn btn-default pull-left authors-button" ng-disabled="isLoading"
               ng-class="{'authors-shown':authorsShown}" ng-click="onClick()" ng-controller="authors-tooltip-controller"
               tooltip-placement="top" tooltip="{{'show_authors' | translate}}" tooltip-append-to-body="true">
-        <div ng-show="authorsDisabled" id="authors-loading">
-          <div class="loading">
-            <!-- We make this div spin -->
-            <div class="spinner">
-              <!-- Mask of the quarter of circle -->
-              <div class="mask">
-                <!-- Inner masked circle -->
-                <div class="maskedCircle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <i ng-if="!authorsDisabled" class="glyphicon glyphicon-user"></i>
+        <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoading"></div>
+        <i ng-if="!isLoading" class="glyphicon glyphicon-user"></i>
       </button>
     </div>
   </div>

@@ -3,11 +3,13 @@
 
   var http_ = null;
   var service_ = null;
+  var q_ = null;
 
   module.provider('tableViewService', function() {
-    this.$get = function($http) {
+    this.$get = function($q, $http) {
       http_ = $http;
       service_ = this;
+      q_ = $q;
       return this;
     };
 
@@ -15,11 +17,12 @@
     this.attributeNameList = [];
 
     this.showTable = function(layer) {
+      var deferredResponse = q_.defer();
 
       service_.featureList = [];
       service_.attributeNameList = [];
 
-      var url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion + '&request=GetFeature&typeNames=' +
+      var url = layer.get('metadata').url + '/wfs?version=' + '2.0.0' + '&request=GetFeature&typeNames=' +
           layer.get('metadata').name;
       http_.get(url).then(function(response) {
         var x2js = new X2JS();
@@ -47,9 +50,12 @@
           }
           service_.featureList[feat] = feature;
         }
-
-        $('#table-view-window').modal('show');
+        deferredResponse.resolve();
+      }, function(reject) {
+        deferredResponse.reject(reject);
       });
+
+      return deferredResponse.promise;
     };
   });
 }());

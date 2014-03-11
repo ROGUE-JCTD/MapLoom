@@ -12,6 +12,7 @@
             angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
             scope.setCurrentServerIndex = function(serverIndex) {
               scope.currentServerIndex = serverIndex;
+              scope.currentServer = serverService.getServerById(serverIndex);
               serverService.populateLayersConfig(serverIndex);
             };
 

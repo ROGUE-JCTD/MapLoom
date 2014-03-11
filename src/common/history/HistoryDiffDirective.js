@@ -12,6 +12,7 @@
             scope.endDate = [new Date().toISOString()];
             scope.active = true;
             scope.contentHidden = true;
+            scope.isLoading = false;
 
             element.closest('.modal').on('hidden.bs.modal', function(e) {
               if (!scope.$$phase && !$rootScope.$$phase) {
@@ -34,11 +35,11 @@
 
             scope.cancel = function() {
               element.closest('.modal').modal('hide');
-              $('#history-loading').addClass('hidden');
+              scope.isLoading = false;
             };
 
             scope.onDiff = function() {
-              $('#history-loading').toggleClass('hidden');
+              scope.isLoading = true;
               var startTime = new Date(scope.startDate[0]).getTime();
               var endTime = new Date(scope.endDate[0]).getTime();
               var logOptions = new GeoGitLogOptions();
@@ -74,6 +75,7 @@
                       if (goog.isDefAndNotNull(response.nextPage) && response.nextPage == 'true') {
                         dialogService.warn($translate('warning'),
                             $translate('too_many_changes'), [$translate('btn_ok')]);
+                        scope.isLoading = false;
                       } else {
                         diffService.setTitle($translate('summary_of_changes'));
                         pulldownService.showDiffPanel();
@@ -82,27 +84,27 @@
                     } else {
                       dialogService.open($translate('history'),
                           $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
-                      $('#history-loading').addClass('hidden');
+                      scope.isLoading = false;
                     }
                   }, function(reject) {
                     //failed to get diff
                     console.log('Failed to get diff: ', reject);
                     dialogService.error($translate('error'),
                         $translate('diff_unknown_error'), [$translate('btn_ok')]);
-                    $('#history-loading').addClass('hidden');
+                    scope.isLoading = false;
                   });
                 } else {
                   // no commits
                   dialogService.open($translate('history'),
                       $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
-                  $('#history-loading').addClass('hidden');
+                  scope.isLoading = false;
                 }
               }, function(reject) {
                 // failed to get log
                 console.log('Failed to get log: ', reject);
                 dialogService.error($translate('error'),
                     $translate('diff_unknown_error'), [$translate('btn_ok')]);
-                $('#history-loading').addClass('hidden');
+                scope.isLoading = false;
               });
             };
 

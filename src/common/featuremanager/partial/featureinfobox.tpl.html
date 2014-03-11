@@ -46,7 +46,9 @@
       <div id="feature-info-box-button-group" class="btn-group pull-right">
         <button type="button" ng-click="showFeatureHistory()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'show_history' | translate}}"
-                class="btn btn-sm btn-default glyphicon glyphicon-time"></button>
+                class="btn btn-sm btn-default glyphicon glyphicon-time">
+          <div class="loom-loading" spinner-radius="10" spinner-width="2" spinner-hidden="!loadingHistory"></div>
+                </button>
         <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_pics' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>-->
         <button type="button" ng-click="featureManagerService.startAttributeEditing()"

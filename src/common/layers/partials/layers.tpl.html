@@ -34,14 +34,16 @@
                class="btn btn-sm btn-default">
               <i class="glyphicon glyphicon-resize-small"></i>
             </a>
-            <a type="button" ng-click="tableViewService.showTable(layer)" ng-show="layer.get('metadata').editable"
+            <a type="button" ng-click="showTable(layer)" ng-show="layer.get('metadata').editable"
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'show_table' | translate}}">
+              <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(layer)"></div>
               <i class="glyphicon glyphicon-list"></i>
             </a>
             <a type="button" ng-show="isGeogit(layer)" ng-click="showHistory(layer)"
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'show_history' | translate}}">
+              <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingHistory(layer)"></div>
               <i class="glyphicon glyphicon-time"></i>
             </a>
             <a type="button" tooltip-append-to-body="true" ng-click="getLayerInfo(layer)"

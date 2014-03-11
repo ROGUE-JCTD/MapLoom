@@ -13,6 +13,7 @@
           link: function(scope) {
             scope.featureManagerService = featureManagerService;
             scope.mapService = mapService;
+            scope.loadingHistory = false;
 
             scope.$on('feature-info-click', function() {
               scope.$apply(function() {
@@ -29,8 +30,18 @@
                     var nativeLayer = metadata.nativeName;
                     var featureId = featureManagerService.getSelectedItem().id;
                     var fid = nativeLayer + '/' + featureId;
+                    scope.loadingHistory = true;
                     historyService.setTitle($translate('history_for', {value: featureId}));
-                    historyService.getHistory(layer, fid);
+                    var promise = historyService.getHistory(layer, fid);
+                    if (goog.isDefAndNotNull(promise)) {
+                      promise.then(function() {
+                        scope.loadingHistory = false;
+                      }, function() {
+                        scope.loadingHistory = false;
+                      });
+                    } else {
+                      scope.loadingHistory = false;
+                    }
                   }
                 }
               }

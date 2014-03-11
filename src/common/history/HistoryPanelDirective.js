@@ -8,6 +8,7 @@
           replace: true,
           templateUrl: 'history/partial/historypanel.tpl.html',
           link: function(scope, element, attrs) {
+            scope.loadingDiff = false;
             var scrollPane = element.find('.history-scroll-pane');
             var raw = scrollPane[0];
 
@@ -25,6 +26,10 @@
                 raw.scrollTop = raw.scrollTop + height * numInserted;
               }
             });
+
+            scope.isLoading = function(commit) {
+              return goog.isDefAndNotNull(commit.loading) && commit.loading === true;
+            };
 
             function updateVariables(newLog, oldLog) {
               if (goog.isDefAndNotNull(oldLog) && oldLog.length === 0) {
@@ -47,6 +52,11 @@
             };
 
             scope.historyClicked = function(commit) {
+              if (scope.loadingDiff !== false) {
+                return;
+              }
+              commit.loading = true;
+              scope.loadingDiff = true;
               $('.loom-history-popover').popover('hide');
               var lastCommitId = '0000000000000000000000000000000000000000';
               if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
@@ -78,10 +88,14 @@
                   dialogService.open($translate('history'),
                       $translate('no_changes_in_commit'), [$translate('btn_ok')]);
                 }
+                commit.loading = false;
+                scope.loadingDiff = false;
               }, function(reject) {
                 //failed to get diff
                 dialogService.error($translate('error'),
                     $translate('diff_unknown_error'), [$translate('btn_ok')]);
+                scope.loadingDiff = false;
+                commit.loading = false;
               });
             };
 

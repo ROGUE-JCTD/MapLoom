@@ -24,6 +24,7 @@
       <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control" placeholder="{{'filter_layers' | translate}}">
     </div>
     <hr>
+    <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
     <div class="form-group layer-container">
       <ul id="layer-list" class="list-group">
         <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:filterLayers | filter:filterAddedLayers"

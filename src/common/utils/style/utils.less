@@ -64,43 +64,52 @@
   }
 }
 
-/* Loading animation container */
-.loading {
+.loading-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 28px;
-  height: 28px;
-  margin: -14px 0 0 -14px;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  .z-index(@dialogLevel, 1);
+  opacity: 1.0;
+  background-color: white;
 
-  /* Spinning circle (inner circle) */
-  .maskedCircle {
-    width: 20px;
-    height: 20px;
-    border-radius: 12px;
-    border: 3px solid white;
-  }
-
-  /* Spinning circle mask */
-  .mask {
+  /* Loading animation container */
+  .loading {
     position: absolute;
-    width: 12px;
-    height: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
 
-  /* Spinner */
-  .spinner {
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    width: 26px;
-    height: 26px;
-    animation: spin 1s infinite linear;
-    -webkit-animation: webkitspin 1s infinite linear;
-  }
+    /* Spinning circle (inner circle) */
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border-radius: 12px;
+      border: 3px solid;
+      border-color: white;
+    }
 
+    /* Spinning circle mask */
+    .mask {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Spinner */
+    .spinner {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      animation: spin 1s infinite linear;
+      -webkit-animation: webkitspin 1s infinite linear;
+    }
+  }
 }
 
 .z-index(@level; @offset: 0) {

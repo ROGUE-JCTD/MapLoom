@@ -9,6 +9,18 @@
 [loom-addlayers] .modal-body {
   overflow: hidden;
   overflow-y: auto;
+  min-height: 200px;
+}
+
+.add-layers-loading.loom-loading {
+  position: absolute;
+  width: 340px;
+  left: 0;
+  height: 50px;
+
+  .loading-container {
+    background-color: @mainPanelColor;
+  }
 }
 
 #server-list {

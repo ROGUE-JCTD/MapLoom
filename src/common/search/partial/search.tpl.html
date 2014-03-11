@@ -6,17 +6,7 @@
           <input type="text" ng-change="clearResults()" ng-model="searchQuery" class="search-box form-control" placeholder="{{'search' | translate}}">
                 <span class="input-group-btn">
                   <a class="btn btn-default" ng-click="performSearch()" type="button">
-                    <div id="search-loading" ng-show="searchInProgress">
-                      <div class="loading">
-                        <!-- We make this div spin -->
-                        <div class="spinner">
-                          <!-- Mask of the quarter of circle -->
-                          <div class="mask">
-                            <!-- Inner masked circle -->
-                            <div class="maskedCircle"></div>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="loom-loading" spinner-radius="16" spinner-hidden="!searchInProgress">
                     </div>
                     <i ng-if="!displayingResults()" class="glyphicon glyphicon-search"></i>
                     <i ng-if="displayingResults()" class="glyphicon glyphicon-remove"></i>

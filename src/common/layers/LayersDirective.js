@@ -56,9 +56,40 @@
               return false;
             };
 
+            scope.isLoadingTable = function(layer) {
+              var loadingTable = layer.get('metadata').loadingTable;
+              return goog.isDefAndNotNull(loadingTable) && loadingTable === true;
+            };
+
+            scope.showTable = function(layer) {
+              layer.get('metadata').loadingTable = true;
+              tableViewService.showTable(layer).then(function() {
+                layer.get('metadata').loadingTable = false;
+                $('#table-view-window').modal('show');
+              }, function() {
+                layer.get('metadata').loadingTable = false;
+                dialogService.error($translate('show_table'), $translate('show_table_failed'));
+              });
+            };
+
+            scope.isLoadingHistory = function(layer) {
+              var loadingHistory = layer.get('metadata').loadingHistory;
+              return goog.isDefAndNotNull(loadingHistory) && loadingHistory === true;
+            };
+
             scope.showHistory = function(layer) {
               historyService.setTitle($translate('history_for', {value: layer.get('metadata').title}));
-              historyService.getHistory(layer);
+              layer.get('metadata').loadingHistory = true;
+              var promise = historyService.getHistory(layer);
+              if (goog.isDefAndNotNull(promise)) {
+                promise.then(function() {
+                  layer.get('metadata').loadingHistory = false;
+                }, function() {
+                  layer.get('metadata').loadingHistory = false;
+                });
+              } else {
+                layer.get('metadata').loadingHistory = false;
+              }
             };
 
             scope.attrList = [];
