@@ -582,7 +582,7 @@
       });
 
       // -- save layers
-      goog.array.forEach(service_.map.getLayers().getArray(), function(layer, key, obj) {
+      goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         console.log('saving layer: ', layer);
         console.log('metadata: ', layer.get('metadata'));
         console.log('config: ', layer.get('metadata').config);
