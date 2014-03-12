@@ -31,8 +31,8 @@
                 if (config.add) {
                   var slimConfig = {
                     source: scope.currentServerIndex,
-                    title: config.title,
-                    name: config.name,
+                    title: config.Title,
+                    name: config.Name,
                     sourceParams: config.sourceParams
                   };
                   mapService.addLayer(slimConfig);

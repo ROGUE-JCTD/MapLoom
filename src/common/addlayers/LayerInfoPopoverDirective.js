@@ -9,49 +9,40 @@
           link: function(scope, element) {
 
             var safeName = function() {
-              if (goog.isDefAndNotNull(scope.layer.name)) {
-                var split = scope.layer.name.split(':');
+              if (goog.isDefAndNotNull(scope.layer.Name)) {
+                var split = scope.layer.Name.split(':');
                 return split[split.length - 1];
               }
               return '';
             };
 
             var safeTitle = function() {
-              if (goog.isDefAndNotNull(scope.layer.title)) {
-                return scope.layer.title;
+              if (goog.isDefAndNotNull(scope.layer.Title)) {
+                return scope.layer.Title;
               }
               return '';
             };
 
             var safeWorkspace = function() {
-              if (goog.isDefAndNotNull(scope.layer.prefix)) {
-                return scope.layer.prefix;
+              if (goog.isDefAndNotNull(scope.layer.Name)) {
+                var split = scope.layer.Name.split(':');
+                return split[0];
               }
               return '';
             };
 
             var safeAbstract = function() {
-              if (goog.isDefAndNotNull(scope.layer.abstract)) {
-                return scope.layer.abstract;
+              if (goog.isDefAndNotNull(scope.layer.Abstract)) {
+                return scope.layer.Abstract;
               }
               return '';
             };
 
             var buildKeywords = function() {
-              var keywords = '';
-              if (goog.isDefAndNotNull(scope.layer.keywords) && scope.layer.keywords.length > 0) {
-                keywords += scope.layer.keywords[0].value;
-                if (goog.isDefAndNotNull(scope.layer.keywords[0].vocabulary)) {
-                  keywords += ' (' + scope.layer.keywords[0].vocabulary + ')';
-                }
-                for (var index = 0; index < scope.layer.keywords.length; index++) {
-                  keywords += ', ' + scope.layer.keywords[index].value;
-                  if (goog.isDefAndNotNull(scope.layer.keywords[index].vocabulary)) {
-                    keywords += ' (' + scope.layer.keywords[index].vocabulary + ')';
-                  }
-                }
+              if (goog.isDefAndNotNull(scope.layer.KeywordList)) {
+                return scope.layer.KeywordList.toString();
               }
-              return keywords;
+              return '';
             };
 
             var content = '<div class="popover-label">' + $translate('server_name') + ':</div>' +

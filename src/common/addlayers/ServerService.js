@@ -243,15 +243,17 @@ var SERVER_SERVICE_USE_PROXY = true;
             return;
           }
 
-          var parser = new ol.parser.ogc.WMSCapabilities();
+          var parser = new ol.format.WMSCapabilities();
           var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
           server.populatingLayersConfig = true;
           http_.get(url).then(function(xhr) {
             if (xhr.status == 200) {
+              console.log(xhr);
               var response = parser.read(xhr.data);
-              if (goog.isDefAndNotNull(response.capability) &&
-                  goog.isDefAndNotNull(response.capability.layers)) {
-                server.layersConfig = response.capability.layers;
+              console.log(response);
+              if (goog.isDefAndNotNull(response.Capability) &&
+                  goog.isDefAndNotNull(response.Capability.Layer)) {
+                server.layersConfig = response.Capability.Layer.Layer;
                 console.log('---- populateLayersConfig. server', server);
                 rootScope_.$broadcast('layers-loaded', index);
               }
