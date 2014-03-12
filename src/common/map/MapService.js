@@ -814,6 +814,10 @@
     this.hasSelectedFeature = function() {
       return this.featureOverlay.getFeatures().getLength() > 0;
     };
+
+    this.getSelectedFeatures = function() {
+      return this.featureOverlay.getFeatures();
+    };
   });
 
 }());
