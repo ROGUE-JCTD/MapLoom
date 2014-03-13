@@ -416,6 +416,8 @@
                     metadata.isGeoGit = false;
                   }
                   metadata.projection = featureType.srs;
+                  // ping proj4js to pre-download projection if we don't have it
+                  ol.proj.getTransform(metadata.projection, 'EPSG:4326');
                   metadata.workspace = featureType.workspace;
                   metadata.nativeName = featureType.nativeName;
                   metadata.abstract = featureType.abstract;
