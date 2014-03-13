@@ -401,7 +401,6 @@
       if (geometryType.toLowerCase().search('geometry') > -1) {
         $('#drawSelectDialog').modal('toggle');
       } else {
-        console.log(geometryType);
         mapService_.addDraw(geometryType);
       }
       rootScope_.$broadcast('startFeatureInsert');

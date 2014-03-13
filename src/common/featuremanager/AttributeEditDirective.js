@@ -16,9 +16,12 @@
                 scope.properties[index] = goog.object.clone(property);
                 if (goog.isDefAndNotNull(attributeTypes)) {
                   scope.properties[index].type = attributeTypes[scope.properties[index][0]]._type;
+                  console.log(scope.properties[index].type);
                   if (scope.properties[index].type === 'simpleType') {
                     scope.properties[index].enum =
                         attributeTypes[scope.properties[index][0]].simpleType.restriction.enumeration;
+                  } else if (scope.properties[index].type === 'xsd:boolean') {
+                    scope.properties[index].enum = [{_value: 'True'}, {_value: 'False'}];
                   }
                 }
                 scope.properties[index].valid = true;

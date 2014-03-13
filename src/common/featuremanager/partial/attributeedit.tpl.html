@@ -34,6 +34,22 @@
         <div ng-switch-when="xsd:double" ng-class="{'has-error': !prop.valid}">
           <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
         </div>
+        <div ng-switch-when="xsd:decimal" ng-class="{'has-error': !prop.valid}">
+          <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
+        </div>
+        <div ng-switch-when="xsd:boolean" class="input-group">
+          <div class="input-group-btn" ng-class="{'dropup': $last}">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li ng-repeat="enum in prop.enum">
+                <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
+              </li>
+            </ul>
+          </div>
+          <input ng-model="prop[1]" type="text" class="form-control" disabled/>
+        </div>
         <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
       </div>
 
