@@ -119,7 +119,7 @@
       source: new ol.source.Vector({
         parser: null
       }),
-      styleFunction: featureStyle
+      style: featureStyle
     });
   }
 

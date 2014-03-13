@@ -25,7 +25,7 @@
       source: new ol.source.Vector({
         parser: null
       }),
-      styleFunction: function(feature, resolution) {
+      style: function(feature, resolution) {
         return [new ol.style.Style({
           fill: new ol.style.Fill({
             color: [0, 0, 255, 0.25]
@@ -50,74 +50,69 @@
     });
   };
 
-  var createFeatureOverlay = function() {
-    var overlayStyle = (function() {
-      var styles = {};
-      styles['Polygon'] = [
-        new ol.style.Style({
+  var styleFunc = (function() {
+    var styles = {};
+    styles['Polygon'] = [
+      new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: [255, 255, 255, 0.5]
+        })
+      }),
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: [255, 255, 255, 1],
+          width: 6
+        })
+      }),
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: [0, 153, 255, 1],
+          width: 4
+        })
+      })
+    ];
+    styles['MultiPolygon'] = styles['Polygon'];
+
+    styles['LineString'] = [
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: [255, 255, 255, 1],
+          width: 6
+        })
+      }),
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: [0, 153, 255, 1],
+          width: 4
+        })
+      })
+    ];
+    styles['MultiLineString'] = styles['LineString'];
+
+    styles['Point'] = [
+      new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 12,
           fill: new ol.style.Fill({
-            color: [255, 255, 255, 0.5]
-          })
-        }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: [255, 255, 255, 1],
-            width: 6
-          })
-        }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: [0, 153, 255, 1],
-            width: 4
-          })
-        })
-      ];
-      styles['MultiPolygon'] = styles['Polygon'];
-
-      styles['LineString'] = [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: [255, 255, 255, 1],
-            width: 6
-          })
-        }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: [0, 153, 255, 1],
-            width: 4
-          })
-        })
-      ];
-      styles['MultiLineString'] = styles['LineString'];
-
-      styles['Point'] = [
-        new ol.style.Style({
-          image: new ol.style.Circle({
-            radius: 12,
-            fill: new ol.style.Fill({
-              color: [0, 153, 255, 0.75]
-            }),
-            stroke: new ol.style.Stroke({
-              color: [255, 255, 255, 1],
-              width: 1.5
-            })
+            color: [0, 153, 255, 0.75]
           }),
-          zIndex: 100000
-        })
-      ];
-      styles['MultiPoint'] = styles['Point'];
+          stroke: new ol.style.Stroke({
+            color: [255, 255, 255, 1],
+            width: 1.5
+          })
+        }),
+        zIndex: 100000
+      })
+    ];
+    styles['MultiPoint'] = styles['Point'];
 
-      styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+    styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
 
-      return function(feature, resolution) {
-        return styles[feature.getGeometry().getType()];
-      };
-    })();
+    return function(feature, resolution) {
+      return styles[feature.getGeometry().getType()];
+    };
+  })();
 
-    return new ol.FeatureOverlay({
-      styleFunction: overlayStyle
-    });
-  };
 
   module.provider('mapService', function() {
     //$httpProvider, $interpolateProvider
@@ -151,8 +146,6 @@
 
       this.map = this.createMap();
       this.editLayer = createVectorEditLayer();
-      this.featureOverlay = createFeatureOverlay();
-
 
       // must always have a local geoserver. if not, something has gone wrong
       var localServer = serverService_.getServerLocalGeoserver();
@@ -722,7 +715,7 @@
       var map = new ol.Map({
         layers: this.loadLayers(),
         controls: ol.control.defaults().extend([
-          new ol.control.FullScreen(),
+          //new ol.control.FullScreen(),
           new ol.control.ZoomSlider(),
           new ol.control.MousePosition({
             projection: 'EPSG:4326',
@@ -784,8 +777,7 @@
     };
 
     this.addSelect = function() {
-      this.featureOverlay = createFeatureOverlay();
-      select = new ol.interaction.Select({layer: this.editLayer, featureOverlay: this.featureOverlay});
+      select = new ol.interaction.Select({style: styleFunc});
       this.map.addInteraction(select);
     };
 
@@ -795,7 +787,7 @@
     };
 
     this.addModify = function() {
-      modify = new ol.interaction.Modify({featureOverlay: this.featureOverlay});
+      modify = new ol.interaction.Modify({features: select.getFeatures(), style: styleFunc});
       this.map.addInteraction(modify);
     };
 
@@ -812,11 +804,11 @@
     };
 
     this.hasSelectedFeature = function() {
-      return this.featureOverlay.getFeatures().getLength() > 0;
+      return select.getFeatures().getLength() > 0;
     };
 
     this.getSelectedFeatures = function() {
-      return this.featureOverlay.getFeatures();
+      return select.getFeatures();
     };
   });
 

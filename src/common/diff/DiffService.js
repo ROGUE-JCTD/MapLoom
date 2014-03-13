@@ -99,7 +99,7 @@
         source: new ol.source.Vector({
           parser: null
         }),
-        styleFunction: diffStyle
+        style: diffStyle
       });
       rootScope.$on('translation_change', function() {
         difflayer_.get('metadata').title = translate_('differences');

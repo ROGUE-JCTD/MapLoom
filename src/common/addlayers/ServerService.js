@@ -219,22 +219,22 @@ var SERVER_SERVICE_USE_PROXY = true;
 
         if (server.ptype === 'gxp_bingsource') {
           server.layersConfig = [
-            {title: 'BingRoad', name: 'BingRoad', sourceParams: {imagerySet: 'Road'}},
-            {title: 'BingAerial', name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}},
-            {title: 'BingAerialWithLabels', name: 'BingAerialWithLabels',
+            {Title: 'BingRoad', Name: 'BingRoad', sourceParams: {imagerySet: 'Road'}},
+            {Title: 'BingAerial', Name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}},
+            {Title: 'BingAerialWithLabels', Name: 'BingAerialWithLabels',
               sourceParams: {imagerySet: 'AerialWithLabels'}},
-            {title: 'BingCollinsBart', name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
-            {title: 'BingSurvey', name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
+            {Title: 'BingCollinsBart', Name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
+            {Title: 'BingSurvey', Name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
           ];
         } else if (server.ptype === 'gxp_mapquestsource') {
           server.layersConfig = [
-            {title: 'MapQuestSat', name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
-            {title: 'MapQuestHybrid', name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
-            {title: 'MapQuestOSM', name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
+            {Title: 'MapQuestSat', Name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
+            {Title: 'MapQuestHybrid', Name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
+            {Title: 'MapQuestOSM', Name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
           ];
         } else if (server.ptype === 'gxp_osmsource') {
           server.layersConfig = [
-            {title: 'OpenStreetMap', name: 'mapnik'}
+            {Title: 'OpenStreetMap', Name: 'mapnik'}
           ];
         } else {
           console.log('---- Sending GetCapabilities.server: ', server, ', index:', index);

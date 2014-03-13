@@ -215,7 +215,7 @@
         if (getItemType(selectedItem_) === 'feature') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
           mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
-          position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getAllFeatures()[0].getGeometry(),
+          position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
               clickPosition_);
         } else {
           mapService_.clearEditLayer();
@@ -328,15 +328,15 @@
         }
       });
       geometryType = geometryType.split(':')[1].replace('PropertyType', '');
-      if (settings.DescribeFeatureTypeVersion == '1.1.0') {
+      if (settings.WFSVersion == '1.1.0') {
         geometryType = geometryType.replace('Curve', 'Geometry');
-      } else if (settings.DescribeFeatureTypeVersion == '2.0.0') {
+      } else if (settings.WFSVersion == '2.0.0') {
         geometryType = geometryType.replace('Curve', 'LineString');
       }
       geometryType = geometryType.replace('Surface', 'Polygon');
       exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
           exclusiveModeService_.button(translate_('accept_feature'), function() {
-            if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
+            if (mapService_.editLayer.getSource().getFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
@@ -348,8 +348,8 @@
               if (geometryType.search(/^Multi/g) > -1) {
                 feature = new ol.Feature();
                 var geometries = [];
-                for (index = 0; index < mapService_.editLayer.getSource().getAllFeatures().length; index++) {
-                  var geom = mapService_.editLayer.getSource().getAllFeatures()[index].getGeometry();
+                for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
+                  var geom = mapService_.editLayer.getSource().getFeatures()[index].getGeometry();
                   if (geometryType.toLowerCase() == 'multigeometry') {
                     geometries.push(geom);
                   } else {
@@ -361,7 +361,7 @@
                 mapService_.editLayer.getSource().clear();
                 mapService_.editLayer.getSource().addFeature(feature);
               } else {
-                feature = mapService_.editLayer.getSource().getAllFeatures()[0];
+                feature = mapService_.editLayer.getSource().getFeatures()[0];
               }
               var newGeom;
               if (geometryType.toLowerCase() != 'multigeometry') {
@@ -401,6 +401,7 @@
       if (geometryType.toLowerCase().search('geometry') > -1) {
         $('#drawSelectDialog').modal('toggle');
       } else {
+        console.log(geometryType);
         mapService_.addDraw(geometryType);
       }
       rootScope_.$broadcast('startFeatureInsert');
@@ -412,7 +413,7 @@
         var propertyXmlPartial = '';
         var featureGML = '';
         var newPos;
-        var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
+        var feature = mapService_.editLayer.getSource().getFeatures()[0];
         if (goog.isDefAndNotNull(coords)) {
           // Check if either of the coordinates we changed in the attribute editing process
           if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
@@ -468,7 +469,7 @@
       var coords;
       var geometry;
       if (geometryType.search(/^Multi/g) > -1) {
-        var originalCoords = mapService_.editLayer.getSource().getAllFeatures()[0].getGeometry().getCoordinates();
+        var originalCoords = mapService_.editLayer.getSource().getFeatures()[0].getGeometry().getCoordinates();
         mapService_.editLayer.getSource().clear();
         for (index = 0; index < originalCoords.length; index++) {
           feature = new ol.Feature();
@@ -478,7 +479,7 @@
           mapService_.editLayer.getSource().addFeature(feature);
         }
       } else if (geometryType.toLowerCase() == 'geometrycollection') {
-        var geometries = mapService_.editLayer.getSource().getAllFeatures()[0].getGeometry().getGeometries();
+        var geometries = mapService_.editLayer.getSource().getFeatures()[0].getGeometry().getGeometries();
         mapService_.editLayer.getSource().clear();
         for (index = 0; index < geometries.length; index++) {
           feature = new ol.Feature();
@@ -490,7 +491,7 @@
       }
       exclusiveModeService_.startExclusiveMode(translate_('editing_geometry'),
           exclusiveModeService_.button(translate_('accept_feature'), function() {
-            if (mapService_.editLayer.getSource().getAllFeatures().length < 1) {
+            if (mapService_.editLayer.getSource().getFeatures().length < 1) {
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
@@ -516,8 +517,8 @@
         if (geometryType.search(/^Multi/g) > -1) {
           feature = new ol.Feature();
           var coordinates = [];
-          for (index = 0; index < mapService_.editLayer.getSource().getAllFeatures().length; index++) {
-            var tempCoords = mapService_.editLayer.getSource().getAllFeatures()[index].getGeometry().getCoordinates();
+          for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
+            var tempCoords = mapService_.editLayer.getSource().getFeatures()[index].getGeometry().getCoordinates();
             coordinates.push(tempCoords[0]);
           }
           geometry = transformGeometry({type: geometryType, coordinates: coordinates});
@@ -527,15 +528,15 @@
         } else if (geometryType.toLowerCase() == 'geometrycollection') {
           feature = new ol.Feature();
           var geometries = [];
-          for (index = 0; index < mapService_.editLayer.getSource().getAllFeatures().length; index++) {
-            geometries.push(mapService_.editLayer.getSource().getAllFeatures()[index].getGeometry());
+          for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
+            geometries.push(mapService_.editLayer.getSource().getFeatures()[index].getGeometry());
           }
           geometry = transformGeometry({type: 'multigeometry', coordinates: geometries});
           feature.setGeometry(geometry);
           mapService_.editLayer.getSource().clear();
           mapService_.editLayer.getSource().addFeature(feature);
         } else {
-          feature = mapService_.editLayer.getSource().getAllFeatures()[0];
+          feature = mapService_.editLayer.getSource().getFeatures()[0];
         }
         // Feature was modified so we need to save the changes
         var featureGML = getGeometryGMLFromFeature(feature);
@@ -595,7 +596,7 @@
             var newGeom = transformGeometry({type: 'point', coordinates: coords},
                 selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
             // We also need to update the vector feature so that it is in the new position
-            var feature = mapService_.editLayer.getSource().getAllFeatures()[0];
+            var feature = mapService_.editLayer.getSource().getFeatures()[0];
             feature.setGeometry(newGeom);
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request

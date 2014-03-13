@@ -7,12 +7,14 @@
   var enabled_ = false;
   var geometryType_ = null;
   var mapService_ = null;
+  var service_ = null;
   var points = null;
 
   module.provider('exclusiveModeService', function() {
     this.$get = function(pulldownService, mapService) {
       pulldownService_ = pulldownService;
       mapService_ = mapService;
+      service_ = this;
       this.addMode = false;
       return this;
     };
@@ -92,9 +94,9 @@
     };
 
     this.removeFromFeature = function() {
-      if (mapService_.featureOverlay.getFeatures().getLength() > 0) {
-        mapService_.editLayer.getSource().removeFeature(mapService_.featureOverlay.getFeatures().getAt(0));
-        mapService_.featureOverlay.removeFeature(mapService_.featureOverlay.getFeatures().getAt(0));
+      if (mapService_.getSelectedFeatures().getLength() > 0) {
+        mapService_.editLayer.getSource().removeFeature(mapService_.getSelectedFeatures().getAt(0));
+        mapService_.getSelectedFeatures().remove(mapService_.getSelectedFeatures().getAt(0));
       }
     };
 
@@ -180,30 +182,28 @@
       var feat = new ol.Feature();
       points.push(points[0]);
       feat.setGeometry(new ol.geom.Polygon([points]));
+      mapService_.getSelectedFeatures().pop();
       mapService_.editLayer.getSource().clear();
       mapService_.editLayer.getSource().addFeature(feat);
-      //feature.getGeometry().setCoordinates(feature.getGeometry().getCoordinates().splice(0, 1, points));
-      mapService_.removeSelect();
-      mapService_.removeModify();
-      var collection = new ol.Collection();
-      collection.push(feat);
-      mapService_.featureOverlay.setFeatures(collection);
-      mapService_.addSelect();
-      mapService_.addModify();
     };
 
     var updateMultiPolygon = function(feature) {
-      //var newRing = new OpenLayers.Geometry.LinearRing(points);
-      //feature.geometry.components[0].removeComponent(feature.geometry.components[0].components[0]);
-      //feature.geometry.components[0].addComponent(newRing);
+      var feat = new ol.Feature();
+      points.push(points[0]);
+      feat.setGeometry(new ol.geom.MultiPolygon([[points]]));
+      service_.removeFromFeature();
+      mapService_.editLayer.getSource().addFeature(feat);
     };
 
     this.orthogonalize = function() {
       if (mapService_.hasSelectedFeature()) {
         var feature = mapService_.getSelectedFeatures().getAt(0);
-        console.log(feature);
         // check for multipolygon or polygon
-        points = feature.getGeometry().getCoordinates()[0];
+        if (feature.getGeometry().getType().search(/Multi/g) > -1) {
+          points = feature.getGeometry().getCoordinates()[0][0];
+        } else {
+          points = feature.getGeometry().getCoordinates()[0];
+        }
         points.pop();
 
         // number of steps that it will try to get close to orthogonal

@@ -22,7 +22,7 @@
         source: new ol.source.Vector({
           parser: null
         }),
-        styleFunction: function(feature, resolution) {
+        style: function(feature, resolution) {
           return [new ol.style.Style({
             image: new ol.style.Circle({
               radius: 8,
