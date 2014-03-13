@@ -10,21 +10,23 @@
           link: function(scope, element) {
             scope.featureManagerService = featureManagerService;
             scope.$on('startAttributeEdit', function(event, geometry, projection, properties, inserting) {
-              scope.properties = new Array(properties.length);
+              scope.properties = [];
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
-                scope.properties[index] = goog.object.clone(property);
                 if (goog.isDefAndNotNull(attributeTypes)) {
-                  scope.properties[index].type = attributeTypes[scope.properties[index][0]]._type;
-                  console.log(scope.properties[index].type);
-                  if (scope.properties[index].type === 'simpleType') {
-                    scope.properties[index].enum =
-                        attributeTypes[scope.properties[index][0]].simpleType.restriction.enumeration;
-                  } else if (scope.properties[index].type === 'xsd:boolean') {
-                    scope.properties[index].enum = [{_value: 'True'}, {_value: 'False'}];
+                  if (attributeTypes[property[0]]._type.search('gml:') === -1) {
+                    var prop = goog.object.clone(property);
+                    prop.type = attributeTypes[prop[0]]._type;
+                    if (prop.type === 'simpleType') {
+                      prop.enum =
+                          attributeTypes[prop[0]].simpleType.restriction.enumeration;
+                    } else if (prop.type === 'xsd:boolean') {
+                      prop.enum = [{_value: 'True'}, {_value: 'False'}];
+                    }
+                    prop.valid = true;
+                    scope.properties.push(prop);
                   }
                 }
-                scope.properties[index].valid = true;
               });
               if (geometry.type.toLowerCase() == 'point') {
                 if (projection === 'EPSG:4326') {

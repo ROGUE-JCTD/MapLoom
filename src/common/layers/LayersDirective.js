@@ -97,8 +97,7 @@
               scope.attrList = [];
 
               for (var i in layer.get('metadata').schema) {
-                if (layer.get('metadata').schema[i]._name == 'geom' ||
-                    layer.get('metadata').schema[i]._name == 'the_geom') {
+                if (layer.get('metadata').schema[i]._type.search('gml:') > -1) {
                   continue;
                 }
                 scope.attrList.push(layer.get('metadata').schema[i]._name);

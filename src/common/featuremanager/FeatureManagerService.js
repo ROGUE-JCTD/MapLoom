@@ -322,8 +322,10 @@
           if (v._type.search('gml:') == -1) {
             props.push([k, null]);
           } else {
-            geometryName = k;
-            geometryType = v._type;
+            if (geometryType === '') {
+              geometryName = k;
+              geometryType = v._type;
+            }
           }
         }
       });

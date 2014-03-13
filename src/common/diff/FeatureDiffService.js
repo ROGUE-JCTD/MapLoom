@@ -410,7 +410,9 @@
             }
             panel.attributes.push(item);
           } else {
-            panel.geometry = item;
+            if (!goog.isDefAndNotNull(panel.geometry)) {
+              panel.geometry = item;
+            }
           }
         });
 
