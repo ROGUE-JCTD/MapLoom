@@ -495,6 +495,50 @@
           properties[propertyIndex].enum =
               service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
         }
+        if (properties[propertyIndex].type === 'xsd:dateTime') {
+          if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {
+            properties[propertyIndex].oldvalue = new Date(properties[propertyIndex].oldvalue).toISOString();
+          }
+          if (goog.isDefAndNotNull(properties[propertyIndex].newvalue)) {
+            properties[propertyIndex].newvalue = new Date(properties[propertyIndex].newvalue).toISOString();
+          }
+        }
+        /*
+        There are a lot of problems with the handling of date and time fields, commenting out until we have the time
+        to refactor it.
+        var date;
+        if (properties[propertyIndex].type === 'xsd:date') {
+          if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {
+            date = properties[propertyIndex].oldvalue;
+            if (date.search('T') === -1) {
+              date = properties[propertyIndex].oldvalue.replace('Z', '');
+            }
+            properties[propertyIndex].oldvalue = new Date(date).toISOString();
+          }
+          if (goog.isDefAndNotNull(properties[propertyIndex].newvalue)) {
+            date = properties[propertyIndex].newvalue;
+            if (date.search('T') === -1) {
+              date = properties[propertyIndex].newvalue.replace('Z', '');
+            }
+            properties[propertyIndex].newvalue = new Date(date).toISOString();
+          }
+        }
+        if (properties[propertyIndex].type === 'xsd:time') {
+          if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {
+            date = properties[propertyIndex].oldvalue;
+            if ('Invalid Date' == new Date(date)) {
+              date = '2014-03-10T' + properties[propertyIndex].oldvalue;
+            }
+            properties[propertyIndex].oldvalue = new Date(date).toISOString();
+          }
+          if (goog.isDefAndNotNull(properties[propertyIndex].newvalue)) {
+            date = properties[propertyIndex].newvalue;
+            if ('Invalid Date' == new Date(date)) {
+              date = '2014-03-10T' + properties[propertyIndex].newvalue;
+            }
+            properties[propertyIndex].newvalue = new Date(date).toISOString();
+          }
+        }*/
         properties[propertyIndex].valid = true;
         properties[propertyIndex].editable = editable;
       }

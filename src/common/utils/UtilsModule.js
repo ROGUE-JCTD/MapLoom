@@ -137,6 +137,7 @@
           if (goog.isDefAndNotNull(date)) {
             date = date.getDate();
             newDate.setFullYear(date.year(), date.month(), date.date());
+            newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
           }
           var time = element.find('.timepicker').data('DateTimePicker');
           if (goog.isDefAndNotNull(time)) {
@@ -148,13 +149,13 @@
             scope.$apply(function() {
               var momentDate = moment(new Date(dateOptions.defaultDate));
               momentDate.lang($translate.uses());
-              if (time && date) {
+              if (scope.time === 'true' && scope.date === 'true') {
                 scope.dateObject[scope.dateKey] = newDate.toISOString();
                 scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
-              } else if (time) {
+              } else if (scope.time === 'true') {
                 scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[1];
                 scope.disabledText = momentDate.format('LT');
-              } else if (date) {
+              } else if (scope.date === 'true') {
                 scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[0];
                 scope.disabledText = momentDate.format('L');
               }
@@ -162,13 +163,13 @@
           } else {
             var momentDate = moment(new Date(dateOptions.defaultDate));
             momentDate.lang($translate.uses());
-            if (time && date) {
+            if (scope.time === 'true' && scope.date === 'true') {
               scope.dateObject[scope.dateKey] = newDate.toISOString();
               scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
-            } else if (time) {
+            } else if (scope.time === 'true') {
               scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[1];
               scope.disabledText = momentDate.format('LT');
-            } else if (date) {
+            } else if (scope.date === 'true') {
               scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[0];
               scope.disabledText = momentDate.format('L');
             }
@@ -191,19 +192,31 @@
           timeOptions.defaultDate = defaultDate;
         }
 
-        if (goog.isDefAndNotNull(scope.dateObject[scope.dateKey])) {
-          if (scope.date === 'false') {
-            timeOptions.defaultDate = '2014-03-10T' + scope.dateObject[scope.dateKey];
-          } else if (scope.time === 'false') {
-            dateOptions.defaultDate = scope.dateObject[scope.dateKey].replace('Z', '');
-          } else {
-            if (scope.dateObject[scope.dateKey].search('Z') === -1) {
-              scope.dateObject[scope.dateKey] += 'Z';
+        var updateDate = function() {
+          if (goog.isDefAndNotNull(scope.dateObject[scope.dateKey])) {
+            if (scope.date === 'false') {
+              var testDate = new Date(scope.dateObject[scope.dateKey]);
+              if ('Invalid Date' == testDate) {
+                timeOptions.defaultDate = '2014-03-10T' + scope.dateObject[scope.dateKey];
+              } else {
+                timeOptions.defaultDate = scope.dateObject[scope.dateKey];
+              }
+              if (scope.seperateTime === 'false') {
+                dateOptions.defaultDate = timeOptions.defaultDate;
+              }
+            } else if (scope.time === 'false') {
+              dateOptions.defaultDate = scope.dateObject[scope.dateKey].replace('Z', '');
+            } else {
+              if (scope.dateObject[scope.dateKey].search('Z') === -1) {
+                scope.dateObject[scope.dateKey] += 'Z';
+              }
+              dateOptions.defaultDate = scope.dateObject[scope.dateKey];
+              timeOptions.defaultDate = scope.dateObject[scope.dateKey];
             }
-            dateOptions.defaultDate = scope.dateObject[scope.dateKey];
-            timeOptions.defaultDate = scope.dateObject[scope.dateKey];
           }
-        }
+        };
+
+        updateDate();
 
         var setUpPickers = function() {
           if (scope.date === 'true') {
@@ -235,6 +248,19 @@
           }
         };
         setUpPickers();
+
+        var dateObjectChanged = function() {
+          updateDate();
+          if (scope.date === 'true') {
+            element.find('.datepicker').data('DateTimePicker').setDate(dateOptions.defaultDate);
+          }
+          if (scope.time === 'true' && (scope.seperateTime === 'true' || scope.date === 'false')) {
+            element.find('.timepicker').data('DateTimePicker').setDate(dateOptions.defaultDate);
+          }
+          updateDateTime();
+        };
+
+        scope.$watch('dateObject', dateObjectChanged);
 
         scope.$on('translation_change', function(event, lang) {
           dateOptions.language = lang;
