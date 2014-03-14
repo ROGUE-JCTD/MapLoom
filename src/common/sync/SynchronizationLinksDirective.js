@@ -3,7 +3,7 @@
   var module = angular.module('loom_synclinks_directive', []);
 
   module.directive('loomSynclinks',
-      function(synchronizationService, geogitService) {
+      function($translate, synchronizationService, dialogService) {
         return {
           restrict: 'C',
           replace: true,
@@ -35,11 +35,18 @@
             scope.singleSync = function(link) {
               if (!link.isSyncing && !scope.syncService.getIsSyncing()) {
                 link.isSyncing = true;
+                link.singleSync = true;
                 scope.syncService.sync(link).then(function(syncedLink) {
                   syncedLink.isSyncing = false;
+                  link.singleSync = false;
+                  dialogService.open($translate('synchronization'), $translate('synchronization_success'));
                 }, function(error) {
                   // Something failed
                   link.isSyncing = false;
+                  link.singleSync = false;
+                  if (!(goog.isDefAndNotNull(error) && error === false)) {
+                    dialogService.error($translate('synchronization'), $translate('synchronization_failed'));
+                  }
                 });
               }
             };

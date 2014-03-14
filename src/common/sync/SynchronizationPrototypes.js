@@ -5,6 +5,8 @@ var SynchronizationLink = function(_name, _repo, _localBranch, _remote, _remoteB
 
   this.continuous = false;
 
+  this.singleSync = false;
+
   this.syncInterval = 30000; // In milliseconds
 
   this.timeStamp = new Date().getTime();

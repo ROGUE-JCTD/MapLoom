@@ -156,19 +156,21 @@
     };
 
     this.toggleAutoSync = function(link) {
-      link.isSyncing = !link.isSyncing;
-      if (link.isSyncing) {
-        link.continuous = true;
-        numSyncingLinks++;
-        if (!syncTimeout) {
-          syncTimeout = timeout_(autoSync, syncInterval);
-        }
-      } else {
-        link.continuous = false;
-        numSyncingLinks--;
-        if (numSyncingLinks <= 0) {
-          clearTimeout(syncTimeout);
-          syncTimeout = null;
+      if (!link.singleSync) {
+        link.isSyncing = !link.isSyncing;
+        if (link.isSyncing) {
+          link.continuous = true;
+          numSyncingLinks++;
+          if (!syncTimeout) {
+            syncTimeout = timeout_(autoSync, syncInterval);
+          }
+        } else {
+          link.continuous = false;
+          numSyncingLinks--;
+          if (numSyncingLinks <= 0) {
+            clearTimeout(syncTimeout);
+            syncTimeout = null;
+          }
         }
       }
     };

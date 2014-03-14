@@ -23,6 +23,8 @@
     'remove_btn': 'Remove',
     'conflict': 'CONFLICT',
     'synchronization': 'Synchronization',
+    'synchronization_failed': 'An unknown error occurred when synchronizing.  Please try again.',
+    'synchronization_success': 'The repositories have been synchronized.',
     'add_sync': 'Add Sync',
     'merge': 'Merge',
     'config': 'Config',
