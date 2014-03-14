@@ -230,7 +230,10 @@
     'branch': 'Branch',
     'layerinfo': 'Layer Info',
     'author_fetch_failed': 'An unknown error occured while determining the authors of the feature.',
-    'show_authors': 'Show Authors'
+    'show_authors': 'Show Authors',
+    'right_angles': 'Right Angles',
+    'right_angles_failed': 'We weren\'t able to fix your polygon, try to get it closer to a' +
+        ' rectangle and try again.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

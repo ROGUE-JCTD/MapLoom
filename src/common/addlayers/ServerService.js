@@ -248,9 +248,7 @@ var SERVER_SERVICE_USE_PROXY = true;
           server.populatingLayersConfig = true;
           http_.get(url).then(function(xhr) {
             if (xhr.status == 200) {
-              console.log(xhr);
               var response = parser.read(xhr.data);
-              console.log(response);
               if (goog.isDefAndNotNull(response.Capability) &&
                   goog.isDefAndNotNull(response.Capability.Layer)) {
                 server.layersConfig = response.Capability.Layer.Layer;

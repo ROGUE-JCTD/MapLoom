@@ -232,7 +232,10 @@
     'branch': 'Rama',
     'layerinfo': 'Informacion de las Capas',
     'author_fetch_failed': 'Un error desconocido ocurrió mientras que la determinación de los autores del elemento.',
-    'show_authors': 'Mostrar los Autores'
+    'show_authors': 'Mostrar los Autores',
+    'right_angles': 'Angulo Recto',
+    'right_angles_failed': 'No fuimos capaces de arreglar su poligono, tratar de conseguir que mas cerca de un' +
+        ' rectangulo y vuelva a intentarlo.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

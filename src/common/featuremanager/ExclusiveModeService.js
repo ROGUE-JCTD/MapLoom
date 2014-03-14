@@ -8,12 +8,16 @@
   var geometryType_ = null;
   var mapService_ = null;
   var service_ = null;
+  var dialogService_ = null;
+  var translate_ = null;
   var points = null;
 
   module.provider('exclusiveModeService', function() {
-    this.$get = function(pulldownService, mapService) {
+    this.$get = function(pulldownService, mapService, dialogService, $translate) {
       pulldownService_ = pulldownService;
       mapService_ = mapService;
+      dialogService_ = dialogService;
+      translate_ = $translate;
       service_ = this;
       this.addMode = false;
       return this;
@@ -218,7 +222,8 @@
           var newScore = totalScore();
           // if the newScore is greater than the old score then we failed
           if (newScore > score) {
-            alert('failed');
+            dialogService_.open(translate_('right_angles'), translate_('right_angles_failed'),
+                [translate_('btn_ok')], false);
             return;
           }
           score = newScore;
