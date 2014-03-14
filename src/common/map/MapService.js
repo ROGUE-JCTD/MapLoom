@@ -435,19 +435,8 @@
           source: new ol.source.TileWMS({
             url: server.url,
             params: {
-              'LAYERS': config.name,
-              'BUFFER': 15
+              'LAYERS': config.name
             }
-            /*  TODO: OL3 FIXME
-            ,
-            getFeatureInfoOptions: {
-              'method': ol.source.WMSGetFeatureInfoMethod.XHR_GET,
-              'params': {
-                'INFO_FORMAT': 'application/json',
-                'FEATURE_COUNT': 50,
-                'BUFFER': 15
-              }
-            }*/
           })
         });
         // console.log('new layer: ', layer);
