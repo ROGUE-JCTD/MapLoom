@@ -776,6 +776,14 @@
       this.map.removeLayer(this.editLayer);
     };
 
+    this.selectFeature = function(feature) {
+      if (goog.isDefAndNotNull(feature)) {
+        select.getFeatures().push(feature);
+      } else if (this.editLayer.getSource().getFeatures().length > 0) {
+        select.getFeatures().push(this.editLayer.getSource().getFeatures()[0]);
+      }
+    };
+
     this.addSelect = function() {
       select = new ol.interaction.Select({style: styleFunc});
       this.map.addInteraction(select);

@@ -44,6 +44,7 @@
           mapService_.removeDraw();
           mapService_.addSelect();
           mapService_.addModify();
+          mapService_.selectFeature(event.feature);
         }
       });
 
@@ -342,6 +343,7 @@
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
+              exclusiveModeService_.endExclusiveMode();
               mapService_.removeDraw();
               mapService_.removeSelect();
               mapService_.removeModify();
@@ -390,6 +392,7 @@
               service_.startAttributeEditing(true);
             }
           }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
+            exclusiveModeService_.endExclusiveMode();
             mapService_.removeDraw();
             mapService_.removeSelect();
             mapService_.removeModify();
@@ -409,7 +412,6 @@
     };
 
     this.endFeatureInsert = function(save, properties, coords) {
-      exclusiveModeService_.endExclusiveMode();
       if (save) {
         var propertyXmlPartial = '';
         var featureGML = '';
@@ -505,6 +507,7 @@
           }), geometryType);
       mapService_.addSelect();
       mapService_.addModify();
+      mapService_.selectFeature();
       enabled_ = false;
     };
 
