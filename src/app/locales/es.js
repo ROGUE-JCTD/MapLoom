@@ -102,8 +102,8 @@
     'btn_ok': 'Aceptar',
     'summary_of_changes': 'Resumen de Cambios',
     'too_many_changes': 'Se encontraron demasiados cambios para ser mostrados. De ser posible, minimice el rango.',
-    'too_many_changes_refresh': 'Se realizaron demasiados cambios para ser mostrados. ' +
-        'Solamente los primeros cambios {{value}} seran mostrados.',
+    'too_many_changes_refresh': 'Durante fueron hechas {{value}} cambios a la capa. ' +
+        'Revise la historia de un registro detallado.',
     'no_changes_in_time_range': 'No se realizaron cambios a la capa dentro del marco de tiempo especificado.',
     'no_changes_in_commit': 'No se realizaron cambios a la capa.',
     'diff_unknown_error': 'Un error desconocido ocurrio al resumir las diferencias. Favor intentar nuevamente.',

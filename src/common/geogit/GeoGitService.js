@@ -136,8 +136,9 @@
       newRepo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
       service_.repos.push(newRepo);
-
-      service_.loadRemotesAndBranches(newRepo, result);
+      service_.commitChanged(newRepo.id).then(function() {
+        service_.loadRemotesAndBranches(newRepo, result);
+      });
 
       return result.promise;
     };
@@ -334,10 +335,10 @@
       return deferredResponse.promise;
     };
 
-    //gets the current commit id of a layer's repository
-    this.getCommitId = function(layer) {
-      var url = layer.get('metadata').url + '/geogit/' + layer.get('metadata').workspace + ':' +
-          layer.get('metadata').geogitStore + '/repo/manifest';
+    //gets the current commit id of a repository
+    this.commitChanged = function(repoId) {
+      var repo = service_.getRepoById(repoId);
+      var url = repo.url + '/repo/manifest';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
         var branchArray = response.data.split('\n');
@@ -355,18 +356,25 @@
 
           //get the index of the branch name to see if we're on the right branch
           //  the '/' is so that a search for 'master' won't leave us on a branch called '*_master'
-          var branchNameIndex = branchData[0].indexOf('/' + layer.get('metadata').branchName);
+          var branchNameIndex = branchData[0].indexOf('/' + repo.branch);
 
           //extract the branch name so that we can check the length and ensure we don't end up with 'master_*'
           var branchNameSubString = branchData[0].slice(branchNameIndex + 1);
 
-          if (branchNameIndex !== -1 && branchNameSubString.length === layer.get('metadata').branchName.length) {
+          if (branchNameIndex !== -1 && branchNameSubString.length === repo.branch.length) {
             //these are the droids we're looking for
             commitId = branchData[1];
             break;
           }
         }
-        deferredResponse.resolve(commitId);
+        var oldCommit = repo.commitId;
+        repo.commitId = commitId;
+        deferredResponse.resolve({
+          repoid: repo.id,
+          oldId: oldCommit,
+          newId: repo.commitId,
+          changed: oldCommit !== repo.commitId
+        });
       }, function(reject) {
         deferredResponse.reject(reject);
       });
@@ -424,9 +432,6 @@
                   metadata.keywords = featureType.keywords;
                   metadata.dataStoreType = dataStore.type;
                   rootScope.$broadcast('layerInfoLoaded', layer);
-                  service_.getCommitId(layer).then(function(response) {
-                    metadata.repoCommitId = response;
-                  });
                 }, function(rejected) {
                   dialogService_.error(
                       translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
