@@ -253,6 +253,8 @@
         var strings = response.data.split('</LayerDescription>');
         if (strings.length <= 2) {
           deferredResponse.resolve(response.data);
+        } else {
+          deferredResponse.reject('Is a Layergroup.');
         }
       }, function(reject) {
         deferredResponse.reject(reject);
@@ -261,13 +263,16 @@
     };
 
     this.getDataStoreName = function(layer) {
-      var featureType = layer.get('metadata').name;
+      var featureType = layer.get('metadata').workspace + ':' + layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       var url = layer.get('metadata').url + '/rest/layers/' + featureType + '.json';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
         var resourceUrl = response.data.layer.resource.href;
         var datastoreStartIndex = resourceUrl.indexOf(workspaceRoute.workspace + '/datastores');
+        if (datastoreStartIndex === -1) {
+          deferredResponse.reject('No datastore.');
+        }
         datastoreStartIndex = datastoreStartIndex + workspaceRoute.workspace.length + 12;
         var datastoreEnd = resourceUrl.substr(datastoreStartIndex);
         var datastoreEndIndex = datastoreEnd.indexOf('/');
@@ -280,10 +285,8 @@
     };
 
     this.getDataStore = function(layer, name) {
-      var featureType = layer.get('metadata').name;
-      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
-      var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' + name +
-          '.json';
+      var url = layer.get('metadata').url + '/rest/workspaces/' + layer.get('metadata').workspace + '/datastores/' +
+          name + '.json';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
         if (goog.isDefAndNotNull(response.data) && goog.isDefAndNotNull(response.data.dataStore) &&
@@ -299,32 +302,31 @@
     };
 
     this.getFeatureType = function(layer, dataStore) {
-      var featureType = layer.get('metadata').name;
-      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
-      var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' +
-          dataStore.name + '/featuretypes/' + workspaceRoute.typeName + '.json';
+      var url = layer.get('metadata').url + '/rest/workspaces/' + layer.get('metadata').workspace + '/datastores/' +
+          dataStore.name + '/featuretypes/' + layer.get('metadata').name + '.json';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
-        response.data.featureType.workspace = workspaceRoute.workspace;
+        response.data.featureType.workspace = layer.get('metadata').workspace;
         var featureType = response.data.featureType;
         url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion +
-            '&request=DescribeFeatureType&typeName=' +
-            workspaceRoute.typeName;
+            '&request=DescribeFeatureType&typeName=' + layer.get('metadata').name;
 
         http.get(url).then(function(response) {
           // TODO: Use the OpenLayers parser once it is done
           var x2js = new X2JS();
           var json = x2js.xml_str2json(response.data);
           var schema = [];
+          if (goog.isDefAndNotNull(json.schema)) {
+            forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
+              schema[obj._name] = obj;
+              if (goog.isDefAndNotNull(obj.simpleType)) {
+                schema[obj._name]._type = 'simpleType';
+              }
+            });
 
-          forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
-            schema[obj._name] = obj;
-            if (goog.isDefAndNotNull(obj.simpleType)) {
-              schema[obj._name]._type = 'simpleType';
-            }
-          });
-
-          layer.get('metadata').schema = schema;
+            layer.get('metadata').schema = schema;
+            layer.get('metadata').editable = true;
+          }
           deferredResponse.resolve(featureType);
         }, function(reject) {
           deferredResponse.reject(reject);
@@ -392,45 +394,41 @@
               // Then get the datastore to determine if it is a geogit datastore or not
               service_.getDataStore(layer, dataStoreName).then(function(dataStore) {
                 // Finally get the needed information stored on the layer and create the repo object
-                service_.getFeatureType(layer, dataStore).then(function(featureType) {
-                  if (dataStore.type === 'GeoGIT') {
-                    var repoName = dataStore.connectionParameters.entry[0].$;
-                    repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
+                if (dataStore.type === 'GeoGIT') {
+                  var repoName = dataStore.connectionParameters.entry[0].$;
+                  repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
 
-                    metadata.branchName = dataStore.connectionParameters.entry[1].$;
+                  metadata.branchName = dataStore.connectionParameters.entry[1].$;
 
-                    //the branch name will apparently come back as 'false' if its on master,
-                    // so we need to correct for that
-                    if (metadata.branchName === 'false') {
-                      metadata.branchName = 'master';
-                    }
-                    var promise = service_.addRepo(
-                        new GeoGitRepo(metadata.url + '/geogit/' + featureType.workspace + ':' + dataStore.name,
-                            dataStore.connectionParameters.entry[1].$, repoName));
-                    promise.then(function(repo) {
-                      if (goog.isDef(repo.id)) {
-                        rootScope.$broadcast('repoAdded', repo);
-                        metadata.repoId = repo.id;
-                      } else {
-                        metadata.repoId = repo;
-                      }
-                    }, function(reject) {
-                      dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
-                    });
-                    metadata.isGeoGit = true;
-                    metadata.geogitStore = dataStore.name;
-                    metadata.repoName = repoName;
-                  } else {
-                    metadata.isGeoGit = false;
+                  //the branch name will apparently come back as 'false' if its on master,
+                  // so we need to correct for that
+                  if (metadata.branchName === 'false') {
+                    metadata.branchName = 'master';
                   }
+                  var promise = service_.addRepo(
+                      new GeoGitRepo(metadata.url + '/geogit/' + metadata.workspace + ':' + dataStore.name,
+                          dataStore.connectionParameters.entry[1].$, repoName));
+                  promise.then(function(repo) {
+                    if (goog.isDef(repo.id)) {
+                      rootScope.$broadcast('repoAdded', repo);
+                      metadata.repoId = repo.id;
+                    } else {
+                      metadata.repoId = repo;
+                    }
+                  }, function(reject) {
+                    dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+                  });
+                  metadata.isGeoGit = true;
+                  metadata.geogitStore = dataStore.name;
+                  metadata.repoName = repoName;
+                } else {
+                  metadata.isGeoGit = false;
+                }
+                service_.getFeatureType(layer, dataStore).then(function(featureType) {
                   metadata.projection = featureType.srs;
                   // ping proj4js to pre-download projection if we don't have it
                   ol.proj.getTransform(metadata.projection, 'EPSG:4326');
-                  metadata.workspace = featureType.workspace;
                   metadata.nativeName = featureType.nativeName;
-                  metadata.abstract = featureType.abstract;
-                  metadata.keywords = featureType.keywords;
-                  metadata.dataStoreType = dataStore.type;
                   rootScope.$broadcast('layerInfoLoaded', layer);
                 }, function(rejected) {
                   dialogService_.error(
@@ -441,12 +439,16 @@
                     translate_('error'), translate_('unable_to_get_datastore') + ' (' + rejected.status + ')');
               });
             }, function(rejected) {
-              dialogService_.error(
-                  translate_('error'), translate_('unable_to_get_datastore_name') + ' (' + rejected.status + ')');
+              if (goog.isDefAndNotNull(rejected.status)) {
+                dialogService_.error(
+                    translate_('error'), translate_('unable_to_get_datastore_name') + ' (' + rejected.status + ')');
+              }
             });
           }, function(rejected) {
-            dialogService_.error(
-                translate_('error'), translate_('layer_was_layer_group') + ' (' + rejected.status + ')');
+            if (goog.isDefAndNotNull(rejected.status)) {
+              dialogService_.error(
+                  translate_('error'), translate_('layer_was_layer_group') + ' (' + rejected.status + ')');
+            }
           });
         }
       }

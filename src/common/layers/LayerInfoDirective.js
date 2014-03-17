@@ -48,7 +48,7 @@
                 scope.datastoreType = metadata.dataStoreType;
               }
               if (goog.isDefAndNotNull(metadata.keywords)) {
-                scope.keywords = metadata.keywords.string.toString();
+                scope.keywords = metadata.keywords.toString();
               }
               if (metadata.isGeoGit) {
                 scope.branchName = metadata.branchName;

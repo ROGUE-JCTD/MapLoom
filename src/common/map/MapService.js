@@ -355,13 +355,7 @@
     };
 
     this.layerIsImagery = function(layer) {
-      if (((layer.source_ instanceof ol.source.OSM) ||
-          (layer.source_ instanceof ol.source.BingMaps) ||
-          (layer.source_ instanceof ol.source.MapQuest))) {
-        return true;
-      }
-
-      return false;
+      return !layer.get('metadata').editable;
     };
 
     this.addLayer = function(config, doNotAddToMap) {
@@ -430,7 +424,10 @@
             url: goog.isDefAndNotNull(url) ? url : undefined,
             title: config.title,
             name: config.name,
-            editable: true
+            workspace: config.workspace,
+            abstract: config.abstract,
+            keywords: config.keywords,
+            editable: false
           },
           source: new ol.source.TileWMS({
             url: server.url,

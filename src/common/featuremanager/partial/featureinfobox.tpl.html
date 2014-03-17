@@ -51,10 +51,10 @@
                 </button>
         <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_pics' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>-->
-        <button type="button" ng-click="featureManagerService.startAttributeEditing()"
+        <button type="button" ng-show="featureManagerService.getSelectedLayer().get('metadata').editable" ng-click="featureManagerService.startAttributeEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_attributes' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-list-alt"></button>
-        <button type="button" ng-click="featureManagerService.startGeometryEditing()"
+        <button type="button" ng-show="featureManagerService.getSelectedLayer().get('metadata').editable" ng-click="featureManagerService.startGeometryEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_geometry' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
         <button type="button" ng-click="deleteFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"

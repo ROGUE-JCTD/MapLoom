@@ -48,6 +48,12 @@
         }
       });
 
+      rootScope_.$on('layerRemoved', function(evt, layer) {
+        if (service_.getSelectedLayer().get('metadata').uniqueID === layer.get('metadata').uniqueID) {
+          service_.hide();
+        }
+      });
+
       overlay_ = new ol.Overlay({
         insertFirst: false,
         element: document.getElementById('info-box')
@@ -664,6 +670,9 @@
         };
 
         goog.array.forEach(layers, function(layer, index) {
+          if (!layer.get('metadata').editable) {
+            return;
+          }
           var source = layer.getSource();
           var url = source.getGetFeatureInfoUrl(evt.coordinate, view.getResolution(), view.getProjection(),
               {

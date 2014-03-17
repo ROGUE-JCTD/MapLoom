@@ -29,10 +29,14 @@
               for (var index = 0; index < length; index += 1) {
                 var config = layersConfig[index];
                 if (config.add) {
+                  var split = config.Name.split(':');
                   var slimConfig = {
                     source: scope.currentServerIndex,
                     title: config.Title,
-                    name: config.Name,
+                    name: split[1],
+                    abstract: config.Abstract,
+                    keywords: config.KeywordList,
+                    workspace: split[0],
                     sourceParams: config.sourceParams
                   };
                   mapService.addLayer(slimConfig);
