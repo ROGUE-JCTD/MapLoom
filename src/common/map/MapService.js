@@ -354,6 +354,7 @@
       var server = serverService_.getServerByIndex(config.source);
       //console.log('server for layer: ', server);
       var layer = null;
+      var url = null;
 
       if (server.ptype === 'gxp_osmsource') {
         layer = new ol.layer.Tile({
@@ -401,36 +402,69 @@
         }
 
       } else if (server.ptype === 'gxp_olsource' || server.ptype === 'gxp_wmscsource') {
-        var url = null;
+        if (server.type === 'TMS') {
+          url = server.url;
 
-        if (goog.isDefAndNotNull(server.url)) {
-          var urlIndex = server.url.lastIndexOf('/');
-          if (urlIndex !== -1) {
-            url = server.url.slice(0, urlIndex);
-          }
-        }
-
-        layer = new ol.layer.Tile({
-          metadata: {
-            serverId: server.id,
-            url: goog.isDefAndNotNull(url) ? url : undefined,
-            title: config.title,
-            name: config.name,
-            workspace: config.workspace,
-            abstract: config.abstract,
-            keywords: config.keywords,
-            editable: false,
-            bbox: config.bbox
-          },
-          source: new ol.source.TileWMS({
-            url: server.url,
-            params: {
-              'LAYERS': config.name
+          if (goog.isDefAndNotNull(server.url)) {
+            if (server.url.lastIndexOf('/') !== server.url.length - 1) {
+              url += '/';
             }
-          })
-        });
-        // console.log('new layer: ', layer);
-        geogitService_.isGeoGit(layer);
+          }
+
+          layer = new ol.layer.Tile({
+            metadata: {
+              serverId: server.id,
+              url: goog.isDefAndNotNull(url) ? url : undefined,
+              title: config.title,
+              name: config.name,
+              workspace: config.workspace,
+              abstract: config.abstract,
+              keywords: config.keywords,
+              editable: false,
+              bbox: config.bbox
+            },
+            source: new ol.source.XYZ({
+              tileUrlFunction: function(coordinate) {
+                if (coordinate == null) {
+                  return '';
+                }
+                var z = coordinate.z;
+                var x = coordinate.x;
+                var y = (1 << z) - coordinate.y - 1;
+                return '/proxy/?url=' + url + config.name + '/' + z + '/' + x + '/' + y + '.png';
+              }
+            })
+          });
+        } else {
+          if (goog.isDefAndNotNull(server.url)) {
+            var urlIndex = server.url.lastIndexOf('/');
+            if (urlIndex !== -1) {
+              url = server.url.slice(0, urlIndex);
+            }
+          }
+
+          layer = new ol.layer.Tile({
+            metadata: {
+              serverId: server.id,
+              url: goog.isDefAndNotNull(url) ? url : undefined,
+              title: config.title,
+              name: config.name,
+              workspace: config.workspace,
+              abstract: config.abstract,
+              keywords: config.keywords,
+              editable: false,
+              bbox: config.bbox
+            },
+            source: new ol.source.TileWMS({
+              url: server.url,
+              params: {
+                'LAYERS': config.name
+              }
+            })
+          });
+          // console.log('new layer: ', layer);
+          geogitService_.isGeoGit(layer);
+        }
         //console.log(geogitService_);
       }
 

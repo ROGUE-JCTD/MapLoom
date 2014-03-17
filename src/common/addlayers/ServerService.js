@@ -164,6 +164,12 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       goog.object.extend(server, serverInfo, {});
 
+      if (server.type === 'TMS') {
+        if (goog.isDefAndNotNull(server.url) && server.url.lastIndexOf('/') !== server.url.length - 1) {
+          server.url += '/';
+        }
+      }
+
       console.log('---- adding server: ', server);
       // TODO: Actually use the type specified in the url
       servers.push(server);

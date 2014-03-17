@@ -24,7 +24,7 @@
         <label class="control-label"><span translate="server_url"></span>: </label>
       </div>
       <div class="col-md-10">
-      <input name="serverurl" ng-model="url" type="url" class="form-control" placeholder="http://url/wms" required ng-pattern="//wms$/">
+      <input name="serverurl" ng-model="url" type="url" class="form-control" placeholder="{{getPlaceholder()}}" required ng-pattern="getPattern()">
       </div>
     </div>
   </form>
