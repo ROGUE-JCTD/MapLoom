@@ -37,6 +37,7 @@
                     abstract: config.Abstract,
                     keywords: config.KeywordList,
                     workspace: split[0],
+                    extent: config.BoundingBox[0].extent,
                     sourceParams: config.sourceParams
                   };
                   mapService.addLayer(slimConfig);

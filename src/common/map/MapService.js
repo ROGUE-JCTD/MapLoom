@@ -287,9 +287,11 @@
 
     this.zoomToLayerExtent = function(layer) {
       var extent900913 = null;
-
+      var transform;
       if (service_.layerIsImagery(layer)) {
         extent900913 = layer.getSource().getExtent();
+        transform = ol.proj.getTransform('EPSG:4326', service_.map.getView().getView2D().getProjection());
+        extent900913 = ol.extent.transform(extent900913, transform);
       } else {
         var metadata = layer.get('metadata');
 
@@ -305,7 +307,7 @@
             var bbox = layerConfig.bbox['EPSG:4326'].bbox;
             // reorder the coordinates to get minx, miny, maxx, maxy
             var bounds = [bbox[1], bbox[0], bbox[3], bbox[2]];
-            var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.projection),
+            transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.projection),
                 ol.proj.get('EPSG:900913'));
             extent900913 = ol.extent.transform(bounds, transform);
           }
@@ -433,7 +435,8 @@
             url: server.url,
             params: {
               'LAYERS': config.name
-            }
+            },
+            extent: config.extent
           })
         });
         // console.log('new layer: ', layer);

@@ -49,7 +49,8 @@
       });
 
       rootScope_.$on('layerRemoved', function(evt, layer) {
-        if (service_.getSelectedLayer().get('metadata').uniqueID === layer.get('metadata').uniqueID) {
+        if (goog.isDefAndNotNull(service_.getSelectedLayer()) &&
+            service_.getSelectedLayer().get('metadata').uniqueID === layer.get('metadata').uniqueID) {
           service_.hide();
         }
       });
