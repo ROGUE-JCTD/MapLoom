@@ -33,10 +33,10 @@
                   var slimConfig = {
                     source: scope.currentServerIndex,
                     title: config.Title,
-                    name: split[1],
+                    name: split.length > 1 ? split[1] : split[0],
                     abstract: config.Abstract,
                     keywords: config.KeywordList,
-                    workspace: split[0],
+                    workspace: split.length > 1 ? split[0] : null,
                     extent: config.BoundingBox[0].extent,
                     sourceParams: config.sourceParams
                   };

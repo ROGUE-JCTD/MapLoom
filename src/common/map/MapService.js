@@ -222,9 +222,8 @@
         return;
       }
 
-      if (goog.isDefAndNotNull(layer.get('metadata').editable) &&
-          layer.get('metadata').editable) {
-        var layerTypeName = layer.get('metadata').name;
+      if (!service_.layerIsImagery(layer)) {
+        var layerTypeName = layer.get('metadata').workspace + ':' + layer.get('metadata').name;
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
 
         var wpsPostData = '' +
@@ -357,7 +356,7 @@
     };
 
     this.layerIsImagery = function(layer) {
-      return !layer.get('metadata').editable;
+      return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
 
     this.addLayer = function(config, doNotAddToMap) {
