@@ -263,7 +263,7 @@
     };
 
     this.getDataStoreName = function(layer) {
-      var featureType = layer.get('metadata').workspace + ':' + layer.get('metadata').name;
+      var featureType = layer.get('metadata').name;
       var workspaceRoute = service_.parseWorkspaceRoute(featureType);
       var url = layer.get('metadata').url + '/rest/layers/' + featureType + '.json';
       var deferredResponse = q.defer();
@@ -302,14 +302,16 @@
     };
 
     this.getFeatureType = function(layer, dataStore) {
-      var url = layer.get('metadata').url + '/rest/workspaces/' + layer.get('metadata').workspace + '/datastores/' +
-          dataStore.name + '/featuretypes/' + layer.get('metadata').name + '.json';
+      var featureType = layer.get('metadata').name;
+      var workspaceRoute = service_.parseWorkspaceRoute(featureType);
+      var url = layer.get('metadata').url + '/rest/workspaces/' + workspaceRoute.workspace + '/datastores/' +
+          dataStore.name + '/featuretypes/' + workspaceRoute.typeName + '.json';
       var deferredResponse = q.defer();
       http.get(url).then(function(response) {
-        response.data.featureType.workspace = layer.get('metadata').workspace;
+        response.data.featureType.workspace = workspaceRoute.workspace;
         var featureType = response.data.featureType;
         url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion +
-            '&request=DescribeFeatureType&typeName=' + layer.get('metadata').name;
+            '&request=DescribeFeatureType&typeName=' + workspaceRoute.typeName;
 
         http.get(url).then(function(response) {
           // TODO: Use the OpenLayers parser once it is done

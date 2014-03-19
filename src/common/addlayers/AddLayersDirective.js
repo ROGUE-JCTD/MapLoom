@@ -33,11 +33,11 @@
                   var slimConfig = {
                     source: scope.currentServerIndex,
                     title: config.Title,
-                    name: split.length > 1 ? split[1] : split[0],
+                    name: config.Name,
                     abstract: config.Abstract,
                     keywords: config.KeywordList,
                     workspace: split.length > 1 ? split[0] : null,
-                    extent: config.BoundingBox[0].extent,
+                    bbox: config.BoundingBox[0],
                     sourceParams: config.sourceParams
                   };
                   mapService.addLayer(slimConfig);

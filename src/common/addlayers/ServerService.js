@@ -193,7 +193,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       var layerConfig = null;
 
       for (var index = 0; index < layersConfig.length; index += 1) {
-        if (layersConfig[index].name === layerName) {
+        if (layersConfig[index].Name === layerName) {
           layerConfig = layersConfig[index];
           break;
         }

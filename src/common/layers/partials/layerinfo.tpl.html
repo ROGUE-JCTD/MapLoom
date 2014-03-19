@@ -31,6 +31,10 @@
     <div><h4 translate="server"></h4></div>
     <div class="well">{{serverName}}</div>
   </div>
+  <div ng-show="serverURL">
+    <div><h4 translate="server_url"></h4></div>
+    <div class="well ellipsis">{{serverURL}}</div>
+  </div>
   <div ng-show="datastoreType">
     <div><h4 translate="datastoretype"></h4></div>
     <div class="well">{{datastoreType}}</div>

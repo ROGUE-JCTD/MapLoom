@@ -223,7 +223,7 @@
       }
 
       if (!service_.layerIsImagery(layer)) {
-        var layerTypeName = layer.get('metadata').workspace + ':' + layer.get('metadata').name;
+        var layerTypeName = layer.get('metadata').name;
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
 
         var wpsPostData = '' +
@@ -285,30 +285,21 @@
     };
 
     this.zoomToLayerExtent = function(layer) {
-      var extent900913 = null;
-      var transform;
-      if (service_.layerIsImagery(layer)) {
-        extent900913 = layer.getSource().getExtent();
-        transform = ol.proj.getTransform('EPSG:4326', service_.map.getView().getView2D().getProjection());
+      var metadata = layer.get('metadata');
+
+      var extent900913 = layer.getSource().getExtent();
+      if (!goog.isDefAndNotNull(extent900913) && goog.isDefAndNotNull(metadata) &&
+          goog.isDefAndNotNull(metadata.bbox.crs)) {
+        extent900913 = metadata.bbox.extent;
+        var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
+            service_.map.getView().getView2D().getProjection());
         extent900913 = ol.extent.transform(extent900913, transform);
-      } else {
-        var metadata = layer.get('metadata');
-
-        if (goog.isDefAndNotNull(metadata) &&
-            goog.isDefAndNotNull(metadata.serverId) &&
-            goog.isDefAndNotNull(metadata.name) &&
-            goog.isDefAndNotNull(metadata.projection)) {
-
-          var serverIndex = serverService_.getServerIndex(metadata.serverId);
-          var layerConfig = serverService_.getLayerConfig(serverIndex, metadata.name);
-
-          if (goog.isDefAndNotNull(layerConfig)) {
-            var bbox = layerConfig.bbox['EPSG:4326'].bbox;
-            // reorder the coordinates to get minx, miny, maxx, maxy
-            var bounds = [bbox[1], bbox[0], bbox[3], bbox[2]];
-            transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.projection),
-                ol.proj.get('EPSG:900913'));
-            extent900913 = ol.extent.transform(bounds, transform);
+      }
+      if (goog.isDefAndNotNull(extent900913)) {
+        for (var index = 0; index < extent900913.length; index++) {
+          if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
+            extent900913 = null;
+            break;
           }
         }
       }
@@ -428,14 +419,14 @@
             workspace: config.workspace,
             abstract: config.abstract,
             keywords: config.keywords,
-            editable: false
+            editable: false,
+            bbox: config.bbox
           },
           source: new ol.source.TileWMS({
             url: server.url,
             params: {
               'LAYERS': config.name
-            },
-            extent: config.extent
+            }
           })
         });
         // console.log('new layer: ', layer);

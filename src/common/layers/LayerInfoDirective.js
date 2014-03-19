@@ -56,6 +56,7 @@
               }
               var server = serverService.getServerById(scope.layer.get('metadata').serverId);
               scope.serverName = server.name;
+              scope.serverURL = server.url;
               element.closest('.modal').modal('toggle');
             });
 
