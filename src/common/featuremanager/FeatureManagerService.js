@@ -10,6 +10,7 @@
   var httpService_ = null;
   var exclusiveModeService_ = null;
   var dialogService_ = null;
+  var q_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
   var selectedItemPics_ = null;
@@ -25,7 +26,7 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, $translate, mapService, $compile, $http, exclusiveModeService, dialogService,
+    this.$get = function($rootScope, $translate, $q, mapService, $compile, $http, exclusiveModeService, dialogService,
                          historyService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
@@ -36,6 +37,7 @@
       httpService_ = $http;
       exclusiveModeService_ = exclusiveModeService;
       dialogService_ = dialogService;
+      q_ = $q;
       registerOnMapClick($rootScope, $compile);
 
       mapService_.editLayer.getSource().on(ol.source.VectorEventType.ADDFEATURE, function(event) {
@@ -419,6 +421,7 @@
     };
 
     this.endFeatureInsert = function(save, properties, coords) {
+      var deferredResponse = q_.defer();
       if (save) {
         var propertyXmlPartial = '';
         var featureGML = '';
@@ -463,12 +466,24 @@
                 '</feature:' + property[0] + '>';
           }
         });
-        issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos);
+        issueWFSPost(wfsPostTypes_.INSERT, propertyXmlPartial, properties, coords, newPos).then(function(resolve) {
+          deferredResponse.resolve(resolve);
+        }, function(reject) {
+          deferredResponse.reject(reject);
+        });
       } else {
         service_.hide();
+        deferredResponse.resolve();
       }
-      enabled_ = true;
-      rootScope_.$broadcast('endFeatureInsert', save);
+      var returnResponse = q_.defer();
+      deferredResponse.promise.then(function(resolve) {
+        enabled_ = true;
+        rootScope_.$broadcast('endFeatureInsert', save);
+        returnResponse.resolve(resolve);
+      }, function(reject) {
+        returnResponse.reject(reject);
+      });
+      return returnResponse.promise;
     };
 
     this.startGeometryEditing = function() {
@@ -505,8 +520,10 @@
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
-              exclusiveModeService_.endExclusiveMode();
-              service_.endGeometryEditing(true);
+              service_.endGeometryEditing(true).then(function(resolve) {
+                exclusiveModeService_.endExclusiveMode();
+              }, function(reject) {
+              });
             }
           }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
             exclusiveModeService_.endExclusiveMode();
@@ -519,6 +536,7 @@
     };
 
     this.endGeometryEditing = function(save) {
+      var deferredResponse = q_.defer();
       if (save) {
         // actually save the geom
         var feature;
@@ -565,16 +583,28 @@
         }
         newPos = getNewPositionFromGeometry(feature.getGeometry());
         // Issue the request
-        issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos);
+        issueWFSPost(wfsPostTypes_.UPDATE, partial, null, coords, newPos).then(function(resolve) {
+          deferredResponse.resolve(resolve);
+        }, function(reject) {
+          deferredResponse.reject(reject);
+        });
       } else {
         // discard changes
         mapService_.clearEditLayer();
         mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+        deferredResponse.resolve();
       }
-      rootScope_.$broadcast('endGeometryEdit', save);
-      mapService_.removeSelect();
-      mapService_.removeModify();
-      enabled_ = true;
+      var returnResponse = q_.defer();
+      deferredResponse.promise.then(function(resolve) {
+        rootScope_.$broadcast('endGeometryEdit', save);
+        mapService_.removeSelect();
+        mapService_.removeModify();
+        enabled_ = true;
+        returnResponse.resolve(resolve);
+      }, function(reject) {
+        returnResponse.reject(reject);
+      });
+      return returnResponse.promise;
     };
 
     this.startAttributeEditing = function(inserting) {
@@ -584,9 +614,14 @@
 
     this.endAttributeEditing = function(save, inserting, properties, coords) {
       //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
+      var deferredResponse = q_.defer();
       if (inserting) {
         // create request
-        service_.endFeatureInsert(save, properties, coords);
+        service_.endFeatureInsert(save, properties, coords).then(function(resolve) {
+          deferredResponse.resolve(resolve);
+        }, function(reject) {
+          deferredResponse.reject(reject);
+        });
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
@@ -623,15 +658,34 @@
         }
 
         if (propertyXmlPartial !== '') {
-          issueWFSPost(wfsPostTypes_.UPDATE, propertyXmlPartial, properties, coords, newPos);
+          issueWFSPost(wfsPostTypes_.UPDATE, propertyXmlPartial, properties, coords, newPos).then(function(resolve) {
+            deferredResponse.resolve(resolve);
+          }, function(reject) {
+            deferredResponse.reject(reject);
+          });
+        } else {
+          deferredResponse.reject();
         }
       }
-      rootScope_.$broadcast('endAttributeEdit', save);
+      var returnResponse = q_.defer();
+      deferredResponse.promise.then(function(resolve) {
+        rootScope_.$broadcast('endAttributeEdit', save);
+        returnResponse.resolve(resolve);
+      }, function(reject) {
+        returnResponse.reject(reject);
+      });
+      return returnResponse.promise;
     };
 
     this.deleteFeature = function() {
-      issueWFSPost(wfsPostTypes_.DELETE);
-      rootScope_.$broadcast('featureDeleted');
+      var deferredResponse = q_.defer();
+      issueWFSPost(wfsPostTypes_.DELETE).then(function(resolve) {
+        rootScope_.$broadcast('featureDeleted');
+        deferredResponse.resolve(resolve);
+      }, function(reject) {
+        deferredResponse.reject(reject);
+      });
+      return deferredResponse.promise;
     };
   });
 
@@ -720,6 +774,7 @@
   }
 
   function issueWFSPost(postType, partial, properties, coords, newPos) {
+    var deferredResponse = q_.defer();
     var wfsRequestTypePartial;
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
@@ -766,29 +821,47 @@
     var layerName = selectedLayer_.get('metadata').uniqueID;
     httpService_.post(url, wfsRequestData).success(function(data, status, headers, config) {
       //console.log('====[ great success. ', data, status, headers, config);
-      if (postType === wfsPostTypes_.INSERT) {
-        var x2js = new X2JS();
-        var json = x2js.xml_str2json(data);
-        selectedItem_.id = json.WFS_TransactionResponse.InsertResult.FeatureId._fid;
-        selectedItem_.type = 'Feature';
+      var x2js = new X2JS();
+      var json = x2js.xml_str2json(data);
+      if (goog.isDefAndNotNull(json.WFS_TransactionResponse) &&
+          goog.isDefAndNotNull(json.WFS_TransactionResponse.TransactionResult.Status.SUCCESS)) {
+        if (postType === wfsPostTypes_.INSERT) {
+          selectedItem_.id = json.WFS_TransactionResponse.InsertResult.FeatureId._fid;
+          selectedItem_.type = 'Feature';
+        }
+        if (goog.isDefAndNotNull(properties)) {
+          selectedItemProperties_ = properties;
+        }
+        if (goog.isDefAndNotNull(coords)) {
+          selectedItem_.geometry.coordinates = coords;
+        }
+        if (goog.isDefAndNotNull(newPos)) {
+          service_.show(selectedItem_, newPos);
+        }
+        if (postType === wfsPostTypes_.DELETE) {
+          service_.hide();
+        }
+        historyService_.refreshHistory(layerName);
+        mapService_.dumpTileCache(layerName);
+        deferredResponse.resolve();
+      } else if (goog.isDefAndNotNull(json.ExceptionReport) &&
+          goog.isDefAndNotNull(json.ExceptionReport.Exception) &&
+          goog.isDefAndNotNull(json.ExceptionReport.Exception.ExceptionText)) {
+        dialogService_.error(translate_('error'), translate_('unable_to_save_feature') +
+            json.ExceptionReport.Exception.ExceptionText, [translate_('btn_ok')], false);
+        deferredResponse.reject();
+      } else {
+        dialogService_.error(translate_('error'), translate_('unable_to_save_feature_unknown'),
+            [translate_('btn_ok')], false);
+        deferredResponse.reject();
       }
-      if (goog.isDefAndNotNull(properties)) {
-        selectedItemProperties_ = properties;
-      }
-      if (goog.isDefAndNotNull(coords)) {
-        selectedItem_.geometry.coordinates = coords;
-      }
-      if (goog.isDefAndNotNull(newPos)) {
-        service_.show(selectedItem_, newPos);
-      }
-      if (postType === wfsPostTypes_.DELETE) {
-        service_.hide();
-      }
-      historyService_.refreshHistory(layerName);
-      mapService_.dumpTileCache(layerName);
     }).error(function(data, status, headers, config) {
       console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
+      dialogService_.error(translate_('error'), translate_('unable_to_save_feature_unknown'),
+          [translate_('btn_ok')], false);
+      deferredResponse.reject();
     });
+    return deferredResponse.promise;
   }
 
   function getNewPositionFromGeometry(geometry, clickPos) {

@@ -11,6 +11,7 @@
             scope.featureManagerService = featureManagerService;
             scope.$on('startAttributeEdit', function(event, geometry, projection, properties, inserting) {
               scope.properties = [];
+              scope.isSaving = false;
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               goog.array.forEach(properties, function(property, index, arr) {
                 if (goog.isDefAndNotNull(attributeTypes)) {
@@ -61,6 +62,9 @@
             };
 
             scope.save = function() {
+              if (scope.isSaving) {
+                return;
+              }
               var numErrors = 0;
               if (goog.isDefAndNotNull(scope.coordinates) && !scope.coordinates.valid) {
                 numErrors++;
@@ -82,19 +86,30 @@
                       $translate('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0: {
+                      scope.isSaving = true;
                       featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
-                          scope.coordinates.coords);
-                      reset();
-                      $('#attribute-edit-dialog').modal('toggle');
+                          scope.coordinates.coords).then(function(resolve) {
+                                     reset();
+                                     $('#attribute-edit-dialog').modal('toggle');
+                                     scope.isSaving = false;
+                                   }, function(reject) {
+                                     scope.isSaving = false;
+                                   });
                     }
                   }
                 });
                 return;
               }
+              scope.isSaving = true;
               featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
-                  goog.isDefAndNotNull(scope.coordinates) ? scope.coordinates.coords : scope.coordinates);
-              reset();
-              $('#attribute-edit-dialog').modal('toggle');
+                  goog.isDefAndNotNull(scope.coordinates) ? scope.coordinates.coords : scope.coordinates)
+                  .then(function(resolve) {
+                    reset();
+                    $('#attribute-edit-dialog').modal('toggle');
+                    scope.isSaving = false;
+                  }, function(reject) {
+                    scope.isSaving = false;
+                  });
             };
 
             scope.selectValue = function(property, index) {

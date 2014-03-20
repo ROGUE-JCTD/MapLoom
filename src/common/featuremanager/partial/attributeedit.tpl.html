@@ -57,5 +57,8 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" ng-click="save()">{{'save_btn' | translate}}</button>
+  <button type="button" class="btn btn-primary" ng-click="save()">
+    <div class="loom-loading" spinner-radius="16" spinner-hidden="!isSaving"></div>
+    <span ng-class="{'text-transparent': isSaving}">{{'save_btn' | translate}}</span>
+  </button>
 </div>

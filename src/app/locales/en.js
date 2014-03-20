@@ -235,7 +235,9 @@
     'show_authors': 'Show Authors',
     'right_angles': 'Right Angles',
     'right_angles_failed': 'We weren\'t able to fix your polygon, try to get it closer to a' +
-        ' rectangle and try again.'
+        ' rectangle and try again.',
+    'unable_to_save_feature': 'Unable to save the feature for the following reason: ',
+    'unable_to_save_feature_unknown': 'An unknown error occurred while saving the feature.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

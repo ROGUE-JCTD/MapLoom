@@ -238,7 +238,9 @@
     'show_authors': 'Mostrar los Autores',
     'right_angles': 'Angulo Recto',
     'right_angles_failed': 'No fuimos capaces de arreglar su poligono, tratar de conseguir que mas cerca de un' +
-        ' rectangulo y vuelva a intentarlo.'
+        ' rectangulo y vuelva a intentarlo.',
+    'unable_to_save_feature': 'No se puede guardar el elemento por el siguiente motivo: ',
+    'unable_to_save_feature_unknown': 'Se ha producido un error desconocido al guardar el elemento.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
