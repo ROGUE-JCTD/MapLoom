@@ -13,21 +13,29 @@
           link: function(scope, element) {
             scope.mapService = mapService;
             scope.serverService = serverService;
-            scope.expandLegend = function() {
+
+            var openLegend = function() {
+              angular.element('#legend-container')[0].style.visibility = 'visible';
+              angular.element('#legend-panel').collapse('show');
+              legendOpen = true;
+            };
+            var closeLegend = function() {
+              angular.element('#legend-panel').collapse('hide');
+              legendOpen = false;
+
+              //the timeout is so the transition will finish before hiding the div
+              setTimeout(function() {
+                angular.element('#legend-container')[0].style.visibility = 'hidden';
+              }, 350);
+            };
+
+            scope.toggleLegend = function() {
               if (legendOpen === false) {
                 if (angular.element('.legend-item').length > 0) {
-                  angular.element('#legend-container')[0].style.visibility = 'visible';
-                  angular.element('#legend-panel').collapse('show');
-                  legendOpen = true;
+                  openLegend();
                 }
               } else {
-                angular.element('#legend-panel').collapse('hide');
-                legendOpen = false;
-
-                //the timeout is so the transition will finish before hiding the div
-                setTimeout(function() {
-                  angular.element('#legend-container')[0].style.visibility = 'hidden';
-                }, 350);
+                closeLegend();
               }
             };
 
@@ -42,22 +50,14 @@
 
             scope.$on('layer-added', function() {
               if (legendOpen === false) {
-                angular.element('#legend-container')[0].style.visibility = 'visible';
-                angular.element('#legend-panel').collapse('show');
-                legendOpen = true;
+                openLegend();
               }
             });
 
             scope.$on('layerRemoved', function() {
               //close the legend if the last layer is removed
               if (legendOpen === true && angular.element('.legend-item').length == 1) {
-                angular.element('#legend-panel').collapse('hide');
-                legendOpen = false;
-
-                //the timeout is so the transition will finish before hiding the div
-                setTimeout(function() {
-                  angular.element('#legend-container')[0].style.visibility = 'hidden';
-                }, 350);
+                closeLegend();
               }
             });
           }

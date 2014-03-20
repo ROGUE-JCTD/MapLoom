@@ -1,7 +1,7 @@
 <div>
     <div id="legend-btn-border" class="map-btn-border" tooltip-placement="left" tooltip-append-to-body="true"
          tooltip="{{'toggle_legend' | translate}}">
-        <div id="legend-btn" ng-click="expandLegend()">
+        <div id="legend-btn" ng-click="toggleLegend()">
             <i class="glyphicon glyphicon-list-alt"></i>
         </div>
     </div>
@@ -9,7 +9,7 @@
         <div id="legend-panel" class="panel collapse legend-panel-body">
             <div id="legend-title-heading" class="panel-heading">
                 <div class="legend-panel-title pull-left" id="legend-title-text" translate="legend_title"></div>
-                <i class="glyphicon glyphicon-remove legend-panel-title pull-right" ng-click="expandLegend()"></i>
+                <i class="glyphicon glyphicon-remove legend-panel-title pull-right" ng-click="toggleLegend()"></i>
             </div>
             <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getLayers();">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
