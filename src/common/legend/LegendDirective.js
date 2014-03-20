@@ -47,6 +47,19 @@
                 legendOpen = true;
               }
             });
+
+            scope.$on('layerRemoved', function() {
+              //close the legend if the last layer is removed
+              if (legendOpen === true && angular.element('.legend-item').length == 1) {
+                angular.element('#legend-panel').collapse('hide');
+                legendOpen = false;
+
+                //the timeout is so the transition will finish before hiding the div
+                setTimeout(function() {
+                  angular.element('#legend-container')[0].style.visibility = 'hidden';
+                }, 350);
+              }
+            });
           }
         };
       });
