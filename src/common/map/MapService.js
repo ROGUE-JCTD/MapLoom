@@ -193,7 +193,7 @@
       });
     };
 
-    this.zoomToExtent = function(extent, animate, map) {
+    this.zoomToExtent = function(extent, animate, map, scale) {
       console.log('---- MapService.zoomToExtent. extent: ', extent);
 
       if (!goog.isDefAndNotNull(animate)) {
@@ -202,10 +202,29 @@
       if (!goog.isDefAndNotNull(map)) {
         map = this.map;
       }
+      if (!goog.isDefAndNotNull(scale) || scale < 0) {
+        scale = 0;
+      }
+
       var view = map.getView().getView2D();
 
       if (!goog.isDefAndNotNull(extent)) {
         extent = view.getProjection().getExtent();
+      } else {
+        if (scale > 0) {
+          var width = extent[2] - extent[0];
+          var height = extent[3] - extent[1];
+          extent[0] -= width * scale;
+          extent[1] -= height * scale;
+          extent[2] += width * scale;
+          extent[3] += height * scale;
+          for (var index = 0; index < extent.length; index++) {
+            if (isNaN(parseFloat(extent[index])) || !isFinite(extent[index])) {
+              extent = view.getProjection().getExtent();
+              break;
+            }
+          }
+        }
       }
 
       if (animate) {
@@ -272,7 +291,7 @@
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
               ol.proj.get('EPSG:900913'));
           var extent900913 = ol.extent.transform(bounds, transform);
-          service_.zoomToExtent(extent900913);
+          service_.zoomToExtent(extent900913, null, null, 0.1);
         }).error(function(data, status, headers, config) {
           console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
           service_.zoomToLayerExtent(layer);

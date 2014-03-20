@@ -135,6 +135,7 @@
     this.schema = null;
     this.undoable = false;
     this.layer = null;
+    this.combinedExtent = [0, 0, 0, 0];
 
     this.$get = function($rootScope, mapService, geogitService, dialogService, $translate) {
       service_ = this;
@@ -143,6 +144,7 @@
       geogitService_ = geogitService;
       dialogService_ = dialogService;
       translate_ = $translate;
+      ol.extent.empty(this.combinedExtent);
       var createMap = function(panel) {
         panel.map = new ol.Map({
           renderer: ol.RendererHint.CANVAS,
@@ -309,6 +311,7 @@
       service_.left.clearFeature();
       service_.right.clearFeature();
       service_.merged.clearFeature();
+      ol.extent.empty(service_.combinedExtent);
       ours_ = ours;
       theirs_ = theirs;
       ancestor_ = ancestor;
@@ -345,15 +348,6 @@
         var transform = ol.proj.getTransform(crs_, mapService_.map.getView().getView2D().getProjection());
         geom.transform(transform);
       }
-      var newBounds = geom.getExtent();
-      var x = newBounds[2] - newBounds[0];
-      var y = newBounds[3] - newBounds[1];
-      x *= 0.5;
-      y *= 0.5;
-      newBounds[0] -= x;
-      newBounds[2] += x;
-      newBounds[1] -= y;
-      newBounds[3] += y;
 
       diffsInError_ = 0;
       switch (feature.change) {
@@ -387,7 +381,7 @@
           service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
           break;
       }
-      mapService_.zoomToExtent(newBounds);
+      mapService_.zoomToExtent(geom.getExtent(), null, null, 0.5);
       service_.title = feature.id;
       rootScope_.$broadcast('feature-diff-feature-set');
     };
@@ -432,16 +426,7 @@
         olFeature.setGeometry(geom);
         panel.featureLayer.getSource().addFeature(olFeature);
         panel.olFeature = olFeature;
-        var newBounds = geom.getExtent();
-        var x = newBounds[2] - newBounds[0];
-        var y = newBounds[3] - newBounds[1];
-        x *= 0.1;
-        y *= 0.1;
-        newBounds[0] -= x;
-        newBounds[2] += x;
-        newBounds[1] -= y;
-        newBounds[3] += y;
-        panel.bounds = newBounds;
+        ol.extent.extend(service_.combinedExtent, geom.getExtent());
         diffsNeeded_ -= 1;
         assignAttributeTypes(panel.attributes, false);
         if (diffsNeeded_ === 0) {
