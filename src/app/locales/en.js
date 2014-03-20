@@ -155,6 +155,7 @@
     'remote_options': 'Remote Options',
     'history_summary': 'History Summary',
     'zoom_world': 'Zoom To World',
+    'legend_title': 'Legend',
     'toggle_legend': 'Toggle Legend',
     'refresh_layers': 'Refresh Layers',
     'sure_remove_layer': 'Are you sure that you want to remove this layer?',

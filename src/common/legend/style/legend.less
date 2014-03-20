@@ -12,6 +12,7 @@
   padding-bottom: 5px;
   max-height: 100%;
   overflow-y: auto;
+  visibility: hidden;
 }
 
 .legend-panel-body {
@@ -48,4 +49,17 @@
   &:hover {
     background-color: @mainHeaderColor;
   }
+}
+
+.legend-panel-title {
+  display: inline-block;
+}
+
+#legend-title-heading {
+  padding-bottom: 20px;
+  background-color: @legendHeaderColor;
+}
+
+#legend-title-text {
+  padding-right: 5px;
 }

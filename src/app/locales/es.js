@@ -157,6 +157,7 @@
     'remote_options': 'Opciones Remotas',
     'history_summary': 'Resumen de Historial',
     'zoom_world': 'Regresar a Mapa Mundial',
+    'legend_title': 'Descripcion',
     'toggle_legend': 'Modificar la Descripcion',
     'refresh_layers': 'Refrescar Capas',
     'sure_remove_layer': 'Esta seguro de querer eliminar esta capa?',

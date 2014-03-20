@@ -6,8 +6,11 @@
         </div>
     </div>
     <div id="legend-container" class="panel">
-        <!--<div id="legend-panel-heading" class="panel-heading">Legend</div>-->
-        <div id="legend-panel" class="panel in legend-panel-body">
+        <div id="legend-panel" class="panel collapse legend-panel-body">
+            <div id="legend-title-heading" class="panel-heading">
+                <div class="legend-panel-title pull-left" id="legend-title-text" translate="legend_title"></div>
+                <i class="glyphicon glyphicon-remove legend-panel-title pull-right" ng-click="expandLegend()"></i>
+            </div>
             <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getLayers();">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
                     data-target="{{'#' + layer.get('metadata').uniqueID + 'legend'}}">{{layer.get('metadata').title}}

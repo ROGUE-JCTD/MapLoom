@@ -12,6 +12,7 @@
   var dialogService_ = null;
   var translate_ = null;
   var dragZoomActive = false;
+  var rootScope_ = null;
 
   var select = null;
   var draw = null;
@@ -117,7 +118,7 @@
   module.provider('mapService', function() {
     //$httpProvider, $interpolateProvider
     this.$get = function($translate, serverService, geogitService, $http,
-                         $cookieStore, $cookies, configService, dialogService) {
+                         $cookieStore, $cookies, configService, dialogService, $rootScope) {
       service_ = this;
       httpService_ = $http;
       //httpProviderService_ = $httpProvider;
@@ -129,6 +130,7 @@
       geogitService_ = geogitService;
       dialogService_ = dialogService;
       translate_ = $translate;
+      rootScope_ = $rootScope;
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
@@ -498,6 +500,7 @@
         meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
         if (!goog.isDefAndNotNull(doNotAddToMap)) {
+          rootScope_.$broadcast('layer-added');
           this.map.addLayer(layer);
         }
       } else {

@@ -1,8 +1,7 @@
 (function() {
   var module = angular.module('loom_legend_directive', []);
 
-  var legendOpen = true;
-  //var panelWidth = 0;
+  var legendOpen = false;
 
   module.directive('loomLegend',
       function($rootScope, mapService, serverService) {
@@ -40,6 +39,14 @@
                   'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
               return url;
             };
+
+            scope.$on('layer-added', function() {
+              if (legendOpen === false) {
+                angular.element('#legend-container')[0].style.visibility = 'visible';
+                angular.element('#legend-panel').collapse('show');
+                legendOpen = true;
+              }
+            });
           }
         };
       });
