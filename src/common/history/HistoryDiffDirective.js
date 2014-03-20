@@ -115,11 +115,10 @@
               var untilTime = startTime < endTime ? endTime : startTime;
               var sinceTime = startTime < endTime ? startTime : endTime;
               var path = historyService.pathFilter;
-              // TODO: Add the since option to specify branch name
-              //var since = historyService.layer.get('metadata').branchName;
+              var until = historyService.layer.get('metadata').branchName;
               // TODO: Make this work with a proxy once it supports authentication
-              var url = repo.url + '/repo/exportcsv?path=' +
-                  path + '&sinceTime=' + sinceTime + '&untilTime=' + untilTime;
+              var url = repo.url + '/log?output_format=csv&until=' + until + '&path=' +
+                  path + '&sinceTime=' + sinceTime + '&untilTime=' + untilTime + '&summary=true';
               $window.open(url);
             };
           }

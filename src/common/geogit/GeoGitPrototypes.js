@@ -181,7 +181,8 @@ var GeoGitLogOptions = function() {
   this.page = null;
   this.show = null;
   this.firstParentOnly = null;
-  this.summarize = null;
+  this.countChanges = null;
+  this.summary = null;
   this.returnRange = null;
 };
 
