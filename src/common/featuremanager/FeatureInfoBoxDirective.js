@@ -61,6 +61,9 @@
                         scope.deletingFeature = false;
                       }, function(reject) {
                         scope.deletingFeature = false;
+                        dialogService.error($translate('error'),
+                            $translate('unable_to_delete_feature', {value: reject}),
+                            [$translate('btn_ok')], false);
                       });
                       break;
                     case 1:

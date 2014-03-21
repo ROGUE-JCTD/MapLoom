@@ -239,8 +239,11 @@
     'right_angles': 'Angulo Recto',
     'right_angles_failed': 'No fuimos capaces de arreglar su poligono, tratar de conseguir que mas cerca de un' +
         ' rectangulo y vuelva a intentarlo.',
-    'unable_to_save_feature': 'No se puede guardar el elemento por el siguiente motivo: ',
-    'unable_to_save_feature_unknown': 'Se ha producido un error desconocido al guardar el elemento.'
+    'unable_to_save_feature': 'Error al guardar la nueva caracteristica por la siguiente razon: {{value}}',
+    'unknown_error': 'Se ha producido un error desconocido mientras se ahorra la función.',
+    'unable_to_save_geometry': 'Error al guardar los cambios en la geometria de las siguientes razones: {{value}}',
+    'unable_to_save_attributes': 'Error al guardar los cambios en los atributos de la siguiente razon: {{value}}',
+    'unable_to_delete_feature': 'Error al eliminar la funcion por la siguiente razon: {{value}}'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

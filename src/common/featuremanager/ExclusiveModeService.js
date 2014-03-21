@@ -20,6 +20,7 @@
       translate_ = $translate;
       service_ = this;
       this.addMode = false;
+      this.isSaving = false;
       return this;
     };
 

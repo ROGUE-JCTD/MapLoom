@@ -16,7 +16,10 @@
     <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-show="!exclusiveModeService.isMultiType() && exclusiveModeService.isPolygon()"
             tooltip-placement="bottom" tooltip="{{'right_angles' | translate}}" ng-click="exclusiveModeService.orthogonalize()"><i class="glyphicon glyphicon-fullscreen"></i></button>
     <button ng-click="exclusiveModeService.getButtonOne().callback()" class="btn btn-sm btn-primary" tooltip-append-to-body="true"
-            tooltip-placement="bottom" tooltip="{{exclusiveModeService.getButtonOne().title}}"><i class="glyphicon glyphicon-ok"></i></button>
+            tooltip-placement="bottom" tooltip="{{exclusiveModeService.getButtonOne().title}}">
+      <div class="loom-loading" spinner-radius="16" spinner-hidden="!exclusiveModeService.isSaving"></div>
+      <i class="glyphicon glyphicon-ok" ng-class="{'text-transparent': exclusiveModeService.isSaving}"></i>
+    </button>
     </div>
 
   </div>

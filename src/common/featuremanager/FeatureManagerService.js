@@ -520,9 +520,13 @@
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
+              exclusiveModeService_.isSaving = true;
               service_.endGeometryEditing(true).then(function(resolve) {
                 exclusiveModeService_.endExclusiveMode();
+                exclusiveModeService_.isSaving = false;
               }, function(reject) {
+                dialogService_.error(translate_('error'), translate_('unable_to_save_geometry', {value: reject}),
+                    [translate_('btn_ok')], false);
               });
             }
           }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
@@ -847,19 +851,13 @@
       } else if (goog.isDefAndNotNull(json.ExceptionReport) &&
           goog.isDefAndNotNull(json.ExceptionReport.Exception) &&
           goog.isDefAndNotNull(json.ExceptionReport.Exception.ExceptionText)) {
-        dialogService_.error(translate_('error'), translate_('unable_to_save_feature') +
-            json.ExceptionReport.Exception.ExceptionText, [translate_('btn_ok')], false);
-        deferredResponse.reject();
+        deferredResponse.reject(json.ExceptionReport.Exception.ExceptionText);
       } else {
-        dialogService_.error(translate_('error'), translate_('unable_to_save_feature_unknown'),
-            [translate_('btn_ok')], false);
-        deferredResponse.reject();
+        deferredResponse.reject(translate_('unknown_error'));
       }
     }).error(function(data, status, headers, config) {
       console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
-      dialogService_.error(translate_('error'), translate_('unable_to_save_feature_unknown'),
-          [translate_('btn_ok')], false);
-      deferredResponse.reject();
+      deferredResponse.reject(status);
     });
     return deferredResponse.promise;
   }
