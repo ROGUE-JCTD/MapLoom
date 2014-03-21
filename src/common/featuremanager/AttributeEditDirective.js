@@ -94,6 +94,10 @@
                                      scope.isSaving = false;
                                    }, function(reject) {
                                      scope.isSaving = false;
+                                     var message = scope.inserting ?
+                                'unable_to_save_feature' : 'unable_to_save_attributes';
+                                     dialogService.error($translate('error'), $translate(message, {'value': reject}),
+                                     [$translate('btn_ok')], false);
                                    });
                     }
                   }

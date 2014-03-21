@@ -525,6 +525,7 @@
                 exclusiveModeService_.endExclusiveMode();
                 exclusiveModeService_.isSaving = false;
               }, function(reject) {
+                exclusiveModeService_.isSaving = false;
                 dialogService_.error(translate_('error'), translate_('unable_to_save_geometry', {value: reject}),
                     [translate_('btn_ok')], false);
               });
@@ -852,7 +853,11 @@
           goog.isDefAndNotNull(json.ExceptionReport.Exception) &&
           goog.isDefAndNotNull(json.ExceptionReport.Exception.ExceptionText)) {
         deferredResponse.reject(json.ExceptionReport.Exception.ExceptionText);
+      } else if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
+          goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException)) {
+        deferredResponse.reject(json.ServiceExceptionReport.ServiceException);
       } else {
+        console.log(json);
         deferredResponse.reject(translate_('unknown_error'));
       }
     }).error(function(data, status, headers, config) {
