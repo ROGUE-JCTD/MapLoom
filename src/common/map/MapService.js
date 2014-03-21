@@ -5,7 +5,6 @@
   var serverService_ = null;
   var geogitService_ = null;
   var httpService_ = null;
-  //var httpProviderService_ = null;
   var cookieStoreService_ = null;
   var cookiesService_ = null;
   var configService_ = null;
@@ -147,15 +146,14 @@
       }
 
       this.map = this.createMap();
+
+      // now taht we have a map, lets try to add layers and servers
+      service_.loadLayers();
+
       this.editLayer = createVectorEditLayer();
 
-      // must always have a local geoserver. if not, something has gone wrong
-      var localServer = serverService_.getServerLocalGeoserver();
-      serverService_.populateLayersConfig(serverService_.getServerIndex(localServer.id));
       return this;
     };
-
-
 
     this.activateDragZoom = function() {
       //first we need to get access to the map's drag zoom interaction, if there is one
@@ -371,17 +369,23 @@
       return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
 
-    this.addLayer = function(config, doNotAddToMap) {
-      var server = serverService_.getServerByIndex(config.source);
-      //console.log('server for layer: ', server);
+    this.addLayer = function(minimalConfig, doNotAddToMap) {
+      var server = serverService_.getServerById(minimalConfig.source);
+      var fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
+
+      console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
+          server);
+
       var layer = null;
+      var nameSplit = null;
       var url = null;
 
       if (server.ptype === 'gxp_osmsource') {
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            title: config.title
+            name: minimalConfig.name,
+            title: fullConfig.Title
           },
           source: new ol.source.OSM()
         });
@@ -392,8 +396,8 @@
           imagerySet: 'Aerial'
         };
 
-        if (goog.isDefAndNotNull(config.sourceParams)) {
-          goog.object.extend(sourceParams, config.sourceParams);
+        if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
+          goog.object.extend(sourceParams, fullConfig.sourceParams);
         }
 
         // console.log(sourceParams, config.sourceParams, {});
@@ -401,20 +405,23 @@
         layer = new ol.layer.Tile({
           metadata: {
             serverId: server.id,
-            title: config.title
+            name: minimalConfig.name,
+            title: fullConfig.Title
           },
           source: new ol.source.BingMaps(sourceParams)
         });
       } else if (server.ptype === 'gxp_googlesource') {
-        console.log('====[ Error: google source not implemeted');
+        dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported',
+            {type: 'gxp_googlesource'}));
       } else if (server.ptype === 'gxp_mapquestsource') {
-        var source = new ol.source.MapQuest(config.sourceParams);
+        var source = new ol.source.MapQuest(minimalConfig.sourceParams);
 
         if (goog.isDefAndNotNull(source)) {
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
-              title: config.title
+              name: minimalConfig.name,
+              title: fullConfig.Title
             },
             source: source
           });
@@ -422,80 +429,84 @@
           console.log('====[ Error: could not create base layer.');
         }
 
-      } else if (server.ptype === 'gxp_olsource' || server.ptype === 'gxp_wmscsource') {
-        if (server.type === 'TMS') {
-          url = server.url;
+      } else if (server.ptype === 'gxp_wmscsource') {
+        nameSplit = fullConfig.Name.split(':');
 
-          if (goog.isDefAndNotNull(server.url)) {
-            if (server.url.lastIndexOf('/') !== server.url.length - 1) {
-              url += '/';
-            }
+        if (goog.isDefAndNotNull(server.url)) {
+          var urlIndex = server.url.lastIndexOf('/');
+          if (urlIndex !== -1) {
+            url = server.url.slice(0, urlIndex);
           }
-
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              url: goog.isDefAndNotNull(url) ? url : undefined,
-              title: config.title,
-              name: config.name,
-              workspace: config.workspace,
-              abstract: config.abstract,
-              keywords: config.keywords,
-              editable: false,
-              bbox: config.bbox
-            },
-            source: new ol.source.XYZ({
-              tileUrlFunction: function(coordinate) {
-                if (coordinate == null) {
-                  return '';
-                }
-                var z = coordinate.z;
-                var x = coordinate.x;
-                var y = (1 << z) - coordinate.y - 1;
-                return '/proxy/?url=' + url + config.name + '/' + z + '/' + x + '/' + y + '.png';
-              }
-            })
-          });
-        } else {
-          if (goog.isDefAndNotNull(server.url)) {
-            var urlIndex = server.url.lastIndexOf('/');
-            if (urlIndex !== -1) {
-              url = server.url.slice(0, urlIndex);
-            }
-          }
-
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              url: goog.isDefAndNotNull(url) ? url : undefined,
-              title: config.title,
-              name: config.name,
-              workspace: config.workspace,
-              abstract: config.abstract,
-              keywords: config.keywords,
-              editable: false,
-              bbox: config.bbox
-            },
-            source: new ol.source.TileWMS({
-              url: server.url,
-              params: {
-                'LAYERS': config.name
-              }
-            })
-          });
-          // console.log('new layer: ', layer);
-          geogitService_.isGeoGit(layer);
         }
-        //console.log(geogitService_);
+
+        layer = new ol.layer.Tile({
+          metadata: {
+            serverId: server.id,
+            name: minimalConfig.name,
+            url: goog.isDefAndNotNull(url) ? url : undefined,
+            title: fullConfig.Title,
+            abstract: fullConfig.Abstract,
+            keywords: fullConfig.KeywordList,
+            workspace: nameSplit.length > 1 ? nameSplit[0] : '',
+            editable: false,
+            bbox: fullConfig.BoundingBox[0]
+          },
+          source: new ol.source.TileWMS({
+            url: server.url,
+            params: {
+              'LAYERS': minimalConfig.name
+            }
+          })
+        });
+
+        geogitService_.isGeoGit(layer);
+
+      } else if (server.ptype === 'gxp_tmssource') {
+        nameSplit = fullConfig.Name.split(':');
+        url = server.url;
+
+        if (goog.isDefAndNotNull(server.url)) {
+          if (server.url.lastIndexOf('/') !== server.url.length - 1) {
+            url += '/';
+          }
+        }
+
+        layer = new ol.layer.Tile({
+          metadata: {
+            serverId: server.id,
+            name: minimalConfig.name,
+            url: goog.isDefAndNotNull(url) ? url : undefined,
+            title: fullConfig.Title,
+            abstract: fullConfig.Abstract,
+            keywords: fullConfig.KeywordList,
+            workspace: nameSplit.length > 1 ? nameSplit[0] : '',
+            editable: false,
+            bbox: fullConfig.BoundingBox[0]
+          },
+          source: new ol.source.XYZ({
+            tileUrlFunction: function(coordinate) {
+              if (coordinate == null) {
+                return '';
+              }
+              var z = coordinate.z;
+              var x = coordinate.x;
+              var y = (1 << z) - coordinate.y - 1;
+              return '/proxy/?url=' + url + minimalConfig.name + '/' + z + '/' + x + '/' + y + '.png';
+            }
+          })
+        });
+
+      } else if (server.ptype === 'gxp_olsource') {
+        dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported', {type: 'gxp_olsource'}));
       }
 
 
       if (goog.isDefAndNotNull(layer)) {
         // convert source id to a number. even though geonode gives it as a string, it wants it back as number
-        config.source = parseInt(config.source, 10);
+        minimalConfig.source = parseInt(minimalConfig.source, 10);
 
         var meta = layer.get('metadata');
-        meta.config = config;
+        meta.config = minimalConfig;
         // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
         meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
@@ -504,48 +515,10 @@
           this.map.addLayer(layer);
         }
       } else {
-        console.log('====[Error: could not load layer: ', config);
-      }
-      // console.log('---addLayer layer', layer);
-      return layer;
-    };
-
-    this.addBaseLayer = function(title, doNotAddToMap) {
-      var layer = null;
-
-      var serverId = serverService_.getServerByName('OpenStreetMap').id;
-      console.log('____ serverId for baselayer: ', serverId);
-
-      if (title === 'OpenStreetMap') {
-        layer = new ol.layer.Tile({
-          metadata: {
-            serverId: serverId,
-            title: title
-          },
-          source: new ol.source.OSM()
-        });
-      } else if (title === 'MapQuestImagery') {
-        layer = new ol.layer.Tile({
-          metadata: {
-            serverId: serverId,
-            title: title
-          },
-          source: new ol.source.MapQuestOpenAerial()
-        });
-      } else if (title === 'MapQuestOSM') {
-        layer = new ol.layer.Tile({
-          metadata: {
-            serverId: serverId,
-            title: title
-          },
-          source: new ol.source.MapQuestOSM()
-        });
+        console.log('====[Error: could not load layer: ', minimalConfig);
       }
 
-      if (!goog.isDefAndNotNull(doNotAddToMap) && goog.isDefAndNotNull(layer)) {
-        this.map.addLayer(layer);
-      }
-
+      console.log('-- MapService.addLayer, added: ', layer);
       return layer;
     };
 
@@ -635,9 +608,8 @@
     };
 
     this.loadLayers = function() {
-      console.log('=======[[ using this.configuration: ', service_.configuration);
-
-      var layers = [];
+      //TODO: use configService_.configuration instead of saving ref in this service
+      console.log('=======[[ using service_.configuration: ', service_.configuration);
 
       if (goog.isDefAndNotNull(service_.configuration) &&
           goog.isDefAndNotNull(service_.configuration.sources) &&
@@ -645,14 +617,14 @@
           goog.isDefAndNotNull(service_.configuration.map.layers)) {
 
         var ordered = new Array(service_.configuration.sources.length);
-        console.log('this.configuration.sources: ', service_.configuration.sources);
+        console.log('service_.configuration.sources: ', service_.configuration.sources);
         goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
 
         // if a server has the same url as another server, do not add the server and update layers pointing to the
         // duplicate server to point to the existing server. geonode passes in duplicate servers when creating
-        // a map from a layer
+        // a map from a layer. Note that this array can end up with holes.
         var orderedUnique = new Array(ordered.length);
         goog.array.forEach(ordered, function(serverInfo, key, obj) {
 
@@ -689,33 +661,58 @@
               orderedUnique[key] = serverInfo;
             }
           } else {
+            // basemaps will have servers without a url
             orderedUnique[key] = serverInfo;
           }
         });
 
-        goog.array.forEach(orderedUnique, function(serverInfo, index, obj) {
+        //Note serverIndex refers to the index in the config object not the index in serverService
+        var addLayersForServer = function(configServerIndex, server) {
+
+          // get all layers that refer to this serverIndex
+          var configs = [];
+          goog.array.forEach(service_.configuration.map.layers, function(layerInfo, index, obj) {
+            // Note: config.source will be string while serverIndex might be number
+            if (layerInfo.source == configServerIndex) {
+              configs.push(layerInfo);
+            }
+          });
+
+          goog.array.forEach(configs, function(layerInfo) {
+            if (goog.isDefAndNotNull(layerInfo.name)) {
+              // when the server is added to maploom, it will have an entirely different index/id so once it is
+              // resolved, we will update the layer info to reflect it. Do this on a clone since other functions
+              // are still using the config object
+              var layerInfoClone = goog.object.clone(layerInfo);
+              layerInfoClone.source = server.id;
+              service_.addLayer(layerInfoClone);
+            } else {
+              console.log('====[ Warning: could not add layer because it does not have a name: ', layerInfo);
+            }
+          });
+        };
+
+        // TODO: set layers panel to loading until all layers pass or fail
+
+        goog.array.forEach(orderedUnique, function(serverInfo, serverIndex, obj) {
           // if there was a duplicate server, an index in the ordered array will be undefined
           if (goog.isDefAndNotNull(serverInfo)) {
-            serverService_.addServer(serverInfo);
+            serverService_.addServer(serverInfo)
+                .then(function(serverNew) {
+                  addLayersForServer(serverIndex, serverNew);
+                }, function(reject) {
+                  console.log('====[ Error: Add server failed. ', reject);
+                });
           }
         });
 
+        //TODO: once all servers were added, async, then add any missing ones.
+        // add servers corresponding to basemaps
         serverService_.configDefaultServers();
-
-        goog.array.forEach(this.configuration.map.layers, function(layerInfo, index, obj) {
-          if (goog.isDefAndNotNull(layerInfo.name)) {
-            layers.push(service_.addLayer(layerInfo, true));
-          } else {
-            console.log('====[ Error: cannot add a layer without a name: ', layerInfo);
-          }
-        });
-
       } else {
-        console.log('invalid config object, cannot load map: ', this.configuration);
+        console.log('invalid config object, cannot load map: ', service_.configuration);
         alert('invalid config object, cannot load map');
       }
-
-      return layers;
     };
 
     this.switchMousePosCoordFormat = function() {
@@ -745,10 +742,11 @@
         coordDisplay = ol.coordinate.createStringXY(settings.DDPrecision);
       }
 
-      console.log('====[[ loading config: ', this.configuration);
+      console.log('====[[ loading config: ', service_.configuration);
 
       var map = new ol.Map({
-        layers: this.loadLayers(),
+        //layers: do not add any layers to the map as they will be added once server is created and getcapabilities
+        //        equivalent functions respond if relevant.
         controls: ol.control.defaults().extend([
           //new ol.control.FullScreen(),
           new ol.control.ZoomSlider(),

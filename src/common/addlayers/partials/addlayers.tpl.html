@@ -4,18 +4,18 @@
       <div class="btn-group custom-width-100">
         <div class="btn-group custom-width-88">
           <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
-            <span class="pull-left"> {{serverService.getServerByIndex(currentServerIndex).name}} </span>
+            <span class="pull-left"> {{getCurrentServerName()}} </span>
             <span class="caret right-and-center"></span>
           </button>
           <ul id="server-list" class="dropdown-menu col-md-12">
-            <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="setCurrentServerIndex($index)">{{server.name}}</a></li>
+            <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="setCurrentServerId(server.id)">{{server.name}}</a></li>
             <li class="divider"></li>
             <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
           </ul>
         </div>
         <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
                 type="button"
-                ng-click="serverService.populateLayersConfig(currentServerIndex, true)" class="btn btn-default">
+                ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)" class="btn btn-default">
           <i class="glyphicon glyphicon-repeat"></i>
         </button>
       </div>
@@ -27,7 +27,7 @@
     <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
     <div class="form-group layer-container">
       <ul id="layer-list" class="list-group">
-        <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerIndex) | filter:filterLayers | filter:filterAddedLayers"
+        <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerId) | filter:filterLayers | filter:filterAddedLayers"
             class="list-group-item loom-layerinfo-popover" data-placement="left">
           <div class="row">
             <div class="col-xs-2">

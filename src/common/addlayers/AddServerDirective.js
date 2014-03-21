@@ -11,9 +11,26 @@
             scope.type = 'WMS';
             scope.name = null;
             scope.url = null;
+
             scope.addServer = function(info) {
-              var id = serverService.addServer(info);
-              $rootScope.$broadcast('server-added', id);
+              var config = {
+                name: info.name,
+                url: info.url
+              };
+
+              if (info.type === 'TMS') {
+                config.ptype = 'gxp_tmssource';
+                if (goog.isDefAndNotNull(config.url) && config.url.lastIndexOf('/') !== config.url.length - 1) {
+                  config.url += '/';
+                }
+              } else {
+                config.ptype = 'gxp_wmscsource';
+              }
+
+              serverService.addServer(config).then(function(server) {
+                $rootScope.$broadcast('server-added-through-ui', server.id);
+              });
+
               scope.type = 'WMS';
               scope.name = null;
               scope.url = null;

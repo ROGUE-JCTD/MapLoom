@@ -8,39 +8,52 @@
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
             scope.serverService = serverService;
+            scope.currentServerId = -1;
+            scope.currentServer = null;
 
             angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
-            scope.setCurrentServerIndex = function(serverIndex) {
-              scope.currentServerIndex = serverIndex;
-              scope.currentServer = serverService.getServerById(serverIndex);
-              serverService.populateLayersConfig(serverIndex);
+            scope.setCurrentServerId = function(serverId) {
+              var server = serverService.getServerById(serverId);
+              if (goog.isDefAndNotNull(server)) {
+                scope.currentServerId = serverId;
+                scope.currentServer = server;
+              }
             };
 
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
             // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            scope.setCurrentServerIndex(serverService.getServerLocalGeoserver().id);
+            var server = serverService.getServerLocalGeoserver();
+            if (goog.isDefAndNotNull(server)) {
+              scope.setCurrentServerId(server.id);
+            }
+
+            scope.getCurrentServerName = function() {
+              var server = serverService.getServerById(scope.currentServerId);
+              if (goog.isDefAndNotNull(server)) {
+                return server.name;
+              }
+
+              return '';
+            };
 
             scope.addLayers = function(layersConfig) {
-              // var currentServer = serverService.getServerByIndex(scope.currentServerIndex);
-
               // if the server is not a typical server and instead the hardcoded ones
-              // console.log('---- addLayers. currentServer: ', currentServer, ', layersConfig', layersConfig);
               var length = layersConfig.length;
               for (var index = 0; index < length; index += 1) {
                 var config = layersConfig[index];
                 if (config.add) {
-                  var split = config.Name.split(':');
-                  var slimConfig = {
-                    source: scope.currentServerIndex,
-                    title: config.Title,
+                  // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
+                  //       maploom such as geonode. At this point, only source (server id), and name are used. If you
+                  //       find the need to add more parameters here, you need to put them in MapService.addLayer
+                  //       instead. that's because MapService.addLayer may be invoked from here, when a saved
+                  //       map is opened, or when a map is created from a layer in which case the logic here will be
+                  //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
+                  //       has already been resolved so you can used that info to append values to the layer.
+                  var minimalConfig = {
                     name: config.Name,
-                    abstract: config.Abstract,
-                    keywords: config.KeywordList,
-                    workspace: split.length > 1 ? split[0] : null,
-                    bbox: config.BoundingBox[0],
-                    sourceParams: config.sourceParams
+                    source: scope.currentServerId
                   };
-                  mapService.addLayer(slimConfig);
+                  mapService.addLayer(minimalConfig);
 
                   config.add = false;
                 }
@@ -55,8 +68,8 @@
                 if (goog.isDefAndNotNull(layer.get('metadata')) &&
                     goog.isDefAndNotNull(layer.get('metadata').config)) {
                   var conf = layer.get('metadata').config;
-                  if (conf.source === scope.currentServerIndex) {
-                    if (conf.name === layerConfig.name) {
+                  if (conf.source === scope.currentServerId) {
+                    if (conf.name === layerConfig.Name) {
                       show = false;
                       break;
                     }
@@ -72,8 +85,19 @@
               }
             });
 
+            // when a server is added to server service, if we do not have a server selected, if localGeoserver
+            // is added, make it the selected server
             scope.$on('server-added', function(event, id) {
-              scope.setCurrentServerIndex(id);
+              if (scope.currentServerId === -1) {
+                var server = serverService.getServerById(id);
+                if (server === serverService.getServerLocalGeoserver()) {
+                  scope.setCurrentServerId(id);
+                }
+              }
+            });
+
+            scope.$on('server-added-through-ui', function(event, id) {
+              scope.setCurrentServerId(id);
             });
 
             function onResize() {

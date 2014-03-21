@@ -12,49 +12,22 @@ var SERVER_SERVICE_USE_PROXY = true;
   var dialogService_ = null;
   var translate_ = null;
   var http_ = null;
+  var q_ = null;
 
   module.provider('serverService', function() {
-    this.$get = function($rootScope, $http, $location, $translate, dialogService) {
+    this.$get = function($rootScope, $http, $q, $translate, dialogService) {
       service_ = this;
       rootScope_ = $rootScope;
       dialogService_ = dialogService;
       translate_ = $translate;
       http_ = $http;
+      q_ = $q;
 
       return this;
     };
 
     this.getServers = function() {
       return servers;
-    };
-
-    /**
-     * Note: the index of a server may change after the map is saved and loaded again. When try to use getServerById
-     *       which is the same as the index if the map has not be saved/loaded. GetServerByIndex should typically be
-     *       used if looking through the servers or when you are certain that the index is valid.
-     *       layer.get('metadata').serverId for example, returns ids and not index even though getIndex may work in
-     *       most cases.
-     */
-    this.getServerByIndex = function(index) {
-      var server = null;
-
-      if (!goog.isDefAndNotNull(index)) {
-        throw ({
-          name: 'serverService',
-          level: 'High',
-          message: 'undefined server index.',
-          toString: function() {
-            return this.name + ': ' + this.message;
-          }
-        });
-      }
-
-      if (index >= 0 && index < servers.length) {
-        server = servers[index];
-      }
-
-      //console.log('----[ returning server index: ', index, ', server: ', server);
-      return server;
     };
 
     this.getServerById = function(id) {
@@ -132,48 +105,32 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
-    this.getServerIndex = function(id) {
-      if (!goog.isDefAndNotNull(id)) {
-        throw ({
-          name: 'serverService',
-          level: 'High',
-          message: 'undefined server id.',
-          toString: function() {
-            return this.name + ': ' + this.message;
-          }
-        });
-      }
-
-      for (var index = 0; index < servers.length; index += 1) {
-        if (servers[index].id === id) {
-          return index;
-        }
-      }
-
-      return -1;
-    };
-
     this.getServerLocalGeoserver = function() {
       return service_.getServerByName('Local Geoserver');
     };
 
     this.addServer = function(serverInfo) {
+      var deferredResponse = q_.defer();
+
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
-      var server = {id: servers.length, ptype: 'gxp_olsource', config: serverInfo, populatingLayersConfig: false};
+      var server = {id: null, ptype: 'gxp_olsource', config: serverInfo, populatingLayersConfig: false};
 
       goog.object.extend(server, serverInfo, {});
 
-      if (server.type === 'TMS') {
-        if (goog.isDefAndNotNull(server.url) && server.url.lastIndexOf('/') !== server.url.length - 1) {
-          server.url += '/';
-        }
-      }
+      console.log('---- MapService.layerInfo. trying to add server: ', server);
+      service_.populateLayersConfig(server)
+          .then(function(response) {
+            // set the id. it should always resolve to the length
+            server.id = servers.length;
+            servers.push(server);
+            rootScope_.$broadcast('server-added', server.id);
+            deferredResponse.resolve(server);
+          }, function(reject) {
+            deferredResponse.reject(server, reject);
+          });
 
-      console.log('---- adding server: ', server);
-      // TODO: Actually use the type specified in the url
-      servers.push(server);
-      return server.id;
+      return deferredResponse.promise;
     };
 
     this.configDefaultServers = function() {
@@ -182,20 +139,29 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_bingsource'))) {
         config = {ptype: 'gxp_bingsource', name: 'Bing'};
-        service_.getServerById(service_.addServer(config));
+        service_.addServer(config);
       }
+
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapquestsource'))) {
         config = {ptype: 'gxp_mapquestsource', name: 'MapQuest'};
-        service_.getServerById(service_.addServer(config));
+        service_.addServer(config);
+      }
+
+      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_osmsource'))) {
+        config = {ptype: 'gxp_osmsource', name: 'OpenStreetMap'};
+        service_.addServer(config);
       }
     };
 
-    this.getLayersConfig = function(serverIndex) {
-      return servers[serverIndex].layersConfig;
+    this.getLayersConfig = function(serverId) {
+      var server = service_.getServerById(serverId);
+      if (goog.isDefAndNotNull(server)) {
+        return server.layersConfig;
+      }
     };
 
-    this.getLayerConfig = function(serverIndex, layerName) {
-      var layersConfig = service_.getLayersConfig(serverIndex);
+    this.getLayerConfig = function(serverId, layerName) {
+      var layersConfig = service_.getLayersConfig(serverId);
       var layerConfig = null;
 
       for (var index = 0; index < layersConfig.length; index += 1) {
@@ -209,18 +175,20 @@ var SERVER_SERVICE_USE_PROXY = true;
       return layerConfig;
     };
 
-    this.populateLayersConfig = function(index, force) {
-      var server = servers[index];
-      // console.log('---- populateLayersConfig. server', server);
+    this.populateLayersConfig = function(server, force) {
+      var deferredResponse = q_.defer();
+      console.log('---- ServerService.populateLayersConfig. server', server);
 
       if (!goog.isDefAndNotNull(server)) {
-        return;
+        //TODO: make sure it is okay to reject and then return the promise
+        deferredResponse.reject();
+        return deferredResponse.promise;
       }
 
       if (!goog.isDefAndNotNull(server.layersConfig) ||
           (goog.isDefAndNotNull(force) && force)) {
 
-        // clear out list of layers
+        // clear out layers config
         server.layersConfig = [];
 
         if (server.ptype === 'gxp_bingsource') {
@@ -232,48 +200,59 @@ var SERVER_SERVICE_USE_PROXY = true;
             {Title: 'BingCollinsBart', Name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
             {Title: 'BingSurvey', Name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
           ];
+          deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_mapquestsource') {
           server.layersConfig = [
             {Title: 'MapQuestSat', Name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
             {Title: 'MapQuestHybrid', Name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
             {Title: 'MapQuestOSM', Name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
           ];
+          deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
           server.layersConfig = [
             {Title: 'OpenStreetMap', Name: 'mapnik'}
           ];
-        } else {
-          console.log('---- Sending GetCapabilities.server: ', server, ', index:', index);
+          deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_wmscsource' ||
+            server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
+          console.log('---- ServerService.Sending GetCapabilities.server: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_('error'), translate_('server_url_not_specified'));
-            return;
-          }
-
-          var parser = new ol.format.WMSCapabilities();
-          var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-          server.populatingLayersConfig = true;
-          http_.get(url).then(function(xhr) {
-            if (xhr.status == 200) {
-              var response = parser.read(xhr.data);
-              if (goog.isDefAndNotNull(response.Capability) &&
-                  goog.isDefAndNotNull(response.Capability.Layer)) {
-                server.layersConfig = response.Capability.Layer.Layer;
-                console.log('---- populateLayersConfig. server', server);
-                rootScope_.$broadcast('layers-loaded', index);
+            deferredResponse.reject(server);
+          } else {
+            var parser = new ol.format.WMSCapabilities();
+            var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
+            server.populatingLayersConfig = true;
+            http_.get(url).then(function(xhr) {
+              if (xhr.status === 200) {
+                var response = parser.read(xhr.data);
+                if (goog.isDefAndNotNull(response.Capability) &&
+                    goog.isDefAndNotNull(response.Capability.Layer)) {
+                  server.layersConfig = response.Capability.Layer.Layer;
+                  console.log('---- populateLayersConfig.populateLayersConfig server', server);
+                  rootScope_.$broadcast('layers-loaded', server.id);
+                  deferredResponse.resolve(server);
+                } else {
+                  deferredResponse.reject(server);
+                }
+                server.populatingLayersConfig = false;
+              } else {
+                dialogService_.error(translate_('error'),
+                    translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+                deferredResponse.reject(server);
+                server.populatingLayersConfig = false;
               }
-              server.populatingLayersConfig = false;
-            } else {
+            }, function(xhr) {
               dialogService_.error(translate_('error'),
                   translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
+              deferredResponse.reject(server);
               server.populatingLayersConfig = false;
-            }
-          }, function(xhr) {
-            dialogService_.error(translate_('error'),
-                translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
-            server.populatingLayersConfig = false;
-          });
+            });
+          }
         }
       }
+
+      return deferredResponse.promise;
     };
 
   });
