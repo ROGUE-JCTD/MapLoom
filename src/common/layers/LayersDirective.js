@@ -3,7 +3,7 @@
   var module = angular.module('loom_layers_directive', []);
 
   module.directive('loomLayers',
-      function($rootScope, mapService, serverService, pulldownService, historyService, featureManagerService,
+      function($rootScope, mapService, serverService, historyService, featureManagerService,
                dialogService, $translate, tableViewService) {
         return {
           restrict: 'C',

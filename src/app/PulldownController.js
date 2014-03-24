@@ -18,6 +18,7 @@
           $scope.configService = configService;
           $scope.historyPanel = pulldownService.historyPanel.getVisible();
           $scope.toggleEnabled = pulldownService.toggleEnabled;
+          $scope.addLayers = pulldownService.addLayers;
           $scope.pulldownService = pulldownService;
         }
 

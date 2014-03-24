@@ -57,6 +57,10 @@
         }
       });
 
+      rootScope_.$on('conflict_mode', function() {
+        service_.hide();
+      });
+
       overlay_ = new ol.Overlay({
         insertFirst: false,
         element: document.getElementById('info-box')

@@ -17,6 +17,8 @@
   var draw = null;
   var modify = null;
 
+  var editableLayers_ = null;
+
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
@@ -152,6 +154,20 @@
 
       this.editLayer = createVectorEditLayer();
 
+      $rootScope.$on('conflict_mode', function() {
+        editableLayers_ = service_.getLayers();
+        for (var index = 0; index < editableLayers_.length; index++) {
+          editableLayers_[index].get('metadata').editable = false;
+        }
+      });
+
+      $rootScope.$on('default_mode', function() {
+        if (goog.isDefAndNotNull(editableLayers_)) {
+          for (var index = 0; index < editableLayers_.length; index++) {
+            editableLayers_[index].get('metadata').editable = true;
+          }
+        }
+      });
       return this;
     };
 

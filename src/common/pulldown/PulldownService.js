@@ -22,6 +22,7 @@
     this.syncPanel = new PulldownPanel(true, false);
     this.historyPanel = new PulldownPanel(true, false);
     this.toggleEnabled = true;
+    this.addLayers = true;
 
     this.$get = function($rootScope, $timeout) {
       rootScope_ = $rootScope;
@@ -39,6 +40,8 @@
       this.layersPanel.visible = true;
       this.syncPanel.visible = false;
       this.historyPanel.visible = false;
+      this.addLayers = false;
+      rootScope_.$broadcast('conflict_mode');
       this.apply();
       this.showDiffPanel();
     };
@@ -49,6 +52,8 @@
       this.layersPanel.visible = true;
       this.syncPanel.visible = true;
       this.historyPanel.visible = true;
+      this.addLayers = true;
+      rootScope_.$broadcast('default_mode');
       this.apply();
       this.showLayerPanel();
     };
