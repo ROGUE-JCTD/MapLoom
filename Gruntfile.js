@@ -608,15 +608,20 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'django_maploom_build', [
     'clean', 'html2js', 'gjslint', 'jshint', 'coffeelint', 'coffee', 'recess:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets', 'copy:build_vendor_fonts',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'compile'//,'karmaconfig', 'karma:continuous'
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'compile'
   ]);
+
+  /**
+   * The `django_maploom_build_production` runs django_maploom_build then uglify
+   */
+  grunt.registerTask( 'django_maploom_build_production', [ 'django_maploom_build', 'uglify'] );
 
   /**
    * The `compile` task gets your app ready for deployment by concatenating and
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'recess:compile', 'copy:compile_assets', 'copy:compile_fonts', 'ngmin', 'concat:compile_js', 'index:compile', 'uglify'
+    'recess:compile', 'copy:compile_assets', 'copy:compile_fonts', 'ngmin', 'concat:compile_js', 'index:compile'
   ]);
 
   /**
