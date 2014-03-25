@@ -13,7 +13,7 @@
           <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
                 tooltip-placement="top" tooltip="{{'add_feature' | translate}}"
                 ng-show="layer.get('metadata').editable" stop-event="click mousedown" class="btn btn-xs btn-default"
-                ng-class="{'disabled': (!layer.get('visible') || !layer.get('metadata').schema)}">
+                ng-disabled="(!layer.get('visible') || !layer.get('metadata').schema)">
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"

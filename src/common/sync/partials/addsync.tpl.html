@@ -52,5 +52,5 @@
   <button type="button" class="btn btn-default" translate="close_btn" ng-click="dismiss()">Close</button>
   <button type="button" class="btn btn-primary"
           ng-click="createLink(name, selectedRepo, selectedRemote, localBranch, remoteBranch)"
-          ng-class="{'disabled': !syncform.$valid}" translate="add_btn">Add</button>
+          ng-disabled="!syncform.$valid" translate="add_btn">Add</button>
 </div>
