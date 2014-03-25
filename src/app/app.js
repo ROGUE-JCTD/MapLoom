@@ -31,6 +31,9 @@
           $(e.target).css('z-index', 760);
         });
 
+        // Enable Proj4JS
+        ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS && typeof Proj4js == 'object';
+
         $scope.mapService = mapService;
         $scope.refreshService = refreshService;
       });
