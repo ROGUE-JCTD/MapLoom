@@ -9,6 +9,7 @@
           link: function(scope, element) {
             scope.geogitService = geogitService;
             scope.remoteService = remoteService;
+            scope.saving = false;
 
             angular.element('#remote-name')[0].attributes.placeholder.value = $translate('repo_name');
             angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate('repo_username');
@@ -16,12 +17,12 @@
 
             scope.finish = function(save) {
               if (save) {
-                element.find('#loading').toggleClass('hidden');
+                scope.saving = true;
                 var result = $q.defer();
                 remoteService.finishRemoteOperation(save, result);
                 result.promise.then(function() {
                   remoteService.editing = false;
-                  element.find('#loading').toggleClass('hidden');
+                  scope.saving = false;
                 });
               } else {
                 remoteService.finishRemoteOperation(save);

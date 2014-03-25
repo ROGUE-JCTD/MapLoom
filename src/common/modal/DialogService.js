@@ -45,7 +45,8 @@
       var modalInstance = modal_.open({
         template: '<div loom-dialog></div>',
         scope: modalScope,
-        backdrop: 'static'
+        backdrop: 'static',
+        keyboard: false
       });
 
       numModals = numModals + 1;

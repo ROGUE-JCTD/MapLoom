@@ -9,6 +9,7 @@
           templateUrl: 'merge/partials/merge.tpl.html',
           link: function(scope, element, attrs) {
             scope.geogitService = geogitService;
+            scope.merging = false;
             scope.listFilter = function(otherItem) {
               return function(item) {
                 return item !== otherItem;
@@ -23,11 +24,11 @@
               scope.sourceBranch = null;
               scope.destinationBranch = null;
               element.closest('.modal').modal('hide');
-              element.find('#loading').addClass('hidden');
+              scope.merging = false;
             };
 
             scope.onMerge = function() {
-              element.find('#loading').toggleClass('hidden');
+              scope.merging = true;
               var repoId = scope.selectedRepoId;
               geogitService.beginTransaction(repoId).then(function(transaction) {
                 var checkoutOptions = new GeoGitCheckoutOptions();
