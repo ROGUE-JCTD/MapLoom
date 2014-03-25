@@ -23,6 +23,7 @@
     this.historyPanel = new PulldownPanel(true, false);
     this.toggleEnabled = true;
     this.addLayers = true;
+    this.serversLoading = false;
 
     this.$get = function($rootScope, $timeout) {
       rootScope_ = $rootScope;

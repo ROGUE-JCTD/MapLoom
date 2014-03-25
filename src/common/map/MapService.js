@@ -9,6 +9,7 @@
   var cookiesService_ = null;
   var configService_ = null;
   var dialogService_ = null;
+  var pulldownService_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -118,7 +119,7 @@
 
   module.provider('mapService', function() {
     //$httpProvider, $interpolateProvider
-    this.$get = function($translate, serverService, geogitService, $http,
+    this.$get = function($translate, serverService, geogitService, $http, pulldownService,
                          $cookieStore, $cookies, configService, dialogService, $rootScope) {
       service_ = this;
       httpService_ = $http;
@@ -132,6 +133,7 @@
       dialogService_ = dialogService;
       translate_ = $translate;
       rootScope_ = $rootScope;
+      pulldownService_ = pulldownService;
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
@@ -155,7 +157,7 @@
       this.editLayer = createVectorEditLayer();
 
       $rootScope.$on('conflict_mode', function() {
-        editableLayers_ = service_.getLayers();
+        editableLayers_ = service_.getLayers(true);
         for (var index = 0; index < editableLayers_.length; index++) {
           editableLayers_[index].get('metadata').editable = false;
         }
@@ -257,7 +259,7 @@
         return;
       }
 
-      if (!service_.layerIsImagery(layer)) {
+      if (!service_.layerIsEditable(layer)) {
         var layerTypeName = layer.get('metadata').name;
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
 
@@ -342,7 +344,7 @@
       service_.zoomToExtent(extent900913);
     };
 
-    this.getLayers = function(includeHidden, includeImagery) {
+    this.getLayers = function(includeHidden, includeEditable) {
       var layers = [];
 
       this.map.getLayers().forEach(function(layer) {
@@ -353,9 +355,9 @@
             !(layer.get('metadata').internalLayer)) {
 
           // if it is imagery
-          if (service_.layerIsImagery(layer)) {
+          if (service_.layerIsEditable(layer)) {
             // if we want imagery
-            if (goog.isDefAndNotNull(includeImagery) && includeImagery) {
+            if (goog.isDefAndNotNull(includeEditable) && includeEditable) {
               if (layer.get('visible')) {
                 layers.push(layer);
               } else {
@@ -381,7 +383,7 @@
       return layers;
     };
 
-    this.layerIsImagery = function(layer) {
+    this.layerIsEditable = function(layer) {
       return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
 
@@ -708,15 +710,25 @@
           });
         };
 
-        // TODO: set layers panel to loading until all layers pass or fail
-
+        var numServers = orderedUnique.length;
+        pulldownService_.serversLoading = true;
         goog.array.forEach(orderedUnique, function(serverInfo, serverIndex, obj) {
           // if there was a duplicate server, an index in the ordered array will be undefined
           if (goog.isDefAndNotNull(serverInfo)) {
             serverService_.addServer(serverInfo)
                 .then(function(serverNew) {
+                  numServers--;
                   addLayersForServer(serverIndex, serverNew);
+                  if (numServers === 0) {
+                    pulldownService_.serversLoading = false;
+                  }
                 }, function(reject) {
+                  numServers--;
+                  if (numServers === 0) {
+                    pulldownService_.serversLoading = false;
+                  }
+                  dialogService_.error(translate_('server'), translate_('load_server_failed',
+                      {'server': serverInfo.name, 'value': reject}));
                   console.log('====[ Error: Add server failed. ', reject);
                 });
           }

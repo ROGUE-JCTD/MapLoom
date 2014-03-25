@@ -244,7 +244,8 @@
     'unknown_error': 'Se ha producido un error desconocido mientras se ahorra la función.',
     'unable_to_save_geometry': 'Error al guardar los cambios en la geometria de las siguientes razones: {{value}}',
     'unable_to_save_attributes': 'Error al guardar los cambios en los atributos de la siguiente razon: {{value}}',
-    'unable_to_delete_feature': 'Error al eliminar la funcion por la siguiente razon: {{value}}'
+    'unable_to_delete_feature': 'Error al eliminar la funcion por la siguiente razon: {{value}}',
+    'load_server_failed': 'No se pudo cargar el servidor {{server}} por la siguiente razon: {{value}}'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

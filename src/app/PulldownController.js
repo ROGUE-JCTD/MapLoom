@@ -19,6 +19,7 @@
           $scope.historyPanel = pulldownService.historyPanel.getVisible();
           $scope.toggleEnabled = pulldownService.toggleEnabled;
           $scope.addLayers = pulldownService.addLayers;
+          $scope.serversLoading = pulldownService.serversLoading;
           $scope.pulldownService = pulldownService;
         }
 
@@ -62,5 +63,6 @@
         $scope.$on('history_fetched', historyPanelEnabled);
         $scope.$on('history_cleared', historyPanelEnabled);
         $scope.$watch('pulldownService.toggleEnabled', updateScopeVariables);
+        $scope.$watch('pulldownService.serversLoading', updateScopeVariables);
       });
 })();

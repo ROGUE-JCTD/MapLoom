@@ -119,6 +119,7 @@
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
             <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
               <div class="loom-layers"></div>

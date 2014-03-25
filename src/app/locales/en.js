@@ -241,7 +241,8 @@
     'unknown_error': 'An unknown error occurred while saving the feature.',
     'unable_to_save_geometry': 'Failed to save the geometry changes for the following reason: {{value}}',
     'unable_to_save_attributes': 'Failed to save the attribute changes for the following reason: {{value}}',
-    'unable_to_delete_feature': 'Failed to delete feature for the following reason: {{value}}'
+    'unable_to_delete_feature': 'Failed to delete feature for the following reason: {{value}}',
+    'load_server_failed': 'Failed to load the server {{server}} for the following reason: {{value}}'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
