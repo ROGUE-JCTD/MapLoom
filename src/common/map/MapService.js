@@ -118,12 +118,10 @@
 
 
   module.provider('mapService', function() {
-    //$httpProvider, $interpolateProvider
     this.$get = function($translate, serverService, geogitService, $http, pulldownService,
                          $cookieStore, $cookies, configService, dialogService, $rootScope) {
       service_ = this;
       httpService_ = $http;
-      //httpProviderService_ = $httpProvider;
       cookieStoreService_ = $cookieStore;
       cookiesService_ = $cookies;
       configService_ = configService;
@@ -387,12 +385,19 @@
       return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
 
-    this.addLayer = function(minimalConfig, doNotAddToMap) {
+    /**
+     *  {Object} minimalConfig
+     *  {Number} opt_layerOrder is optional and indicates the spot in the layers array it should try to go to.
+     *        when not specified, the layer will be the top most layer. On a an empty map, if a layer with layerOrder 5
+     *        is added when later another layer with layerOrder 3 is added, it will be inserted below the previous one.
+     *        Similarly a 3rd layer with order 4 will be inserted between 3 and 5.
+     */
+    this.addLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
       var fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
 
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
-          server);
+          server, ', opt_layerOrder: ', opt_layerOrder);
 
       var layer = null;
       var nameSplit = null;
@@ -523,15 +528,34 @@
         // convert source id to a number. even though geonode gives it as a string, it wants it back as number
         minimalConfig.source = parseInt(minimalConfig.source, 10);
 
+        //TODO: assume all layers have a meta object. we can go through rest of the code and remove any checks for meta
+        //      being defined. If it is not defined, we should add an empty one here.
         var meta = layer.get('metadata');
+
         meta.config = minimalConfig;
         // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
         meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
-        if (!goog.isDefAndNotNull(doNotAddToMap)) {
-          rootScope_.$broadcast('layer-added');
-          this.map.addLayer(layer);
+        var mapLayers = this.map.getLayerGroup().getLayers().getArray();
+        meta.layerOrder = goog.isDefAndNotNull(opt_layerOrder) ? opt_layerOrder : mapLayers.length;
+
+        var insertIndex = -1;
+
+        for (var index = 0; index < mapLayers.length; index++) {
+          var lyr = mapLayers[index];
+          var lyrLayerOrder = lyr.get('metadata').layerOrder;
+          if (meta.layerOrder < lyrLayerOrder) {
+            insertIndex = index;
+          }
         }
+
+        if (insertIndex === -1) {
+          this.map.addLayer(layer);
+        } else {
+          this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
+        }
+
+        rootScope_.$broadcast('layer-added');
       } else {
         console.log('====[Error: could not load layer: ', minimalConfig);
       }
@@ -692,18 +716,24 @@
           goog.array.forEach(service_.configuration.map.layers, function(layerInfo, index, obj) {
             // Note: config.source will be string while serverIndex might be number
             if (layerInfo.source == configServerIndex) {
+              layerInfo.temp_layerOrder = index;
               configs.push(layerInfo);
             }
           });
 
           goog.array.forEach(configs, function(layerInfo) {
             if (goog.isDefAndNotNull(layerInfo.name)) {
+              // save the layerOrder which was based on the index the layer config is in the initial config object
+              // remove it from layer info since it shouldn't stay there.
+              var layerOrder = layerInfo.temp_layerOrder;
+              layerInfo.temp_layerOrder = undefined;
+
               // when the server is added to maploom, it will have an entirely different index/id so once it is
               // resolved, we will update the layer info to reflect it. Do this on a clone since other functions
               // are still using the config object
               var layerInfoClone = goog.object.clone(layerInfo);
               layerInfoClone.source = server.id;
-              service_.addLayer(layerInfoClone);
+              service_.addLayer(layerInfoClone, layerOrder);
             } else {
               console.log('====[ Warning: could not add layer because it does not have a name: ', layerInfo);
             }
