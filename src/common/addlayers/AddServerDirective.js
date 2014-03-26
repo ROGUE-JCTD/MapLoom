@@ -6,7 +6,7 @@
       function(serverService, $translate, $rootScope) {
         return {
           templateUrl: 'addlayers/partials/addserver.tpl.html',
-          link: function(scope) {
+          link: function(scope, element) {
             scope.serverService = serverService;
             scope.type = 'WMS';
             scope.name = null;
@@ -34,6 +34,8 @@
               scope.type = 'WMS';
               scope.name = null;
               scope.url = null;
+
+              element.closest('.modal').modal('hide');
             };
 
             scope.getPattern = function() {

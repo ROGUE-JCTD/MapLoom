@@ -72,6 +72,29 @@
             element.mouseleave(function() {
               element.popover('hide');
             });
+
+            scope.$watch('layer', function() {
+              element.popover('destroy');
+              var content = '<div class="popover-label">' + $translate('server_name') + ':</div>' +
+                  '<div class="popover-value">' + safeName() + '</div>' +
+                  '<div class="popover-label">' + $translate('title') + ':</div>' +
+                  '<div class="popover-value">' + safeTitle() + '</div>' +
+                  '<div class="popover-label">' + $translate('workspace') + ':</div>' +
+                  '<div class="popover-value">' + safeWorkspace() + '</div>' +
+                  '<div class="popover-label">' + $translate('abstract') + ':</div>' +
+                  '<div class="popover-value">' + safeAbstract() + '</div>' +
+                  '<div class="popover-label">' + $translate('keywords') + ':</div>' +
+                  '<div class="popover-value">' + buildKeywords() + '</div>';
+
+              element.popover({
+                trigger: 'manual',
+                animation: false,
+                html: true,
+                content: content,
+                container: 'body',
+                title: scope.layer.title
+              });
+            });
           }
         };
       });
