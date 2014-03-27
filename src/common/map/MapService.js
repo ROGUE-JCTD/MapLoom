@@ -399,6 +399,12 @@
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
           server, ', opt_layerOrder: ', opt_layerOrder);
 
+      if (!goog.isDefAndNotNull(fullConfig)) {
+        dialogService_.error(translate_('map_layers'), translate_('load_layer_failed',
+            {'layer': minimalConfig.name}), [translate_('btn_ok')], false);
+        return;
+      }
+
       var layer = null;
       var nameSplit = null;
       var url = null;
@@ -751,22 +757,24 @@
                   addLayersForServer(serverIndex, serverNew);
                   if (numServers === 0) {
                     pulldownService_.serversLoading = false;
+                    // add servers corresponding to basemaps
+                    serverService_.configDefaultServers();
                   }
                 }, function(reject) {
                   numServers--;
                   if (numServers === 0) {
                     pulldownService_.serversLoading = false;
+                    // add servers corresponding to basemaps
+                    serverService_.configDefaultServers();
                   }
                   dialogService_.error(translate_('server'), translate_('load_server_failed',
-                      {'server': serverInfo.name, 'value': reject}));
+                      {'server': serverInfo.name, 'value': reject}), [translate_('btn_ok')], false);
                   console.log('====[ Error: Add server failed. ', reject);
                 });
           }
         });
 
         //TODO: once all servers were added, async, then add any missing ones.
-        // add servers corresponding to basemaps
-        serverService_.configDefaultServers();
       } else {
         console.log('invalid config object, cannot load map: ', service_.configuration);
         alert('invalid config object, cannot load map');

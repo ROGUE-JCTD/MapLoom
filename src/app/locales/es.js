@@ -245,7 +245,13 @@
     'unable_to_save_geometry': 'Error al guardar los cambios en la geometria de las siguientes razones: {{value}}',
     'unable_to_save_attributes': 'Error al guardar los cambios en los atributos de la siguiente razon: {{value}}',
     'unable_to_delete_feature': 'Error al eliminar la funcion por la siguiente razon: {{value}}',
-    'load_server_failed': 'No se pudo cargar el servidor {{server}} por la siguiente razon: {{value}}'
+    'load_server_failed': 'No se pudo cargar el servidor {{server}} por la siguiente razon: {{value}}',
+    'remove_server': 'Esta seguro que desea eliminar este servidor?',
+    'remove_layers_first': 'Este servidor tiene capas que se encuentran en el mapa, por favor retirarlos del primer' +
+        ' mapa.',
+    'edit_server': 'Esta seguro que desea editar este servidor?',
+    'load_layer_failed': 'Error al cargar la capa {{layer}}, no se añadirá esta capa al mapa y si guarda su' +
+        ' mapa no tendrá esta capa.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

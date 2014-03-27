@@ -30,6 +30,7 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
-  <button type="button" class="btn btn-primary" ng-disabled="!serverform.$valid" ng-click="addServer({'type': type, 'name': name, 'url': url})" translate="add_btn">Add</button>
+  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn" ng-click="reset()">Close</button>
+  <button ng-hide="editing" type="button" class="btn btn-primary" ng-disabled="!serverform.$valid" ng-click="addServer({'type': type, 'name': name, 'url': url})" translate="add_btn">Add</button>
+  <button ng-show="editing" type="button" class="btn btn-primary" ng-disabled="!serverform.$valid" ng-click="editServer()" translate="save_btn">Save</button>
 </div>

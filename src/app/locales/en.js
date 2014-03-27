@@ -242,7 +242,12 @@
     'unable_to_save_geometry': 'Failed to save the geometry changes for the following reason: {{value}}',
     'unable_to_save_attributes': 'Failed to save the attribute changes for the following reason: {{value}}',
     'unable_to_delete_feature': 'Failed to delete feature for the following reason: {{value}}',
-    'load_server_failed': 'Failed to load the server {{server}} for the following reason: {{value}}'
+    'load_server_failed': 'Failed to load the server {{server}} for the following reason: {{value}}',
+    'remove_server': 'Are you sure you want to remove this server?',
+    'remove_layers_first': 'This server has layers that are on the map, please remove them from the map first.',
+    'edit_server': 'Are you sure you want to edit this server?',
+    'load_layer_failed': 'Failed to load the layer {{layer}}, this layer will not be added to the map and if you' +
+        ' save your map it will not have this layer.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

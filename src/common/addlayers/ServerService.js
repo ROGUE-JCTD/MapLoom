@@ -13,6 +13,7 @@ var SERVER_SERVICE_USE_PROXY = true;
   var translate_ = null;
   var http_ = null;
   var q_ = null;
+  var serverCount = 0;
 
   module.provider('serverService', function() {
     this.$get = function($rootScope, $http, $q, $translate, dialogService) {
@@ -122,7 +123,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       service_.populateLayersConfig(server)
           .then(function(response) {
             // set the id. it should always resolve to the length
-            server.id = servers.length;
+            server.id = serverCount++;
             servers.push(server);
             rootScope_.$broadcast('server-added', server.id);
             deferredResponse.resolve(server);
@@ -133,24 +134,46 @@ var SERVER_SERVICE_USE_PROXY = true;
       return deferredResponse.promise;
     };
 
+    this.removeServer = function(id) {
+      var serverIndex = -1;
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].id === id) {
+          serverIndex = index;
+          break;
+        }
+      }
+      if (serverIndex > -1) {
+        var server = servers.splice(serverIndex, 1)[0];
+        rootScope_.$broadcast('server-removed', server);
+      }
+    };
+
     this.configDefaultServers = function() {
       var config = null;
       console.log('----- Configuring default servers.');
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_bingsource'))) {
-        config = {ptype: 'gxp_bingsource', name: 'Bing'};
+        config = {ptype: 'gxp_bingsource', name: 'Bing', defaultServer: true};
         service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_bingsource').defaultServer = true;
       }
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapquestsource'))) {
-        config = {ptype: 'gxp_mapquestsource', name: 'MapQuest'};
+        config = {ptype: 'gxp_mapquestsource', name: 'MapQuest', defaultServer: true};
         service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_mapquestsource').defaultServer = true;
       }
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_osmsource'))) {
-        config = {ptype: 'gxp_osmsource', name: 'OpenStreetMap'};
+        config = {ptype: 'gxp_osmsource', name: 'OpenStreetMap', defaultServer: true};
         service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_osmsource').defaultServer = true;
       }
+
+      service_.getServerLocalGeoserver().defaultServer = true;
     };
 
     this.getLayersConfig = function(serverId) {

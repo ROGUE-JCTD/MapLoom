@@ -3,14 +3,22 @@
   var module = angular.module('loom_add_server_directive', []);
 
   module.directive('loomAddServer',
-      function(serverService, $translate, $rootScope) {
+      function(serverService, $translate, $rootScope, dialogService, mapService) {
         return {
           templateUrl: 'addlayers/partials/addserver.tpl.html',
           link: function(scope, element) {
             scope.serverService = serverService;
-            scope.type = 'WMS';
-            scope.name = null;
-            scope.url = null;
+
+
+            scope.reset = function() {
+              scope.type = 'WMS';
+              scope.name = null;
+              scope.url = null;
+              scope.editing = false;
+              scope.server = null;
+            };
+
+            scope.reset();
 
             scope.addServer = function(info) {
               var config = {
@@ -30,11 +38,7 @@
               serverService.addServer(config).then(function(server) {
                 $rootScope.$broadcast('server-added-through-ui', server.id);
               });
-
-              scope.type = 'WMS';
-              scope.name = null;
-              scope.url = null;
-
+              scope.reset();
               element.closest('.modal').modal('hide');
             };
 
@@ -54,9 +58,62 @@
               }
             };
 
+            scope.editServer = function() {
+              scope.server.name = scope.name;
+              if (scope.server.url !== scope.url) {
+                var layers = mapService.getLayers(true, true);
+                for (var index = 0; index < layers.length; index++) {
+                  if (layers[index].get('metadata').serverId == scope.server.id) {
+                    dialogService.error($translate('server'),
+                        $translate('remove_layers_first'), [$translate('btn_ok')]);
+                    element.closest('.modal').modal('hide');
+                    scope.reset();
+                    return;
+                  }
+                }
+                dialogService.warn($translate('server'), $translate('edit_server'),
+                    [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                  switch (button) {
+                    case 0:
+                      scope.server.url = scope.url;
+                      serverService.populateLayersConfig(scope.server, true).then(function() {
+                        element.closest('.modal').modal('hide');
+                        scope.reset();
+                      });
+                      break;
+                  }
+                });
+              } else {
+                element.closest('.modal').modal('hide');
+                scope.reset();
+              }
+            };
+
+            var parentModal = element.closest('.modal');
+            var closeModal = function(event, element) {
+              if (parentModal[0] === element[0]) {
+                scope.reset();
+              }
+            };
+
+            scope.$on('modal-closed', closeModal);
+
             scope.$watch('type', function() {
               scope.name = null;
               scope.url = null;
+            });
+
+            scope.$on('server-edit', function(event, server) {
+              element.closest('.modal').modal('show');
+              scope.editing = true;
+              scope.name = server.name;
+              scope.url = server.url;
+              scope.server = server;
+              if (server.ptype == 'gxp_tmssource') {
+                scope.type = 'TMS';
+              } else if (server.ptype == 'gxp_wmscsource') {
+                scope.type = 'WMS';
+              }
             });
           }
         };

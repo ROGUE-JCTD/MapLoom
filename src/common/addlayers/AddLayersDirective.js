@@ -3,7 +3,7 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function($rootScope, serverService, mapService, geogitService, $translate) {
+      function($rootScope, serverService, mapService, geogitService, $translate, dialogService) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
@@ -93,6 +93,35 @@
                 if (server === serverService.getServerLocalGeoserver()) {
                   scope.setCurrentServerId(id);
                 }
+              }
+            });
+
+            scope.removeServer = function(id) {
+              var layers = mapService.getLayers(true, true);
+              for (var index = 0; index < layers.length; index++) {
+                if (layers[index].get('metadata').serverId == id) {
+                  dialogService.error($translate('server'),
+                      $translate('remove_layers_first'), [$translate('btn_ok')]);
+                  return;
+                }
+              }
+              dialogService.warn($translate('server'), $translate('remove_server'),
+                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                switch (button) {
+                  case 0:
+                    serverService.removeServer(id);
+                    break;
+                }
+              });
+            };
+
+            scope.editServer = function(server) {
+              $rootScope.$broadcast('server-edit', server);
+            };
+
+            scope.$on('server-removed', function(event, server) {
+              if (scope.currentServerId == server.id) {
+                scope.setCurrentServerId(serverService.getServerLocalGeoserver().id);
               }
             });
 

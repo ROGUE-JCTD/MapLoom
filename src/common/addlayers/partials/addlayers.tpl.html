@@ -8,7 +8,13 @@
             <span class="caret right-and-center"></span>
           </button>
           <ul id="server-list" class="dropdown-menu col-md-12">
-            <li ng-repeat="server in servers = serverService.getServers()"><a ng-click="setCurrentServerId(server.id)">{{server.name}}</a></li>
+            <li ng-repeat="server in servers = serverService.getServers()">
+              <a ng-click="setCurrentServerId(server.id)">{{server.name}}
+                <div ng-hide="server.defaultServer" stop-event='click' ng-click="removeServer(server.id)" class="glyphicon glyphicon-remove-circle pull-right"></div>
+                <div ng-hide="server.defaultServer" stop-event='click' ng-click="editServer(server)" class="glyphicon glyphicon-pencil pull-right server-edit-icon"></div>
+              </a>
+
+            </li>
             <li class="divider"></li>
             <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
           </ul>
