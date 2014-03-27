@@ -13,7 +13,7 @@
             scope.mapService = mapService;
             scope.featureManagerService = featureManagerService;
             scope.tableViewService = tableViewService;
-
+            scope.zooming = false;
             scope.toggleVisibility = function(layer) {
               layer.setVisible(!layer.get('visible'));
             };
@@ -29,6 +29,13 @@
                   case 1:
                     break;
                 }
+              });
+            };
+
+            scope.zoomToData = function(layer) {
+              scope.zooming = true;
+              mapService.zoomToLayerFeatures(layer).then(function() {
+                scope.zooming = false;
               });
             };
 

@@ -13,7 +13,6 @@ var SERVER_SERVICE_USE_PROXY = true;
   var translate_ = null;
   var http_ = null;
   var q_ = null;
-  var serverCount = 0;
 
   module.provider('serverService', function() {
     this.$get = function($rootScope, $http, $q, $translate, dialogService) {
@@ -123,7 +122,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       service_.populateLayersConfig(server)
           .then(function(response) {
             // set the id. it should always resolve to the length
-            server.id = serverCount++;
+            server.id = servers.length;
             servers.push(server);
             rootScope_.$broadcast('server-added', server.id);
             deferredResponse.resolve(server);

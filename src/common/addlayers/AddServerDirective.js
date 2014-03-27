@@ -8,7 +8,7 @@
           templateUrl: 'addlayers/partials/addserver.tpl.html',
           link: function(scope, element) {
             scope.serverService = serverService;
-
+            scope.loading = false;
 
             scope.reset = function() {
               scope.type = 'WMS';
@@ -34,12 +34,13 @@
               } else {
                 config.ptype = 'gxp_wmscsource';
               }
-
+              scope.loading = true;
               serverService.addServer(config).then(function(server) {
+                scope.loading = false;
                 $rootScope.$broadcast('server-added-through-ui', server.id);
+                scope.reset();
+                element.closest('.modal').modal('hide');
               });
-              scope.reset();
-              element.closest('.modal').modal('hide');
             };
 
             scope.getPattern = function() {
@@ -76,7 +77,9 @@
                   switch (button) {
                     case 0:
                       scope.server.url = scope.url;
+                      scope.loading = true;
                       serverService.populateLayersConfig(scope.server, true).then(function() {
+                        scope.loading = false;
                         element.closest('.modal').modal('hide');
                         scope.reset();
                       });

@@ -13,6 +13,7 @@
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
+  var q_ = null;
 
   var select = null;
   var draw = null;
@@ -119,7 +120,7 @@
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogitService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, $rootScope) {
+                         $cookieStore, $cookies, configService, dialogService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -132,6 +133,7 @@
       translate_ = $translate;
       rootScope_ = $rootScope;
       pulldownService_ = pulldownService;
+      q_ = $q;
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
@@ -253,8 +255,11 @@
     };
 
     this.zoomToLayerFeatures = function(layer) {
+      var deferredResponse = q_.defer();
+
       if (!goog.isDefAndNotNull(layer)) {
-        return;
+        deferredResponse.resolve();
+        return deferredResponse.promise;
       }
 
       if (!service_.layerIsEditable(layer)) {
@@ -308,15 +313,19 @@
               ol.proj.get('EPSG:900913'));
           var extent900913 = ol.extent.transform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
+          deferredResponse.resolve();
         }).error(function(data, status, headers, config) {
           console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
           service_.zoomToLayerExtent(layer);
+          deferredResponse.resolve();
         });
 
       } else {
         // dealing with an non vector layer
         service_.zoomToLayerExtent(layer);
+        deferredResponse.resolve();
       }
+      return deferredResponse.promise;
     };
 
     this.zoomToLayerExtent = function(layer) {

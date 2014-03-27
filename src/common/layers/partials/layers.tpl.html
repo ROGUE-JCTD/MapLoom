@@ -29,9 +29,10 @@
       <div class="panel-body layer-inner-panel">
         <div class="btn-group-wrap">
           <div class="btn-group">
-            <a type="button" ng-click="mapService.zoomToLayerFeatures(layer)" tooltip-append-to-body="true"
+            <a type="button" ng-click="zoomToData(layer)" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'zoom_to_data' | translate}}"
                class="btn btn-sm btn-default">
+              <div class="loom-loading" spinner-radius="16" spinner-hidden="!zooming"></div>
               <i class="glyphicon glyphicon-resize-small"></i>
             </a>
             <a type="button" ng-click="showTable(layer)" ng-show="layer.get('metadata').editable"
