@@ -99,16 +99,16 @@
               }
             };
 
-            scope.attrList = [];
-            scope.fillAttrList = function(layer) {
-              scope.attrList = [];
+            scope.getAttrList = function(layer) {
+              var attrList = [];
 
               for (var i in layer.get('metadata').schema) {
                 if (layer.get('metadata').schema[i]._type.search('gml:') > -1) {
                   continue;
                 }
-                scope.attrList.push(layer.get('metadata').schema[i]._name);
+                attrList.push(layer.get('metadata').schema[i]._name);
               }
+              return attrList;
             };
 
             scope.getLayerInfo = function(layer) {

@@ -576,6 +576,7 @@
       }
 
       console.log('-- MapService.addLayer, added: ', layer);
+      pulldownService_.showLayerPanel();
       return layer;
     };
 

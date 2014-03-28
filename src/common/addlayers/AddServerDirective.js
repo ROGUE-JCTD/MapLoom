@@ -40,6 +40,10 @@
                 $rootScope.$broadcast('server-added-through-ui', server.id);
                 scope.reset();
                 element.closest('.modal').modal('hide');
+              }, function() {
+                scope.loading = false;
+                scope.reset();
+                element.closest('.modal').modal('hide');
               });
             };
 
@@ -79,6 +83,10 @@
                       scope.server.url = scope.url;
                       scope.loading = true;
                       serverService.populateLayersConfig(scope.server, true).then(function() {
+                        scope.loading = false;
+                        element.closest('.modal').modal('hide');
+                        scope.reset();
+                      }, function() {
                         scope.loading = false;
                         element.closest('.modal').modal('hide');
                         scope.reset();
