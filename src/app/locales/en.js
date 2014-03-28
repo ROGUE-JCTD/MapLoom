@@ -247,7 +247,8 @@
     'remove_layers_first': 'This server has layers that are on the map, please remove them from the map first.',
     'edit_server': 'Are you sure you want to edit this server?',
     'load_layer_failed': 'Failed to load the layer {{layer}}, this layer will not be added to the map and if you' +
-        ' save your map it will not have this layer.'
+        ' save your map it will not have this layer.',
+    'no_attributes': 'There are no attributes to display.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

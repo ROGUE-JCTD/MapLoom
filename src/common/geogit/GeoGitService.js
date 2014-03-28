@@ -321,6 +321,7 @@
           if (goog.isDefAndNotNull(json.schema)) {
             forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
               schema[obj._name] = obj;
+              schema[obj._name].visible = true;
               if (goog.isDefAndNotNull(obj.simpleType)) {
                 schema[obj._name]._type = 'simpleType';
               }

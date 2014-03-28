@@ -27,18 +27,21 @@
   </div>
 
   <div ng-if="featureManagerService.getState() == 'feature'">
-    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics()">
+    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics() && featureManagerService.getSelectedLayer().get('metadata').schema[featureManagerService.getSelectedItemPics().name].visible">
       <carousel id="feature-info-box-carousel" interval="2000">
-        <slide ng-repeat="pic in featureManagerService.getSelectedItemPics()">
+        <slide ng-repeat="pic in featureManagerService.getSelectedItemPics().pics">
           <img ng-src="{{pic}}" style="margin: auto" ng-click="featureManagerService.showPics($index)">
         </slide>
       </carousel>
     </div>
 
     <div class="feature-info-box">
+      <span class="info-box-attribute" ng-show="!isShowingAttributes()" translate="no_attributes"></span>
       <span ng-repeat="prop in featureManagerService.getSelectedItemProperties()">
-        <span class="info-box-attribute">{{prop[0]}}</span>
-        <span class="info-box-attribute-value">{{prop[1]}}</span>
+        <div ng-show="featureManagerService.getSelectedLayer().get('metadata').schema[prop[0]].visible">
+          <span class="info-box-attribute">{{prop[0]}}</span>
+          <span class="info-box-attribute-value">{{prop[1]}}</span>
+        </div>
       </span>
     </div>
 

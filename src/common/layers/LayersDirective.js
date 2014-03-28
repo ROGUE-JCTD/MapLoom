@@ -18,6 +18,10 @@
               layer.setVisible(!layer.get('visible'));
             };
 
+            scope.toggleAttributeVisibility = function(attribute) {
+              attribute.visible = !attribute.visible;
+            };
+
             scope.removeLayer = function(layer) {
               dialogService.warn($translate('remove_layer'), $translate('sure_remove_layer'),
                   [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
@@ -106,7 +110,7 @@
                 if (layer.get('metadata').schema[i]._type.search('gml:') > -1) {
                   continue;
                 }
-                attrList.push(layer.get('metadata').schema[i]._name);
+                attrList.push(layer.get('metadata').schema[i]);
               }
               return attrList;
             };

@@ -187,14 +187,13 @@
         // -- update the selectedItemPics_
         var pics = null;
 
-        if (getItemType(selectedItem_) === 'feature' &&
-            goog.isDefAndNotNull(selectedItem_) &&
-            goog.isDefAndNotNull(selectedItem_.properties) &&
-            goog.isDefAndNotNull(selectedItem_.properties.fotos) &&
-            selectedItem_.properties.fotos !== '') {
-
-          pics = JSON.parse(selectedItem_.properties.fotos);
-
+        if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
+            goog.isDefAndNotNull(selectedItem_.properties)) {
+          if (goog.isDefAndNotNull(selectedItem_.properties.fotos) && selectedItem_.properties.fotos !== '') {
+            pics = {name: 'fotos', pics: JSON.parse(selectedItem_.properties.fotos)};
+          } else if (goog.isDefAndNotNull(selectedItem_.properties.photos) && selectedItem_.properties.photos !== '') {
+            pics = {name: 'photos', pics: JSON.parse(selectedItem_.properties.photos)};
+          }
           if (goog.isDefAndNotNull(pics) &&
               pics.length === 0) {
             pics = null;
@@ -204,24 +203,11 @@
         selectedItemPics_ = pics;
 
         if (selectedItemPics_ !== null) {
-          goog.array.forEach(selectedItemPics_, function(item, index) {
-            selectedItemPics_[index] = '/file-service/' + item;
+          goog.array.forEach(selectedItemPics_.pics, function(item, index) {
+            selectedItemPics_.pics[index] = '/file-service/' + item;
           });
 
           //console.log('selectedItemPics_: ', selectedItemPics_);
-        }
-
-
-        // -- update the selectedItemProperties_
-        var props = null;
-
-        if (getItemType(selectedItem_) === 'feature') {
-          props = [];
-          goog.object.forEach(selectedItem_.properties, function(v, k) {
-            if (k !== 'fotos' && k !== 'photos') {
-              props.push([k, v]);
-            }
-          });
         }
 
         // -- select the geometry if it is a feature, clear otherwise
@@ -233,6 +219,18 @@
               clickPosition_);
         } else {
           mapService_.clearEditLayer();
+        }
+
+        // -- update the selectedItemProperties_
+        var props = null;
+
+        if (getItemType(selectedItem_) === 'feature') {
+          props = [];
+          goog.object.forEach(selectedItem_.properties, function(v, k) {
+            if (k !== 'fotos' && k !== 'photos') {
+              props.push([k, v]);
+            }
+          });
         }
 
         selectedItemProperties_ = props;
@@ -320,7 +318,7 @@
           options.index = activeIndex;
         }
 
-        blueimp.Gallery(selectedItemPics_, options);
+        blueimp.Gallery(selectedItemPics_.pics, options);
       }
     };
 

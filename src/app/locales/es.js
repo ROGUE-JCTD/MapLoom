@@ -251,7 +251,8 @@
         ' mapa.',
     'edit_server': 'Esta seguro que desea editar este servidor?',
     'load_layer_failed': 'Error al cargar la capa {{layer}}, no se añadirá esta capa al mapa y si guarda su' +
-        ' mapa no tendrá esta capa.'
+        ' mapa no tendrá esta capa.',
+    'no_attributes': 'No hay ningun atributo para mostrar.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
