@@ -13,6 +13,7 @@ var SERVER_SERVICE_USE_PROXY = true;
   var translate_ = null;
   var http_ = null;
   var q_ = null;
+  var serverCount = 0;
 
   module.provider('serverService', function() {
     this.$get = function($rootScope, $http, $q, $translate, dialogService) {
@@ -53,6 +54,28 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       //console.log('----[ returning server id: ', id, ', server: ', server);
       return server;
+    };
+
+    this.getServerIndex = function(id) {
+
+      if (!goog.isDefAndNotNull(id)) {
+        throw ({
+          name: 'serverService',
+          level: 'High',
+          message: 'undefined server id.',
+          toString: function() {
+            return this.name + ': ' + this.message;
+          }
+        });
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].id === id) {
+          return index;
+        }
+      }
+
+      return -1;
     };
 
     this.getServerByPtype = function(ptype) {
@@ -122,7 +145,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       service_.populateLayersConfig(server)
           .then(function(response) {
             // set the id. it should always resolve to the length
-            server.id = servers.length;
+            server.id = serverCount++;
             servers.push(server);
             rootScope_.$broadcast('server-added', server.id);
             deferredResponse.resolve(server);

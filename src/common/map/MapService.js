@@ -642,10 +642,15 @@
 
       // -- save layers
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
+        var config = layer.get('metadata').config;
+        // Note: when a server is removed, its id diverges from the index. since in geonode's config object it is all
+        // index based, updating it to be the index in case the id is no longer the index
+        config.source = serverService_.getServerIndex(config.source);
+
         console.log('saving layer: ', layer);
         console.log('metadata: ', layer.get('metadata'));
         console.log('config: ', layer.get('metadata').config);
-        cfg.map.layers.push(layer.get('metadata').config);
+        cfg.map.layers.push(config);
       });
 
       console.log('--- save.cfg: ', cfg);
