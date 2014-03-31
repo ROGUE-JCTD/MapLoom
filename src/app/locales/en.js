@@ -248,7 +248,9 @@
     'edit_server': 'Are you sure you want to edit this server?',
     'load_layer_failed': 'Failed to load the layer {{layer}}, this layer will not be added to the map and if you' +
         ' save your map it will not have this layer.',
-    'no_attributes': 'There are no attributes to display.'
+    'no_attributes': 'There are no attributes to display.',
+    'true': 'True',
+    'false': 'False'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

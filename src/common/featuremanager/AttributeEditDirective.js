@@ -42,6 +42,10 @@
               $('#attribute-edit-dialog').modal('toggle');
             });
 
+            scope.translate = function(value) {
+              return $translate(value);
+            };
+
             var reset = function() {
               scope.featureManagerService = null;
               scope.properties = null;

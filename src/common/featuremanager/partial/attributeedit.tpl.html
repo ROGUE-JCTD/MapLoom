@@ -44,11 +44,11 @@
             </button>
             <ul class="dropdown-menu">
               <li ng-repeat="enum in prop.enum">
-                <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
+                <a ng-click="selectValue(prop, $index)" translate="{{enum._value}}"></a>
               </li>
             </ul>
           </div>
-          <input ng-model="prop[1]" type="text" class="form-control" disabled/>
+          <input value="{{translate(prop[1])}}" type="text" class="form-control" disabled/>
         </div>
         <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
       </div>
