@@ -213,7 +213,6 @@
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
-          console.log(selectedItem_);
           selectedLayer_ = this.getSelectedItemLayer().layer;
           mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
           position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
@@ -615,7 +614,6 @@
       }
       var returnResponse = q_.defer();
       deferredResponse.promise.then(function(resolve) {
-        console.log('endGeometryEdit');
         rootScope_.$broadcast('endGeometryEdit', save);
         mapService_.removeSelect();
         mapService_.removeModify();

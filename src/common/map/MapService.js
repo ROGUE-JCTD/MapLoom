@@ -796,7 +796,6 @@
                   }
                 }, function(reject) {
                   orderedUniqueLength--;
-                  console.log('Server Failed To Be Added');
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     // add servers corresponding to basemaps
@@ -806,8 +805,6 @@
                       {'server': serverInfo.name, 'value': reject}), [translate_('btn_ok')], false);
                   console.log('====[ Error: Add server failed. ', reject);
                 });
-          } else {
-            console.log('Server undefined');
           }
         });
 
