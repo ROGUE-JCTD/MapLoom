@@ -4,7 +4,7 @@
     'layer_type_not_supported': 'Layer type not supported',
     'notifications_tab': 'Notifications',
     'no_notifications': 'No notifications',
-    'map_layers': 'Map Layers',
+    'map_layers': 'Layers',
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
     'remove_layer': 'Remove Layer',

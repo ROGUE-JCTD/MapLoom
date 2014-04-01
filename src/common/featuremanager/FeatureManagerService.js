@@ -213,6 +213,7 @@
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
+          console.log(selectedItem_);
           selectedLayer_ = this.getSelectedItemLayer().layer;
           mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
           position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
@@ -441,8 +442,10 @@
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request
             featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-                mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
-                newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
+                mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+                '<gml:coordinates decimal="." cs="," ts=" ">' +
+                newPos[0] + ',' + newPos[1] +
+                '</gml:coordinates></gml:Point>';
             var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
             mapService_.map.beforeRender(pan);
             mapService_.map.getView().getView2D().setCenter(newPos);
@@ -582,9 +585,18 @@
         // Transform the geometry so that we can get the new Decimal Degrees to display in the info-box
         var coords = null;
         var newPos;
-        if (feature.getGeometry().getType().toLowerCase() == 'point') {
+        var transformedGeom;
+        if (feature.getGeometry().getType().toLowerCase() == 'geometrycollection') {
+          coords = feature.getGeometry().getGeometries();
+          transformedGeom = transformGeometry({type: 'multigeometry', coordinates: coords},
+              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+          coords = [];
+          for (index = 0; index < transformedGeom.getGeometries().length; index++) {
+            coords.push(transformedGeom.getGeometries()[index].getCoordinates());
+          }
+        } else {
           coords = feature.getGeometry().getCoordinates();
-          var transformedGeom = transformGeometry({type: 'point', coordinates: coords},
+          transformedGeom = transformGeometry({type: feature.getGeometry().getType(), coordinates: coords},
               mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
           coords = transformedGeom.getCoordinates();
         }
@@ -603,6 +615,7 @@
       }
       var returnResponse = q_.defer();
       deferredResponse.promise.then(function(resolve) {
+        console.log('endGeometryEdit');
         rootScope_.$broadcast('endGeometryEdit', save);
         mapService_.removeSelect();
         mapService_.removeModify();
@@ -654,8 +667,10 @@
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request
             var featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-                mapService_.map.getView().getView2D().getProjection().getCode() + '"><gml:pos>' +
-                newPos[0] + ' ' + newPos[1] + '</gml:pos></gml:Point>';
+                mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+                '<gml:coordinates decimal="." cs="," ts=" ">' +
+                newPos[0] + ',' + newPos[1] +
+                '</gml:coordinates></gml:Point>';
             propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
                 '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
             var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
@@ -840,7 +855,13 @@
           selectedItemProperties_ = properties;
         }
         if (goog.isDefAndNotNull(coords)) {
-          selectedItem_.geometry.coordinates = coords;
+          if (selectedItem_.geometry.type.toLowerCase() == 'geometrycollection') {
+            for (var index = 0; index < coords.length; index++) {
+              selectedItem_.geometry.geometries[index].coordinates = coords[index];
+            }
+          } else {
+            selectedItem_.geometry.coordinates = coords;
+          }
         }
         if (goog.isDefAndNotNull(newPos)) {
           service_.show(selectedItem_, newPos);

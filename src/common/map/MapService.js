@@ -707,6 +707,7 @@
         // duplicate server to point to the existing server. geonode passes in duplicate servers when creating
         // a map from a layer. Note that this array can end up with holes.
         var orderedUnique = new Array(ordered.length);
+        var orderedUniqueLength = 0;
         goog.array.forEach(ordered, function(serverInfo, key, obj) {
 
           if (goog.isDefAndNotNull(serverInfo.url)) {
@@ -740,10 +741,12 @@
               }
             } else {
               orderedUnique[key] = serverInfo;
+              orderedUniqueLength++;
             }
           } else {
             // basemaps will have servers without a url
             orderedUnique[key] = serverInfo;
+            orderedUniqueLength++;
           }
         });
 
@@ -778,24 +781,23 @@
             }
           });
         };
-
-        var numServers = orderedUnique.length;
         pulldownService_.serversLoading = true;
         goog.array.forEach(orderedUnique, function(serverInfo, serverIndex, obj) {
           // if there was a duplicate server, an index in the ordered array will be undefined
           if (goog.isDefAndNotNull(serverInfo)) {
             serverService_.addServer(serverInfo)
                 .then(function(serverNew) {
-                  numServers--;
+                  orderedUniqueLength--;
                   addLayersForServer(serverIndex, serverNew);
-                  if (numServers === 0) {
+                  if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }
                 }, function(reject) {
-                  numServers--;
-                  if (numServers === 0) {
+                  orderedUniqueLength--;
+                  console.log('Server Failed To Be Added');
+                  if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
@@ -804,6 +806,8 @@
                       {'server': serverInfo.name, 'value': reject}), [translate_('btn_ok')], false);
                   console.log('====[ Error: Add server failed. ', reject);
                 });
+          } else {
+            console.log('Server undefined');
           }
         });
 
@@ -917,38 +921,53 @@
     };
 
     this.addSelect = function() {
-      select = new ol.interaction.Select({style: styleFunc});
-      this.map.addInteraction(select);
+      if (!goog.isDefAndNotNull(select)) {
+        select = new ol.interaction.Select({style: styleFunc});
+        this.map.addInteraction(select);
+      }
     };
 
     this.addDraw = function(geometryType) {
-      draw = new ol.interaction.Draw({source: this.editLayer.getSource(), type: geometryType});
-      this.map.addInteraction(draw);
+      if (!goog.isDefAndNotNull(draw)) {
+        draw = new ol.interaction.Draw({source: this.editLayer.getSource(), type: geometryType});
+        this.map.addInteraction(draw);
+      }
     };
 
     this.addModify = function() {
-      modify = new ol.interaction.Modify({features: select.getFeatures(), style: styleFunc});
-      this.map.addInteraction(modify);
+      if (!goog.isDefAndNotNull(modify)) {
+        modify = new ol.interaction.Modify({features: select.getFeatures(), style: styleFunc});
+        this.map.addInteraction(modify);
+      }
     };
 
     this.removeSelect = function() {
       this.map.removeInteraction(select);
+      select = null;
     };
 
     this.removeDraw = function() {
       this.map.removeInteraction(draw);
+      draw = null;
     };
 
     this.removeModify = function() {
       this.map.removeInteraction(modify);
+      modify = null;
     };
 
     this.hasSelectedFeature = function() {
-      return select.getFeatures().getLength() > 0;
+      if (goog.isDefAndNotNull(select)) {
+        return select.getFeatures().getLength() > 0;
+      }
+      return false;
     };
 
     this.getSelectedFeatures = function() {
-      return select.getFeatures();
+      if (goog.isDefAndNotNull(select)) {
+        return select.getFeatures();
+      }
+      return [];
     };
   });
 

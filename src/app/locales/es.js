@@ -4,7 +4,7 @@
     'layer_type_not_supported': 'El tipo de capa no soportado',
     'notifications_tab': 'Notificaciones',
     'no_notifications': 'Ninguna notificación',
-    'map_layers': 'Capas de Mapa',
+    'map_layers': 'Capas',
     'add_layer_btn': 'Añadir Capa',
     'add_layers': 'Añadir Capas',
     'remove_layer': 'Retirar la Capa',
