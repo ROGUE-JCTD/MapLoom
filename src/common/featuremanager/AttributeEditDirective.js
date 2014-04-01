@@ -16,25 +16,19 @@
               goog.array.forEach(properties, function(property, index, arr) {
                 if (goog.isDefAndNotNull(attributeTypes)) {
                   var prop;
-                  if (goog.isDefAndNotNull(attributeTypes[property[0]])) {
-                    if (attributeTypes[property[0]]._type.search('gml:') === -1) {
-                      prop = goog.object.clone(property);
-                      prop.type = attributeTypes[prop[0]]._type;
-                      if (prop.type === 'simpleType') {
-                        prop.enum =
-                            attributeTypes[prop[0]].simpleType.restriction.enumeration;
-                      } else if (prop.type === 'xsd:boolean') {
-                        prop.enum = [
-                          {_value: 'true'},
-                          {_value: 'false'}
-                        ];
-                      }
-                      prop.valid = true;
-                      scope.properties.push(prop);
-                    }
-                  } else if (goog.isDefAndNotNull(property[0])) {
+                  if (goog.isDefAndNotNull(attributeTypes[property[0]]) &&
+                      attributeTypes[property[0]]._type.search('gml:') === -1) {
                     prop = goog.object.clone(property);
-                    prop.type = 'xsd:string';
+                    prop.type = attributeTypes[prop[0]]._type;
+                    if (prop.type === 'simpleType') {
+                      prop.enum =
+                          attributeTypes[prop[0]].simpleType.restriction.enumeration;
+                    } else if (prop.type === 'xsd:boolean') {
+                      prop.enum = [
+                        {_value: 'true'},
+                        {_value: 'false'}
+                      ];
+                    }
                     prop.valid = true;
                     scope.properties.push(prop);
                   }

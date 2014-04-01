@@ -919,7 +919,7 @@
 
     this.addSelect = function() {
       if (!goog.isDefAndNotNull(select)) {
-        select = new ol.interaction.Select({style: styleFunc});
+        select = new ol.interaction.Select({style: styleFunc, layer: this.editLayer});
         this.map.addInteraction(select);
       }
     };

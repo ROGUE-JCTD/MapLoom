@@ -354,6 +354,7 @@
               dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
                   [translate_('btn_ok')], false);
             } else {
+              exclusiveModeService_.addMode = false;
               exclusiveModeService_.endExclusiveMode();
               mapService_.removeDraw();
               mapService_.removeSelect();
@@ -403,6 +404,7 @@
               service_.startAttributeEditing(true);
             }
           }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
+            exclusiveModeService_.addMode = false;
             exclusiveModeService_.endExclusiveMode();
             mapService_.removeDraw();
             mapService_.removeSelect();
@@ -535,8 +537,9 @@
               });
             }
           }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
-            exclusiveModeService_.endExclusiveMode();
-            service_.endGeometryEditing(false);
+            service_.endGeometryEditing(false).then(function(resolve) {
+              exclusiveModeService_.endExclusiveMode();
+            });
           }), geometryType);
       mapService_.addSelect();
       mapService_.addModify();
