@@ -331,18 +331,30 @@
     this.zoomToLayerExtent = function(layer) {
       var metadata = layer.get('metadata');
 
-      var extent900913 = layer.getSource().getExtent();
-      if (!goog.isDefAndNotNull(extent900913) && goog.isDefAndNotNull(metadata) &&
-          goog.isDefAndNotNull(metadata.bbox.crs)) {
-        extent900913 = metadata.bbox.extent;
-        var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
-            service_.map.getView().getView2D().getProjection());
-        extent900913 = ol.extent.transform(extent900913, transform);
-      }
+      var shrinkExtent = function(extent, shrink) {
+        var newExtent = extent;
+        if (!goog.isDefAndNotNull(extent) && goog.isDefAndNotNull(metadata) &&
+            goog.isDefAndNotNull(metadata.bbox.crs)) {
+          newExtent = goog.array.clone(metadata.bbox.extent);
+          var yDelta = (newExtent[3] - newExtent[1]) * shrink;
+          var xDelta = (newExtent[2] - newExtent[0]) * shrink;
+          newExtent[0] += xDelta;
+          newExtent[1] += yDelta;
+          newExtent[2] -= xDelta;
+          newExtent[3] -= yDelta;
+          var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
+              service_.map.getView().getView2D().getProjection());
+          newExtent = ol.extent.transform(newExtent, transform);
+        }
+        return newExtent;
+      };
+
+      var extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+
       if (goog.isDefAndNotNull(extent900913)) {
         for (var index = 0; index < extent900913.length; index++) {
           if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
-            extent900913 = null;
+            extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
             break;
           }
         }
@@ -487,7 +499,8 @@
             keywords: fullConfig.KeywordList,
             workspace: nameSplit.length > 1 ? nameSplit[0] : '',
             editable: false,
-            bbox: fullConfig.BoundingBox[0]
+            bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
+            projection: fullConfig.SRS
           },
           source: new ol.source.TileWMS({
             url: server.url,
@@ -568,6 +581,11 @@
           this.map.addLayer(layer);
         } else {
           this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
+        }
+
+        if (goog.isDefAndNotNull(meta.projection)) {
+          // ping proj4js to pre-download projection if we don't have it
+          ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
 
         rootScope_.$broadcast('layer-added');
