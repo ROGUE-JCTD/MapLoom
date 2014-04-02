@@ -110,21 +110,22 @@
             scope.$on('modal-closed', closeModal);
 
             scope.$watch('type', function() {
-              scope.name = null;
-              scope.url = null;
+              if (!scope.editing) {
+                scope.url = null;
+              }
             });
 
             scope.$on('server-edit', function(event, server) {
               element.closest('.modal').modal('show');
-              scope.editing = true;
-              scope.name = server.name;
-              scope.url = server.url;
-              scope.server = server;
               if (server.ptype == 'gxp_tmssource') {
                 scope.type = 'TMS';
               } else if (server.ptype == 'gxp_wmscsource') {
                 scope.type = 'WMS';
               }
+              scope.editing = true;
+              scope.name = server.name;
+              scope.url = server.url;
+              scope.server = server;
             });
           }
         };

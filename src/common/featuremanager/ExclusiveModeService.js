@@ -87,8 +87,8 @@
 
     this.addToFeature = function() {
       if (!this.addMode) {
-        mapService_.removeModify();
         mapService_.removeSelect();
+        mapService_.removeModify();
         if (geometryType_.toLowerCase() == 'multigeometry' || geometryType_.toLowerCase() == 'geometrycollection') {
           $('#drawSelectDialog').modal('toggle');
         } else {
