@@ -594,7 +594,8 @@
               mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
           coords = [];
           for (index = 0; index < transformedGeom.getGeometries().length; index++) {
-            coords.push(transformedGeom.getGeometries()[index].getCoordinates());
+            coords.push({coordinates: transformedGeom.getGeometries()[index].getCoordinates(),
+              type: transformedGeom.getGeometries()[index].getType()});
           }
         } else {
           coords = feature.getGeometry().getCoordinates();
@@ -857,9 +858,7 @@
         }
         if (goog.isDefAndNotNull(coords)) {
           if (selectedItem_.geometry.type.toLowerCase() == 'geometrycollection') {
-            for (var index = 0; index < coords.length; index++) {
-              selectedItem_.geometry.geometries[index].coordinates = coords[index];
-            }
+            selectedItem_.geometry.geometries = coords;
           } else {
             selectedItem_.geometry.coordinates = coords;
           }
