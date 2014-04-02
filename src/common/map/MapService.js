@@ -500,7 +500,7 @@
             workspace: nameSplit.length > 1 ? nameSplit[0] : '',
             editable: false,
             bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
-            projection: fullConfig.SRS
+            projection: (goog.isArray(fullConfig.CRS) ? fullConfig.CRS[0] : fullConfig.CRS)
           },
           source: new ol.source.TileWMS({
             url: server.url,
