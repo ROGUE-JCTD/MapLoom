@@ -11,6 +11,11 @@
       rootScope_ = $rootScope;
       modal_ = $modal;
       q_ = $q;
+      $(document).keydown(function(objEvent) {
+        if (objEvent.keyCode == 9 && numModals > 0) {  //tab pressed
+          objEvent.preventDefault(); // stops its action
+        }
+      });
       return this;
     };
 
