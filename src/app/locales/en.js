@@ -28,7 +28,7 @@
     'synchronization_success': 'The repositories have been synchronized.',
     'add_sync': 'Add Sync',
     'merge': 'Merge',
-    'config': 'Config',
+    'config': 'Remote Config',
     'repo': 'Repo',
     'remote': 'Remote',
     'new_remote': 'New Remote',

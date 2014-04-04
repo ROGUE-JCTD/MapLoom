@@ -28,7 +28,7 @@
     'synchronization_success': 'Los repositorios se han sincronizado.',
     'add_sync': 'Añadir Sinc',
     'merge': 'Fusionar',
-    'config': 'Configuración',
+    'config': 'Configuracion Remota',
     'repo': 'Repo',
     'remote': 'Remoto',
     'new_remote': 'Nuevo Remoto',
