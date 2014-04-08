@@ -958,12 +958,17 @@
             '<gml:coordinates decimal="." cs="," ts=" ">' + buildCoordString(geometry.getCoordinates().toString()) +
             '</gml:coordinates></gml:LineString>';
       } else if (geometryType == 'polygon') {
-        for (var coordIndex = 0; coordIndex < geometry.getCoordinates().length; coordIndex++) {}
         featureGML += '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
             mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
             '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
-            buildCoordString(geometry.getCoordinates().toString()) + '</gml:coordinates>' +
-            '</gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>';
+            buildCoordString(geometry.getCoordinates()[0].toString()) + '</gml:coordinates>' +
+            '</gml:LinearRing></gml:outerBoundaryIs>';
+        for (index = 1; index < geometry.getCoordinates().length; index++) {
+          featureGML += '<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+              buildCoordString(geometry.getCoordinates()[index].toString()) + '</gml:coordinates>' +
+              '</gml:LinearRing></gml:innerBoundaryIs>';
+        }
+        featureGML += '</gml:Polygon>';
       } else if (geometryType == 'multipoint') {
         featureGML += '<gml:MultiPoint xmlns:gml="http://www.opengis.net/gml" srsName="' +
             mapService_.map.getView().getView2D().getProjection().getCode() + '">';
@@ -977,7 +982,7 @@
         featureGML += '<gml:MultiLineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
             mapService_.map.getView().getView2D().getProjection().getCode() + '">';
         for (index = 0; index < geometry.getCoordinates().length; index++) {
-          featureGML += '<gml:lineMember><gml:LineString>' + '<gml:coordinates decimal="." cs="," ts=" ">' +
+          featureGML += '<gml:lineMember><gml:LineString><gml:coordinates decimal="." cs="," ts=" ">' +
               buildCoordString(geometry.getCoordinates()[index].toString()) +
               '</gml:coordinates></gml:LineString></gml:lineMember>';
         }
@@ -988,8 +993,14 @@
         for (index = 0; index < geometry.getCoordinates().length; index++) {
           featureGML += '<gml:polygonMember><gml:Polygon>' +
               '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
-              buildCoordString(geometry.getCoordinates()[index].toString()) + '</gml:coordinates>' +
-              '</gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></gml:polygonMember>';
+              buildCoordString(geometry.getCoordinates()[index][0].toString()) + '</gml:coordinates>' +
+              '</gml:LinearRing></gml:outerBoundaryIs>';
+          for (var innerIndex = 1; innerIndex < geometry.getCoordinates()[index].length; innerIndex++) {
+            featureGML += '<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+                buildCoordString(geometry.getCoordinates()[index][innerIndex].toString()) + '</gml:coordinates>' +
+                '</gml:LinearRing></gml:innerBoundaryIs>';
+          }
+          featureGML += '</gml:Polygon></gml:polygonMember>';
         }
         featureGML += '</gml:MultiPolygon>';
       }

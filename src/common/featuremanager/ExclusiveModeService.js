@@ -105,6 +105,13 @@
       }
     };
 
+    /* These functions were adapted from openstreetmap's Quadrilateralise.as file located on GitHub at
+     * https://github.com/openstreetmap/potlatch2/blob/master/net/systemeD/potlatch2/tools/Quadrilateralise.as
+     *
+     * The purpose of these functions is to provide a way to take an existing polygon and modify it so that its corners
+     * consist of only right angles.
+     */
+
     // helper function to find the magnitude or length of the point
     var magnitude = function(point) {
       return Math.sqrt((point[0] * point[0]) + (point[1] * point[1]));
@@ -185,8 +192,7 @@
     // Updates the polygon with the new points
     var updatePolygon = function(feature) {
       var feat = new ol.Feature();
-      points.push(points[0]);
-      feat.setGeometry(new ol.geom.Polygon([points]));
+      feat.setGeometry(new ol.geom.Polygon(points));
       mapService_.getSelectedFeatures().pop();
       mapService_.editLayer.getSource().clear();
       mapService_.editLayer.getSource().addFeature(feat);
@@ -194,8 +200,7 @@
 
     var updateMultiPolygon = function(feature) {
       var feat = new ol.Feature();
-      points.push(points[0]);
-      feat.setGeometry(new ol.geom.MultiPolygon([[points]]));
+      feat.setGeometry(new ol.geom.MultiPolygon([points]));
       service_.removeFromFeature();
       mapService_.editLayer.getSource().addFeature(feat);
     };
@@ -204,35 +209,44 @@
       if (mapService_.hasSelectedFeature()) {
         var feature = mapService_.getSelectedFeatures().getAt(0);
         // check for multipolygon or polygon
+        var coordinates;
         if (feature.getGeometry().getType().search(/Multi/g) > -1) {
-          points = feature.getGeometry().getCoordinates()[0][0];
+          coordinates = feature.getGeometry().getCoordinates()[0];
         } else {
-          points = feature.getGeometry().getCoordinates()[0];
+          coordinates = feature.getGeometry().getCoordinates();
         }
-        points.pop();
 
-        // number of steps that it will try to get close to orthogonal
-        var steps = 1000;
-        // threshold for being considered close enough
-        var tolerance = 1.0e-8;
-        // the inital score of the polygon
-        var score = totalScore();
+        for (var ringIndex = 0; ringIndex < coordinates.length; ringIndex++) {
+          points = coordinates[ringIndex];
+          points.pop();
 
-        for (var index = 0; index < steps; index++) {
-          step();
-          var newScore = totalScore();
-          // if the newScore is greater than the old score then we failed
-          if (newScore > score) {
-            dialogService_.open(translate_('right_angles'), translate_('right_angles_failed'),
-                [translate_('btn_ok')], false);
-            return;
+          // number of steps that it will try to get close to orthogonal
+          var steps = 1000;
+          // threshold for being considered close enough
+          var tolerance = 1.0e-8;
+          // the inital score of the polygon
+          var score = totalScore();
+
+          for (var index = 0; index < steps; index++) {
+            step();
+            var newScore = totalScore();
+            // if the newScore is greater than the old score then we failed
+            if (newScore > score) {
+              dialogService_.open(translate_('right_angles'), translate_('right_angles_failed'),
+                  [translate_('btn_ok')], false);
+              return;
+            }
+            score = newScore;
+            // if the score is less than the tolerance then we succeeded
+            if (score < tolerance) {
+              break;
+            }
           }
-          score = newScore;
-          // if the score is less than the tolerance then we succeeded
-          if (score < tolerance) {
-            break;
-          }
+          points.push(points[0]);
+          coordinates[ringIndex] = points;
         }
+
+        points = coordinates;
         if (feature.getGeometry().getType().search(/Multi/g) > -1) {
           updateMultiPolygon(feature);
         } else {

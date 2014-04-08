@@ -212,8 +212,6 @@
     };
 
     this.zoomToExtent = function(extent, animate, map, scale) {
-      console.log('---- MapService.zoomToExtent. extent: ', extent);
-
       if (!goog.isDefAndNotNull(animate)) {
         animate = true;
       }
@@ -236,14 +234,15 @@
           extent[1] -= height * scale;
           extent[2] += width * scale;
           extent[3] += height * scale;
-          for (var index = 0; index < extent.length; index++) {
-            if (isNaN(parseFloat(extent[index])) || !isFinite(extent[index])) {
-              extent = view.getProjection().getExtent();
-              break;
-            }
+        }
+        for (var index = 0; index < extent.length; index++) {
+          if (isNaN(parseFloat(extent[index])) || !isFinite(extent[index])) {
+            extent = view.getProjection().getExtent();
+            break;
           }
         }
       }
+      console.log('---- MapService.zoomToExtent. extent: ', extent);
 
       if (animate) {
         var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
