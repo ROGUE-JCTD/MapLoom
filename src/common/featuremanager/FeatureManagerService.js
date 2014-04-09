@@ -99,6 +99,18 @@
       return enabled_;
     };
 
+    this.setSelectedItem = function(item) {
+      selectedItem_ = item;
+    };
+
+    this.setSelectedItemProperties = function(properties) {
+      selectedItemProperties_ = properties;
+    };
+
+    this.setSelectedLayer = function(layer) {
+      selectedLayer_ = layer;
+    };
+
     this.hide = function() {
       selectedItem_ = null;
       selectedItemPics_ = null;

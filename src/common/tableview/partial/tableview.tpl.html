@@ -2,28 +2,36 @@
   <input id="filter-text" type="text">
   <button id="filter-button" ng-click="filterTable()">{{'filter_table' | translate}}</button>
   <button ng-click="clearFilter()">{{'clear_table_filter' | translate}}</button>
-  <div class="panel panel-default">
+  <form editable-form name="tableviewform" onaftersave="saveTable()">
+    <div class="panel panel-default">
       <table class="table-hover table-striped sortable">
         <thead>
-        <tr>
-          <th>{{'feature_id' | translate}}</th>
-          <th ng-repeat="attr in attributes">{{attr}}</th>
-        </tr>
+          <tr>
+            <th>{{'feature_id' | translate}}</th>
+            <th ng-repeat="attr in attributes">{{attr}}</th>
+          </tr>
         </thead>
-
         <tr ng-repeat="feature in featureList" ng-show="feature.visible">
-          <td ng-repeat="property in feature.properties track by $index">
-            {{property}}
-          </td>
+            <td ng-repeat="property in feature.properties track by $index">
+                <div ng-switch on="property.restriction">
+                  <span ng-switch-when="" editable-text="property.value" e-form="tableviewform"
+                        e-style="width:160px">{{property.value}}</span>
+                  <span ng-switch-when="noEdit">{{property.value}}</span>
+                  <div ng-switch-when="datetime">
+                      <span ng-if="!tableviewform.$visible">{{property['value'] | date:"MM/dd/yyyy @ h:mma"}}</span>
+                      <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="property" date-key="'value'" default-date="false" seperate-time="false"></datetimepicker>
+                  </div>
+                  <span ng-switch-default editable-select="property.value"
+                        e-form="tableviewform" e-style="width:160px" e-ng-options="r._value as r._value for r in property.restriction">{{property.value}}</span>
+                </div>
+            </td>
         </tr>
-
       </table>
-	  <!--<button type="submit" class="btn btn-default" ng-show="tableviewform.$visible">Save</button>-->
-  </div>
-</div>
-<div class="modal-footer">
-    <!--<button type="button" class="btn btn-default" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">Edit Table</button>-->
-    <!--<button type="button" class="btn btn-default" ng-click="tableviewform.$hide()" ng-disabled="!tableviewform.$visible">Stop Editing</button>-->
-    <button type="button" class="btn btn-default" ng-click="toggleWordWrap()">{{'word_wrap' | translate}}</button>
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate}}</button>
+    </div>
+    <button type="submit" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">Save</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">Edit Table</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">Cancel Edit</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()">{{'word_wrap' | translate}}</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
+  </form>
 </div>

@@ -7,10 +7,12 @@
     'ui.router',
     'pascalprecht.translate',
     'loom_translations_en',
-    'loom_translations_es'
+    'loom_translations_es',
+    'xeditable'
   ]);
 
-  module.run(function run() {
+  module.run(function run(editableOptions) {
+    editableOptions.theme = 'bs3';
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,

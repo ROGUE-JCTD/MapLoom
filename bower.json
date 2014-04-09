@@ -6,7 +6,7 @@
     "bootstrap": "3.0.0",
     "angular": "1.2.0-rc.2",
     "angular-mocks": "1.2.0-rc.2",
-    "angular-bootstrap": "0.6.0",
+    "angular-bootstrap": "0.10.0",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
     "proj4js": "./bower-local/proj4js",
@@ -18,7 +18,8 @@
     "blueimp-bootstrap-image-gallery": "3.0.1",
     "bootstrap3-datetimepicker": "~2.1.11",
     "bootstrap-sortable":"*",
-    "x2js": "*"
+    "x2js": "*",
+    "angular-xeditable": "0.1.8"
   },
   "resolutions": {
     "angular": "1.2.0-rc.2"
