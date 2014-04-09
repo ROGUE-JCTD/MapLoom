@@ -28,9 +28,9 @@
         </tr>
       </table>
     </div>
-    <button type="submit" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">Save</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">Edit Table</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">Cancel Edit</button>
+    <button type="submit" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">{{'edit_attributes' | translate}}</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
       <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()">{{'word_wrap' | translate}}</button>
       <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
   </form>

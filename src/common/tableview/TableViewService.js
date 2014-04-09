@@ -80,7 +80,7 @@
         };
 
         if (json.FeatureCollection.member) {
-          if (json.FeatureCollection.member && json.FeatureCollection.member.length > 1) {
+          if (json.FeatureCollection.member.length > 1) {
             for (var feat in json.FeatureCollection.member) {
               feature = {visible: true, properties: []};
               jsonFeature = json.FeatureCollection.member[feat][index];
