@@ -436,6 +436,7 @@
             name: minimalConfig.name,
             title: fullConfig.Title
           },
+          visible: minimalConfig.visibility,
           source: new ol.source.OSM()
         });
       } else if (server.ptype === 'gxp_bingsource') {
@@ -457,6 +458,7 @@
             name: minimalConfig.name,
             title: fullConfig.Title
           },
+          visible: minimalConfig.visibility,
           source: new ol.source.BingMaps(sourceParams)
         });
       } else if (server.ptype === 'gxp_googlesource') {
@@ -472,6 +474,7 @@
               name: minimalConfig.name,
               title: fullConfig.Title
             },
+            visible: minimalConfig.visibility,
             source: source
           });
         } else {
@@ -499,8 +502,10 @@
             workspace: nameSplit.length > 1 ? nameSplit[0] : '',
             editable: false,
             bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
-            projection: (goog.isArray(fullConfig.CRS) ? fullConfig.CRS[0] : fullConfig.CRS)
+            projection: (goog.isArray(fullConfig.CRS) ? fullConfig.CRS[0] : fullConfig.CRS),
+            savedSchema: minimalConfig.schema
           },
+          visible: minimalConfig.visibility,
           source: new ol.source.TileWMS({
             url: server.url,
             params: {
@@ -533,6 +538,7 @@
             editable: false,
             bbox: fullConfig.BoundingBox[0]
           },
+          visible: minimalConfig.visibility,
           source: new ol.source.XYZ({
             tileUrlFunction: function(coordinate) {
               if (coordinate == null) {
@@ -663,7 +669,13 @@
         // Note: when a server is removed, its id diverges from the index. since in geonode's config object it is all
         // index based, updating it to be the index in case the id is no longer the index
         config.source = serverService_.getServerIndex(config.source);
-
+        config.visibility = layer.get('visible');
+        if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
+          config.schema = [];
+          for (var i in layer.get('metadata').schema) {
+            config.schema.push({name: i, visible: layer.get('metadata').schema[i].visible});
+          }
+        }
         console.log('saving layer: ', layer);
         console.log('metadata: ', layer.get('metadata'));
         console.log('config: ', layer.get('metadata').config);

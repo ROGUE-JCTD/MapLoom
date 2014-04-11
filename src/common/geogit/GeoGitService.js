@@ -319,9 +319,17 @@
           var json = x2js.xml_str2json(response.data);
           var schema = [];
           if (goog.isDefAndNotNull(json.schema)) {
+            var savedSchema = layer.get('metadata').savedSchema;
             forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
               schema[obj._name] = obj;
               schema[obj._name].visible = true;
+              if (goog.isDefAndNotNull(savedSchema)) {
+                for (var index = 0; index < savedSchema.length; index++) {
+                  if (obj._name == savedSchema[index].name) {
+                    schema[obj._name].visible = savedSchema[index].visible;
+                  }
+                }
+              }
               if (goog.isDefAndNotNull(obj.simpleType)) {
                 schema[obj._name]._type = 'simpleType';
               }
