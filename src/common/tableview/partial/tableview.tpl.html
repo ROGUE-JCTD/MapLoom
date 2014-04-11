@@ -1,7 +1,15 @@
 <div class="modal-body">
-  <input id="filter-text" type="text">
-  <button id="filter-button" ng-click="filterTable()">{{'filter_table' | translate}}</button>
-  <button ng-click="clearFilter()">{{'clear_table_filter' | translate}}</button>
+  <form ng-submit="filterTable()">
+    <div class="input-group input-group-sm" id="table-filter-group">
+      <input class="form-control" id="filter-text" type="text" ng-model="filterText" ng-change="clearFilter()">
+      <span class="input-group-btn">
+        <a type="button" class="btn btn-default" id="filter-button" ng-click="filterTable()">
+            <i ng-if="!filteringTable" class="glyphicon glyphicon-search"></i>
+            <i ng-if="filteringTable" class="glyphicon glyphicon-remove"></i>
+        </a>
+      </span>
+    </div>
+  </form>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-hover table-striped sortable">
@@ -29,9 +37,14 @@
       </table>
     </div>
     <button type="submit" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()" ng-show="!tableviewform.$visible">{{'edit_attributes' | translate}}</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()">{{'word_wrap' | translate}}</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
+    <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
+    <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()"
+          ng-show="!tableviewform.$visible" tooltip="{{'edit_attributes' | translate}}" tooltip-append-to-body="true">
+        <i class="glyphicon glyphicon-edit"></i>
+    </button>
+    <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()" tooltip="{{'word_wrap' | translate}}" tooltip-append-to-body="true">
+        <i class="glyphicon glyphicon-text-width"></i>
+    </button>
+    <button type="button" class="btn btn-default table-btn pull-right" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
   </form>
 </div>

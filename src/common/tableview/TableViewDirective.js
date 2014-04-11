@@ -89,15 +89,26 @@
             scope.featureList = tableViewService.featureList;
             scope.attributes = tableViewService.attributeNameList;
 
-            scope.filterTable = function() {
-              var filterText = angular.element('#filter-text')[0].value;
+            scope.filterText = '';
+            scope.filteringTable = false;
 
+            scope.filterTable = function() {
+              if (scope.filteringTable) {
+                scope.filterText = '';
+              }
+
+              if (scope.filterText === '') {
+                scope.clearFilter();
+                return;
+              }
+
+              scope.filteringTable = true;
               for (var feat in scope.featureList) {
                 scope.featureList[feat].visible = false;
 
                 for (var prop in scope.featureList[feat].properties) {
 
-                  if (tableFilter(scope.featureList[feat].properties[prop].value, filterText) !== '') {
+                  if (tableFilter(scope.featureList[feat].properties[prop].value, scope.filterText) !== '') {
                     scope.featureList[feat].visible = true;
                     break;
                   }
@@ -106,10 +117,11 @@
             };
 
             scope.clearFilter = function() {
-              angular.element('#filter-text')[0].value = '';
               for (var feat in scope.featureList) {
                 scope.featureList[feat].visible = true;
               }
+
+              scope.filteringTable = false;
             };
 
             $('#table-view-window').on('hidden.bs.modal', function(e) {

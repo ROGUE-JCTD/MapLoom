@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function($translate, featureManagerService, mapService, historyService, dialogService) {
+      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -82,6 +82,23 @@
                   }
                 });
               }
+            };
+
+            scope.showTable = function(layer) {
+              layer.get('metadata').loadingTable = true;
+              tableViewService.showTable(layer).then(function() {
+                layer.get('metadata').loadingTable = false;
+                featureManagerService.hide();
+                $('#table-view-window').modal('show');
+              }, function() {
+                layer.get('metadata').loadingTable = false;
+                dialogService.error($translate('show_table'), $translate('show_table_failed'));
+              });
+            };
+
+            scope.isLoadingTable = function(layer) {
+              var loadingTable = layer.get('metadata').loadingTable;
+              return goog.isDefAndNotNull(loadingTable) && loadingTable === true;
             };
           }
         };
