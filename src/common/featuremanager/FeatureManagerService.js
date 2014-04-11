@@ -688,7 +688,7 @@
             deferredResponse.reject(reject);
           });
         } else {
-          deferredResponse.reject();
+          deferredResponse.resolve();
         }
       }
       var returnResponse = q_.defer();
