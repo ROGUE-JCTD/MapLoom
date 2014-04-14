@@ -19,6 +19,55 @@
       return this;
     };
 
+    this.promptCredentials = function(title, message, type) {
+      if (!goog.isDefAndNotNull(type)) {
+        type = 'dialog-default';
+      }
+
+      var username = null;
+      var password = null;
+      var deferredPromise = q_.defer();
+      var modalScope = rootScope_.$new();
+      var ok = false;
+      modalScope.dialogTitle = title;
+      modalScope.dialogContent = message;
+      modalScope.modalOffset = numModals * 20;
+      modalScope.type = type;
+      modalScope.username = '';
+      modalScope.password = '';
+      modalScope.ok = function(_username, _password) {
+        ok = true;
+        username = _username;
+        password = _password;
+        modalInstance.close();
+      };
+      modalScope.cancel = function() {
+        modalInstance.close();
+      };
+
+      var modalInstance = modal_.open({
+        template: '<div loom-password-dialog></div>',
+        scope: modalScope,
+        backdrop: 'static',
+        keyboard: false
+      });
+
+      numModals = numModals + 1;
+
+      modalInstance.result.then(function() {
+        numModals -= 1;
+        if (ok) {
+          deferredPromise.resolve(username + ':' + password);
+        } else {
+          deferredPromise.reject();
+        }
+      }, function(reject) {
+        deferredPromise.reject(reject);
+      });
+
+      return deferredPromise.promise;
+    };
+
     this.open = function(title, message, buttons, closeButton, type) {
       if (!goog.isDefAndNotNull(type)) {
         type = 'dialog-default';
