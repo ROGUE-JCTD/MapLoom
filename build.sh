@@ -4,7 +4,7 @@ echo
 rm -rf vendor
 bower cache clean
 rc=$?
-if [[ $rc != 0 ]] ; then
+if [ $rc != 0 ] ; then
     echo Failed to clean the bower cache
     exit $rc
 fi
@@ -15,7 +15,7 @@ echo ===================================================
 echo   
 bower install
 rc=$?
-if [[ $rc != 0 ]] ; then
+if [ $rc != 0 ] ; then
     echo Failed to install bower dependencies
     exit $rc
 fi
@@ -26,6 +26,6 @@ echo ===================================
 echo   
 grunt $*
 rc=$?
-if [[ $rc != 0 ]] ; then
+if [ $rc != 0 ] ; then
     exit $rc
 fi
