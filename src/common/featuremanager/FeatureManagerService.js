@@ -214,9 +214,13 @@
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
-          mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
-          position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
-              clickPosition_);
+          // note that another service may make a fake feature selection on a layer not in mapservice.
+          // checking to make sure it had a geometry before making assumptions about edit layer etc
+          if (goog.isDefAndNotNull(selectedItem_.geometry)) {
+            mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+            position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
+                clickPosition_);
+          }
         } else {
           mapService_.clearEditLayer();
         }
