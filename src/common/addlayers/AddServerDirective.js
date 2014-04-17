@@ -65,6 +65,9 @@
 
             scope.editServer = function() {
               scope.server.name = scope.name;
+              if (goog.isDefAndNotNull(scope.server.config)) {
+                scope.server.config.name = scope.name;
+              }
               if (scope.server.url !== scope.url) {
                 var layers = mapService.getLayers(true, true);
                 for (var index = 0; index < layers.length; index++) {

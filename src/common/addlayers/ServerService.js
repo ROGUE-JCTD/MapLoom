@@ -134,7 +134,14 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.getServerLocalGeoserver = function() {
-      return service_.getServerByName('Local Geoserver');
+      var server = null;
+      for (var index = 0; index < servers.length; index += 1) {
+        if (servers[index].isLocal === true) {
+          server = servers[index];
+          break;
+        }
+      }
+      return server;
     };
 
     this.changeCredentials = function(server) {
@@ -207,6 +214,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         } else {
           server.username = configService_.username;
           server.isLocal = true;
+          server.name = translate_('local_geoserver');
           doWork();
         }
       } else {
