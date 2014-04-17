@@ -29,7 +29,17 @@
     <div class="form-group">
       <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control" placeholder="{{'filter_layers' | translate}}">
     </div>
-    <hr>
+    <div class="form-group" ng-if="currentServer.username !== null && currentServer.username !== undefined">
+      <div ng-class="{'input-group':!currentServer.isLocal}">
+        <input type="text" value="Connected as {{currentServer.username}}." disabled class="form-control logged-in-as-input">
+        <span class="input-group-btn" ng-if="!currentServer.isLocal">
+          <a class="switch-user-btn btn btn-default" tooltip-append-to-body="true" tooltip-placement="top"
+             tooltip="Connect as..." ng-click="changeCredentials()" type="button">
+            <i class="glyphicon glyphicon-transfer"></i>
+          </a>
+        </span>
+      </div>
+    </div>
     <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
     <div class="form-group layer-container">
       <ul id="layer-list" class="list-group">

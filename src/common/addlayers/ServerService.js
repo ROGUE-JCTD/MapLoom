@@ -12,16 +12,21 @@ var SERVER_SERVICE_USE_PROXY = true;
   var dialogService_ = null;
   var translate_ = null;
   var http_ = null;
+  var location_ = null;
+  var configService_ = null;
   var q_ = null;
   var serverCount = 0;
 
   module.provider('serverService', function() {
-    this.$get = function($rootScope, $http, $q, $translate, dialogService) {
+    this.$get = function($rootScope, $http, $q, $location, $translate, dialogService, configService) {
       service_ = this;
       rootScope_ = $rootScope;
       dialogService_ = dialogService;
       translate_ = $translate;
       http_ = $http;
+      location_ = $location;
+      configService_ = configService;
+      configService_.serverList = servers;
       q_ = $q;
 
       return this;
@@ -132,6 +137,39 @@ var SERVER_SERVICE_USE_PROXY = true;
       return service_.getServerByName('Local Geoserver');
     };
 
+    this.changeCredentials = function(server) {
+      var deferredResponse = q_.defer();
+      var doWork = function() {
+        service_.populateLayersConfig(server, true)
+            .then(function(response) {
+              deferredResponse.resolve(server);
+            }, function(reject) {
+              deferredResponse.reject(server, reject);
+            });
+      };
+
+      if (goog.isDefAndNotNull(server.url)) {
+        if (server.url.indexOf(location_.host()) === -1) {
+          dialogService_.promptCredentials(server.url).then(function(credentials) {
+            server.username = credentials.username;
+            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+            doWork();
+          }, function(reject) {
+            server.username = 'Anonymous';
+            server.authentication = undefined;
+            doWork();
+          });
+        } else {
+          server.username = configService_.username;
+          server.isLocal = true;
+          doWork();
+        }
+      } else {
+        doWork();
+      }
+      return deferredResponse.promise;
+    };
+
     this.addServer = function(serverInfo) {
       var deferredResponse = q_.defer();
 
@@ -141,17 +179,39 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       goog.object.extend(server, serverInfo, {});
 
-      console.log('---- MapService.layerInfo. trying to add server: ', server);
-      service_.populateLayersConfig(server)
-          .then(function(response) {
-            // set the id. it should always resolve to the length
-            server.id = serverCount++;
-            servers.push(server);
-            rootScope_.$broadcast('server-added', server.id);
-            deferredResponse.resolve(server);
+      var doWork = function() {
+        console.log('---- MapService.layerInfo. trying to add server: ', server);
+        service_.populateLayersConfig(server)
+            .then(function(response) {
+              // set the id. it should always resolve to the length
+              server.id = serverCount++;
+              servers.push(server);
+              rootScope_.$broadcast('server-added', server.id);
+              deferredResponse.resolve(server);
+            }, function(reject) {
+              deferredResponse.reject(server, reject);
+            });
+      };
+
+      if (goog.isDefAndNotNull(server.url)) {
+        if (server.url.indexOf(location_.host()) === -1) {
+          dialogService_.promptCredentials(server.url).then(function(credentials) {
+            server.username = credentials.username;
+            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+            doWork();
           }, function(reject) {
-            deferredResponse.reject(server, reject);
+            server.username = 'Anonymous';
+            server.authentication = undefined;
+            doWork();
           });
+        } else {
+          server.username = configService_.username;
+          server.isLocal = true;
+          doWork();
+        }
+      } else {
+        doWork();
+      }
 
       return deferredResponse.promise;
     };
@@ -268,7 +328,15 @@ var SERVER_SERVICE_USE_PROXY = true;
             var parser = new ol.format.WMSCapabilities();
             var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
             server.populatingLayersConfig = true;
-            http_.get(url).then(function(xhr) {
+            var config = {};
+            config.headers = {};
+            if (goog.isDefAndNotNull(server.authentication)) {
+              config.headers['Authorization'] = 'Basic ' + server.authentication;
+            } else {
+              config.headers['Authorization'] = '';
+            }
+            // server hasn't been added yet, so specify the auth headers here
+            http_.get(url, config).then(function(xhr) {
               if (xhr.status === 200) {
                 var response = parser.read(xhr.data);
                 if (goog.isDefAndNotNull(response.Capability) &&

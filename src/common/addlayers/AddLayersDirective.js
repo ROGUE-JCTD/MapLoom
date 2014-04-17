@@ -60,6 +60,10 @@
               }
             };
 
+            scope.changeCredentials = function() {
+              serverService.changeCredentials(scope.currentServer);
+            };
+
             scope.filterAddedLayers = function(layerConfig) {
               var show = true;
               var layers = mapService.getLayers(true, true);

@@ -10,7 +10,8 @@
   var service_ = null;
 
   var issueRequest = function(URL, deferredResponse) {
-    http.jsonp(URL).then(function(response) {
+    http.get(URL).then(function(response) {
+      console.log('GeoGit response: ', response);
       if (!goog.isDef(response.data.response.success) || response.data.response.success === true) {
         // Check for merge conflicts
         if (goog.isDef(response.data.response.Merge) && goog.isDef(response.data.response.Merge.conflicts)) {
@@ -77,7 +78,7 @@
       var deferredResponse = q.defer();
       var repo = service_.getRepoById(repoId);
       if (goog.isDefAndNotNull(repo)) {
-        var URL = repo.url + '/' + command + '?output_format=JSON&callback=JSON_CALLBACK';
+        var URL = repo.url + '/' + command + '?output_format=JSON';
         URL += '&_dc=' + new Date().getTime(); // Disable caching of responses.
         if (goog.isDefAndNotNull(options)) {
           for (var property in options) {

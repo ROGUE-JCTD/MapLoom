@@ -12,6 +12,14 @@
         }
         if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0 &&
             config.url.indexOf('http://' + $location.host()) !== 0) {
+          var server = service_.getServerByURL(config.url);
+          if (goog.isDefAndNotNull(server)) {
+            if (!goog.isDefAndNotNull(server.authentication)) {
+              config.headers['Authorization'] = '';
+            } else {
+              config.headers['Authorization'] = 'Basic ' + server.authentication;
+            }
+          }
           var configCopy = $.extend(true, {}, config);
           var proxy = service_.configuration.proxy;
           if (goog.isDefAndNotNull(proxy)) {
@@ -31,6 +39,8 @@
 
   module.provider('configService', function() {
     this.configuration = {};
+    // This is to avoid a ciruclar dependency with the server service.
+    this.serverList = null;
 
     this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
@@ -101,6 +111,36 @@
 
     this.isAuthenticated = function() {
       return service_.configuration.authStatus == 200;
+    };
+
+    this.getServerByURL = function(url) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(url)) {
+        throw ({
+          name: 'configService',
+          level: 'High',
+          message: 'undefined server url.',
+          toString: function() {
+            return this.name + ': ' + this.message;
+          }
+        });
+      }
+
+      for (var index = 0; index < service_.serverList.length; index += 1) {
+        var subURL = service_.serverList[index].url;
+        if (goog.isDefAndNotNull(subURL)) {
+          if (subURL.indexOf('/wms') >= 0) {
+            subURL = subURL.substring(0, subURL.indexOf('/wms'));
+          }
+          if (url.indexOf(subURL) === 0) {
+            server = service_.serverList[index];
+            break;
+          }
+        }
+      }
+
+      return server;
     };
   });
 }());

@@ -11,15 +11,15 @@
       rootScope_ = $rootScope;
       modal_ = $modal;
       q_ = $q;
-      $(document).keydown(function(objEvent) {
+      /*$(document).keydown(function(objEvent) {
         if (objEvent.keyCode == 9 && numModals > 0) {  //tab pressed
           objEvent.preventDefault(); // stops its action
         }
-      });
+      });*/
       return this;
     };
 
-    this.promptCredentials = function(title, message, type) {
+    this.promptCredentials = function(server, type) {
       if (!goog.isDefAndNotNull(type)) {
         type = 'dialog-default';
       }
@@ -29,8 +29,7 @@
       var deferredPromise = q_.defer();
       var modalScope = rootScope_.$new();
       var ok = false;
-      modalScope.dialogTitle = title;
-      modalScope.dialogContent = message;
+      modalScope.serverURL = server;
       modalScope.modalOffset = numModals * 20;
       modalScope.type = type;
       modalScope.username = '';
@@ -57,7 +56,7 @@
       modalInstance.result.then(function() {
         numModals -= 1;
         if (ok) {
-          deferredPromise.resolve(username + ':' + password);
+          deferredPromise.resolve({username: username, password: password});
         } else {
           deferredPromise.reject();
         }
