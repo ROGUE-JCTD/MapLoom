@@ -155,7 +155,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
             doWork();
           }, function(reject) {
-            server.username = 'Anonymous';
+            server.username = translate_('anonymous');
             server.authentication = undefined;
             doWork();
           });
@@ -200,7 +200,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
             doWork();
           }, function(reject) {
-            server.username = 'Anonymous';
+            server.username = translate_('anonymous');
             server.authentication = undefined;
             doWork();
           });

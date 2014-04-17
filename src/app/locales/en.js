@@ -229,6 +229,14 @@
     'keywords': 'Keywords',
     'srs': 'SRS',
     'server': 'Server',
+    'credentials': 'Credentials',
+    'enter_credentials': 'Please enter your credentials for:',
+    'skip_credentials': 'Or you may click Skip to log in anonymously. Only public layer will be visible to anonymous ' +
+        'users and changes to those layers will not be associated with a user. It is recommended that you log in if ' +
+        'you have credentials for this server.',
+    'skip': 'Skip',
+    'connected_as': 'Connected as {{value}}.',
+    'connect_as': 'Connect as...',
     'datastoretype': 'Datastore Type',
     'branch': 'Branch',
     'layerinfo': 'Layer Info',

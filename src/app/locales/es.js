@@ -232,6 +232,14 @@
     'keywords': 'Palabras clave',
     'srs': 'SRS',
     'server': 'Servidor',
+    'credentials': 'Cartas Credenciales',
+    'enter_credentials': 'Por favor, introduzca sus credenciales para:',
+    'skip_credentials': 'O usted puede hacer clic en Omitir para iniciar sesión de forma anónima. Sólo capa ' +
+        'público será visible para los usuarios anónimos y los cambios en las capas no se asociará con un usuario. ' +
+        'Se recomienda que usted inicia sesión si usted tiene las credenciales para este servidor.',
+    'skip': 'Omitir',
+    'connected_as': 'Conectado como {{value}}.',
+    'connect_as': 'Conecte como...',
     'datastoretype': 'Tipo de almacen de datos',
     'branch': 'Rama',
     'layerinfo': 'Informacion de las Capas',

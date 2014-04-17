@@ -11,7 +11,10 @@
       rootScope_ = $rootScope;
       modal_ = $modal;
       q_ = $q;
-      /*$(document).keydown(function(objEvent) {
+      /*
+      // This causes the tab key to not work in the prompt password dialog.  Commented out because it prevented the
+      // user from selecting a field in the password dialog.
+      $(document).keydown(function(objEvent) {
         if (objEvent.keyCode == 9 && numModals > 0) {  //tab pressed
           objEvent.preventDefault(); // stops its action
         }

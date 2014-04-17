@@ -20,6 +20,10 @@
               }
             };
 
+            scope.getConnectedString = function() {
+              return $translate('connected_as', {value: scope.currentServer.username});
+            };
+
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
             // the order of the servers might be different and MapLoom should be able to handle it accordingly
             var server = serverService.getServerLocalGeoserver();

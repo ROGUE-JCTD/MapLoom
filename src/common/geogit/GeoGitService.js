@@ -11,7 +11,6 @@
 
   var issueRequest = function(URL, deferredResponse) {
     http.get(URL).then(function(response) {
-      console.log('GeoGit response: ', response);
       if (!goog.isDef(response.data.response.success) || response.data.response.success === true) {
         // Check for merge conflicts
         if (goog.isDef(response.data.response.Merge) && goog.isDef(response.data.response.Merge.conflicts)) {
