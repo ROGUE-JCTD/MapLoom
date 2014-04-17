@@ -12,14 +12,14 @@
   </form>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
-      <table class="table-hover table-striped sortable">
+      <table class="table-striped table-hover sortable">
         <thead>
           <tr>
             <th>{{'feature_id' | translate}}</th>
             <th ng-repeat="attr in attributes">{{attr}}</th>
           </tr>
         </thead>
-        <tr ng-repeat="feature in featureList" ng-show="feature.visible">
+        <tr ng-repeat="feature in featureList" ng-show="feature.visible" ng-class="{selectedfeature: feature.selected}" ng-click="selectFeature(feature)">
             <td ng-repeat="property in feature.properties track by $index">
                 <div ng-switch on="property.restriction">
                   <span ng-switch-when="" editable-text="property.value" e-form="tableviewform"
@@ -44,6 +44,9 @@
     </button>
     <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()" tooltip="{{'word_wrap' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-text-width"></i>
+    </button>
+    <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="selectedFeature != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
+        <i class="glyphicon glyphicon-globe"></i>
     </button>
     <button type="button" class="btn btn-default table-btn pull-right" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
   </form>

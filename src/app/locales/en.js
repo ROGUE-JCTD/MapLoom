@@ -173,6 +173,7 @@
     'filter_table': 'Filter',
     'clear_table_filter': 'Clear',
     'word_wrap': 'Toggle Word Wrap',
+    'go_to_map': 'View on Map',
     'title': 'Title',
     'abstract': 'Abstract',
     'save_this_map': 'Save this map',

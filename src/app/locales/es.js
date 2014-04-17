@@ -176,6 +176,7 @@
     'filter_table': 'Filtrar',
     'clear_table_filter': 'Limpiar',
     'word_wrap': 'Ajuste de línea de alternancia',
+    'go_to_map': 'Ver en el Mapa',
     'title': 'es_Title',
     'abstract': 'es_Abstract',
     'save_this_map': 'es_Save this map',

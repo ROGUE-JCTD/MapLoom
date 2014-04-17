@@ -27,12 +27,16 @@
       var url = layer.get('metadata').url + '/wfs?version=2.0.0&request=GetFeature&typeNames=' +
           layer.get('metadata').name;
       http_.get(url).then(function(response) {
+        console.log('get feature response', response);
         var x2js = new X2JS();
         var json = x2js.xml_str2json(response.data);
+        var geomName = '';
+        console.log('resonse json', json);
 
         for (var i in layer.get('metadata').schema) {
           //if the type starts with gml rather than xsd then this is the geometry so we will skip it
           if (layer.get('metadata').schema[i]._type.split(':')[0] === 'gml') {
+            geomName = layer.get('metadata').schema[i]._name;
             continue;
           }
           if (layer.get('metadata').schema[i]._name === 'photos' || layer.get('metadata').schema[i]._name === 'fotos') {
@@ -82,18 +86,22 @@
         if (json.FeatureCollection.member) {
           if (json.FeatureCollection.member.length > 1) {
             for (var feat in json.FeatureCollection.member) {
-              feature = {visible: true, properties: []};
+              feature = {visible: true, properties: [], selected: false, geometryName: geomName, geometry: null};
               jsonFeature = json.FeatureCollection.member[feat][index];
 
+              console.log('geometry? ', jsonFeature[geomName]);
               pushAttributes(feature, jsonFeature);
+              feature.geometry = jsonFeature[geomName];
 
               service_.featureList[feat] = feature;
             }
           } else {
-            feature = {visible: true, properties: []};
+            feature = {visible: true, properties: [], selected: false, geometryName: geomName, geometry: null};
             jsonFeature = json.FeatureCollection.member[index];
 
+            console.log('geometry? ', jsonFeature[geomName]);
             pushAttributes(feature, jsonFeature);
+            feature.geometry = jsonFeature[geomName];
 
             service_.featureList.push(feature);
           }

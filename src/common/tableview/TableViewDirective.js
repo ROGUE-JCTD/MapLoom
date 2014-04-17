@@ -66,7 +66,7 @@
               angular.element('#table-view-window .modal-body')[0].style.height = bodyHeight + 'px';
 
               //resize the panel to account for the filter text box and padding
-              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 132 + 'px';
+              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 134 + 'px';
             }
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
@@ -124,9 +124,58 @@
               scope.filteringTable = false;
             };
 
+            scope.selectedFeature = null;
+            scope.selectFeature = function(feature) {
+              if (scope.selectedFeature) {
+                scope.selectedFeature.selected = false;
+              }
+              if (feature) {
+                feature.selected = true;
+              }
+              scope.selectedFeature = feature;
+            };
+
+            scope.goToMap = function() {
+              var pointText = scope.selectedFeature.geometry.Point.pos.__text;
+              var coords = [parseFloat(pointText.split(' ')[1], 10), parseFloat(pointText.split(' ')[0], 10)];
+              var projectedPoint = new ol.geom.Point(coords);
+
+              var transform = ol.proj.getTransform(tableViewService.selectedLayer.get('metadata').projection,
+                  mapService.map.getView().getView2D().getProjection());
+              projectedPoint.transform(transform);
+
+              mapService.zoomToExtent(projectedPoint.getExtent());
+              console.log('projectedPoint', projectedPoint);
+
+              var propList = {};
+              var i = 0;
+              //loop through the attribute names and values to put them in a format the feature info box agrees with
+              for (var attr in tableViewService.attributeNameList) {
+                ++i;
+                if (scope.selectedFeature.properties[i].value !== '') {
+                  propList[tableViewService.attributeNameList[attr]] = scope.selectedFeature.properties[i].value;
+                } else {
+                  propList[tableViewService.attributeNameList[attr]] = null;
+                }
+              }
+              //
+              var feature = {geometry: {coordinates: coords, type: 'Point'},
+                    geometry_name: scope.selectedFeature.geometryName, id: scope.selectedFeature.properties[0],
+                    properties: propList, type: 'Feature'};
+
+              var item = {layer: tableViewService.selectedLayer, features: [feature]};
+              $('#table-view-window').modal('hide');
+              featureManagerService.show(item, projectedPoint);
+
+            };
+
             $('#table-view-window').on('hidden.bs.modal', function(e) {
               tableViewService.featureList = [];
               tableViewService.attributeNameList = [];
+
+              scope.filterText = '';
+              scope.filteringTable = false;
+              scope.selectedFeature = null;
             });
             $('#table-view-window').on('show.bs.modal', function(e) {
               scope.attributes = tableViewService.attributeNameList;
