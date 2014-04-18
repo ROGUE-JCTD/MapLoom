@@ -10,8 +10,7 @@
             (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
-        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0 &&
-            config.url.indexOf('http://' + $location.host()) !== 0) {
+        if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url)) {
           var server = service_.getServerByURL(config.url);
           if (goog.isDefAndNotNull(server)) {
             if (!goog.isDefAndNotNull(server.authentication)) {
@@ -21,9 +20,11 @@
             }
           }
           var configCopy = $.extend(true, {}, config);
-          var proxy = service_.configuration.proxy;
-          if (goog.isDefAndNotNull(proxy)) {
-            configCopy.url = proxy + encodeURIComponent(configCopy.url);
+          if (config.url.indexOf('http') === 0 && config.url.indexOf('http://' + $location.host()) !== 0) {
+            var proxy = service_.configuration.proxy;
+            if (goog.isDefAndNotNull(proxy)) {
+              configCopy.url = proxy + encodeURIComponent(configCopy.url);
+            }
           }
           return configCopy;
         }
