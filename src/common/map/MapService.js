@@ -500,6 +500,7 @@
             abstract: fullConfig.Abstract,
             keywords: fullConfig.KeywordList,
             workspace: nameSplit.length > 1 ? nameSplit[0] : '',
+            readOnly: false,
             editable: false,
             bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
             projection: (goog.isArray(fullConfig.CRS) ? fullConfig.CRS[0] : fullConfig.CRS),
@@ -514,7 +515,34 @@
           })
         });
 
-        geogitService_.isGeoGit(layer);
+        // Test if layer is read-only
+        if (goog.isDefAndNotNull(url)) {
+          var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
+              '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
+              'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+              'service="WFS" version="1.0.0" ' +
+              'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd"> ' +
+              '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
+              minimalConfig.name + '">' +
+              '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+              '<ogc:FeatureId fid="garbage_id" />' +
+              '</ogc:Filter></wfs:Update>' +
+              '</wfs:Transaction>';
+
+          var wfsurl = url + '/wfs/WfsDispatcher';
+          httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
+            var x2js = new X2JS();
+            var json = x2js.xml_str2json(data);
+            if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
+                goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException) &&
+                json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
+              layer.get('metadata').readOnly = true;
+            }
+            geogitService_.isGeoGit(layer);
+          }).error(function(data, status, headers, config) {
+            geogitService_.isGeoGit(layer);
+          });
+        }
 
       } else if (server.ptype === 'gxp_tmssource') {
         nameSplit = fullConfig.Name.split(':');

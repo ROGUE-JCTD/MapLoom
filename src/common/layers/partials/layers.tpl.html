@@ -13,7 +13,7 @@
           <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
                 tooltip-placement="top" tooltip="{{'add_feature' | translate}}"
                 ng-show="layer.get('metadata').editable" stop-event="click mousedown" class="btn btn-xs btn-default"
-                ng-disabled="(!layer.get('visible') || !layer.get('metadata').schema)">
+                ng-disabled="(!layer.get('visible') || !layer.get('metadata').schema || layer.get('metadata').readOnly)">
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
@@ -65,7 +65,7 @@
         <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="attribute in getAttrList(layer)">{{attribute._name}}
-              <span ng-click="toggleAttributeVisibility(attribute)" 
+              <span ng-click="toggleAttributeVisibility(attribute)"
                     class="btn btn-xs btn-default layer-visible-button pull-right"
                     ng-class="{'layer-visible': attribute.visible}">
                 <i class="glyphicon" ng-class="{'glyphicon-eye-close': !attribute.visible, 'glyphicon-eye-open': attribute.visible}"></i>

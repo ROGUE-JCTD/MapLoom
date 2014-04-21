@@ -416,22 +416,34 @@
                   if (metadata.branchName === 'false') {
                     metadata.branchName = 'master';
                   }
-                  var promise = service_.addRepo(
-                      new GeoGitRepo(metadata.url + '/geogit/' + metadata.workspace + ':' + dataStore.name,
-                          dataStore.connectionParameters.entry[1].$, repoName));
-                  promise.then(function(repo) {
-                    if (goog.isDef(repo.id)) {
-                      rootScope.$broadcast('repoAdded', repo);
-                      metadata.repoId = repo.id;
-                    } else {
-                      metadata.repoId = repo;
-                    }
-                  }, function(reject) {
-                    dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+
+                  // see if we have access to the geogit endpoint
+                  var geogitURL = metadata.url + '/geogit/' + metadata.workspace + ':' + dataStore.name;
+                  http.get(geogitURL + '/repo/manifest').then(function() {
+                    var promise = service_.addRepo(
+                        new GeoGitRepo(geogitURL, dataStore.connectionParameters.entry[1].$, repoName));
+                    promise.then(function(repo) {
+                      if (goog.isDef(repo.id)) {
+                        rootScope.$broadcast('repoAdded', repo);
+                        metadata.repoId = repo.id;
+                      } else {
+                        metadata.repoId = repo;
+                      }
+                    }, function(reject) {
+                      dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+                    });
+                    metadata.isGeoGit = true;
+                    metadata.geogitStore = dataStore.name;
+                    metadata.repoName = repoName;
+                    // see if we have admin access
+                    http.get(geogitURL + '/merge').then(function() {
+                      metadata.isGeoGitAdmin = true;
+                    }, function(reject) {
+                      metadata.isGeoGitAdmin = false;
+                    });
+                  }, function() {
+                    metadata.isGeoGit = false;
                   });
-                  metadata.isGeoGit = true;
-                  metadata.geogitStore = dataStore.name;
-                  metadata.repoName = repoName;
                 } else {
                   metadata.isGeoGit = false;
                 }

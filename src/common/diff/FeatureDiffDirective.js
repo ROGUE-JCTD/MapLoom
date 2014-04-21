@@ -16,6 +16,12 @@
               scope.undoEnabled = true;
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
+              scope.readOnly = false;
+              if (goog.isDefAndNotNull(featureDiffService.layer) &&
+                  goog.isDefAndNotNull(featureDiffService.layer.get('metadata')) &&
+                  featureDiffService.layer.get('metadata').readOnly) {
+                scope.readOnly = true;
+              }
               switch (featureDiffService.change) {
                 case 'ADDED':
                   scope.rightTitle = $translate('new_feature');

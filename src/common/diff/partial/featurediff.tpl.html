@@ -23,7 +23,7 @@
   <button ng-if="editable" type="button" class="btn btn-primary pull-right" ng-click="save()">{{'save_btn' | translate}}</button>
   <div class="btn-group-wrap pull-left">
     <div class="btn-group feature-diff-btn-group">
-      <button ng-if="featureDiffService.undoable" ng-disabled="!undoEnabled" type="button"
+      <button ng-if="featureDiffService.undoable && !readOnly" ng-disabled="!undoEnabled" type="button"
               class="btn btn-default pull-left" ng-click="undoChanges()"
               tooltip-placement="top" tooltip="{{'undo_changes' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-share-alt undo-button"></i>
