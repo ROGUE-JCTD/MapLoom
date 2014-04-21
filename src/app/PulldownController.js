@@ -40,7 +40,7 @@
         $scope.$watch('mapService', updateScopeVariables);
 
         var syncPanelEnabled = function() {
-          pulldownService.syncPanel.enabled = geogitService.repos.length > 0;
+          pulldownService.syncPanel.enabled = geogitService.adminRepos.length > 0;
           updateScopeVariables();
         };
 

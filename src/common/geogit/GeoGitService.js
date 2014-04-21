@@ -33,6 +33,7 @@
   module.provider('geogitService', function() {
     // public variables
     this.repos = [];
+    this.adminRepos = [];
 
     this.$get = function($q, $http, $rootScope, dialogService, $translate) {
       service_ = this;
@@ -122,7 +123,10 @@
       return deferredResponse.promise;
     };
 
-    this.addRepo = function(newRepo) {
+    this.addRepo = function(newRepo, admin) {
+      if (!goog.isDefAndNotNull(admin)) {
+        admin = false;
+      }
       var result = q.defer();
       for (var index = 0; index < service_.repos.length; index++) {
         var repo = service_.repos[index];
@@ -132,10 +136,14 @@
           return result.promise;
         }
       }
+      newRepo.admin = admin;
       newRepo.refCount = 1;
       newRepo.id = nextRepoId;
       nextRepoId = nextRepoId + 1;
       service_.repos.push(newRepo);
+      if (admin) {
+        service_.adminRepos.push(newRepo);
+      }
       service_.commitChanged(newRepo.id).then(function() {
         service_.loadRemotesAndBranches(newRepo, result);
       });
@@ -150,11 +158,8 @@
       if (repo.branches.length > 0) {
         goog.array.clear(repo.branches);
       }
-      var remoteOptions = new GeoGitRemoteOptions();
-      remoteOptions.list = true;
-      remoteOptions.verbose = true;
-      service_.command(repo.id, 'remote', remoteOptions).then(function(response) {
-        if (goog.isDefAndNotNull(response.Remote)) {
+      var loadBranches = function(response) {
+        if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.Remote)) {
           var remoteId = 0;
           forEachArrayish(response.Remote, function(remote) {
             repo.remotes.push({name: remote.name, url: remote.url, username: remote.username, branches: [],
@@ -164,7 +169,7 @@
         }
         var branchOptions = new GeoGitBranchOptions();
         branchOptions.list = true;
-        branchOptions.remotes = true;
+        branchOptions.remotes = goog.isDefAndNotNull(response);
         service_.command(repo.id, 'branch', branchOptions).then(function(response) {
           var remoteIndex;
           if (goog.isDefAndNotNull(response.Local.Branch)) {
@@ -194,11 +199,19 @@
           service_.removeRepo(repo.id);
           result.reject(translate_('unable_to_get_branches'));
         });
-      }, function(reject) {
-        console.log('Unable to get the repository\'s remotes:', repo, reject);
-        service_.removeRepo(repo.id);
-        result.reject(translate_('unable_to_get_remotes'));
-      });
+      };
+      if (repo.admin) {
+        var remoteOptions = new GeoGitRemoteOptions();
+        remoteOptions.list = true;
+        remoteOptions.verbose = true;
+        service_.command(repo.id, 'remote', remoteOptions).then(loadBranches, function(reject) {
+          console.log('Unable to get the repository\'s remotes:', repo, reject);
+          service_.removeRepo(repo.id);
+          result.reject(translate_('unable_to_get_remotes'));
+        });
+      } else {
+        loadBranches(null);
+      }
     };
 
     this.removeRepo = function(id) {
@@ -210,6 +223,15 @@
       }
       if (index > -1) {
         service_.repos.splice(index, 1);
+      }
+      index = -1;
+      for (i = 0; i < service_.adminRepos.length; i = i + 1) {
+        if (service_.adminRepos[i].id === id) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        service_.adminRepos.splice(index, 1);
       }
     };
 
@@ -420,26 +442,31 @@
                   // see if we have access to the geogit endpoint
                   var geogitURL = metadata.url + '/geogit/' + metadata.workspace + ':' + dataStore.name;
                   http.get(geogitURL + '/repo/manifest').then(function() {
-                    var promise = service_.addRepo(
-                        new GeoGitRepo(geogitURL, dataStore.connectionParameters.entry[1].$, repoName));
-                    promise.then(function(repo) {
-                      if (goog.isDef(repo.id)) {
-                        rootScope.$broadcast('repoAdded', repo);
-                        metadata.repoId = repo.id;
-                      } else {
-                        metadata.repoId = repo;
-                      }
-                    }, function(reject) {
-                      dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
-                    });
-                    metadata.isGeoGit = true;
-                    metadata.geogitStore = dataStore.name;
-                    metadata.repoName = repoName;
+                    var addRepo = function(admin) {
+                      var promise = service_.addRepo(
+                          new GeoGitRepo(geogitURL, dataStore.connectionParameters.entry[1].$, repoName), admin);
+                      promise.then(function(repo) {
+                        if (goog.isDef(repo.id)) {
+                          rootScope.$broadcast('repoAdded', repo);
+                          metadata.repoId = repo.id;
+                        } else {
+                          metadata.repoId = repo;
+                        }
+                      }, function(reject) {
+                        dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+                      });
+                      metadata.isGeoGit = true;
+                      metadata.geogitStore = dataStore.name;
+                      metadata.repoName = repoName;
+                    };
                     // see if we have admin access
+                    // HACK see if the merge endpoint is available.
                     http.get(geogitURL + '/merge').then(function() {
                       metadata.isGeoGitAdmin = true;
+                      addRepo(true);
                     }, function(reject) {
                       metadata.isGeoGitAdmin = false;
+                      addRepo(false);
                     });
                   }, function() {
                     metadata.isGeoGit = false;

@@ -25,7 +25,7 @@
         <label>{{'repo' | translate}}: </label>
       </div>
       <div class="col-md-5">
-        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.repos">
+        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.adminRepos">
         </select>
       </div>
       <div class="col-md-5">
