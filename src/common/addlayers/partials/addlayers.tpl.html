@@ -30,9 +30,9 @@
       <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control" placeholder="{{'filter_layers' | translate}}">
     </div>
     <div class="form-group" ng-if="currentServer.username !== null && currentServer.username !== undefined">
-      <div class="input-group">
+      <div ng-class="{'input-group':!currentServer.isLocal}">
         <input type="text" value="{{getConnectedString()}}" disabled class="form-control logged-in-as-input">
-        <span class="input-group-btn">
+        <span class="input-group-btn" ng-if="!currentServer.isLocal">
           <a class="switch-user-btn btn btn-default" tooltip-append-to-body="true" tooltip-placement="top"
              tooltip="{{'connect_as' | translate}}" ng-click="changeCredentials()" type="button">
             <i class="glyphicon glyphicon-transfer"></i>

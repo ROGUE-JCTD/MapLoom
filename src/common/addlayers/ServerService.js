@@ -156,18 +156,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
 
       if (goog.isDefAndNotNull(server.url)) {
-        if (server.url.indexOf(location_.host()) !== -1) {
+        if (server.url.indexOf(location_.host()) === -1) {
+          dialogService_.promptCredentials(server.url).then(function(credentials) {
+            server.username = credentials.username;
+            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+            doWork();
+          }, function(reject) {
+            server.username = translate_('anonymous');
+            server.authentication = undefined;
+            doWork();
+          });
+        } else {
+          server.username = configService_.username;
           server.isLocal = true;
+          doWork();
         }
-        dialogService_.promptCredentials(server.url).then(function(credentials) {
-          server.username = credentials.username;
-          server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
-          doWork();
-        }, function(reject) {
-          server.username = translate_('anonymous');
-          server.authentication = undefined;
-          doWork();
-        });
       } else {
         doWork();
       }
@@ -198,19 +201,22 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
 
       if (goog.isDefAndNotNull(server.url)) {
-        if (server.url.indexOf(location_.host()) !== -1) {
+        if (server.url.indexOf(location_.host()) === -1) {
+          dialogService_.promptCredentials(server.url).then(function(credentials) {
+            server.username = credentials.username;
+            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+            doWork();
+          }, function(reject) {
+            server.username = translate_('anonymous');
+            server.authentication = undefined;
+            doWork();
+          });
+        } else {
+          server.username = configService_.username;
           server.isLocal = true;
           server.name = translate_('local_geoserver');
+          doWork();
         }
-        dialogService_.promptCredentials(server.url).then(function(credentials) {
-          server.username = credentials.username;
-          server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
-          doWork();
-        }, function(reject) {
-          server.username = translate_('anonymous');
-          server.authentication = undefined;
-          doWork();
-        });
       } else {
         doWork();
       }
