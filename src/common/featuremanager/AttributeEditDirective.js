@@ -134,6 +134,15 @@
             };
 
             scope.$on('modal-closed', closeModal);
+
+            function onResize() {
+              var height = $(window).height();
+              element.children('.modal-body').css('max-height', (height - 200).toString() + 'px');
+            }
+
+            onResize();
+
+            $(window).resize(onResize);
           }
         };
       }

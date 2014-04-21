@@ -170,6 +170,9 @@ body:last-child {
   .modal-body {
     background-color:@editFeaturePanelColor;
     padding: 0;
+    min-height: 200px;
+    overflow: hidden;
+    overflow-y: auto;
   }
   button .loading-container {
     position: relative !important;
@@ -198,6 +201,7 @@ body:last-child {
 
 .bottom-fade {
   bottom: 0;
+  z-index: 10;
   background: linear-gradient(rgba(255,255,255,0), @editFeaturePanelColor);
   .fade-mixin;
 }
