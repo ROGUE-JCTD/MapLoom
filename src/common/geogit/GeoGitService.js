@@ -427,7 +427,8 @@
               // Then get the datastore to determine if it is a geogit datastore or not
               service_.getDataStore(layer, dataStoreName).then(function(dataStore) {
                 // Finally get the needed information stored on the layer and create the repo object
-                if (dataStore.type === 'GeoGIT' && goog.isDefAndNotNull(server.authentication)) {
+                if (dataStore.type === 'GeoGIT' && (goog.isDefAndNotNull(server.authentication) ||
+                    server.isLocal === true)) {
                   var repoName = dataStore.connectionParameters.entry[0].$;
                   repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
 
