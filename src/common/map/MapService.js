@@ -538,9 +538,9 @@
                 json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
               layer.get('metadata').readOnly = true;
             }
-            geogitService_.isGeoGit(layer);
+            geogitService_.isGeoGit(layer, server);
           }).error(function(data, status, headers, config) {
-            geogitService_.isGeoGit(layer);
+            geogitService_.isGeoGit(layer, server);
           });
         }
 

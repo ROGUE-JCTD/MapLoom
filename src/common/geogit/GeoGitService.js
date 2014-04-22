@@ -416,7 +416,7 @@
       return deferredResponse.promise;
     };
 
-    this.isGeoGit = function(layer) {
+    this.isGeoGit = function(layer, server) {
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
         if (!goog.isDefAndNotNull(metadata.isGeoGit)) {
@@ -427,7 +427,7 @@
               // Then get the datastore to determine if it is a geogit datastore or not
               service_.getDataStore(layer, dataStoreName).then(function(dataStore) {
                 // Finally get the needed information stored on the layer and create the repo object
-                if (dataStore.type === 'GeoGIT') {
+                if (dataStore.type === 'GeoGIT' && goog.isDefAndNotNull(server.authentication)) {
                   var repoName = dataStore.connectionParameters.entry[0].$;
                   repoName = repoName.substring(repoName.lastIndexOf('/' || '\\') + 1, repoName.length);
 

@@ -22,9 +22,12 @@
       return this;
     };
 
-    this.promptCredentials = function(server, type) {
+    this.promptCredentials = function(server, closeButton, type) {
       if (!goog.isDefAndNotNull(type)) {
         type = 'dialog-default';
+      }
+      if (!goog.isDefAndNotNull(closeButton)) {
+        closeButton = false;
       }
 
       var username = null;
@@ -32,7 +35,9 @@
       var deferredPromise = q_.defer();
       var modalScope = rootScope_.$new();
       var ok = false;
+      var skip = false;
       modalScope.serverURL = server;
+      modalScope.closeButton = closeButton;
       modalScope.modalOffset = numModals * 20;
       modalScope.type = type;
       modalScope.username = '';
@@ -41,6 +46,10 @@
         ok = true;
         username = _username;
         password = _password;
+        modalInstance.close();
+      };
+      modalScope.skip = function() {
+        skip = true;
         modalInstance.close();
       };
       modalScope.cancel = function() {
@@ -60,6 +69,8 @@
         numModals -= 1;
         if (ok) {
           deferredPromise.resolve({username: username, password: password});
+        } else if (skip) {
+          deferredPromise.reject({anonymous: true});
         } else {
           deferredPromise.reject();
         }

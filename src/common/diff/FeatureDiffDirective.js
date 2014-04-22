@@ -19,7 +19,8 @@
               scope.readOnly = false;
               if (goog.isDefAndNotNull(featureDiffService.layer) &&
                   goog.isDefAndNotNull(featureDiffService.layer.get('metadata')) &&
-                  featureDiffService.layer.get('metadata').readOnly) {
+                  (featureDiffService.layer.get('metadata').readOnly ||
+                   !featureDiffService.layer.get('metadata').editable)) {
                 scope.readOnly = true;
               }
               switch (featureDiffService.change) {
