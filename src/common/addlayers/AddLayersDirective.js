@@ -29,6 +29,8 @@
             var server = serverService.getServerLocalGeoserver();
             if (goog.isDefAndNotNull(server)) {
               scope.setCurrentServerId(server.id);
+            } else {
+              scope.setCurrentServerId(serverService.getServerByName('OpenStreetMap').id);
             }
 
             scope.getCurrentServerName = function() {
@@ -96,11 +98,9 @@
             // when a server is added to server service, if we do not have a server selected, if localGeoserver
             // is added, make it the selected server
             scope.$on('server-added', function(event, id) {
-              if (scope.currentServerId === -1) {
-                var server = serverService.getServerById(id);
-                if (server === serverService.getServerLocalGeoserver()) {
-                  scope.setCurrentServerId(id);
-                }
+              var server = serverService.getServerById(id);
+              if (server === serverService.getServerLocalGeoserver()) {
+                scope.setCurrentServerId(id);
               }
             });
 

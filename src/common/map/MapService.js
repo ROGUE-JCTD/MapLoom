@@ -821,6 +821,7 @@
           });
         };
         pulldownService_.serversLoading = true;
+        pulldownService_.addLayers = false;
         goog.array.forEach(orderedUnique, function(serverInfo, serverIndex, obj) {
           // if there was a duplicate server, an index in the ordered array will be undefined
           if (goog.isDefAndNotNull(serverInfo)) {
@@ -830,6 +831,7 @@
                   addLayersForServer(serverIndex, serverNew);
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
+                    pulldownService_.addLayers = true;
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }
@@ -837,6 +839,7 @@
                   orderedUniqueLength--;
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
+                    pulldownService_.addLayers = true;
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }

@@ -262,7 +262,9 @@
         ' mapa no tendrá esta capa.',
     'no_attributes': 'No hay ningun atributo para mostrar.',
     'true': 'Verdadero',
-    'false': 'Falso'
+    'false': 'Falso',
+    'failed_to_add_server': 'Hubo un problema al intentar conectar con el servidor especificado, compruebe la URL y' +
+        ' las credenciales para asegurarse de que son correctos antes de volver a intentarlo.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

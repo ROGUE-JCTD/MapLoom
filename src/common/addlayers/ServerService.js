@@ -264,8 +264,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         service_.getServerByPtype('gxp_osmsource').defaultServer = true;
       }
-
-      service_.getServerLocalGeoserver().defaultServer = true;
+      if (goog.isDefAndNotNull(service_.getServerLocalGeoserver())) {
+        service_.getServerLocalGeoserver().defaultServer = true;
+      }
     };
 
     this.getLayersConfig = function(serverId) {
@@ -360,14 +361,10 @@ var SERVER_SERVICE_USE_PROXY = true;
                 }
                 server.populatingLayersConfig = false;
               } else {
-                dialogService_.error(translate_('error'),
-                    translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
                 deferredResponse.reject(server);
                 server.populatingLayersConfig = false;
               }
             }, function(xhr) {
-              dialogService_.error(translate_('error'),
-                  translate_('failed_get_capabilities') + ' (' + xhr.status + ')');
               deferredResponse.reject(server);
               server.populatingLayersConfig = false;
             });

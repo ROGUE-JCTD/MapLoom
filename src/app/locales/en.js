@@ -258,7 +258,9 @@
         ' save your map it will not have this layer.',
     'no_attributes': 'There are no attributes to display.',
     'true': 'True',
-    'false': 'False'
+    'false': 'False',
+    'failed_to_add_server': 'There was a problem trying to connect to the server you specified, check the url and' +
+        ' credentials to make sure they are correct before trying again.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

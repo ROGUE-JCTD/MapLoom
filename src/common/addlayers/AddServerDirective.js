@@ -42,8 +42,8 @@
                 element.closest('.modal').modal('hide');
               }, function() {
                 scope.loading = false;
-                scope.reset();
-                element.closest('.modal').modal('hide');
+                dialogService.error($translate('error'),
+                    $translate('failed_to_add_server'), [$translate('btn_ok')]);
               });
             };
 
