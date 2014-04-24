@@ -37,19 +37,23 @@
         }
 
         var index = layer.get('metadata').name.split(':')[1];
-        for (var feat in json.FeatureCollection.member) {
+        forEachArrayish(json.FeatureCollection.member, function(member) {
           var feature = {visible: true, properties: []};
-          feature.properties.push(json.FeatureCollection.member[feat][index]['_gml:id']);
+          var feat = member;
+          if (goog.isDefAndNotNull(member[index])) {
+            feat = member[index];
+          }
+          feature.properties.push(feat['_gml:id']);
           for (var attr in service_.attributeNameList) {
-            if (!goog.isDef(json.FeatureCollection.member[feat][index][service_.attributeNameList[attr]])) {
+            if (!goog.isDef(feat[service_.attributeNameList[attr]])) {
               feature.properties.push('');
             } else {
               feature.properties.push(
-                  json.FeatureCollection.member[feat][index][service_.attributeNameList[attr]].toString());
+                  feat[service_.attributeNameList[attr]].toString());
             }
           }
-          service_.featureList[feat] = feature;
-        }
+          service_.featureList.push(feature);
+        });
         deferredResponse.resolve();
       }, function(reject) {
         deferredResponse.reject(reject);

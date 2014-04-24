@@ -20,7 +20,7 @@
            class="geom-author form-control attr-none" placeholder="">
   </div>
   <span ng-repeat="attribute in panel.attributes" class="">
-    <span class="info-box-attribute">{{attribute.attributename}}</span>
+    <span class="info-box-attribute ellipsis">{{attribute.attributename}}</span>
             <div ng-switch on="attribute.type" class="attribute-value-section">
               <div ng-switch-when="xsd:dateTime" ng-class="{
                         'attr-added': attribute.changetype == 'ADDED',
