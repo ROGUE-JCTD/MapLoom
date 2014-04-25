@@ -1,11 +1,10 @@
 <div>
-  <div class="row">
-    <div ng-if="featureManagerService.getPreviousState() != ''" class="btn btn-sm pull-left">
-      <i class="glyphicon glyphicon-chevron-left" ng-click="featureManagerService.showPreviousState()"></i>
-    </div>
-    <div class="btn btn-sm pull-right">
-      <i class="glyphicon glyphicon-remove" ng-click="featureManagerService.hide()"></i>
-    </div>
+  <div class="info-box-title-row row">
+    <div class="info-box-back"><i ng-if="featureManagerService.getPreviousState() != ''" class="glyphicon glyphicon-chevron-left" ng-click="featureManagerService.showPreviousState()"></i></div>
+    <div ng-if="featureManagerService.getState() == 'layers'" class="info-box-title ellipsis" translate="map_layers"></div>
+    <div ng-if="featureManagerService.getState() == 'layer'" class="info-box-title ellipsis">{{featureManagerService.getSelectedItem().layer.get('metadata').title}}</div>
+    <div ng-if="featureManagerService.getState() == 'feature'" class="info-box-title ellipsis">{{featureManagerService.getSelectedItem().id}}</div>
+    <div class="info-box-close"><i class="glyphicon glyphicon-remove" ng-click="featureManagerService.hide()"></i></div>
   </div>
   <div class="animate-switch-container">
     <div ng-if="featureManagerService.getState() == 'layers'">

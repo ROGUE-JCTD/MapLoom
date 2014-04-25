@@ -101,7 +101,7 @@
       this.csrfToken = $cookies.csrftoken;
 
       if (goog.isDefAndNotNull(this.configuration.map.zoom) && this.configuration.map.zoom === 0) {
-        this.configuration.map.zoom = 1;
+        this.configuration.map.zoom = 3;
       }
 
       $translate.uses(this.currentLanguage);

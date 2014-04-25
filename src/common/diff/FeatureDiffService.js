@@ -484,11 +484,18 @@
               service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
         }
         if (properties[propertyIndex].type === 'xsd:dateTime') {
+          var date;
           if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {
-            properties[propertyIndex].oldvalue = new Date(properties[propertyIndex].oldvalue).toISOString();
+            date = new Date(properties[propertyIndex].oldvalue);
+            if (date != 'Invalid Date') {
+              properties[propertyIndex].oldvalue = date.toISOString();
+            }
           }
           if (goog.isDefAndNotNull(properties[propertyIndex].newvalue)) {
-            properties[propertyIndex].newvalue = new Date(properties[propertyIndex].newvalue).toISOString();
+            date = new Date(properties[propertyIndex].newvalue);
+            if (date != 'Invalid Date') {
+              properties[propertyIndex].newvalue = date.toISOString();
+            }
           }
         }
         /*
