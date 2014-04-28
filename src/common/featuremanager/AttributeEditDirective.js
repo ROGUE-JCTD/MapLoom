@@ -58,9 +58,13 @@
               scope.inserting = false;
             };
 
-            scope.validateInteger = validateInteger;
+            scope.validateInteger = function(property, key) {
+              property.valid = validateInteger(property[key]);
+            };
 
-            scope.validateDouble = validateDouble;
+            scope.validateDouble = function(property, key) {
+              property.valid = validateDouble(property[key]);
+            };
 
             var parentModal = element.closest('.modal');
             var closeModal = function(event, element) {

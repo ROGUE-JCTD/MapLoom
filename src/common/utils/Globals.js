@@ -89,23 +89,14 @@ var transformGeometry = function(geometry, crsFrom, crsTo) {
   return newGeom;
 };
 
-var validateInteger = function(property, key) {
+var validateInteger = function(property) {
   var numbers = /^[-+]?[0-9]*$/;
-  var valid = true;
-  if (!numbers.test(property[key])) {
-    valid = false;
-  }
-  property.valid = valid;
+  return numbers.test(property);
 };
 
-var validateDouble = function(property, key) {
+var validateDouble = function(property) {
   var numbers = /^[-+]?[0-9]*\.?[0-9]+$/;
-  var valid = true;
-  if (property[key] !== null && property[key] !== '' &&
-      !numbers.test(property[key])) {
-    valid = false;
-  }
-  property.valid = valid;
+  return property == null || property === '' || numbers.test(property);
 };
 
 
