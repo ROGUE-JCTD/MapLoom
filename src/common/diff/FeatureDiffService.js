@@ -328,7 +328,7 @@
       mapService_.map.getLayers().forEach(function(layer) {
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
-          if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
+          if (goog.isDefAndNotNull(metadata.repoName) && metadata.repoName === repoName) {
             var splitFeature = feature.id.split('/');
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
               service_.layer = layer;
@@ -484,17 +484,14 @@
               service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
         }
         if (properties[propertyIndex].type === 'xsd:dateTime') {
-          var date;
           if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {
-            date = new Date(properties[propertyIndex].oldvalue);
-            if (date != 'Invalid Date') {
-              properties[propertyIndex].oldvalue = date.toISOString();
+            if (properties[propertyIndex].oldvalue.search(' ') != -1) {
+              properties[propertyIndex].oldvalue = properties[propertyIndex].oldvalue.replace(' ', 'T') + 'Z';
             }
           }
           if (goog.isDefAndNotNull(properties[propertyIndex].newvalue)) {
-            date = new Date(properties[propertyIndex].newvalue);
-            if (date != 'Invalid Date') {
-              properties[propertyIndex].newvalue = date.toISOString();
+            if (properties[propertyIndex].newvalue.search(' ') != -1) {
+              properties[propertyIndex].newvalue = properties[propertyIndex].newvalue.replace(' ', 'T') + 'Z';
             }
           }
         }
