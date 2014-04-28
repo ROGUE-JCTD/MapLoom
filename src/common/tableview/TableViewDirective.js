@@ -178,20 +178,17 @@
 
             function hasValidationErrors() {
               var numErrors = 0;
-              var validationNumbers;
               for (var row in scope.rows) {
                 var feature = scope.rows[row].feature;
                 for (var prop in feature.properties) {
                   if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
                       scope.restrictions[prop] === 'int') {
-                    validationNumbers = /^[-+]?[0-9]*$/;
-                    if (!validationNumbers.test(feature.properties[prop])) {
+                    if (!validateInteger(feature.properties[prop])) {
                       numErrors++;
                     }
                   } else if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
                       scope.restrictions[prop] === 'double') {
-                    validationNumbers = /^[-+]?[0-9]*\.?[0-9]+$/;
-                    if (!validationNumbers.test(feature.properties[prop])) {
+                    if (!validateDouble(feature.properties[prop])) {
                       numErrors++;
                     }
                   }
@@ -208,8 +205,8 @@
 
             scope.saveTable = function() {
               if (hasValidationErrors() === true) {
-                //returning a string, even an empty one, will tell xeditable to not close the table form
-                return '';
+                //returning a string, even an empty one, will stop xeditable from closing the table form
+                return 'Invalid fields detected';
               }
 
               for (var featureIndex = 0; featureIndex < scope.rows.length; ++featureIndex) {
@@ -219,21 +216,6 @@
                 var feature = scope.rows[featureIndex].feature;
 
                 for (var prop in feature.properties) {
-                  var validationNumbers;
-                  if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
-                      scope.restrictions[prop] === 'int') {
-                    validationNumbers = /^[-+]?[0-9]*$/;
-                    if (!validationNumbers.test(feature.properties[prop])) {
-                      dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: 7}),
-                          [$translate('btn_ok')], false);
-                    }
-                  } else if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
-                      scope.restrictions[prop] === 'double') {
-                    validationNumbers = /^[-+]?[0-9]*\.?[0-9]+$/;
-                    if (!validationNumbers.test(feature.properties[prop])) {
-                      alert('invalid double');
-                    }
-                  }
                   propertyArray.push({0: prop, 1: feature.properties[prop]});
                   originalPropertyArray.push({0: prop, 1: originalFeature.properties[prop]});
                 }
