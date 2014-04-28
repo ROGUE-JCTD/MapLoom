@@ -19,20 +19,30 @@
             <th ng-repeat="attr in attributes">{{attr}}</th>
           </tr>
         </thead>
-        <tr ng-repeat="feature in featureList" ng-show="feature.visible" ng-class="{selectedfeature: feature.selected}" ng-click="selectFeature(feature)">
-            <td ng-repeat="property in feature.properties track by $index">
-                <div ng-switch on="property.restriction">
-                  <span ng-switch-when="" editable-text="property.value" e-form="tableviewform"
-                        e-style="width:160px">{{property.value}}</span>
-                  <span ng-switch-when="noEdit">{{property.value}}</span>
-                  <div ng-switch-when="datetime">
-                      <span ng-if="!tableviewform.$visible">{{property['value'] | date:"MM/dd/yyyy @ h:mma"}}</span>
-                      <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="property" date-key="'value'" default-date="false" seperate-time="false"></datetimepicker>
-                  </div>
-                  <span ng-switch-default editable-select="property.value"
-                        e-form="tableviewform" e-style="width:160px" e-ng-options="r._value as r._value for r in property.restriction">{{property.value}}</span>
-                </div>
-            </td>
+        <tr ng-repeat="row in rows" ng-show="row.visible" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
+          <td>{{row.feature.id}}</td>
+          <td ng-repeat="attr in attributes track by $index">
+            <div ng-switch on="restrictions[attr]">
+              <span ng-switch-when="" editable-text="row.feature.properties[attr]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-when="noEdit">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-when="int" editable-text="row.feature.properties[attr]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-when="double" editable-text="row.feature.properties[attr]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-when="date" editable-text="row.feature.properties[attr]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-when="time" editable-text="row.feature.properties[attr]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+              <div ng-switch-when="datetime">
+                  <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr] | date:"MM/dd/yyyy @ h:mma"}}</span>
+                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties" date-key="attr" default-date="false" seperate-time="false"></datetimepicker>
+              </div>
+
+              <span ng-switch-default editable-select="row.feature.properties[attr]" e-form="tableviewform" e-style="width:160px"
+                    e-ng-options="r._value as r._value for r in restrictions[attr]">{{row.feature.properties[attr]}}</span>
+            </div>
+          </td>
         </tr>
       </table>
     </div>
@@ -45,7 +55,7 @@
     <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()" tooltip="{{'word_wrap' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-text-width"></i>
     </button>
-    <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="selectedFeature != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
+    <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-globe"></i>
     </button>
     <button type="button" class="btn btn-default table-btn pull-right" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>

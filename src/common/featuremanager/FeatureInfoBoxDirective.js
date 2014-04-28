@@ -86,7 +86,7 @@
 
             scope.showTable = function(layer) {
               layer.get('metadata').loadingTable = true;
-              tableViewService.showTable(layer).then(function() {
+              tableViewService.showTable(layer, featureManagerService.getSelectedItem()).then(function() {
                 layer.get('metadata').loadingTable = false;
                 featureManagerService.hide();
                 $('#table-view-window').modal('show');

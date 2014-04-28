@@ -13,43 +13,28 @@
       return this;
     };
 
-    this.featureList = [];
+    this.rows = [];
     this.attributeNameList = [];
+    this.restrictionList = null;
     this.selectedLayer = null;
 
-    this.showTable = function(layer) {
+    this.showTable = function(layer, feature) {
       var deferredResponse = q_.defer();
 
-      service_.featureList = [];
+      service_.rows = [];
       service_.attributeNameList = [];
+      service_.restrictionList = {};
       service_.selectedLayer = layer;
 
-      var url = layer.get('metadata').url + '/wfs?version=2.0.0&request=GetFeature&typeNames=' +
+      var projection = service_.selectedLayer.get('metadata').projection;
+      console.log('proj', projection);
+      var url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion +
+          '&srsName=' + projection +
+          '&outputFormat=JSON&request=GetFeature&typeNames=' +
           layer.get('metadata').name;
       http_.get(url).then(function(response) {
-        console.log('get feature response', response);
-        var x2js = new X2JS();
-        var json = x2js.xml_str2json(response.data);
-        var geomName = '';
-        console.log('resonse json', json);
 
-        for (var i in layer.get('metadata').schema) {
-          //if the type starts with gml rather than xsd then this is the geometry so we will skip it
-          if (layer.get('metadata').schema[i]._type.split(':')[0] === 'gml') {
-            geomName = layer.get('metadata').schema[i]._name;
-            continue;
-          }
-          if (layer.get('metadata').schema[i]._name === 'photos' || layer.get('metadata').schema[i]._name === 'fotos') {
-            continue;
-          }
-          service_.attributeNameList.push(layer.get('metadata').schema[i]._name);
-        }
-
-        var index = layer.get('metadata').name.split(':')[1];
-        var feature, jsonFeature;
-        var pushAttributes = function(feature, jsonFeature) {
-          feature.properties.push({value: jsonFeature['_gml:id'], restriction: 'noEdit'});
-
+        var getRestrictions = function() {
           for (var attr in service_.attributeNameList) {
             var attrRestriction = '';
             var schemaType = layer.get('metadata').schema[service_.attributeNameList[attr]]._type;
@@ -74,36 +59,27 @@
               attrRestriction = 'time';
             }
 
-            if (!goog.isDef(jsonFeature[service_.attributeNameList[attr]])) {
-              feature.properties.push({value: '', restriction: attrRestriction});
-            } else {
-              feature.properties.push({value: jsonFeature[service_.attributeNameList[attr]].toString(),
-                restriction: attrRestriction});
-            }
+            service_.restrictionList[service_.attributeNameList[attr]] = attrRestriction;
           }
         };
 
-        if (json.FeatureCollection.member) {
-          if (json.FeatureCollection.member.length > 1) {
-            for (var feat in json.FeatureCollection.member) {
-              feature = {visible: true, properties: [], selected: false, geometryName: geomName, geometry: null};
-              jsonFeature = json.FeatureCollection.member[feat][index];
+        var row;
+        if (response.data.features.length > 0) {
+          for (var attrName in response.data.features[0].properties) {
+            service_.attributeNameList.push(attrName);
+          }
+          getRestrictions();
+          for (var feat in response.data.features) {
+            var selectedFeature = false;
+            console.log('feature', feature);
 
-              console.log('geometry? ', jsonFeature[geomName]);
-              pushAttributes(feature, jsonFeature);
-              feature.geometry = jsonFeature[geomName];
-
-              service_.featureList[feat] = feature;
+            console.log('response.data.features[feat]', response.data.features[feat]);
+            if (goog.isDefAndNotNull(feature) && response.data.features[feat].id === feature.id) {
+              selectedFeature = true;
             }
-          } else {
-            feature = {visible: true, properties: [], selected: false, geometryName: geomName, geometry: null};
-            jsonFeature = json.FeatureCollection.member[index];
+            row = {visible: true, selected: selectedFeature, feature: response.data.features[feat]};
 
-            console.log('geometry? ', jsonFeature[geomName]);
-            pushAttributes(feature, jsonFeature);
-            feature.geometry = jsonFeature[geomName];
-
-            service_.featureList.push(feature);
+            service_.rows[feat] = row;
           }
         }
         deferredResponse.resolve();

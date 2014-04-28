@@ -4,11 +4,14 @@
   module.filter('table', function() {
     return function(input, filter) {
       var out = '';
-      //converting the input and filter strings to lower case for a case insensitive filtering
-      var inputLower = input.toLowerCase(),
-          filterLower = filter.toLowerCase();
-      if (inputLower.indexOf(filterLower) !== -1) {
-        out = input;
+
+      if (input) {
+        //converting the input and filter strings to lower case for a case insensitive filtering
+        var inputLower = input.toLowerCase(),
+            filterLower = filter.toLowerCase();
+        if (inputLower.indexOf(filterLower) !== -1) {
+          out = input;
+        }
       }
       return out;
     };
@@ -86,8 +89,9 @@
               }
             };
 
-            scope.featureList = tableViewService.featureList;
+            scope.rows = clone(tableViewService.rows);
             scope.attributes = tableViewService.attributeNameList;
+            scope.restrictions = tableViewService.restrictionList;
 
             scope.filterText = '';
             scope.filteringTable = false;
@@ -103,13 +107,12 @@
               }
 
               scope.filteringTable = true;
-              for (var feat in scope.featureList) {
-                scope.featureList[feat].visible = false;
+              for (var feat in scope.rows) {
+                scope.rows[feat].visible = false;
 
-                for (var prop in scope.featureList[feat].properties) {
-
-                  if (tableFilter(scope.featureList[feat].properties[prop].value, scope.filterText) !== '') {
-                    scope.featureList[feat].visible = true;
+                for (var prop in scope.rows[feat].feature.properties) {
+                  if (tableFilter(scope.rows[feat].feature.properties[prop], scope.filterText) !== '') {
+                    scope.rows[feat].visible = true;
                     break;
                   }
                 }
@@ -117,89 +120,75 @@
             };
 
             scope.clearFilter = function() {
-              for (var feat in scope.featureList) {
-                scope.featureList[feat].visible = true;
+              for (var feat in scope.rows) {
+                scope.rows[feat].visible = true;
               }
 
               scope.filteringTable = false;
             };
 
-            scope.selectedFeature = null;
+            scope.selectedRow = null;
             scope.selectFeature = function(feature) {
-              if (scope.selectedFeature) {
-                scope.selectedFeature.selected = false;
+              if (scope.selectedRow) {
+                scope.selectedRow.selected = false;
               }
               if (feature) {
                 feature.selected = true;
               }
-              scope.selectedFeature = feature;
+              scope.selectedRow = feature;
             };
 
             scope.goToMap = function() {
-              var pointText = scope.selectedFeature.geometry.Point.pos.__text;
-              var coords = [parseFloat(pointText.split(' ')[1], 10), parseFloat(pointText.split(' ')[0], 10)];
-              var projectedPoint = new ol.geom.Point(coords);
-
-              var transform = ol.proj.getTransform(tableViewService.selectedLayer.get('metadata').projection,
+              var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
+                  tableViewService.selectedLayer.get('metadata').projection,
                   mapService.map.getView().getView2D().getProjection());
-              projectedPoint.transform(transform);
 
-              mapService.zoomToExtent(projectedPoint.getExtent());
-              console.log('projectedPoint', projectedPoint);
+              mapService.zoomToExtent(projectedgeom.getExtent());
 
-              var propList = {};
-              var i = 0;
-              //loop through the attribute names and values to put them in a format the feature info box agrees with
-              for (var attr in tableViewService.attributeNameList) {
-                ++i;
-                if (scope.selectedFeature.properties[i].value !== '') {
-                  propList[tableViewService.attributeNameList[attr]] = scope.selectedFeature.properties[i].value;
-                } else {
-                  propList[tableViewService.attributeNameList[attr]] = null;
-                }
-              }
-              //
-              var feature = {geometry: {coordinates: coords, type: 'Point'},
-                    geometry_name: scope.selectedFeature.geometryName, id: scope.selectedFeature.properties[0],
-                    properties: propList, type: 'Feature'};
-
-              var item = {layer: tableViewService.selectedLayer, features: [feature]};
+              var item = {layer: tableViewService.selectedLayer, features: [scope.selectedRow.feature]};
               $('#table-view-window').modal('hide');
-              featureManagerService.show(item, projectedPoint);
+              featureManagerService.show(item);
 
             };
 
             $('#table-view-window').on('hidden.bs.modal', function(e) {
-              tableViewService.featureList = [];
+              tableViewService.rows = [];
               tableViewService.attributeNameList = [];
+              scope.restrictions = {};
 
               scope.filterText = '';
               scope.filteringTable = false;
-              scope.selectedFeature = null;
+              scope.selectedRow = null;
             });
             $('#table-view-window').on('show.bs.modal', function(e) {
               scope.attributes = tableViewService.attributeNameList;
 
               //this needs to be deep copied so the original values will be available to pass to the feature manager
-              scope.featureList = clone(tableViewService.featureList);
+              scope.rows = clone(tableViewService.rows);
+              for (var row in scope.rows) {
+                if (scope.rows[row].selected === true) {
+                  scope.selectedRow = scope.rows[row];
+                }
+              }
+
+              scope.restrictions = tableViewService.restrictionList;
+
+              featureManagerService.hide();
             });
 
             scope.saveTable = function() {
-              for (var featureIndex = 0; featureIndex < scope.featureList.length; ++featureIndex) {
+              for (var featureIndex = 0; featureIndex < scope.rows.length; ++featureIndex) {
                 var originalPropertyArray = [];
                 var propertyArray = [];
-                var originalFeature = tableViewService.featureList[featureIndex];
-                var feature = scope.featureList[featureIndex];
+                var originalFeature = tableViewService.rows[featureIndex].feature;
+                var feature = scope.rows[featureIndex].feature;
 
-                //propertyIndex starts at 1 rather than 0 because properties[0] is used to hold the featureID
-                for (var propertyIndex = 1; propertyIndex < feature.properties.length; ++ propertyIndex) {
-                  propertyArray.push({0: scope.attributes[propertyIndex - 1],
-                    1: feature.properties[propertyIndex].value});
-                  originalPropertyArray.push({0: scope.attributes[propertyIndex - 1],
-                    1: originalFeature.properties[propertyIndex].value});
+                for (var prop in feature.properties) {
+                  propertyArray.push({0: prop, 1: feature.properties[prop]});
+                  originalPropertyArray.push({0: prop, 1: originalFeature.properties[prop]});
                 }
 
-                featureManagerService.setSelectedItem({type: 'feature', id: feature.properties[0].value,
+                featureManagerService.setSelectedItem({type: 'feature', id: originalFeature.id,
                   properties: originalPropertyArray});
                 featureManagerService.setSelectedItemProperties(originalPropertyArray);
                 featureManagerService.setSelectedLayer(tableViewService.selectedLayer);
