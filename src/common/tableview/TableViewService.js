@@ -27,7 +27,6 @@
       service_.selectedLayer = layer;
 
       var projection = service_.selectedLayer.get('metadata').projection;
-      console.log('proj', projection);
       var url = layer.get('metadata').url + '/wfs?version=' + settings.WFSVersion +
           '&srsName=' + projection +
           '&outputFormat=JSON&request=GetFeature&typeNames=' +
@@ -71,9 +70,6 @@
           getRestrictions();
           for (var feat in response.data.features) {
             var selectedFeature = false;
-            console.log('feature', feature);
-
-            console.log('response.data.features[feat]', response.data.features[feat]);
             if (goog.isDefAndNotNull(feature) && response.data.features[feat].id === feature.id) {
               selectedFeature = true;
             }
