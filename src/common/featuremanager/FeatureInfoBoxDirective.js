@@ -26,7 +26,7 @@
               var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
               var properties = featureManagerService.getSelectedItemProperties();
               for (var index = 0; index < properties.length; index++) {
-                if (schema[properties[index][0]].visible) {
+                if (goog.isDefAndNotNull(schema[properties[index][0]]) && schema[properties[index][0]].visible) {
                   return true;
                 }
               }
