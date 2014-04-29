@@ -1,0 +1,20 @@
+<div class="timeline-background">
+  <div class="btn-group">
+    <a type="button" ng-click="onPlay()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Play"
+       class="btn btn-sm btn-default" ng-if="!isPlaying">
+      <i class="glyphicon glyphicon-play"></i>
+    </a>
+    <a type="button" ng-click="onPause()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Pause"
+       class="btn btn-sm btn-default" ng-if="isPlaying">
+      <i class="glyphicon glyphicon-pause"></i>
+    </a>
+    <a type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Backward"
+       class="btn btn-sm btn-default">
+      <i class="glyphicon glyphicon-fast-backward"></i>
+    </a>
+    <a type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Forward"
+       class="btn btn-sm btn-default">
+      <i class="glyphicon glyphicon-fast-forward"></i>
+    </a>
+  </div>
+</div>

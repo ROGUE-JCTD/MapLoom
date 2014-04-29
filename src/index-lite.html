@@ -1,0 +1,165 @@
+<% if (!(typeof django === 'undefined') && (django)) { %>
+{% load staticfiles i18n avatar_tags maploom_tags %}
+<% } %>
+
+<!DOCTYPE html>
+<html ng-app="ngBoilerplate" ng-controller="AppCtrl">
+<head>
+  <title ng-bind="pageTitle"></title>
+
+  <!-- social media tags -->
+  <meta property="og:title" content="ngBoilerplate"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="http://bit.ly/ngBoilerplate"/>
+  <meta property="og:image"
+        content="https://a248.e.akamai.net/assets.github.com/images/modules/logos_page/Octocat.png?1366128846"/>
+  <meta property="og:description"
+        content="Non-Trivial AngularJS Made Easy: Everything you need to kickstart AngularJS projects: a best-practice directory structure, an intelligent build system, and the best web design libraries around.">
+
+  <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+  <% if (!(typeof django === 'undefined') && (django)) { %>
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}maploom/<%= file %>"/>
+  <% }else{ %>
+  <link rel="stylesheet" type="text/css" href="<%= file %>"/>
+  <% } %>
+
+  <% }); %>
+
+  <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+  <% if (!(typeof django === 'undefined') && (django)) { %>
+  <script type="text/javascript" src="{{STATIC_URL}}maploom/<%= file %>"></script>
+  <% }else{ %>
+  <script type="text/javascript" src="<%= file %>"></script>
+  <% } %>
+  <% }); %>
+
+  <% if (!(typeof django === 'undefined') && (django)) { %>
+  {% get_current_language as language%}
+  <script type="text/javascript">
+    config = {
+      authStatus: { % if user.is_authenticated %}
+    200
+    {% else %
+    }
+    401
+    {%
+      endif %
+    }
+    ,
+    username: {%
+      if user.is_authenticated %}
+      "{{ user.username }}"
+      {% else %
+      }
+      undefined
+      {%
+        endif %
+      }
+    ,
+      userprofilename: {%
+        if user.is_authenticated %}
+        "{{ user.profile.name }}"
+        {% else %
+        }
+        undefined
+        {%
+          endif %
+        }
+      ,
+        userprofileemail: {%
+          if user.is_authenticated %}
+          "{{ user.profile.email }}"
+          {% else %
+          }
+          undefined
+          {%
+            endif %
+          }
+        ,
+          currentLanguage: "{{language|default:'en'}}",
+              proxy
+        :
+          "/proxy/?url=",
+              nominatimUrl
+        :
+          "http://nominatim.openstreetmap.org",
+              printService
+        :
+          "{{GEOSERVER_BASE_URL}}pdf/",
+            /* The URL to a REST map configuration service.  This service
+             * provides listing and, with an authenticated user, saving of
+             * maps on the server for sharing and editing.
+             */
+              rest
+        :
+          "{% url "
+          maps_browse
+          " %}",
+              ajaxLoginUrl
+        :
+          "{% url "
+          account_ajax_login
+          " %}",
+              homeUrl
+        :
+          "{% url "
+          home
+          " %}",
+              portalItems
+        :
+          [
+            {
+              xtype: "container",
+              layout: "fit",
+            { %
+          if classification_banner_enabled %}
+          height: 99,
+              { %
+        else %
+        }
+        height: 81,
+            { % endif %
+      }
+      region: "north"
+    }
+    ],
+    localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
+        localCSWBaseUrl
+    :
+    "{{ CATALOGUE_BASE_URL }}",
+        csrfToken
+    :
+    "{{ csrf_token }}",
+        tools
+    :
+    [
+      {ptype: "gxp_getfeedfeatureinfo"}
+    ],
+    }
+    ;
+
+    goog.object.extend(config, {
+    {
+      config | safe
+    }
+    })
+    ;
+
+    console.log('############ config: ', config);
+  </script>
+  <% } %>
+
+</head>
+<body>
+<% if (!(typeof django === 'undefined') && (django)) { %>
+{% verbatim %}
+<% } %>
+<div id="map" class="map">
+  <div class="map-shadow"></div>
+  <div class="loom-timeline"></div>
+</div>
+<% if (!(typeof django === 'undefined') && (django)) { %>
+{% endverbatim %}
+<% } %>
+</body>
+</html>

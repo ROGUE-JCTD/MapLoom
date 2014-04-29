@@ -437,6 +437,44 @@ module.exports = function ( grunt ) {
         ]
       }
     },
+
+    /**
+     * The `index-lite` task compiles the `index-lite.html` file as a Grunt template. CSS
+     * and JS files co-exist here but they get split apart later.
+     */
+    indexlite: {
+
+      /**
+       * During development, we don't want to have wait for compilation,
+       * concatenation, minification, etc. So to avoid these steps, we simply
+       * add all script files directly to the `<head>` of `index.html`. The
+       * `src` property contains the list of included files.
+       */
+      build: {
+        dir: '<%= build_dir %>',
+        src: [
+          '<%= vendor_files.js %>',
+          '<%= build_dir %>/src/**/*.js',
+          '<%= html2js.common.dest %>',
+          '<%= html2js.app.dest %>',
+          '<%= recess.build.dest %>'
+        ]
+      },
+
+      /**
+       * When it is time to have a completely compiled application, we can
+       * alter the above to include only a single JavaScript and a single CSS
+       * file. Now we're back!
+       */
+      compile: {
+        dir: '<%= compile_dir %>',
+        src: [
+          '<%= concat.compile_js.dest %>',
+          '<%= vendor_files.css %>',
+          '<%= recess.compile.dest %>'
+        ]
+      }
+    },
     /**
      * This task compiles the karma template so that changes to its file array
      * don't have to be managed manually.
@@ -524,7 +562,7 @@ module.exports = function ( grunt ) {
        */
       html: {
         files: [ '<%= app_files.html %>' ],
-        tasks: [ 'index:build']
+        tasks: [ 'index:build', 'indexlite:build']
       },
 
       /**
@@ -599,7 +637,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'build', [
     'clean', 'html2js', 'gjslint', 'jshint', 'coffeelint', 'coffee', 'recess:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets', 'copy:build_vendor_fonts',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'karmaconfig', 'karma:continuous'
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'indexlite:build', 'karmaconfig', 'karma:continuous'
   ]);
 
   /**
@@ -608,7 +646,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'django_maploom_build', [
     'clean', 'html2js', 'gjslint', 'jshint', 'coffeelint', 'coffee', 'recess:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets', 'copy:build_vendor_fonts',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'compile'
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'indexlite:build', 'compile'
   ]);
 
   /**
@@ -621,7 +659,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'recess:compile', 'copy:compile_assets', 'copy:compile_fonts', 'ngmin', 'concat:compile_js', 'index:compile'
+    'recess:compile', 'copy:compile_assets', 'copy:compile_fonts', 'ngmin', 'concat:compile_js', 'index:compile', 'indexlite:compile'
   ]);
 
   /**
@@ -676,6 +714,47 @@ module.exports = function ( grunt ) {
             scripts: jsFiles,
             styles: cssFiles,
             version: grunt.config( 'pkg.version' ),
+            django: true
+          }
+        });
+      }
+    });
+  });
+
+  /**
+   * The index-lite.html template includes the stylesheet and javascript sources
+   * based on dynamic names calculated in this Gruntfile. This task assembles
+   * the list into variables for the template to use and then runs the
+   * compilation.
+   */
+  grunt.registerMultiTask('indexlite', 'Process index-lite.html template', function() {
+    var dirRE = new RegExp('^(' + grunt.config('build_dir') + '|' + grunt.config('compile_dir') + ')\/', 'g');
+    var jsFiles = filterForJS(this.filesSrc).map(function(file) {
+      return file.replace(dirRE, '');
+    });
+    var cssFiles = filterForCSS(this.filesSrc).map(function(file) {
+      return file.replace(dirRE, '');
+    });
+
+    grunt.file.copy('src/index-lite.html', this.data.dir + '/index-lite.html', {
+      process: function(contents, path) {
+        return grunt.template.process(contents, {
+          data: {
+            scripts: jsFiles,
+            styles: cssFiles,
+            version: grunt.config('pkg.version')
+          }
+        });
+      }
+    });
+
+    grunt.file.copy('src/index-lite.html', this.data.dir + '/maploom-lite.html', {
+      process: function(contents, path) {
+        return grunt.template.process(contents, {
+          data: {
+            scripts: jsFiles,
+            styles: cssFiles,
+            version: grunt.config('pkg.version'),
             django: true
           }
         });
