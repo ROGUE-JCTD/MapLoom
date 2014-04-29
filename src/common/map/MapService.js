@@ -736,6 +736,20 @@
           goog.isDefAndNotNull(service_.configuration.map) &&
           goog.isDefAndNotNull(service_.configuration.map.layers)) {
 
+        // go through each server and if any of them are pointing to a specific layer's wms change it to point to
+        // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
+        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
+          if (goog.isDefAndNotNull(serverInfo.url)) {
+            var urlSections = serverInfo.url.split('/');
+            if (urlSections.length > 5) {
+              console.log('---- changing layer-specific server to generic. serverInfo.url: ', serverInfo.url);
+              service_.configuration.sources[key].url = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] +
+                  '/' + urlSections[6];
+              console.log('---- updated server url: ', service_.configuration.sources[key].url);
+            }
+          }
+        });
+
         var ordered = new Array(service_.configuration.sources.length);
         console.log('service_.configuration.sources: ', service_.configuration.sources);
         goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
