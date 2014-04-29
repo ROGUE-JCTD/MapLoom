@@ -172,6 +172,7 @@
               }
 
               scope.restrictions = tableViewService.restrictionList;
+              scope.readOnly = tableViewService.readOnly;
 
               featureManagerService.hide();
             });

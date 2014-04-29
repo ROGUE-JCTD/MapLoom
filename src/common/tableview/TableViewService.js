@@ -17,6 +17,7 @@
     this.attributeNameList = [];
     this.restrictionList = null;
     this.selectedLayer = null;
+    this.readOnly = false;
 
     this.showTable = function(layer, feature) {
       var deferredResponse = q_.defer();
@@ -34,6 +35,10 @@
       http_.get(url).then(function(response) {
 
         var getRestrictions = function() {
+          if (layer.get('metadata').readOnly || !layer.get('metadata').editable) {
+            service_.readOnly = true;
+            return;
+          }
           for (var attr in service_.attributeNameList) {
             var attrRestriction = '';
             var schemaType = layer.get('metadata').schema[service_.attributeNameList[attr]]._type;
