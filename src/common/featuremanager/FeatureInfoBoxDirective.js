@@ -24,6 +24,12 @@
 
             scope.isShowingAttributes = function() {
               var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
+
+              // if there is no schema, do not hide attributes
+              if (!goog.isDefAndNotNull(schema)) {
+                return true;
+              }
+
               var properties = featureManagerService.getSelectedItemProperties();
               for (var index = 0; index < properties.length; index++) {
                 if (goog.isDefAndNotNull(schema[properties[index][0]]) && schema[properties[index][0]].visible) {
@@ -32,6 +38,18 @@
               }
               return false;
             };
+
+            scope.isAttributeVisible = function(property) {
+              var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
+
+              // if there is no schema, show the attribute. only filter out if there is schema and attr is set to hidden
+              if (!goog.isDefAndNotNull(schema)) {
+                return true;
+              }
+
+              return featureManagerService.getSelectedLayer().get('metadata').schema[property].visible;
+            };
+
 
             scope.showFeatureHistory = function() {
               if (!scope.loadingHistory) {
