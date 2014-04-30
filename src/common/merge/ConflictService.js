@@ -213,11 +213,35 @@
         });
 
       } else {
+        var merges = $.extend(true, {}, conflict.merges);
+        var schema = null;
+        var repoName = geogitService_.getRepoById(service_.repoId).name;
+        mapService_.map.getLayers().forEach(function(layer) {
+          var metadata = layer.get('metadata');
+          if (goog.isDefAndNotNull(metadata)) {
+            if (goog.isDefAndNotNull(metadata.repoName) && metadata.repoName === repoName) {
+              var splitFeature = conflict.id.split('/');
+              if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+                if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
+                  schema = layer.get('metadata').schema;
+                }
+              }
+            }
+          }
+        });
+        for (var attr in merges) {
+          if (goog.isDefAndNotNull(merges[attr].value) && goog.isDefAndNotNull(schema)) {
+            if (schema[attr]._type == 'xsd:dateTime') {
+              merges[attr].value = new Date(merges[attr].value).getTime();
+            }
+          }
+        }
+
         var resolveConflict = {
           path: conflict.id,
           ours: service_.ours,
           theirs: service_.theirs,
-          merges: conflict.merges
+          merges: merges
         };
 
         geogitService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {

@@ -607,6 +607,7 @@
           var lyrLayerOrder = lyr.get('metadata').layerOrder;
           if (meta.layerOrder < lyrLayerOrder) {
             insertIndex = index;
+            break;
           }
         }
 
