@@ -741,11 +741,20 @@
         goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
             var urlSections = serverInfo.url.split('/');
-            if (urlSections.length > 5) {
-              console.log('---- changing layer-specific server to generic. serverInfo.url: ', serverInfo.url);
-              service_.configuration.sources[key].url = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] +
-                  '/' + urlSections[6];
-              console.log('---- updated server url: ', service_.configuration.sources[key].url);
+
+            var counter = 0;
+            var lastNotEmptyToken = null;
+            for (var i = 0; i < urlSections.length; i++) {
+              if (urlSections[i].length > 0) {
+                counter++;
+                lastNotEmptyToken = urlSections[i];
+              }
+            }
+
+            if (counter > 4 && lastNotEmptyToken.toLowerCase() === 'wms') {
+              var newUrl = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] + '/' + urlSections[6];
+              console.log('---- changing layer-specific server to generic. old: ', serverInfo.url, ', new: ', newUrl);
+              service_.configuration.sources[key].url = newUrl;
             }
           }
         });
