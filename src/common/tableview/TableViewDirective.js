@@ -52,7 +52,7 @@
           restrict: 'C',
           templateUrl: 'tableview/partial/tableview.tpl.html',
           link: function(scope, element) {
-
+            scope.isSaving = false;
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -152,6 +152,9 @@
             };
 
             $('#table-view-window').on('hidden.bs.modal', function(e) {
+              if (scope.isSaving) {
+                return;
+              }
               tableViewService.rows = [];
               tableViewService.attributeNameList = [];
               scope.restrictions = {};
@@ -205,12 +208,17 @@
             }
 
             scope.saveTable = function() {
+              if (scope.isSaving) {
+                return;
+              }
               if (hasValidationErrors() === true) {
                 //returning a string, even an empty one, will stop xeditable from closing the table form
                 return 'Invalid fields detected';
               }
-
-              for (var featureIndex = 0; featureIndex < scope.rows.length; ++featureIndex) {
+              scope.isSaving = true;
+              var featureIndex = 0;
+              var numFailed = 0;
+              var save = function() {
                 var originalPropertyArray = [];
                 var propertyArray = [];
                 var originalFeature = tableViewService.rows[featureIndex].feature;
@@ -225,8 +233,33 @@
                   properties: originalPropertyArray});
                 featureManagerService.setSelectedItemProperties(originalPropertyArray);
                 featureManagerService.setSelectedLayer(tableViewService.selectedLayer);
-                featureManagerService.endAttributeEditing(true, false, propertyArray);
-              }
+                featureManagerService.endAttributeEditing(true, false, propertyArray).then(function() {
+                  tableViewService.rows[featureIndex].feature = $.extend(true, {}, scope.rows[featureIndex].feature);
+                  featureIndex++;
+                  if (featureIndex < scope.rows.length) {
+                    save();
+                  } else {
+                    scope.isSaving = false;
+                    if (numFailed > 0) {
+                      dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',
+                          {value: numFailed}), [$translate('btn_ok')], false);
+                    }
+                  }
+                }, function() {
+                  featureIndex++;
+                  numFailed++;
+                  if (featureIndex < scope.rows.length) {
+                    save();
+                  } else {
+                    scope.isSaving = false;
+                    if (numFailed > 0) {
+                      dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',
+                          {value: numFailed}), [$translate('btn_ok')], false);
+                    }
+                  }
+                });
+              };
+              save();
               $.bootstrapSortable();
             };
 

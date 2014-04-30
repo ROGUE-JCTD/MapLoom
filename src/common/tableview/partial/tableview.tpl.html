@@ -1,4 +1,5 @@
 <div class="modal-body">
+  <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
   <form ng-submit="filterTable()">
     <div class="input-group input-group-sm" id="table-filter-group">
       <input class="form-control" id="filter-text" type="text" ng-model="filterText" ng-change="clearFilter()">

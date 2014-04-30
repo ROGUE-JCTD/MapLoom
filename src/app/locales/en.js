@@ -261,7 +261,9 @@
     'true': 'True',
     'false': 'False',
     'failed_to_add_server': 'There was a problem trying to connect to the server you specified, check the url and' +
-        ' credentials to make sure they are correct before trying again.'
+        ' credentials to make sure they are correct before trying again.',
+    'failed_to_save_features': '{{value}} features failed to save, please try to save again before closing' +
+        ' the table or you will lose work.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
