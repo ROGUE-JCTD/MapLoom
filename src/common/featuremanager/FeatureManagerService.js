@@ -216,7 +216,13 @@
 
         if (selectedItemPics_ !== null) {
           goog.array.forEach(selectedItemPics_.pics, function(item, index) {
-            selectedItemPics_.pics[index] = '/file-service/' + item;
+            // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
+            // otherwise list it as is so that a feature can point to an full url
+            if (item.indexOf('http') === -1) {
+              selectedItemPics_.pics[index] = '/file-service/' + item;
+            } else {
+              selectedItemPics_.pics[index] = item;
+            }
           });
 
           //console.log('selectedItemPics_: ', selectedItemPics_);

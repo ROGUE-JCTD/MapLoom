@@ -26,7 +26,7 @@
   </div>
 
   <div ng-if="featureManagerService.getState() == 'feature'">
-    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics() && featureManagerService.getSelectedLayer().get('metadata').schema[featureManagerService.getSelectedItemPics().name].visible">
+    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics() && isAttributeVisible(featureManagerService.getSelectedItemPics().name)">
       <carousel id="feature-info-box-carousel" interval="2000">
         <slide ng-repeat="pic in featureManagerService.getSelectedItemPics().pics">
           <img ng-src="{{pic}}" style="margin: auto" ng-click="featureManagerService.showPics($index)">
