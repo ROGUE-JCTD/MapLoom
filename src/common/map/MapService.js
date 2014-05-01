@@ -465,7 +465,7 @@
         dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported',
             {type: 'gxp_googlesource'}));
       } else if (server.ptype === 'gxp_mapquestsource') {
-        var source = new ol.source.MapQuest(minimalConfig.sourceParams);
+        var source = new ol.source.MapQuest(fullConfig.sourceParams);
 
         if (goog.isDefAndNotNull(source)) {
           layer = new ol.layer.Tile({
