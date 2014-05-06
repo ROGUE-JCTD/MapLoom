@@ -208,7 +208,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.username = credentials.username;
             server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
 
-            var subURL = server.url.replace('/geoserver/wms', '/geoserver/rest');
+            var subURL = server.url.replace('/wms', '/rest');
             $.ajax({
               url: subURL,
               type: 'GET',
