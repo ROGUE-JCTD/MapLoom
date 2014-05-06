@@ -540,6 +540,7 @@
             }
             geogitService_.isGeoGit(layer, server);
           }).error(function(data, status, headers, config) {
+            layer.get('metadata').readOnly = true;
             geogitService_.isGeoGit(layer, server);
           });
         }
