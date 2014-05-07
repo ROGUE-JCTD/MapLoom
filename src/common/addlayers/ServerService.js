@@ -160,7 +160,16 @@ var SERVER_SERVICE_USE_PROXY = true;
           dialogService_.promptCredentials(server.url, true).then(function(credentials) {
             server.username = credentials.username;
             server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
-            doWork();
+
+            var subURL = server.url.replace('/wms', '/rest');
+            subURL = subURL.replace('http://', 'http://null:null@');
+            $.ajax({
+              url: subURL,
+              type: 'GET',
+              dataType: 'jsonp',
+              jsonp: 'callback',
+              complete: doWork
+            });
           }, function(reject) {
             if (goog.isDefAndNotNull(reject) && reject.anonymous) {
               server.username = translate_('anonymous');
@@ -209,6 +218,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
 
             var subURL = server.url.replace('/wms', '/rest');
+            subURL = subURL.replace('http://', 'http://null:null@');
             $.ajax({
               url: subURL,
               type: 'GET',
