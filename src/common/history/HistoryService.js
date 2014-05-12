@@ -92,7 +92,7 @@
       } else {
         logOptions.show = service_.entriesPerPage;
       }
-      logOptions.firstParentOnly = 'true';
+      //logOptions.firstParentOnly = 'true';
       logOptions.countChanges = true;
       var thisTransaction = service_.historyTransaction;
       var metadata = service_.layer.get('metadata');
@@ -133,11 +133,24 @@
                   removed = commit.removes;
                 }
                 var totalChanges = added + removed + modified;
-                commit.summary = {
-                  added: {width: added / totalChanges * 100 + '%'},
-                  modified: {width: modified / totalChanges * 100 + '%'},
-                  removed: {width: removed / totalChanges * 100 + '%'}
-                };
+                if (totalChanges === 0 && goog.isArray(commit.parents.id) && commit.parents.id.length > 0) {
+                  commit.visible = false;
+                } else {
+                  commit.visible = true;
+                  if (totalChanges === 0) {
+                    commit.summary = {
+                      added: {width: '0%'},
+                      modified: {width: '0%'},
+                      removed: {width: '0%'}
+                    };
+                  } else {
+                    commit.summary = {
+                      added: {width: added / totalChanges * 100 + '%'},
+                      modified: {width: modified / totalChanges * 100 + '%'},
+                      removed: {width: removed / totalChanges * 100 + '%'}
+                    };
+                  }
+                }
               });
               var numCommits = 0;
               if (goog.isArray(response.commit)) {

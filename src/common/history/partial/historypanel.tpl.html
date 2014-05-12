@@ -1,7 +1,7 @@
 <div>
   <div class="history-scroll-pane">
     <ul class="list-group">
-      <li class="list-group-item loom-history-popover" ng-repeat="commit in log" ng-click="historyClicked(commit)">
+      <li class="list-group-item loom-history-popover" ng-repeat="commit in log | filter:{visible:'true'}" ng-click="historyClicked(commit)">
         <div ng-if="isLoading(commit)" class="diff-loading loom-loading" spinner-hidden="false"></div>
         <div class="commit-summary progress">
           <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
