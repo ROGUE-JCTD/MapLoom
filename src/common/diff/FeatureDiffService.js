@@ -345,8 +345,7 @@
 
       var geom = WKT.read(feature.geometry);
       if (goog.isDefAndNotNull(crs_)) {
-        var transform = ol.proj.getTransform(crs_, mapService_.map.getView().getView2D().getProjection());
-        geom.transform(transform);
+        geom.transform(crs_, mapService_.map.getView().getView2D().getProjection());
       }
 
       diffsInError_ = 0;
@@ -418,8 +417,7 @@
           localCrs = panel.geometry.crs;
         }
         if (goog.isDefAndNotNull(localCrs)) {
-          var transform = ol.proj.getTransform(localCrs, panel.map.getView().getView2D().getProjection());
-          geom.transform(transform);
+          geom.transform(localCrs, panel.map.getView().getView2D().getProjection());
         }
         var olFeature = new ol.Feature();
         olFeature.set('MapLoomChange', DiffColorMap[panel.geometry.changetype]);

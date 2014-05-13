@@ -310,7 +310,7 @@
           //console.log('------- [[ bounds: ', bounds);
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
               ol.proj.get('EPSG:900913'));
-          var extent900913 = ol.extent.transform(bounds, transform);
+          var extent900913 = ol.extent.applyTransform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
           deferredResponse.resolve();
         }).error(function(data, status, headers, config) {

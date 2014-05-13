@@ -192,8 +192,7 @@
     var lon = getRandomBetween(config.lonMin, config.lonMax);
     var zoom = Math.floor(getRandomBetween(config.zoomMin, config.zoomMax));
     var point = new ol.geom.Point([lon, lat]);
-    var transform = ol.proj.getTransform(projection4326, projectionTarget);
-    point.transform(transform);
+    point.transform(projection4326, projectionTarget);
 
     return {
       center: point.getCoordinates(),

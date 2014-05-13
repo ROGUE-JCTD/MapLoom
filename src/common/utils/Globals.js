@@ -83,8 +83,7 @@ var transformGeometry = function(geometry, crsFrom, crsTo) {
     }
   }
   if (goog.isDefAndNotNull(crsFrom) && goog.isDefAndNotNull(crsTo)) {
-    var transform = ol.proj.getTransform(crsFrom, crsTo);
-    newGeom.transform(transform);
+    newGeom.transform(crsFrom, crsTo);
   }
   return newGeom;
 };
