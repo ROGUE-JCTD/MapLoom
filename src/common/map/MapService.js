@@ -935,7 +935,8 @@
         view: new ol.View2D({
           center: this.configuration.map.center,
           zoom: this.configuration.map.zoom,
-          maxZoom: 20
+          maxZoom: 17,
+          maxResolution: 40075016.68557849 / 2048
         })
       });
 
