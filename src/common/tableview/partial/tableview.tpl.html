@@ -1,47 +1,47 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
-  <form ng-submit="filterTable()">
-    <div class="input-group input-group-sm" id="table-filter-group">
-      <input class="form-control" id="filter-text" type="text" ng-model="filterText" ng-change="clearFilter()">
-      <span class="input-group-btn">
-        <a type="button" class="btn btn-default" id="filter-button" ng-click="filterTable()">
-            <i ng-if="!filteringTable" class="glyphicon glyphicon-search"></i>
-            <i ng-if="filteringTable" class="glyphicon glyphicon-remove"></i>
-        </a>
-      </span>
-    </div>
-  </form>
+  <button type="button" class="btn btn-default" ng-click="toggleFilters()">Toggle Filters
+  </button>
+  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="applyFilters()">Apply Filters
+  </button>
+  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="clearFilters()">Clear Filters
+  </button>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-striped table-hover sortable">
         <thead>
           <tr>
             <th>{{'feature_id' | translate}}</th>
-            <th ng-repeat="attr in attributes">{{attr}}</th>
+            <th ng-repeat="attr in attributes">{{attr.name}}</th>
+          </tr>
+          <tr ng-if="filterOn">
+            <td class="filter-row first-filter-row">Filter:</td>
+            <td class="filter-row" ng-repeat="attr in attributes"><input class="form-control" type="text"
+                                                                         ng-model="attr.filter"></td>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-show="row.visible" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
           <td>{{row.feature.id}}</td>
           <td ng-repeat="attr in attributes track by $index">
-            <div ng-switch on="restrictions[attr]">
-              <span ng-switch-when="" editable-text="row.feature.properties[attr]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
-              <span ng-switch-when="noEdit">{{row.feature.properties[attr]}}</span>
-              <span ng-switch-when="int" editable-text="row.feature.properties[attr]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
-              <span ng-switch-when="double" editable-text="row.feature.properties[attr]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
-              <span ng-switch-when="date" editable-text="row.feature.properties[attr]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
-              <span ng-switch-when="time" editable-text="row.feature.properties[attr]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr]}}</span>
+            <div ng-switch on="restrictions[attr.name]">
+              <span ng-switch-when="" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
+              <span ng-switch-when="noEdit">{{row.feature.properties[attr.name]}}</span>
+              <span ng-switch-when="int" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
+              <span ng-switch-when="double" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
+              <span ng-switch-when="date" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
+              <span ng-switch-when="time" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
+                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <div ng-switch-when="datetime">
-                  <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr] | date:"MM/dd/yyyy @ h:mma"}}</span>
-                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties" date-key="attr" default-date="false" seperate-time="false"></datetimepicker>
+                  <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
+                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties" date-key="attr.name" default-date="false" seperate-time="false"></datetimepicker>
               </div>
 
-              <span ng-switch-default editable-select="row.feature.properties[attr]" e-form="tableviewform" e-style="width:160px"
-                    e-ng-options="r._value as r._value for r in restrictions[attr]">{{row.feature.properties[attr]}}</span>
+              <span ng-switch-default editable-select="row.feature.properties[attr.name]" e-form="tableviewform" e-style="width:160px"
+                    e-ng-options="r._value as r._value for r in restrictions[attr.name]">{{row.feature.properties[attr.name]}}</span>
             </div>
           </td>
         </tr>
@@ -58,6 +58,17 @@
     </button>
     <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-globe"></i>
+    </button>
+    <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
+            ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"
+            tooltip="Previous Page" tooltip-append-to-body="true">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+    </button>
+    <div class="table-page-indicator">Page {{currentPage}} of {{totalPages}}</div>
+    <button id='next-page-btn' type="button" class="btn btn-default table-btn"
+            ng-controller="next-tt-controller" ng-click="onNext()" ng-disabled="currentPage == totalPages"
+            tooltip="Next Page" tooltip-append-to-body="true">
+      <i class="glyphicon glyphicon-chevron-right"></i>
     </button>
     <button type="button" class="btn btn-default table-btn pull-right" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>
   </form>

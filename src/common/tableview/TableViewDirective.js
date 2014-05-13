@@ -89,45 +89,53 @@
               }
             };
 
-            scope.rows = clone(tableViewService.rows);
-            scope.attributes = tableViewService.attributeNameList;
-            scope.restrictions = tableViewService.restrictionList;
-
-            scope.filterText = '';
-            scope.filteringTable = false;
-
-            scope.filterTable = function() {
-              if (scope.filteringTable) {
-                scope.filterText = '';
-              }
-
-              if (scope.filterText === '') {
-                scope.clearFilter();
-                return;
-              }
-
-              scope.filteringTable = true;
-              for (var feat in scope.rows) {
-                scope.rows[feat].visible = false;
-
-                for (var prop in scope.rows[feat].feature.properties) {
-                  if (tableFilter(scope.rows[feat].feature.properties[prop], scope.filterText) !== '') {
-                    scope.rows[feat].visible = true;
-                    break;
-                  }
-                }
-              }
+            scope.toggleFilters = function() {
+              scope.filterOn = !scope.filterOn;
             };
 
-            scope.clearFilter = function() {
-              for (var feat in scope.rows) {
-                scope.rows[feat].visible = true;
-              }
-
-              scope.filteringTable = false;
+            scope.applyFilters = function() {
+              scope.isSaving = true;
+              tableViewService.selectedLayer.get('metadata').loadingTable = true;
+              tableViewService.filter().then(function() {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+                updateData();
+              }, function(reject) {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+              });
             };
 
-            scope.selectedRow = null;
+            scope.clearFilters = function() {
+              for (var attrIndex in scope.attributes) {
+                scope.attributes[attrIndex].filter = '';
+              }
+              scope.applyFilters();
+            };
+
+            var newTableSession = function() {
+              scope.filterText = '';
+              scope.restrictions = tableViewService.restrictionList;
+              scope.selectedRow = null;
+              scope.filterOn = false;
+            };
+
+            var updateData = function() {
+              scope.rows = clone(tableViewService.rows);
+              scope.attributes = tableViewService.attributeNameList;
+              scope.currentPage = tableViewService.currentPage + 1;
+              scope.totalPages = tableViewService.totalPages;
+            };
+
+            var clearSession = function() {
+              tableViewService.clear();
+              scope.restrictions = {};
+
+              scope.filterText = '';
+              scope.selectedRow = null;
+              scope.rows = null;
+            };
+
             scope.selectFeature = function(feature) {
               if (scope.selectedRow) {
                 scope.selectedRow.selected = false;
@@ -151,31 +159,48 @@
 
             };
 
+            scope.previousPage = function() {
+              scope.isSaving = true;
+              tableViewService.selectedLayer.get('metadata').loadingTable = true;
+              tableViewService.previousPage().then(function() {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+                updateData();
+                console.log('Previous Page');
+              }, function(reject) {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+              });
+            };
+
+            scope.nextPage = function() {
+              scope.isSaving = true;
+              tableViewService.selectedLayer.get('metadata').loadingTable = true;
+              tableViewService.nextPage().then(function() {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+                updateData();
+                console.log('Next Page');
+              }, function(reject) {
+                scope.isSaving = false;
+                tableViewService.selectedLayer.get('metadata').loadingTable = false;
+              });
+            };
+
             $('#table-view-window').on('hidden.bs.modal', function(e) {
               if (scope.isSaving) {
                 return;
               }
-              tableViewService.rows = [];
-              tableViewService.attributeNameList = [];
-              scope.restrictions = {};
-
-              scope.filterText = '';
-              scope.filteringTable = false;
-              scope.selectedRow = null;
+              clearSession();
             });
             $('#table-view-window').on('show.bs.modal', function(e) {
-              scope.attributes = tableViewService.attributeNameList;
-
-              //this needs to be deep copied so the original values will be available to pass to the feature manager
-              scope.rows = clone(tableViewService.rows);
+              newTableSession();
+              updateData();
               for (var row in scope.rows) {
                 if (scope.rows[row].selected === true) {
                   scope.selectedRow = scope.rows[row];
                 }
               }
-
-              scope.restrictions = tableViewService.restrictionList;
-              scope.readOnly = tableViewService.readOnly;
 
               featureManagerService.hide();
             });
@@ -266,4 +291,21 @@
           }
         };
       });
+  // This controller is necessary to hide the tooltip when the button is clicked.  The mouse leave doesn't get
+  // triggered due to the button getting disabled.  This causes the tooltip to get stuck on.
+  module.controller('previous-tt-controller', function($scope) {
+    $scope.onPrevious = function() {
+      //hide the tooltip
+      $scope.tt_isOpen = false;
+      $scope.previousPage();
+    };
+  });
+
+  module.controller('next-tt-controller', function($scope) {
+    $scope.onNext = function() {
+      //hide the tooltip
+      $scope.tt_isOpen = false;
+      $scope.nextPage();
+    };
+  });
 }());
