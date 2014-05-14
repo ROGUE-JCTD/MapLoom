@@ -857,6 +857,7 @@
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     pulldownService_.addLayers = true;
+                    service_.map.updateSize();
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }
@@ -865,6 +866,7 @@
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     pulldownService_.addLayers = true;
+                    service_.map.updateSize();
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }
