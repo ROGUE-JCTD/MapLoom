@@ -871,7 +871,7 @@
         goog.array.forEach(orderedUnique, function(serverInfo, serverIndex, obj) {
           // if there was a duplicate server, an index in the ordered array will be undefined
           if (goog.isDefAndNotNull(serverInfo)) {
-            serverService_.addServer(serverInfo)
+            serverService_.addServer(serverInfo, true)
                 .then(function(serverNew) {
                   orderedUniqueLength--;
                   addLayersForServer(serverIndex, serverNew);

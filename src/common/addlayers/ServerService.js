@@ -188,7 +188,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return deferredResponse.promise;
     };
 
-    this.addServer = function(serverInfo) {
+    this.addServer = function(serverInfo, loaded) {
       var deferredResponse = q_.defer();
 
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
@@ -197,17 +197,38 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       goog.object.extend(server, serverInfo, {});
 
+      if (goog.isDefAndNotNull(loaded)) {
+        loaded = false;
+      }
+
       var doWork = function() {
         console.log('---- MapService.layerInfo. trying to add server: ', server);
         service_.populateLayersConfig(server)
             .then(function(response) {
               // set the id. it should always resolve to the length
-              server.id = serverCount++;
-              servers.push(server);
-              rootScope_.$broadcast('server-added', server.id);
-              deferredResponse.resolve(server);
+              if (server.layersConfig.length === 0 && !loaded) {
+                dialogService_.warn(translate_('add_server'), translate_('server_connect_failed'),
+                    [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
+                  switch (button) {
+                    case 0:
+                      server.id = serverCount++;
+                      servers.push(server);
+                      rootScope_.$broadcast('server-added', server.id);
+                      deferredResponse.resolve(server);
+                      break;
+                    case 1:
+                      deferredResponse.reject(server);
+                      break;
+                  }
+                });
+              } else {
+                server.id = serverCount++;
+                servers.push(server);
+                rootScope_.$broadcast('server-added', server.id);
+                deferredResponse.resolve(server);
+              }
             }, function(reject) {
-              deferredResponse.reject(server, reject);
+              deferredResponse.reject(reject);
             });
       };
 
@@ -375,15 +396,15 @@ var SERVER_SERVICE_USE_PROXY = true;
                   rootScope_.$broadcast('layers-loaded', server.id);
                   deferredResponse.resolve(server);
                 } else {
-                  deferredResponse.reject(server);
+                  deferredResponse.resolve(server);
                 }
                 server.populatingLayersConfig = false;
               } else {
-                deferredResponse.reject(server);
+                deferredResponse.resolve(server);
                 server.populatingLayersConfig = false;
               }
             }, function(xhr) {
-              deferredResponse.reject(server);
+              deferredResponse.resolve(server);
               server.populatingLayersConfig = false;
             });
           }

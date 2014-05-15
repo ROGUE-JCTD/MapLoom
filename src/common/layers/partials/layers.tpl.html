@@ -3,10 +3,10 @@
      arrangeable-placeholder='<div class="placeholder"></div>'>
   <div class="panel"
        ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterInternalLayers">
-    <div class="panel-heading layer-heading" data-toggle="collapse"
+    <div class="panel-heading layer-heading" data-toggle="collapse" ng-class="{'placeholder-layer': layer.get('metadata').placeholder}"
          data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').uniqueID}}">
       <div class="row">
-        <div class="layer-title ellipsis">
+        <div class="layer-title ellipsis" ng-class="{'placeholder-layer-title': layer.get('metadata').placeholder}">
           {{layer.get('metadata').title}}
         </div>
         <div class="layer-buttons">
@@ -17,11 +17,13 @@
             <i class="glyphicon glyphicon-pencil"></i>
           </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
-                tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"
+                ng-show="!layer.get('metadata').placeholder" tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"
                 class="btn btn-xs btn-default layer-visible-button" ng-class="{'layer-visible': layer.get('visible')}">
             <i class="glyphicon"
                ng-class="{'glyphicon-eye-close': !layer.get('visible'), 'glyphicon-eye-open': layer.get('visible')}"></i>
           </span>
+          <i tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'disabled_layer' | translate}}"
+             ng-show="layer.get('metadata').placeholder" class="placeholder-layer-symbol glyphicon glyphicon-ban-circle"></i>
         </div>
       </div>
     </div>
