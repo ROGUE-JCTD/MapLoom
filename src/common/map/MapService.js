@@ -301,6 +301,12 @@
           //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
           var x2js = new X2JS();
           var json = x2js.xml_str2json(data);
+          if (goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
+            console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
+            service_.zoomToLayerExtent(layer);
+            deferredResponse.resolve();
+            return;
+          }
           var lower = json.BoundingBox.LowerCorner.toString().split(' ');
           var upper = json.BoundingBox.UpperCorner.toString().split(' ');
           var bounds = [JSON.parse(lower[0], 10),
@@ -343,7 +349,7 @@
           newExtent[3] -= yDelta;
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
               service_.map.getView().getView2D().getProjection());
-          newExtent = ol.extent.transform(newExtent, transform);
+          newExtent = ol.extent.applyTransform(newExtent, transform);
         }
         return newExtent;
       };
