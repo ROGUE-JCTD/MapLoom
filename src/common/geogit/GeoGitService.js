@@ -123,19 +123,20 @@
       return deferredResponse.promise;
     };
 
-    this.addRepo = function(newRepo, admin) {
+    this.addRepo = function(newRepo, admin, uniqueId) {
       if (!goog.isDefAndNotNull(admin)) {
         admin = false;
       }
       var result = q.defer();
       for (var index = 0; index < service_.repos.length; index++) {
         var repo = service_.repos[index];
-        if (repo.isEqual(newRepo)) {
+        if (uniqueId === repo.uniqueId) {
           repo.refCount++;
           result.resolve(repo.id);
           return result.promise;
         }
       }
+      newRepo.uniqueId = uniqueId;
       newRepo.admin = admin;
       newRepo.refCount = 1;
       newRepo.id = nextRepoId;
@@ -445,7 +446,8 @@
                   http.get(geogitURL + '/repo/manifest').then(function() {
                     var addRepo = function(admin) {
                       var promise = service_.addRepo(
-                          new GeoGitRepo(geogitURL, dataStore.connectionParameters.entry[1].$, repoName), admin);
+                          new GeoGitRepo(geogitURL, dataStore.connectionParameters.entry[1].$, repoName), admin,
+                          sha1(metadata.url + ':' + dataStore.connectionParameters.entry[0].$));
                       promise.then(function(repo) {
                         if (goog.isDef(repo.id)) {
                           rootScope.$broadcast('repoAdded', repo);
