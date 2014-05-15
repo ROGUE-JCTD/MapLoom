@@ -8,6 +8,7 @@
   var mapService_ = null;
   var geogitService_ = null;
   var featureDiffService_ = null;
+  var dialogService_ = null;
   var translate_ = null;
   var q_ = null;
 
@@ -27,11 +28,12 @@
     this.newCommitId = null;
     this.repoId = null;
 
-    this.$get = function($rootScope, $q, $translate, mapService, geogitService, featureDiffService) {
+    this.$get = function($rootScope, $q, $translate, mapService, geogitService, featureDiffService, dialogService) {
       rootScope = $rootScope;
       geogitService_ = geogitService;
       featureDiffService_ = featureDiffService;
       translate_ = $translate;
+      dialogService_ = dialogService;
       q_ = $q;
       service_ = this;
       var diffStyle = (function() {
@@ -132,14 +134,18 @@
       mapService_.map.removeLayer(difflayer_);
       mapService_.map.addLayer(difflayer_);
       if (goog.isDefAndNotNull(_changeList)) {
+        var numOutside = 0;
+        var missingLayers = {};
         forEachArrayish(_changeList, function(change) {
           var crs = goog.isDefAndNotNull(change.crs) ? change.crs : null;
+          var layerFound = false;
+          var splitFeature = change.id.split('/');
           mapService_.map.getLayers().forEach(function(layer) {
             var metadata = layer.get('metadata');
             if (goog.isDefAndNotNull(metadata)) {
               if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === _repo) {
-                var splitFeature = change.id.split('/');
                 if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+                  layerFound = true;
                   if (goog.isDefAndNotNull(metadata.projection)) {
                     crs = metadata.projection;
                   }
@@ -157,7 +163,6 @@
           olFeature.setGeometry(geom);
           difflayer_.getSource().addFeature(olFeature);
           change.olFeature = olFeature;
-          var splitFeature = change.id.split('/');
           var feature = {
             repo: _repo,
             layer: splitFeature[0],
@@ -174,6 +179,10 @@
               service_.modifies.push(feature);
               break;
             case 'CONFLICT':
+              if (layerFound === false) {
+                numOutside++;
+                missingLayers[splitFeature[0]] = true;
+              }
               service_.conflicts.push(feature);
               break;
             case 'MERGED':
@@ -181,6 +190,23 @@
               break;
           }
         });
+
+        if (numOutside > 0) {
+          var layerString = '';
+          var first = true;
+          for (var layer in missingLayers) {
+            if (first) {
+              first = false;
+            } else {
+              layerString += ', ';
+            }
+            layerString += layer;
+          }
+          dialogService_.warn('Warning', 'There are ' + numOutside + ' feature(s) involved in the merge that are not ' +
+              'part of the map.  In order to get the most accurate schema information for that layer, it is ' +
+              'recommended that you cancel the merge, add the missing layers, and try again. Missing layer(s): ' +
+              layerString, [translate_('btn_ok')], false);
+        }
       }
       rootScope.$broadcast('diff_performed', _repo);
     };

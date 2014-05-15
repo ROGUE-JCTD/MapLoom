@@ -94,20 +94,32 @@
             };
 
             scope.save = function() {
-              featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
-              featureDiffService.feature.olFeature.set('change', DiffColorMap.MERGED);
-              var merges = featureDiffService.getMerges();
-              var geomattributename = featureDiffService.merged.geometry.attributename;
-              var geomMergeValue = merges[geomattributename];
-              conflictService.resolveConflict(merges,
-                  (featureDiffService.merged.geometry.changetype === 'REMOVED' ? geomMergeValue : null));
-              featureDiffService.clear();
-              scope.leftPanel = false;
-              scope.rightPanel = false;
-              scope.mergePanel = false;
-              scope.leftSeparator = false;
-              scope.rightSeparator = false;
-              element.closest('.modal').modal('hide');
+              var numErrors = 0;
+              for (var index = 0; index < featureDiffService.merged.attributes.length; index++) {
+                if (!featureDiffService.merged.attributes[index].valid) {
+                  numErrors++;
+                }
+              }
+              if (numErrors > 0) {
+                dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
+                    [$translate('btn_ok')], false);
+                return;
+              } else {
+                featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
+                featureDiffService.feature.olFeature.set('change', DiffColorMap.MERGED);
+                var merges = featureDiffService.getMerges();
+                var geomattributename = featureDiffService.merged.geometry.attributename;
+                var geomMergeValue = merges[geomattributename];
+                conflictService.resolveConflict(merges,
+                    (featureDiffService.merged.geometry.changetype === 'REMOVED' ? geomMergeValue : null));
+                featureDiffService.clear();
+                scope.leftPanel = false;
+                scope.rightPanel = false;
+                scope.mergePanel = false;
+                scope.leftSeparator = false;
+                scope.rightSeparator = false;
+                element.closest('.modal').modal('hide');
+              }
             };
 
             scope.performBlame = function() {

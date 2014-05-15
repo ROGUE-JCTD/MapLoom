@@ -71,6 +71,25 @@
                       'form-control' : attribute.editable
                     }"/>
               </div>
+              <div ng-switch-when="xsd:boolean" class="merge-select" ng-class="{'input-group': attribute.editable}">
+                <div ng-if="attribute.editable" class="input-group-btn">
+                  <button ng-disabled="!isConflictPanel" type="button" class="btn btn-default dropdown-toggle attr-none"
+                          data-toggle="dropdown">
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="enum in attribute.enum">
+                      <a ng-click="selectBooleanValue(attribute, $index)" translate="{{enum._value}}"></a>
+                    </li>
+                  </ul>
+                </div>
+                <input value="{{translate(attribute.newvalue)}}" type="text" class="form-control attr-none" disabled ng-class="{
+                      'attr-added': attribute.changetype == 'ADDED',
+                      'attr-modified': attribute.changetype == 'MODIFIED',
+                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED',
+                      'form-control' : attribute.editable
+                    }"/>
+              </div>
               <div ng-switch-when="xsd:int" ng-class="{'has-error': !attribute.valid}">
                 <input ng-disabled="!isConflictPanel" ng-model="attribute.newvalue" type="text"
                        class="form-control attr-none"

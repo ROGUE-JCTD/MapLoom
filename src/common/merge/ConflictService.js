@@ -199,7 +199,7 @@
         }
         service_.transaction.command('checkout', checkoutOptions).then(function() {
           var addOptions = new GeoGitAddOptions();
-          addOptions.path = conflict.id.split('/')[0];
+          addOptions.path = conflict.id;
           service_.transaction.command('add', addOptions).then(function() {
             // add successful
             commitInternal(conflictList, conflictsInError);

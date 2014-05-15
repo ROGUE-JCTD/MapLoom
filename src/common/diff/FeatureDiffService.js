@@ -300,6 +300,10 @@
           merges[service_.merged.attributes[i].attributename] = {theirs: true};
         } else {
           merges[service_.merged.attributes[i].attributename] = {value: service_.merged.attributes[i].newvalue};
+          if (service_.schema[service_.merged.attributes[i].attributename]._type === 'xsd:dateTime') {
+            merges[service_.merged.attributes[i].attributename].value =
+                new Date(service_.merged.attributes[i].newvalue).getTime();
+          }
         }
       }
 
@@ -319,17 +323,18 @@
       repoId_ = repoId;
       var layers = mapService_.map.getLayers();
       service_.feature = feature;
+      service_.layer = null;
       service_.left.replaceLayers(layers);
       service_.right.replaceLayers(layers);
       service_.merged.replaceLayers(layers);
 
       crs_ = goog.isDefAndNotNull(feature.crs) ? feature.crs : null;
       var repoName = geogitService_.getRepoById(repoId_).name;
+      var splitFeature = feature.id.split('/');
       mapService_.map.getLayers().forEach(function(layer) {
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
           if (goog.isDefAndNotNull(metadata.repoName) && metadata.repoName === repoName) {
-            var splitFeature = feature.id.split('/');
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
               service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
@@ -343,46 +348,91 @@
         }
       });
 
-      var geom = WKT.read(feature.geometry);
-      if (goog.isDefAndNotNull(crs_)) {
-        geom.transform(crs_, mapService_.map.getView().getView2D().getProjection());
-      }
+      var continueWork = function() {
+        var geom = WKT.read(feature.geometry);
+        if (goog.isDefAndNotNull(crs_)) {
+          geom.transform(crs_, mapService_.map.getView().getView2D().getProjection());
+        }
 
-      diffsInError_ = 0;
-      switch (feature.change) {
-        case 'ADDED':
-          diffsNeeded_ = 1;
-          service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          break;
-        case 'REMOVED':
-          diffsNeeded_ = 1;
-          service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          break;
-        case 'MODIFIED':
-          diffsNeeded_ = 2;
-          service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
-          service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          break;
-        case 'CONFLICT':
-          diffsNeeded_ = 2;
-          service_.merged.active = true;
-          service_.merged.olFeature = new ol.Feature();
-          service_.merged.olFeature.set('MapLoomChange', DiffColorMap[feature.change]);
-          service_.merged.olFeature.setGeometry(geom);
-          service_.merged.featureLayer.getSource().addFeature(service_.merged.olFeature);
-          service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
-          service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          break;
-        case 'MERGED':
-          diffsNeeded_ = 3;
-          service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
-          service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
-          service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
-          break;
+        diffsInError_ = 0;
+        switch (feature.change) {
+          case 'ADDED':
+            diffsNeeded_ = 1;
+            service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
+            break;
+          case 'REMOVED':
+            diffsNeeded_ = 1;
+            service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
+            break;
+          case 'MODIFIED':
+            diffsNeeded_ = 2;
+            service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
+            service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
+            break;
+          case 'CONFLICT':
+            diffsNeeded_ = 2;
+            service_.merged.active = true;
+            service_.merged.olFeature = new ol.Feature();
+            service_.merged.olFeature.set('MapLoomChange', DiffColorMap[feature.change]);
+            service_.merged.olFeature.setGeometry(geom);
+            service_.merged.featureLayer.getSource().addFeature(service_.merged.olFeature);
+            service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
+            service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
+            break;
+          case 'MERGED':
+            diffsNeeded_ = 3;
+            service_.performFeatureDiff(feature, ours_, ancestor_, service_.left);
+            service_.performFeatureDiff(feature, theirs_, ancestor_, service_.right);
+            service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
+            break;
+        }
+        mapService_.zoomToExtent(geom.getExtent(), null, null, 0.5);
+        service_.title = feature.id;
+        rootScope_.$broadcast('feature-diff-feature-set');
+      };
+
+      if (!goog.isDefAndNotNull(service_.layer)) {
+        // try to get the schema from geogit.
+        var lsTreeOptions = new GeoGitLsTreeOptions();
+        lsTreeOptions.onlyTree = true;
+        lsTreeOptions.showTree = true;
+        lsTreeOptions.verbose = true;
+        geogitService_.command(repoId_, 'ls-tree', lsTreeOptions).then(function(response) {
+          // get featuretype
+          var layerFound = false;
+          forEachArrayish(response.node, function(node) {
+            if (node.path === splitFeature[0]) {
+              layerFound = true;
+              var catOptions = new GeoGitCatOptions();
+              catOptions.objectid = node.metadataId;
+              geogitService_.command(repoId_, 'cat', catOptions).then(function(response) {
+                // create schema and get projection from crs
+                service_.schema = {};
+                if (goog.isDefAndNotNull(response.featuretype) &&
+                    goog.isDefAndNotNull(response.featuretype.attribute)) {
+                  forEachArrayish(response.featuretype.attribute, function(attribute) {
+                    var attrType = convertAttributeType(attribute.type);
+                    service_.schema[attribute.name] = {_type: attrType};
+                    if (attrType.search('gml:') > -1) {
+                      crs_ = attribute.crs;
+                    }
+                  });
+                }
+                continueWork();
+              }, function(error) {
+                continueWork();
+              });
+            }
+          });
+          if (layerFound === false) {
+            continueWork();
+          }
+        }, function(error) {
+          continueWork();
+        });
+      } else {
+        continueWork();
       }
-      mapService_.zoomToExtent(geom.getExtent(), null, null, 0.5);
-      service_.title = feature.id;
-      rootScope_.$broadcast('feature-diff-feature-set');
     };
 
     this.performFeatureDiff = function(feature, newCommit, oldCommit, panel) {
@@ -449,7 +499,11 @@
                   } else if (mergeValue.theirs === true) {
                     service_.chooseAttribute(i, service_.right);
                   } else {
-                    service_.merged.attributes[i].newvalue = mergeValue.value;
+                    if (service_.schema[attributename]._type === 'xsd:dateTime') {
+                      service_.merged.attributes[i].newvalue = new Date(mergeValue.value).toISOString();
+                    } else {
+                      service_.merged.attributes[i].newvalue = mergeValue.value;
+                    }
                     service_.updateChangeType(service_.merged.attributes[i]);
                   }
                 }
@@ -473,6 +527,61 @@
     };
   });
 
+  function convertAttributeType(type) {
+    switch (type) {
+      case 'NULL':
+        return 'xsd:null';
+      case 'BOOLEAN':
+        return 'xsd:boolean';
+      case 'BYTE':
+      case 'SHORT':
+      case 'INTEGER':
+      case 'BIG_INTEGER':
+      case 'LONG':
+        return 'xsd:int';
+      case 'FLOAT':
+      case 'DOUBLE':
+      case 'BIG_DECIMAL':
+        return 'xsd:double';
+      case 'DATETIME':
+        return 'xsd:dateTime';
+      case 'DATE':
+        return 'xsd:date';
+      case 'TIME':
+        return 'xsd:time';
+      case 'TIMESTAMP':
+        return 'xsd:dateTime';
+      case 'POINT':
+        return 'gml:Point';
+      case 'LINESTRING':
+        return 'gml:LineString';
+      case 'POLYGON':
+        return 'gml:Polygon';
+      case 'MULTIPOINT':
+        return 'gml:MultiPoint';
+      case 'MULTILINESTRING':
+        return 'gml:MultiLineString';
+      case 'MULTIPOLYGON':
+        return 'gml:MultiPolygon';
+      case 'GEOMETRYCOLLECTION':
+        return 'gml:MultiGeometry';
+      case 'GEOMETRY':
+        return 'gml:Geometry';
+      case 'UUID':
+      case 'STRING':
+      case 'BOOLEAN_ARRAY':
+      case 'BYTE_ARRAY':
+      case 'SHORT_ARRAY':
+      case 'INTEGER_ARRAY':
+      case 'LONG_ARRAY':
+      case 'FLOAT_ARRAY':
+      case 'DOUBLE_ARRAY':
+      case 'STRING_ARRAY':
+        return 'xsd:string';
+    }
+    return 'xsd:string';
+  }
+
   function assignAttributeTypes(properties, editable) {
     if (goog.isDefAndNotNull(service_.schema)) {
       for (var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++) {
@@ -480,6 +589,12 @@
         if (properties[propertyIndex].type === 'simpleType') {
           properties[propertyIndex].enum =
               service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
+        }
+        if (properties[propertyIndex].type === 'xsd:boolean') {
+          properties[propertyIndex].enum = [
+            {_value: 'true'},
+            {_value: 'false'}
+          ];
         }
         if (properties[propertyIndex].type === 'xsd:dateTime') {
           if (goog.isDefAndNotNull(properties[propertyIndex].oldvalue)) {

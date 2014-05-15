@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_panel_directive', []);
 
   module.directive('loomFeaturePanel',
-      function($rootScope, mapService, $timeout, featureDiffService, featureBlameService) {
+      function($rootScope, $translate, mapService, $timeout, featureDiffService, featureBlameService) {
         return {
           restrict: 'C',
           scope: {
@@ -40,6 +40,10 @@
               }, 500);
             }
 
+            scope.translate = function(value) {
+              return $translate(value);
+            };
+
             scope.computeAuthorString = function(attribute) {
               if (scope.isConflictPanel) {
                 return '---------------------';
@@ -58,8 +62,17 @@
               property.newvalue = property.enum[index]._value;
             };
 
-            scope.validateInteger = validateInteger;
-            scope.validateDouble = validateDouble;
+            scope.selectBooleanValue = function(property, index) {
+              property.newvalue = property.enum[index]._value === 'true';
+            };
+
+            scope.validateInteger = function(property, key) {
+              property.valid = validateInteger(property[key]);
+            };
+
+            scope.validateDouble = function(property, key) {
+              property.valid = validateDouble(property[key]);
+            };
 
             scope.$on('feature-diff-performed', updateVariables);
             scope.$on('show-authors', function() {

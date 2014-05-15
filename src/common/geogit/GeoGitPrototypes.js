@@ -81,6 +81,10 @@ var GeoGitAddOptions = function() {
   this.path = null;
 };
 
+var GeoGitCatOptions = function() {
+  this.objectid = null;
+};
+
 var GeoGitRemoveOptions = function() {
   this.path = null;
   this.recursive = null;

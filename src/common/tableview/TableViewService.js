@@ -18,7 +18,7 @@
     this.restrictionList = null;
     this.selectedLayer = null;
     this.readOnly = false;
-    this.resultsPerPage = 2;
+    this.resultsPerPage = 50;
     this.currentPage = 0;
     this.totalPages = 0;
     this.textFilter = null;
