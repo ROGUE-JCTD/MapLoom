@@ -6,7 +6,7 @@
         <label class="control-label"><span translate="repo"></span>: </label>
       </div>
       <div class="col-md-10">
-        <select class="form-control" ng-model="remoteService.selectedRepo" required ng-options="repo.name for repo in geogitService.adminRepos" ng-disabled="remoteService.editing">
+        <select class="form-control" ng-model="remoteService.selectedRepo" required ng-options="repo.name for repo in geogitService.adminRepos | filter:{unique:'true'}" ng-disabled="remoteService.editing">
         </select>
       </div>
     </div>

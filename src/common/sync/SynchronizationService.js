@@ -87,13 +87,15 @@
       q_ = $q;
       $rootScope.$on('repoRemoved', function(event, repo) {
         var linksToRemove = [];
-        goog.array.forEach(synchronizationLinks_, function(link) {
-          if (link.getRepo().id === repo.id) {
-            linksToRemove.push(link.id);
+        if (repo.unique === true) {
+          goog.array.forEach(synchronizationLinks_, function(link) {
+            if (link.getRepo().uniqueId === repo.uniqueId) {
+              linksToRemove.push(link.id);
+            }
+          });
+          for (var index = 0; index < linksToRemove.length; index++) {
+            service_.removeLink(linksToRemove[index]);
           }
-        });
-        for (var index = 0; index < linksToRemove.length; index++) {
-          service_.removeLink(linksToRemove[index]);
         }
       });
       return this;

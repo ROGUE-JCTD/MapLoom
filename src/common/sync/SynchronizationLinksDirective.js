@@ -11,6 +11,9 @@
           link: function(scope) {
             scope.syncService = synchronizationService;
             var createDefaultLinks = function(event, repo, remote) {
+              if (!goog.isDefAndNotNull(repo.unique) || repo.unique === false) {
+                return;
+              }
               var localMaster = false;
               var index;
               for (index = 0; index < repo.branches.length; index++) {

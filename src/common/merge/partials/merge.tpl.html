@@ -4,7 +4,7 @@
     <div class="form-group">
       <div class="col-md-4">
         <select class="form-control" ng-model="selectedRepoId">
-          <option ng-repeat="repo in geogitService.repos" value="{{repo.id}}" ng-selected="">{{repo.name}}</option>
+          <option ng-repeat="repo in geogitService.repos | filter:{unique:'true'}" value="{{repo.id}}" ng-selected="">{{repo.name}}</option>
         </select>
       </div>
       <div class="col-md-3" ng-hide="!selectedRepoId">

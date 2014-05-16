@@ -1,5 +1,6 @@
-var GeoGitRepo = function(_url, _branch, _name) {
+var GeoGitRepo = function(_url, _uniqueId, _branch, _name) {
   this.url = _url;
+  this.uniqueId = _uniqueId;
   this.branch = _branch;
   this.name = _name;
   this.branches = [];
