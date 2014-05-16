@@ -269,7 +269,17 @@
     'failed_to_save_features': '{{value}} caracteristicas no pudieron salvar, por favor tratar de salvar una' +
         ' vez mas antes de cerrar la tabla o perdera el trabajo.',
     'server_connect_failed': 'No se pudo conectar con este servidor, todavia desea anadir este servidor?',
-    'disabled_layer': 'Capa es Desactivado'
+    'disabled_layer': 'Capa es Desactivado',
+    'missing_layers_merge': 'Hay {{count}} elemento(s) que participan en la fusión que no son parte del mapa.  ' +
+        'Con el fin de obtener la información de esquema más preciso para esa capa, se recomienda que usted cancela ' +
+        'la combinación, agregue las capas que faltan, y vuelve a intentarlo. Capa(s) faltante:',
+    'toggle_filters': 'Cambiar los Filtros',
+    'apply_filters': 'Aplicar Filtros',
+    'clear_filters': 'Borrar Filtros',
+    'previous_page': 'Página Anterior',
+    'next_page': 'Página Siguiente',
+    'current_page': 'Página {{currentPage}} de {{totalPages}}',
+    'filter': 'Filtro:'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

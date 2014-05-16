@@ -202,9 +202,7 @@
             }
             layerString += layer;
           }
-          dialogService_.warn('Warning', 'There are ' + numOutside + ' feature(s) involved in the merge that are not ' +
-              'part of the map.  In order to get the most accurate schema information for that layer, it is ' +
-              'recommended that you cancel the merge, add the missing layers, and try again. Missing layer(s): ' +
+          dialogService_.warn(translate_('warning'), translate_('missing_layers_merge', {count: numOutside}) +
               layerString, [translate_('btn_ok')], false);
         }
       }

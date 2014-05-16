@@ -1,10 +1,10 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
-  <button type="button" class="btn btn-default" ng-click="toggleFilters()">Toggle Filters
+  <button type="button" class="btn btn-default" ng-click="toggleFilters()" translate="toggle_filters">
   </button>
-  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="applyFilters()">Apply Filters
+  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="applyFilters()" translate="apply_filters">
   </button>
-  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="clearFilters()">Clear Filters
+  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="clearFilters()" translate="clear_filters">
   </button>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
@@ -15,7 +15,7 @@
             <th ng-repeat="attr in attributes">{{attr.name}}</th>
           </tr>
           <tr ng-if="filterOn">
-            <td class="filter-row first-filter-row">Filter:</td>
+            <td class="filter-row first-filter-row" translate="filter"></td>
             <td class="filter-row" ng-repeat="attr in attributes"><input class="form-control" type="text"
                                                                          ng-model="attr.filter"></td>
           </tr>
@@ -61,13 +61,13 @@
     </button>
     <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
             ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"
-            tooltip="Previous Page" tooltip-append-to-body="true">
+            tooltip="{{'previous_page' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-chevron-left"></i>
     </button>
-    <div class="table-page-indicator">Page {{currentPage}} of {{totalPages}}</div>
+    <div class="table-page-indicator">{{getPageText()}}</div>
     <button id='next-page-btn' type="button" class="btn btn-default table-btn"
             ng-controller="next-tt-controller" ng-click="onNext()" ng-disabled="currentPage == totalPages"
-            tooltip="Next Page" tooltip-append-to-body="true">
+            tooltip="{{'next_page' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-chevron-right"></i>
     </button>
     <button type="button" class="btn btn-default table-btn pull-right" ng-click="tableviewform.$cancel()" data-dismiss="modal">{{'close_btn' | translate}}</button>

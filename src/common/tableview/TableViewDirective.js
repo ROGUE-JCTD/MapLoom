@@ -159,6 +159,10 @@
 
             };
 
+            scope.getPageText = function() {
+              return $translate('current_page', {currentPage: scope.currentPage, totalPages: scope.totalPages});
+            };
+
             scope.previousPage = function() {
               scope.isSaving = true;
               tableViewService.selectedLayer.get('metadata').loadingTable = true;
@@ -166,7 +170,6 @@
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;
                 updateData();
-                console.log('Previous Page');
               }, function(reject) {
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;
@@ -180,7 +183,6 @@
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;
                 updateData();
-                console.log('Next Page');
               }, function(reject) {
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;

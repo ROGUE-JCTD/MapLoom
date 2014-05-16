@@ -92,7 +92,7 @@
       } else {
         logOptions.show = service_.entriesPerPage;
       }
-      //logOptions.firstParentOnly = 'true';
+
       logOptions.countChanges = true;
       var thisTransaction = service_.historyTransaction;
       var metadata = service_.layer.get('metadata');

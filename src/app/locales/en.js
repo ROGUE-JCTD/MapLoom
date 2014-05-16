@@ -265,7 +265,17 @@
     'failed_to_save_features': '{{value}} features failed to save, please try to save again before closing' +
         ' the table or you will lose work.',
     'server_connect_failed': 'We were unable to connect to this server, would still like to add this server?',
-    'disabled_layer': 'Layer is Disabled'
+    'disabled_layer': 'Layer is Disabled',
+    'missing_layers_merge': 'There are {{count}} feature(s) involved in the merge that are not part of the map.  ' +
+        'In order to get the most accurate schema information for that layer, it is recommended that you cancel the ' +
+        'merge, add the missing layers, and try again. Missing layer(s): ',
+    'toggle_filters': 'Toggle Filters',
+    'apply_filters': 'Apply Filters',
+    'clear_filters': 'Clear Filters',
+    'previous_page': 'Previous Page',
+    'next_page': 'Next Page',
+    'current_page': 'Page {{currentPage}} of {{totalPages}}',
+    'filter': 'Filter:'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
