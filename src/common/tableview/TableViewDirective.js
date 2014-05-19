@@ -108,16 +108,15 @@
 
             scope.clearFilters = function() {
               for (var attrIndex in scope.attributes) {
-                scope.attributes[attrIndex].filter = '';
+                scope.attributes[attrIndex].filter.filter = '';
               }
               scope.applyFilters();
             };
 
             var newTableSession = function() {
-              scope.filterText = '';
               scope.restrictions = tableViewService.restrictionList;
               scope.selectedRow = null;
-              scope.filterOn = false;
+              scope.filterOn = true;
             };
 
             var updateData = function() {
@@ -131,7 +130,6 @@
               tableViewService.clear();
               scope.restrictions = {};
 
-              scope.filterText = '';
               scope.selectedRow = null;
               scope.rows = null;
             };

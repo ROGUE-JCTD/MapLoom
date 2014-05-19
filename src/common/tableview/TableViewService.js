@@ -21,7 +21,6 @@
     this.resultsPerPage = 25;
     this.currentPage = 0;
     this.totalPages = 0;
-    this.textFilter = null;
 
     this.nextPage = function() {
       this.currentPage++;
@@ -68,19 +67,21 @@
 
       var filter = '';
       var hasFilter = false;
-      for (var attrIndex in service_.attributeNameList) {
-        var attr = service_.attributeNameList[attrIndex];
-        if (goog.isDefAndNotNull(attr.filter) && attr.filter !== '') {
-          if (hasFilter) {
-            filter += ' or ';
-          } else {
-            hasFilter = true;
+      if (goog.isDefAndNotNull(metadata.filters)) {
+        for (var attrName in metadata.filters) {
+          var attr = metadata.filters[attrName];
+          if (goog.isDefAndNotNull(attr.filter) && attr.filter !== '') {
+            if (hasFilter) {
+              filter += ' and ';
+            } else {
+              hasFilter = true;
+            }
+            filter += attrName + ' like \'%' + attr.filter + '%\'';
           }
-          filter += attr.name + ' like \'%' + attr.filter + '%\'';
         }
-      }
-      if (hasFilter) {
-        url += '&cql_filter=' + encodeURIComponent(filter);
+        if (hasFilter) {
+          url += '&cql_filter=' + encodeURIComponent(filter);
+        }
       }
       http_.get(url).then(function(response) {
 
@@ -89,7 +90,6 @@
             service_.readOnly = true;
             return;
           }
-          console.log(service_.attributeNameList);
           for (var attrIndex in service_.attributeNameList) {
             var attr = service_.attributeNameList[attrIndex];
             var attrRestriction = '';
@@ -122,16 +122,17 @@
         var row;
         service_.rows = [];
         if (response.data.features.length > 0) {
-          var oldAttributeNameList = service_.attributeNameList;
           service_.attributeNameList = [];
+          if (!goog.isDefAndNotNull(metadata.filters)) {
+            metadata.filters = {};
+          }
           for (var attrName in response.data.features[0].properties) {
-            var filter = '';
-            for (var attrIndex in oldAttributeNameList) {
-              if (oldAttributeNameList[attrIndex].name === attrName) {
-                filter = oldAttributeNameList[attrIndex].filter;
+            if (response.data.features[0].properties.hasOwnProperty(attrName)) {
+              if (!goog.isDefAndNotNull(metadata.filters[attrName])) {
+                metadata.filters[attrName] = {filter: ''};
               }
+              service_.attributeNameList.push({name: attrName, filter: metadata.filters[attrName]});
             }
-            service_.attributeNameList.push({name: attrName, filter: filter});
           }
           var totalFeatures = response.data.totalFeatures;
           service_.totalPages = Math.ceil(totalFeatures / service_.resultsPerPage);

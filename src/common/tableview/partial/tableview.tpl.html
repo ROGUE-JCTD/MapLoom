@@ -1,10 +1,8 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
-  <button type="button" class="btn btn-default" ng-click="toggleFilters()" translate="toggle_filters">
+  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()" translate="apply_filters">
   </button>
-  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="applyFilters()" translate="apply_filters">
-  </button>
-  <button ng-if="filterOn" type="button" class="btn btn-default" ng-click="clearFilters()" translate="clear_filters">
+  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()" translate="clear_filters">
   </button>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
@@ -17,7 +15,7 @@
           <tr ng-if="filterOn">
             <td class="filter-row first-filter-row" translate="filter"></td>
             <td class="filter-row" ng-repeat="attr in attributes"><input class="form-control" type="text"
-                                                                         ng-model="attr.filter"></td>
+                                                                         ng-model="attr.filter.filter"></td>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-show="row.visible" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
