@@ -46,6 +46,24 @@
     }
   }
 
+  // This controller is necessary to hide the tooltip when the button is clicked.  The mouse leave doesn't get
+  // triggered due to the button getting disabled.  This causes the tooltip to get stuck on.
+  module.controller('previous-tt-controller', function($scope) {
+    $scope.onPrevious = function() {
+      //hide the tooltip
+      $scope.tt_isOpen = false;
+      $scope.previousPage();
+    };
+  });
+
+  module.controller('next-tt-controller', function($scope) {
+    $scope.onNext = function() {
+      //hide the tooltip
+      $scope.tt_isOpen = false;
+      $scope.nextPage();
+    };
+  });
+
   module.directive('loomTableView',
       function(tableFilter, mapService, $http, tableViewService, featureManagerService, dialogService, $translate) {
         return {
@@ -291,21 +309,4 @@
           }
         };
       });
-  // This controller is necessary to hide the tooltip when the button is clicked.  The mouse leave doesn't get
-  // triggered due to the button getting disabled.  This causes the tooltip to get stuck on.
-  module.controller('previous-tt-controller', function($scope) {
-    $scope.onPrevious = function() {
-      //hide the tooltip
-      $scope.tt_isOpen = false;
-      $scope.previousPage();
-    };
-  });
-
-  module.controller('next-tt-controller', function($scope) {
-    $scope.onNext = function() {
-      //hide the tooltip
-      $scope.tt_isOpen = false;
-      $scope.nextPage();
-    };
-  });
 }());

@@ -31,6 +31,11 @@
               return goog.isDefAndNotNull(commit.loading) && commit.loading === true;
             };
 
+            scope.isMerge = function(commit) {
+              return goog.isDefAndNotNull(commit.parents) && goog.isArray(commit.parents.id) &&
+                  commit.parents.id.length > 1;
+            };
+
             function updateVariables(newLog, oldLog) {
               if (goog.isDefAndNotNull(oldLog) && oldLog.length === 0) {
                 $timeout(function() {

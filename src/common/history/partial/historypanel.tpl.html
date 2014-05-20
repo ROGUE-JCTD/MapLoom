@@ -17,8 +17,10 @@
             <span class="sr-only"></span>
           </div>
         </div>
-        <div class="author-name">{{getCommitAuthor(commit)}}</div>
-        <div class="commit-time">{{getCommitTime(commit)}}</div>
+        <span ng-if="isMerge(commit)" class="glyphicon glyphicon-random merged" tooltip-placement="top"
+              tooltip="{{'merge_commit' | translate}}" tooltip-append-to-body="true"></span>
+        <div class="author-name ellipsis">{{getCommitAuthor(commit)}}</div>
+        <div class="commit-time ellipsis">{{getCommitTime(commit)}}</div>
 
       </li>
       <li ng-if="historyService.nextPage" class="list-group-item">
