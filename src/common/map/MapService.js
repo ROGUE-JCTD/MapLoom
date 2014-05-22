@@ -529,7 +529,8 @@
             source: new ol.source.TileWMS({
               url: server.url,
               params: {
-                'LAYERS': minimalConfig.name
+                'LAYERS': minimalConfig.name,
+                'tiled': 'true'
               }
             })
           });
