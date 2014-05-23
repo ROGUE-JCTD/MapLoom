@@ -301,7 +301,8 @@
           //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
           var x2js = new X2JS();
           var json = x2js.xml_str2json(data);
-          if (goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
+          if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
+              goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
             console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
             service_.zoomToLayerExtent(layer);
             deferredResponse.resolve();
