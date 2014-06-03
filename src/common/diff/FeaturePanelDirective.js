@@ -59,7 +59,11 @@
             };
 
             scope.selectValue = function(property, index) {
-              property.newvalue = property.enum[index]._value;
+              if (index === null) {
+                property.newvalue = null;
+              } else {
+                property.newvalue = property.enum[index]._value;
+              }
             };
 
             scope.selectBooleanValue = function(property, index) {

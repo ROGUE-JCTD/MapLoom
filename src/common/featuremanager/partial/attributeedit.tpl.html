@@ -18,6 +18,9 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
+              <li>
+                <a ng-click="selectValue(prop, null)">&nbsp;</a>
+              </li>
               <li ng-repeat="enum in prop.enum">
                 <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
               </li>
