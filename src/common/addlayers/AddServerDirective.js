@@ -85,16 +85,36 @@
                     case 0:
                       scope.server.url = scope.url;
                       scope.loading = true;
-                      serverService.populateLayersConfig(scope.server, true).then(function() {
-                        scope.loading = false;
-                        element.closest('.modal').modal('hide');
-                        scope.reset();
-                      }, function() {
-                        scope.loading = false;
-                        element.closest('.modal').modal('hide');
-                        scope.reset();
+                      var doWork = function() {
+                        serverService.populateLayersConfig(scope.server, true).then(function() {
+                          scope.loading = false;
+                          element.closest('.modal').modal('hide');
+                          scope.reset();
+                        }, function() {
+                          scope.loading = false;
+                          element.closest('.modal').modal('hide');
+                          scope.reset();
+                        });
+                      };
+                      dialogService.promptCredentials(scope.server.url, false).then(function(credentials) {
+                        scope.server.username = credentials.username;
+                        scope.server.authentication =
+                            $.base64.encode(credentials.username + ':' + credentials.password);
+
+                        var subURL = scope.server.url.replace('/wms', '/rest');
+                        subURL = subURL.replace('http://', 'http://null:null@');
+                        $.ajax({
+                          url: subURL,
+                          type: 'GET',
+                          dataType: 'jsonp',
+                          jsonp: 'callback',
+                          complete: doWork
+                        });
+                      }, function(reject) {
+                        scope.server.username = $translate('anonymous');
+                        scope.server.authentication = undefined;
+                        doWork();
                       });
-                      break;
                   }
                 });
               } else {
