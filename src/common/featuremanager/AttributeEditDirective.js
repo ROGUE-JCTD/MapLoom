@@ -29,7 +29,8 @@
                         {_value: 'false'}
                       ];
                     }
-                    prop.valid = true;
+                    prop.nillable = attributeTypes[prop[0]]._nillable;
+                    scope.validateField(prop, 1);
                     scope.properties.push(prop);
                   }
                 }
@@ -62,12 +63,25 @@
               goog.array.remove(property[1], photo);
             };
 
-            scope.validateInteger = function(property, key) {
-              property.valid = validateInteger(property[key]);
-            };
-
-            scope.validateDouble = function(property, key) {
-              property.valid = validateDouble(property[key]);
+            scope.validateField = function(property, key) {
+              property.valid = true;
+              switch (property.type) {
+                case 'xsd:int':
+                  property.valid = validateInteger(property[key]);
+                  break;
+                case 'xsd:integer':
+                  property.valid = validateInteger(property[key]);
+                  break;
+                case 'xsd:double':
+                  property.valid = validateDouble(property[key]);
+                  break;
+                case 'xsd:decimal':
+                  property.valid = validateDouble(property[key]);
+                  break;
+              }
+              if (property.nillable === 'false' && (property[key] === '' || property[key] === null)) {
+                property.valid = false;
+              }
             };
 
             var parentModal = element.closest('.modal');
@@ -143,6 +157,7 @@
               } else {
                 property[1] = property.enum[index]._value;
               }
+              scope.validateField(property, 1);
             };
 
             scope.$on('modal-closed', closeModal);
