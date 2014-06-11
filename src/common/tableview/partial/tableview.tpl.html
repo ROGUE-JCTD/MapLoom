@@ -45,7 +45,7 @@
         </tr>
       </table>
     </div>
-    <button type="submit" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
+    <button type="button" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
     <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
     <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()"
           ng-show="!tableviewform.$visible && !readOnly" tooltip="{{'edit_attributes' | translate}}" tooltip-append-to-body="true">
