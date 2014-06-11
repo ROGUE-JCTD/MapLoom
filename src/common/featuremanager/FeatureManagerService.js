@@ -124,8 +124,12 @@
      * item: can be a feature, a layer containing features, or a collection of layers
      */
     // layers, layer, feature
-    this.show = function(item, position) {
+    this.show = function(item, position, forceUpdate) {
       //console.log('---- show: ', item);
+
+      if (!goog.isDefAndNotNull(forceUpdate)) {
+        forceUpdate = false;
+      }
 
       // if item is not specified, return
       if (!goog.isDefAndNotNull(item)) {
@@ -194,7 +198,7 @@
       }
 
       //---- if selected item changed
-      if (selectedItem_ !== selectedItemOld) {
+      if (selectedItem_ !== selectedItemOld || forceUpdate) {
 
         // -- update the selectedItemPics_
         var pics = null;
@@ -249,7 +253,24 @@
         if (getItemType(selectedItem_) === 'feature') {
           props = [];
           goog.object.forEach(selectedItem_.properties, function(v, k) {
-            if (k !== 'fotos' && k !== 'photos') {
+            if (k === 'fotos' || k === 'photos') {
+              if (goog.isDefAndNotNull(v)) {
+                var picsAttr = JSON.parse(v);
+                if (!goog.isArray(picsAttr)) {
+                  picsAttr = [picsAttr];
+                }
+                goog.array.forEach(picsAttr, function(item, index) {
+                  // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
+                  // otherwise list it as is so that a feature can point to an full url
+                  if (item.indexOf('http') === -1) {
+                    picsAttr[index] = {original: item, modified: '/file-service/' + item};
+                  } else {
+                    picsAttr[index] = {original: item, modified: item};
+                  }
+                });
+                props.push([k, picsAttr]);
+              }
+            } else {
               props.push([k, v]);
             }
           });
@@ -669,12 +690,24 @@
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
-          if (property[1] === '') {
-            property[1] = null;
-          }
-          if (properties[index][1] !== selectedItemProperties_[index][1]) {
-            propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
-                '</wfs:Name><wfs:Value>' + (property[1] === null ? '' : property[1]) + '</wfs:Value></wfs:Property>';
+          if (property[0] === 'fotos' || property[0] === 'photos') {
+            var newArray = [];
+            forEachArrayish(property[1], function(photo) {
+              newArray.push(photo.original);
+            });
+            var stringy = JSON.stringify(newArray);
+            if (stringy !== selectedItemProperties_[index][1]) {
+              propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
+                  '</wfs:Name><wfs:Value>' + (stringy === null ? '' : stringy) + '</wfs:Value></wfs:Property>';
+            }
+          } else {
+            if (property[1] === '') {
+              property[1] = null;
+            }
+            if (properties[index][1] !== selectedItemProperties_[index][1]) {
+              propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
+                  '</wfs:Name><wfs:Value>' + (property[1] === null ? '' : property[1]) + '</wfs:Value></wfs:Property>';
+            }
           }
         });
         var newPos = null;
@@ -832,6 +865,12 @@
       goog.array.forEach(properties, function(obj) {
         if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
           selectedItem_.properties[obj[0]] = obj[1];
+        } else {
+          var newArray = [];
+          forEachArrayish(obj[1], function(photo) {
+            newArray.push(photo.original);
+          });
+          selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
         }
       });
     } else {
@@ -851,6 +890,17 @@
             selectedLayer_.get('metadata').name + '">' +
             partial + filter +
             '</wfs:Update>';
+        goog.array.forEach(properties, function(obj) {
+          if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
+            selectedItem_.properties[obj[0]] = obj[1];
+          } else {
+            var newArray = [];
+            forEachArrayish(obj[1], function(photo) {
+              newArray.push(photo.original);
+            });
+            selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
+          }
+        });
       }
     }
 
@@ -875,9 +925,6 @@
           selectedItem_.id = json.WFS_TransactionResponse.InsertResult.FeatureId._fid;
           selectedItem_.type = 'Feature';
         }
-        if (goog.isDefAndNotNull(properties)) {
-          selectedItemProperties_ = properties;
-        }
         if (goog.isDefAndNotNull(coords)) {
           if (selectedItem_.geometry.type.toLowerCase() == 'geometrycollection') {
             selectedItem_.geometry.geometries = coords;
@@ -886,7 +933,9 @@
           }
         }
         if (goog.isDefAndNotNull(newPos)) {
-          service_.show(selectedItem_, newPos);
+          service_.show(selectedItem_, newPos, true);
+        } else {
+          service_.show(selectedItem_, position_, true);
         }
         if (postType === wfsPostTypes_.DELETE) {
           service_.hide();

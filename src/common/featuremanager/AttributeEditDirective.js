@@ -58,6 +58,10 @@
               scope.inserting = false;
             };
 
+            scope.removePhoto = function(property, photo) {
+              goog.array.remove(property[1], photo);
+            };
+
             scope.validateInteger = function(property, key) {
               property.valid = validateInteger(property[key]);
             };

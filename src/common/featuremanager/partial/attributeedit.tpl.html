@@ -1,61 +1,68 @@
+<div class="bottom-fade"></div>
 <div id="editFeatureBody" class="modal-body">
-  <div class="top-fade"></div>
-  <div class="bottom-fade"></div>
   <form name="editfeatureform" class="form wrapper">
     <div class="form-group" ng-if="coordinates">
       <label for="latLonEdit" class="control-label custom-control-label">{{'location_lon_lat' | translate}}</label>
       <latloneditor id="latLonEdit" coord-display="coordDisplay" geom="coordinates"></latloneditor>
     </div>
     <div class="form-group" ng-repeat="prop in properties">
-      <label class="control-label custom-control-label">{{prop[0]}}</label>
-      <div ng-switch on="prop.type">
-        <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop" date-key="1" default-date="inserting"></datetimepicker>
-        <datetimepicker ng-switch-when="xsd:date" date-object="prop" date-key="1" default-date="inserting" time="false"></datetimepicker>
-        <datetimepicker ng-switch-when="xsd:time" date-object="prop" date-key="1" default-date="inserting" date="false"></datetimepicker>
-        <div ng-switch-when="simpleType" class="input-group">
-          <div class="input-group-btn" ng-class="{'dropup': $last}">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-              <li>
-                <a ng-click="selectValue(prop, null)">&nbsp;</a>
-              </li>
-              <li ng-repeat="enum in prop.enum">
-                <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
-              </li>
-            </ul>
-          </div>
-          <input ng-model="prop[1]" type="text" class="form-control" disabled/>
+      <div ng-if="prop[0] === 'fotos' || prop[0] === 'photos'">
+        <label class="control-label custom-control-label">{{prop[0]}}</label>
+        <div class="photo-group" ng-repeat="photo in prop[1]">
+          <i ng-click="removePhoto(prop, photo)" class="close glyphicon glyphicon-remove"></i>
+          <img width="100%" src="{{photo.modified}}">
         </div>
-        <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">
-          <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
-        </div>
-        <div ng-switch-when="xsd:integer" ng-class="{'has-error': !prop.valid}">
-          <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
-        </div>
-        <div ng-switch-when="xsd:double" ng-class="{'has-error': !prop.valid}">
-          <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
-        </div>
-        <div ng-switch-when="xsd:decimal" ng-class="{'has-error': !prop.valid}">
-          <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
-        </div>
-        <div ng-switch-when="xsd:boolean" class="input-group">
-          <div class="input-group-btn" ng-class="{'dropup': $last}">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-              <li ng-repeat="enum in prop.enum">
-                <a ng-click="selectValue(prop, $index)" translate="{{enum._value}}"></a>
-              </li>
-            </ul>
-          </div>
-          <input value="{{translate(prop[1])}}" type="text" class="form-control" disabled/>
-        </div>
-        <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
       </div>
-
+      <div ng-if="prop[0] !== 'fotos' && prop[0] !== 'photos'">
+        <label class="control-label custom-control-label">{{prop[0]}}</label>
+        <div ng-switch on="prop.type">
+          <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop" date-key="1" default-date="inserting"></datetimepicker>
+          <datetimepicker ng-switch-when="xsd:date" date-object="prop" date-key="1" default-date="inserting" time="false"></datetimepicker>
+          <datetimepicker ng-switch-when="xsd:time" date-object="prop" date-key="1" default-date="inserting" date="false"></datetimepicker>
+          <div ng-switch-when="simpleType" class="input-group">
+            <div class="input-group-btn" ng-class="{'dropup': $last}">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a ng-click="selectValue(prop, null)">&nbsp;</a>
+                </li>
+                <li ng-repeat="enum in prop.enum">
+                  <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
+                </li>
+              </ul>
+            </div>
+            <input ng-model="prop[1]" type="text" class="form-control" disabled/>
+          </div>
+          <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
+          </div>
+          <div ng-switch-when="xsd:integer" ng-class="{'has-error': !prop.valid}">
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateInteger(prop, 1)"/>
+          </div>
+          <div ng-switch-when="xsd:double" ng-class="{'has-error': !prop.valid}">
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
+          </div>
+          <div ng-switch-when="xsd:decimal" ng-class="{'has-error': !prop.valid}">
+            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateDouble(prop, 1)"/>
+          </div>
+          <div ng-switch-when="xsd:boolean" class="input-group">
+            <div class="input-group-btn" ng-class="{'dropup': $last}">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li ng-repeat="enum in prop.enum">
+                  <a ng-click="selectValue(prop, $index)" translate="{{enum._value}}"></a>
+                </li>
+              </ul>
+            </div>
+            <input value="{{translate(prop[1])}}" type="text" class="form-control" disabled/>
+          </div>
+          <autotextarea ng-switch-default ng-model="prop[1]" class="form-control custom-form-control auto-text-area"></autotextarea>
+        </div>
+      </div>
     </div>
   </form>
 </div>

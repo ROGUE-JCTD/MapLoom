@@ -37,7 +37,7 @@
     <div class="feature-info-box">
       <span class="info-box-attribute" ng-show="!isShowingAttributes()" translate="no_attributes"></span>
       <span ng-repeat="prop in featureManagerService.getSelectedItemProperties()">
-        <div ng-show="isAttributeVisible(prop[0])">
+        <div ng-if="prop[0] !== 'fotos' && prop[0] !== 'photos'" ng-show="isAttributeVisible(prop[0])">
           <span class="info-box-attribute">{{prop[0]}}</span>
           <span class="info-box-attribute-value">{{prop[1]}}</span>
         </div>
