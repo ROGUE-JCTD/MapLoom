@@ -276,7 +276,8 @@
     'next_page': 'Next Page',
     'current_page': 'Page {{currentPage}} of {{totalPages}}',
     'filter': 'Filter:',
-    'merge_commit': 'Merge Commit'
+    'merge_commit': 'Merge Commit',
+    'always_anonymous': 'Always Log On Anonymously'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

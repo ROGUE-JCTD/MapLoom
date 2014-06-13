@@ -10,6 +10,7 @@
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
+            scope.filterLayers = null;
 
             angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
             scope.setCurrentServerId = function(serverId) {
@@ -85,6 +86,18 @@
                 }
               }
               return show;
+            };
+
+            var parentModal = element.closest('.modal');
+            var closeModal = function(event, element) {
+              if (parentModal[0] === element[0]) {
+                scope.filterLayers = null;
+              }
+            };
+            scope.$on('modal-closed', closeModal);
+
+            scope.clearFilter = function() {
+              scope.filterLayers = '';
             };
 
             scope.$on('layers-loaded', function() {

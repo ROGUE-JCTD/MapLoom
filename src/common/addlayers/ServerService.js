@@ -157,26 +157,29 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (goog.isDefAndNotNull(server.url)) {
         if (server.url.indexOf(location_.host()) === -1) {
-          dialogService_.promptCredentials(server.url, true).then(function(credentials) {
-            server.username = credentials.username;
-            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+          dialogService_.promptCredentials(server.url, true, null, server.config.alwaysAnonymous).then(
+              function(credentials) {
+                server.username = credentials.username;
+                server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+                server.config.alwaysAnonymous = false;
 
-            var subURL = server.url.replace('/wms', '/rest');
-            subURL = subURL.replace('http://', 'http://null:null@');
-            $.ajax({
-              url: subURL,
-              type: 'GET',
-              dataType: 'jsonp',
-              jsonp: 'callback',
-              complete: doWork
-            });
-          }, function(reject) {
-            if (goog.isDefAndNotNull(reject) && reject.anonymous) {
-              server.username = translate_('anonymous');
-              server.authentication = undefined;
-              doWork();
-            }
-          });
+                var subURL = server.url.replace('/wms', '/rest');
+                subURL = subURL.replace('http://', 'http://null:null@');
+                $.ajax({
+                  url: subURL,
+                  type: 'GET',
+                  dataType: 'jsonp',
+                  jsonp: 'callback',
+                  complete: doWork
+                });
+              }, function(reject) {
+                if (goog.isDefAndNotNull(reject) && reject.anonymous) {
+                  server.username = translate_('anonymous');
+                  server.config.alwaysAnonymous = reject.alwaysAnonymous;
+                  server.authentication = undefined;
+                  doWork();
+                }
+              });
         } else {
           server.username = configService_.username;
           server.isLocal = true;
@@ -234,24 +237,33 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (goog.isDefAndNotNull(server.url)) {
         if (server.url.indexOf(location_.host()) === -1) {
-          dialogService_.promptCredentials(server.url, false).then(function(credentials) {
-            server.username = credentials.username;
-            server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
-
-            var subURL = server.url.replace('/wms', '/rest');
-            subURL = subURL.replace('http://', 'http://null:null@');
-            $.ajax({
-              url: subURL,
-              type: 'GET',
-              dataType: 'jsonp',
-              jsonp: 'callback',
-              complete: doWork
-            });
-          }, function(reject) {
+          if (server.config.alwaysAnonymous) {
             server.username = translate_('anonymous');
             server.authentication = undefined;
             doWork();
-          });
+          } else {
+            dialogService_.promptCredentials(server.url, false, null).then(
+                function(credentials) {
+                  server.username = credentials.username;
+                  server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
+                  server.config.alwaysAnonymous = false;
+
+                  var subURL = server.url.replace('/wms', '/rest');
+                  subURL = subURL.replace('http://', 'http://null:null@');
+                  $.ajax({
+                    url: subURL,
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    jsonp: 'callback',
+                    complete: doWork
+                  });
+                }, function(reject) {
+                  server.username = translate_('anonymous');
+                  server.authentication = undefined;
+                  server.config.alwaysAnonymous = reject.alwaysAnonymous;
+                  doWork();
+                });
+          }
         } else {
           server.username = configService_.username;
           server.isLocal = true;

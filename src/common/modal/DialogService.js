@@ -22,16 +22,20 @@
       return this;
     };
 
-    this.promptCredentials = function(server, closeButton, type) {
+    this.promptCredentials = function(server, closeButton, type, alwaysAnonymousInitial) {
       if (!goog.isDefAndNotNull(type)) {
         type = 'dialog-default';
       }
       if (!goog.isDefAndNotNull(closeButton)) {
         closeButton = false;
       }
+      if (!goog.isDefAndNotNull(alwaysAnonymousInitial)) {
+        alwaysAnonymousInitial = false;
+      }
 
       var username = null;
       var password = null;
+      var alwaysAnonymous = false;
       var deferredPromise = q_.defer();
       var modalScope = rootScope_.$new();
       var ok = false;
@@ -42,14 +46,16 @@
       modalScope.type = type;
       modalScope.username = '';
       modalScope.password = '';
+      modalScope.anonymousOnly = {value: alwaysAnonymousInitial};
       modalScope.ok = function(_username, _password) {
         ok = true;
         username = _username;
         password = _password;
         modalInstance.close();
       };
-      modalScope.skip = function() {
+      modalScope.skip = function(_alwaysAnonymous) {
         skip = true;
+        alwaysAnonymous = _alwaysAnonymous;
         modalInstance.close();
       };
       modalScope.cancel = function() {
@@ -70,7 +76,7 @@
         if (ok) {
           deferredPromise.resolve({username: username, password: password});
         } else if (skip) {
-          deferredPromise.reject({anonymous: true});
+          deferredPromise.reject({anonymous: true, alwaysAnonymous: alwaysAnonymous});
         } else {
           deferredPromise.reject();
         }

@@ -280,7 +280,8 @@
     'next_page': 'Página Siguiente',
     'current_page': 'Página {{currentPage}} de {{totalPages}}',
     'filter': 'Filtro:',
-    'merge_commit': 'Fusion Confirmada'
+    'merge_commit': 'Fusion Confirmada',
+    'always_anonymous': 'Conecte Siempre Anónimamente'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
