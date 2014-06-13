@@ -14,14 +14,15 @@
           </tr>
           <tr ng-if="filterOn">
             <td class="filter-row first-filter-row" translate="filter"></td>
-            <td class="filter-row" ng-repeat="attr in attributes"><input class="form-control" type="text"
-                                                                         ng-model="attr.filter.filter"></td>
+              <td class="filter-row" ng-repeat="attr in attributes">
+                <input class="form-control" type="text" ng-model="attr.filter.filter">
+              </td>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-show="row.visible" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
           <td>{{row.feature.id}}</td>
           <td ng-repeat="attr in attributes track by $index">
-            <div ng-switch on="restrictions[attr.name]">
+            <div ng-switch on="restrictions[attr.name].type">
               <span ng-switch-when="" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <span ng-switch-when="noEdit">{{row.feature.properties[attr.name]}}</span>
@@ -39,13 +40,13 @@
               </div>
 
               <span ng-switch-default editable-select="row.feature.properties[attr.name]" e-form="tableviewform" e-style="width:160px"
-                    e-ng-options="r._value as r._value for r in restrictions[attr.name]">{{row.feature.properties[attr.name]}}</span>
+                    e-ng-options="r._value as r._value for r in restrictions[attr.name].type">{{row.feature.properties[attr.name]}}</span>
             </div>
           </td>
         </tr>
       </table>
     </div>
-    <button type="button" class="btn btn-primary table-btn" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
+    <button type="button" class="btn btn-primary table-btn" ng-click="tableviewform.$submit()" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
     <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
     <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()"
           ng-show="!tableviewform.$visible && !readOnly" tooltip="{{'edit_attributes' | translate}}" tooltip-append-to-body="true">

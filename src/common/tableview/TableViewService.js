@@ -92,28 +92,30 @@
           }
           for (var attrIndex in service_.attributeNameList) {
             var attr = service_.attributeNameList[attrIndex];
-            var attrRestriction = '';
+            var attrRestriction = {type: '', nillable: true};
             var schemaType = metadata.schema[attr.name]._type;
 
             if (schemaType === 'simpleType') {
-              attrRestriction =
+              attrRestriction.type =
                   metadata.schema[attr.name].simpleType.restriction.enumeration;
             }
             else if (schemaType === 'xsd:int' || schemaType === 'xsd:integer') {
-              attrRestriction = 'int';
+              attrRestriction.type = 'int';
             }
             else if (schemaType === 'xsd:double' || schemaType === 'xsd:decimal') {
-              attrRestriction = 'double';
+              attrRestriction.type = 'double';
             }
             else if (schemaType === 'xsd:dateTime') {
-              attrRestriction = 'datetime';
+              attrRestriction.type = 'datetime';
             }
             else if (schemaType === 'xsd:date') {
-              attrRestriction = 'date';
+              attrRestriction.type = 'date';
             }
             else if (schemaType === 'xsd:time') {
-              attrRestriction = 'time';
+              attrRestriction.type = 'time';
             }
+
+            attrRestriction.nillable = metadata.schema[attr.name]._nillable;
 
             service_.restrictionList[attr.name] = attrRestriction;
           }

@@ -228,16 +228,18 @@
               for (var row in scope.rows) {
                 var feature = scope.rows[row].feature;
                 for (var prop in feature.properties) {
-                  if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
-                      scope.restrictions[prop] === 'int') {
-                    if (!validateInteger(feature.properties[prop])) {
-                      numErrors++;
+                  if (feature.properties[prop] !== '' && feature.properties[prop] !== null) {
+                    if (scope.restrictions[prop].type === 'int') {
+                      if (!validateInteger(feature.properties[prop])) {
+                        numErrors++;
+                      }
+                    } else if (scope.restrictions[prop].type === 'double') {
+                      if (!validateDouble(feature.properties[prop])) {
+                        numErrors++;
+                      }
                     }
-                  } else if (feature.properties[prop] !== '' && feature.properties[prop] !== null &&
-                      scope.restrictions[prop] === 'double') {
-                    if (!validateDouble(feature.properties[prop])) {
-                      numErrors++;
-                    }
+                  } else if (scope.restrictions[prop].nillable === 'false') {
+                    numErrors++;
                   }
                 }
               }
