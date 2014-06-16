@@ -16,7 +16,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService) {
+                                                refreshService, dialogService) {
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;
@@ -33,6 +33,10 @@
           $(e.target).css('z-index', 760);
         });
 
+        onErrorCallback = function(msg) {
+          dialogService.error($translate('error'), $translate('script_error', {error: msg}));
+        };
+
         // Enable Proj4JS
         ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS && typeof Proj4js == 'object';
 
@@ -46,6 +50,21 @@
     };
 
     this.showDebugButtons = false;
+  });
+
+  module.provider('$exceptionHandler', function() {
+    this.$get = function(errorLogService) {
+      return errorLogService;
+    };
+  });
+
+  module.factory('errorLogService', function($log, $window) {
+    function log(exception, cause) {
+      $log.error.apply($log, arguments);
+      onErrorCallback(exception.toString());
+    }
+    // Return the logging function.
+    return log;
   });
 
   module.config(function($translateProvider) {

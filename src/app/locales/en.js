@@ -277,7 +277,9 @@
     'current_page': 'Page {{currentPage}} of {{totalPages}}',
     'filter': 'Filter:',
     'merge_commit': 'Merge Commit',
-    'always_anonymous': 'Always Log On Anonymously'
+    'always_anonymous': 'Always Log On Anonymously',
+    'script_error': 'The following script error has occurred: "{{error}}".  It is recommended that you reload the ' +
+        'web page to resolve any potential complications.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

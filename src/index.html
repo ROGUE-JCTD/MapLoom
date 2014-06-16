@@ -74,6 +74,13 @@
 </script>
 <% } %>
 
+<script type="text/javascript">
+  var onErrorCallback = function(msg, url, linenumber) { return true; };
+  window.onerror = function(msg, url, linenumber) {
+    onErrorCallback(msg,url,linenumber);
+  };
+</script>
+
 </head>
 <body>
 <% if (!(typeof django === 'undefined') && (django)) { %>

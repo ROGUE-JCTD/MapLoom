@@ -281,7 +281,9 @@
     'current_page': 'Página {{currentPage}} de {{totalPages}}',
     'filter': 'Filtro:',
     'merge_commit': 'Fusion Confirmada',
-    'always_anonymous': 'Conecte Siempre Anónimamente'
+    'always_anonymous': 'Conecte Siempre Anónimamente',
+    'script_error': 'Se ha producido un error de script siguiente: "{{error}}". Se recomienda volver a cargar ' +
+        'la página web para resolver cualquier posible complicación.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
