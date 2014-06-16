@@ -21,7 +21,7 @@
         </thead>
         <tr ng-repeat="row in rows" ng-show="row.visible" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
           <td>{{row.feature.id}}</td>
-          <td ng-repeat="attr in attributes track by $index">
+          <td ng-repeat="attr in attributes track by $index" ng-class="{'table-editing': tableviewform.$visible}">
             <div ng-switch on="restrictions[attr.name].type">
               <span ng-switch-when="" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
@@ -38,9 +38,23 @@
                   <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
                   <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties" date-key="attr.name" default-date="false" seperate-time="false"></datetimepicker>
               </div>
-
-              <span ng-switch-default editable-select="row.feature.properties[attr.name]" e-form="tableviewform" e-style="width:160px"
-                    e-ng-options="r._value as r._value for r in restrictions[attr.name].type">{{row.feature.properties[attr.name]}}</span>
+              <div ng-switch-default class="input-group">
+                <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name]}}</span>
+                <div ng-if="tableviewform.$visible" class="input-group-btn" ng-class="{'dropup': $last}">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a ng-click="selectValue(row.feature.properties, attr.name, null)">&nbsp;</a>
+                    </li>
+                    <li ng-repeat="enum in restrictions[attr.name].type">
+                      <a ng-click="selectValue(row.feature.properties, attr.name, $index)">{{enum._value}}</a>
+                    </li>
+                  </ul>
+                </div>
+                <input ng-if="tableviewform.$visible" ng-model="row.feature.properties[attr.name]" type="text" class="table-dropdown form-control" disabled/>
+              </div>
             </div>
           </td>
         </tr>

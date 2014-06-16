@@ -96,8 +96,7 @@
             var schemaType = metadata.schema[attr.name]._type;
 
             if (schemaType === 'simpleType') {
-              attrRestriction.type =
-                  metadata.schema[attr.name].simpleType.restriction.enumeration;
+              attrRestriction.type = metadata.schema[attr.name].simpleType.restriction.enumeration;
             }
             else if (schemaType === 'xsd:int' || schemaType === 'xsd:integer') {
               attrRestriction.type = 'int';
@@ -113,6 +112,11 @@
             }
             else if (schemaType === 'xsd:time') {
               attrRestriction.type = 'time';
+            } else if (schemaType === 'xsd:boolean') {
+              attrRestriction.type = [
+                {_value: 'true'},
+                {_value: 'false'}
+              ];
             }
 
             attrRestriction.nillable = metadata.schema[attr.name]._nillable;

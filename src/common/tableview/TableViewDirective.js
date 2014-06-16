@@ -223,6 +223,14 @@
               featureManagerService.hide();
             });
 
+            scope.selectValue = function(properties, name,  index) {
+              if (index === null) {
+                properties[name] = null;
+              } else {
+                properties[name] = scope.restrictions[name].type[index]._value;
+              }
+            };
+
             function hasValidationErrors() {
               var numErrors = 0;
               for (var row in scope.rows) {
