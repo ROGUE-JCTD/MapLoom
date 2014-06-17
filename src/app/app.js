@@ -33,13 +33,20 @@
           $(e.target).css('z-index', 760);
         });
 
+        var errorDialogShowing = false;
         onErrorCallback = function(msg) {
           if (goog.isDefAndNotNull(ignoreNextScriptError) && ignoreNextScriptError &&
               msg.indexOf('Script error') > -1) {
             ignoreNextScriptError = false;
             return;
           }
-          dialogService.error($translate('error'), $translate('script_error', {error: msg}));
+          if (errorDialogShowing) {
+            return;
+          }
+          errorDialogShowing = true;
+          dialogService.error($translate('error'), $translate('script_error', {error: msg})).then(function() {
+            errorDialogShowing = false;
+          });
         };
 
         // Enable Proj4JS

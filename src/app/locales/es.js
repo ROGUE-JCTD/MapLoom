@@ -241,7 +241,6 @@
     'skip': 'Omitir',
     'connected_as': 'Conectado como {{value}}.',
     'connect_as': 'Conecte como...',
-    'datastoretype': 'Tipo de almacen de datos',
     'branch': 'Rama',
     'layerinfo': 'Informacion de las Capas',
     'author_fetch_failed': 'Un error desconocido ocurrió mientras que la determinación de los autores del elemento.',

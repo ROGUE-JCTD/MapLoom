@@ -238,7 +238,6 @@
     'skip': 'Skip',
     'connected_as': 'Connected as {{value}}.',
     'connect_as': 'Connect as...',
-    'datastoretype': 'Datastore Type',
     'branch': 'Branch',
     'layerinfo': 'Layer Info',
     'author_fetch_failed': 'An unknown error occured while determining the authors of the feature.',

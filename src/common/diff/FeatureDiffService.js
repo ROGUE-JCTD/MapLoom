@@ -334,7 +334,7 @@
       mapService_.map.getLayers().forEach(function(layer) {
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
-          if (goog.isDefAndNotNull(metadata.repoName) && metadata.repoName === repoName) {
+          if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
               service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {

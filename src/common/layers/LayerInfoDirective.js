@@ -15,7 +15,6 @@
               scope.abstract = null;
               scope.srs = null;
               scope.serverName = null;
-              scope.datastoreType = null;
               scope.keywords = null;
               scope.repoName = null;
               scope.branchName = null;
@@ -44,15 +43,12 @@
               if (goog.isDefAndNotNull(metadata.projection)) {
                 scope.srs = metadata.projection;
               }
-              if (goog.isDefAndNotNull(metadata.dataStoreType)) {
-                scope.datastoreType = metadata.dataStoreType;
-              }
               if (goog.isDefAndNotNull(metadata.keywords)) {
                 scope.keywords = metadata.keywords.toString();
               }
               if (metadata.isGeoGit) {
                 scope.branchName = metadata.branchName;
-                scope.repoName = metadata.repoName;
+                scope.repoName = metadata.geogitStore;
               }
               var server = serverService.getServerById(scope.layer.get('metadata').serverId);
               scope.serverName = server.name;
