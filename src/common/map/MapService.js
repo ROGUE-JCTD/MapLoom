@@ -523,7 +523,7 @@
               readOnly: false,
               editable: false,
               bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
-              projection: (goog.isArray(fullConfig.CRS) ? fullConfig.CRS[0] : fullConfig.CRS),
+              projection: service_.getCRSCode(fullConfig.CRS),
               savedSchema: minimalConfig.schema
             },
             visible: minimalConfig.visibility,
@@ -1065,6 +1065,16 @@
         return select.getFeatures();
       }
       return [];
+    };
+
+    this.getCRSCode = function(CRS) {
+      var code = 'EPSG:4326';
+      forEachArrayish(CRS, function(_code) {
+        if (_code !== 'CRS:84') {
+          code = _code;
+        }
+      });
+      return code;
     };
   });
 
