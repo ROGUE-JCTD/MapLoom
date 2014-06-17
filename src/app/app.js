@@ -34,6 +34,11 @@
         });
 
         onErrorCallback = function(msg) {
+          if (goog.isDefAndNotNull(ignoreNextScriptError) && ignoreNextScriptError &&
+              msg.indexOf('Script error') > -1) {
+            ignoreNextScriptError = false;
+            return;
+          }
           dialogService.error($translate('error'), $translate('script_error', {error: msg}));
         };
 

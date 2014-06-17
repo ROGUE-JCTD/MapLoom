@@ -20,6 +20,8 @@ var forEachArrayish = function(arrayish, funct) {
   }
 };
 
+var ignoreNextScriptError = false;
+
 var getScrollbarWidth = function() {
   var parent, child, width;
 

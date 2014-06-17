@@ -101,13 +101,17 @@
                         scope.server.authentication =
                             $.base64.encode(credentials.username + ':' + credentials.password);
 
-                        var subURL = scope.server.url.replace('/wms', '/rest');
+                        var subURL = scope.server.url.replace('/wms', '/rest/settings.json');
                         subURL = subURL.replace('http://', 'http://null:null@');
+                        ignoreNextScriptError = true;
                         $.ajax({
                           url: subURL,
                           type: 'GET',
                           dataType: 'jsonp',
                           jsonp: 'callback',
+                          error: function() {
+                            ignoreNextScriptError = false;
+                          },
                           complete: doWork
                         });
                       }, function(reject) {

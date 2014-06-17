@@ -163,13 +163,17 @@ var SERVER_SERVICE_USE_PROXY = true;
                 server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
                 server.config.alwaysAnonymous = false;
 
-                var subURL = server.url.replace('/wms', '/rest');
+                var subURL = server.url.replace('/wms', '/rest/settings.json');
                 subURL = subURL.replace('http://', 'http://null:null@');
+                ignoreNextScriptError = true;
                 $.ajax({
                   url: subURL,
                   type: 'GET',
                   dataType: 'jsonp',
                   jsonp: 'callback',
+                  error: function() {
+                    ignoreNextScriptError = false;
+                  },
                   complete: doWork
                 });
               }, function(reject) {
@@ -248,13 +252,17 @@ var SERVER_SERVICE_USE_PROXY = true;
                   server.authentication = $.base64.encode(credentials.username + ':' + credentials.password);
                   server.config.alwaysAnonymous = false;
 
-                  var subURL = server.url.replace('/wms', '/rest');
+                  var subURL = server.url.replace('/wms', '/rest/settings.json');
                   subURL = subURL.replace('http://', 'http://null:null@');
+                  ignoreNextScriptError = true;
                   $.ajax({
                     url: subURL,
                     type: 'GET',
                     dataType: 'jsonp',
                     jsonp: 'callback',
+                    error: function() {
+                      ignoreNextScriptError = false;
+                    },
                     complete: doWork
                   });
                 }, function(reject) {
