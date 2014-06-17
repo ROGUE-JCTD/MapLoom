@@ -144,7 +144,7 @@
       if (featureInfoPerLayer_.length === 0) {
 
         if (type === 'feature') {
-          featureInfoPerLayer_.push({features: [item]});
+          featureInfoPerLayer_.push({features: [item], layer: selectedLayer_});
         } else if (type === 'layer') {
           featureInfoPerLayer_.push(item);
         } else if (type === 'layers') {
