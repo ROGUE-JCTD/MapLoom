@@ -9,6 +9,7 @@
   var geogitService_ = null;
   var featureDiffService_ = null;
   var service_ = null;
+  var timeout_ = null;
 
   module.provider('refreshService', function() {
     this.$get = function(mapService, $translate, notificationService, geogitService, historyService,
@@ -24,12 +25,14 @@
       service_ = this;
 
       //this is called here to turn refresh on by default
-      this.refreshLayers();
+      timeout_ = setTimeout(function() {
+        refresh(mapService);
+      }, 60000);
 
       return this;
     };
 
-    this.autoRefresh = false;
+    this.autoRefresh = true;
 
     //recursive helper function for refreshLayers
     function refresh(mapService) {
@@ -40,7 +43,10 @@
         var refreshTimeout = 60000;
 
         if (!goog.isDefAndNotNull(layers)) {
-          setTimeout(function() {
+          if (goog.isDefAndNotNull(timeout_)) {
+            clearTimeout(timeout_);
+          }
+          timeout_ = setTimeout(function() {
             refresh(mapService);
           }, refreshTimeout);
           return;
@@ -49,7 +55,10 @@
           layers = [layers];
         }
         if (layers.length < 1) {
-          setTimeout(function() {
+          if (goog.isDefAndNotNull(timeout_)) {
+            clearTimeout(timeout_);
+          }
+          timeout_ = setTimeout(function() {
             refresh(mapService);
           }, refreshTimeout);
           return;
@@ -180,7 +189,10 @@
             if (layers.length > idx) {
               processLayer(layers[idx], idx + 1);
             } else {
-              setTimeout(function() {
+              if (goog.isDefAndNotNull(timeout_)) {
+                clearTimeout(timeout_);
+              }
+              timeout_ = setTimeout(function() {
                 refresh(mapService);
               }, refreshTimeout);
             }
@@ -212,11 +224,7 @@
     }
 
     this.refreshLayers = function() {
-      this.autoRefresh = !this.autoRefresh;
-
-      if (this.autoRefresh) {
-        refresh(mapService_);
-      }
+      refresh(mapService_);
     };
   });
 }());
