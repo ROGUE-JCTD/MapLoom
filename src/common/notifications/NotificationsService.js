@@ -7,8 +7,15 @@
   var rootScope = null;
 
   module.provider('notificationService', function() {
-    this.$get = function($rootScope) {
+    this.$get = function($rootScope, $timeout) {
       rootScope = $rootScope;
+      var updateTimestamps = function() {
+        for (i = 0; i < notifications.length; i = i + 1) {
+          notifications[i].timestr = moment(notifications[i].time).fromNow();
+        }
+        $timeout(updateTimestamps, 10000, true);
+      };
+      updateTimestamps();
       return this;
     };
 
@@ -18,6 +25,8 @@
 
     this.addNotification = function(notification) {
       notification.id = nextNotificationId;
+      notification.time = new Date();
+      notification.timestr = moment(notification.time).fromNow();
       nextNotificationId = nextNotificationId + 1;
       notifications.push(notification);
       rootScope.$broadcast('notification_added', notification);
