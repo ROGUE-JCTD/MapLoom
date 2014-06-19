@@ -1,5 +1,5 @@
 .difflist {
-  .glyphicon {
+  span.glyphicon {
     font-size: large;
     position: relative;
     left: -5px;
@@ -7,8 +7,16 @@
   }
 
   .diff-list-title {
-    width: 90%;
+    width: 73%;
     display: inline-block;
+    position: relative;
+    top: 2px;
+  }
+
+  .list-group-item {
+    padding: 5px;
+    padding-right: 0px;
+    padding-left: 10px;
   }
 
   .add .glyphicon {
@@ -34,10 +42,12 @@
   .conflict {
     font-weight: 900;
     .conflict-badge-mixin(@background-color) {
-      top: 3px !important;
+      top: -3px !important;
       font-size: 9px;
       background-color: @background-color;
       letter-spacing: 1px;
+      float: none;
+      width: 23%;
     }
     .badge.conflict-badge {
       .conflict-badge-mixin(@conflictBadgeColor);
@@ -46,12 +56,30 @@
       .conflict-badge-mixin(@resolvedBadgeColor);
     }
     .diff-list-title {
-      width: 60%;
+      width: 50%;
     }
   }
 
   .conflict.selected {
     box-shadow: inset 0 0 15px 0 white;
+  }
+
+  .diff-list-buttons {
+    text-align: right;
+    display: inline-block;
+    position: relative;
+    top: -2px;
+
+    .btn-xs {
+      margin-left: 0px;
+      margin-right: 0px;
+      background-color: @mainHeaderColor;
+
+      .glyphicon {
+        color: @mainHeaderFontColor;
+        top: 2px;
+      }
+    }
   }
 }
 

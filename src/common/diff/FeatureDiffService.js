@@ -386,7 +386,6 @@
             service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
             break;
         }
-        mapService_.zoomToExtent(geom.getExtent(), null, null, 0.5);
         service_.title = feature.id;
         rootScope_.$broadcast('feature-diff-feature-set');
       };

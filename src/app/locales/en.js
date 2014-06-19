@@ -278,7 +278,8 @@
     'merge_commit': 'Merge Commit',
     'always_anonymous': 'Always Log On Anonymously',
     'script_error': 'The following script error has occurred: "{{error}}".  It is recommended that you reload the ' +
-        'web page to resolve any potential complications.'
+        'web page to resolve any potential complications.',
+    'show_changes': 'Show Changes'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

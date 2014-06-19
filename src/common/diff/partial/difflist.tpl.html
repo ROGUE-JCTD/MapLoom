@@ -1,26 +1,76 @@
 <div class="difflist">
   <ul class="list-group">
-    <li class="list-group-item conflict" ng-click="clickCallback(conflict,'conflict')" ng-repeat="conflict in conflictList">
+    <li class="list-group-item conflict" ng-repeat="conflict in conflictList">
       <span class="glyphicon glyphicon-warning-sign"/><span class="ellipsis diff-list-title">
-      '{{conflict.feature}}' {{'in_lower_case' | translate}} {{conflict.layer}}</span>
+      '{{conciseName(conflict.feature)}}' {{'in_lower_case' | translate}} {{conflict.layer}}</span>
       <span ng-if="!conflict.resolved" class="badge conflict-badge">{{'conflict' | translate}}</span>
       <span ng-if="conflict.resolved" class="badge resolved-badge">{{'fixed' | translate}}</span>
+      <div class="diff-list-buttons">
+          <span ng-click="zoomToFeature(conflict)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'go_to_map' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-globe"></i>
+          </span>
+          <span ng-click="clickCallback(conflict,'conflict')" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'show_changes' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+      </div>
     </li>
-    <li class="list-group-item merged" ng-click="clickCallback(merged,'merge')" ng-repeat="merged in mergeList">
+    <li class="list-group-item merged" ng-repeat="merged in mergeList">
       <span class="glyphicon glyphicon-random"/><span class="ellipsis diff-list-title">
-      '{{merged.feature}}' {{'in_lower_case' | translate}} {{merged.layer}}</span>
+      '{{conciseName(merged.feature)}}' {{'in_lower_case' | translate}} {{merged.layer}}</span>
+      <div class="diff-list-buttons">
+          <span ng-click="zoomToFeature(merged)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'go_to_map' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-globe"></i>
+          </span>
+          <span ng-click="clickCallback(merged,'merge')" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'show_changes' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+      </div>
     </li>
-    <li class="list-group-item add" ng-click="clickCallback(add,'add')" ng-repeat="add in addList">
+    <li class="list-group-item add" ng-repeat="add in addList">
       <span class="glyphicon glyphicon-plus-sign"/><span class="ellipsis diff-list-title">
-      '{{add.feature}}' {{'to_lower_case' | translate}} {{add.layer}}</span>
+      '{{conciseName(add.feature)}}' {{'to_lower_case' | translate}} {{add.layer}}</span>
+      <div class="diff-list-buttons">
+          <span ng-click="zoomToFeature(add)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'go_to_map' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-globe"></i>
+          </span>
+          <span ng-click="clickCallback(add,'add')" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'show_changes' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+      </div>
     </li>
-    <li class="list-group-item modify" ng-click="clickCallback(modify,'modify')" ng-repeat="modify in modifyList">
+    <li class="list-group-item modify" ng-repeat="modify in modifyList">
       <span class="glyphicon glyphicon-edit"/><span class="ellipsis diff-list-title">
-      '{{modify.feature}}' {{'in_lower_case' | translate}} {{modify.layer}}</span>
+      '{{conciseName(modify.feature)}}' {{'in_lower_case' | translate}} {{modify.layer}}</span>
+      <div class="diff-list-buttons">
+          <span ng-click="zoomToFeature(modify)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'go_to_map' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-globe"></i>
+          </span>
+          <span ng-click="clickCallback(modify,'modify')" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'show_changes' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+      </div>
     </li>
-    <li class="list-group-item delete" ng-click="clickCallback(delete,'delete')" ng-repeat="delete in deleteList">
+    <li class="list-group-item delete" ng-repeat="delete in deleteList">
       <span class="glyphicon glyphicon-minus-sign"/><span class="ellipsis diff-list-title">
-      '{{delete.feature}}' {{'from_lower_case' | translate}} {{delete.layer}}</span>
+      '{{conciseName(delete.feature)}}' {{'from_lower_case' | translate}} {{delete.layer}}</span>
+      <div class="diff-list-buttons">
+          <span ng-click="zoomToFeature(delete)" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'go_to_map' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-globe"></i>
+          </span>
+          <span ng-click="clickCallback(delete,'delete')" stop-event="click mousedown" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'show_changes' | translate}}" class="btn btn-xs btn-default">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+      </div>
     </li>
   </ul>
 </div>

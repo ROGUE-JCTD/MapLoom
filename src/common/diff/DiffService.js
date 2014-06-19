@@ -166,7 +166,8 @@
           var feature = {
             repo: _repo,
             layer: splitFeature[0],
-            feature: splitFeature[1]
+            feature: splitFeature[1],
+            extent: geom.getExtent()
           };
           switch (change.change) {
             case 'ADDED':
