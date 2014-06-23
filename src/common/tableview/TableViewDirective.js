@@ -276,6 +276,8 @@
                 var propertyArray = [];
                 var originalFeature = tableViewService.rows[featureIndex].feature;
                 var feature = scope.rows[featureIndex].feature;
+                console.log('saving table, feature', feature);
+                console.log('saving table, originalFeature', originalFeature);
 
                 for (var prop in feature.properties) {
                   propertyArray.push({0: prop, 1: feature.properties[prop]});
@@ -289,9 +291,12 @@
                 featureManagerService.endAttributeEditing(true, false, propertyArray).then(function() {
                   tableViewService.rows[featureIndex].feature = $.extend(true, {}, scope.rows[featureIndex].feature);
                   featureIndex++;
+                  console.log('save success');
                   if (featureIndex < scope.rows.length) {
+                    console.log('calling save');
                     save();
                   } else {
+                    console.log('done saving');
                     scope.isSaving = false;
                     if (numFailed > 0) {
                       dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',
@@ -299,11 +304,14 @@
                     }
                   }
                 }, function() {
+                  console.log('save failed');
                   featureIndex++;
                   numFailed++;
                   if (featureIndex < scope.rows.length) {
+                    console.log('calling save');
                     save();
                   } else {
+                    console.log('done saving');
                     scope.isSaving = false;
                     if (numFailed > 0) {
                       dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',

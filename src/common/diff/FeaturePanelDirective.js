@@ -64,10 +64,12 @@
               } else {
                 property.newvalue = property.enum[index]._value;
               }
+              scope.validateField(property, 'newvalue');
             };
 
             scope.selectBooleanValue = function(property, index) {
               property.newvalue = property.enum[index]._value === 'true';
+              scope.validateField(property, 'newvalue');
             };
 
             scope.validateInteger = function(property, key) {
@@ -76,6 +78,29 @@
 
             scope.validateDouble = function(property, key) {
               property.valid = validateDouble(property[key]);
+            };
+
+            scope.validateField = function(property, key) {
+              property.valid = true;
+              switch (property.type) {
+                case 'xsd:int':
+                  property.valid = validateInteger(property[key]);
+                  break;
+                case 'xsd:integer':
+                  property.valid = validateInteger(property[key]);
+                  break;
+                case 'xsd:double':
+                  property.valid = validateDouble(property[key]);
+                  break;
+                case 'xsd:decimal':
+                  property.valid = validateDouble(property[key]);
+                  break;
+              }
+
+              if (featureDiffService.schema[property.attributename]._nillable === 'false' &&
+                  (property[key] === '' || property[key] === null)) {
+                property.valid = false;
+              }
             };
 
             scope.$on('feature-diff-performed', updateVariables);

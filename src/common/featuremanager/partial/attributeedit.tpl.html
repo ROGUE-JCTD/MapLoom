@@ -32,7 +32,7 @@
                   <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
                 </li>
               </ul>
-            </div>
+          </div>
             <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateField(prop, 1)" disabled/>
           </div>
           <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">

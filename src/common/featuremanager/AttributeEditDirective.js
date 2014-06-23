@@ -65,21 +65,22 @@
 
             scope.validateField = function(property, key) {
               property.valid = true;
-              switch (property.type) {
-                case 'xsd:int':
-                  property.valid = validateInteger(property[key]);
-                  break;
-                case 'xsd:integer':
-                  property.valid = validateInteger(property[key]);
-                  break;
-                case 'xsd:double':
-                  property.valid = validateDouble(property[key]);
-                  break;
-                case 'xsd:decimal':
-                  property.valid = validateDouble(property[key]);
-                  break;
-              }
-              if (property.nillable === 'false' && (property[key] === '' || property[key] === null)) {
+              if (property[key] !== '' && property[key] !== null) {
+                switch (property.type) {
+                  case 'xsd:int':
+                    property.valid = validateInteger(property[key]);
+                    break;
+                  case 'xsd:integer':
+                    property.valid = validateInteger(property[key]);
+                    break;
+                  case 'xsd:double':
+                    property.valid = validateDouble(property[key]);
+                    break;
+                  case 'xsd:decimal':
+                    property.valid = validateDouble(property[key]);
+                    break;
+                }
+              } else if (property.nillable === 'false') {
                 property.valid = false;
               }
             };

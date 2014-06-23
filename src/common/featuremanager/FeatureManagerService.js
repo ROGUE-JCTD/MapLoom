@@ -218,6 +218,7 @@
 
         selectedItemPics_ = pics;
 
+        console.log('selectedpics', selectedItemPics_);
         if (selectedItemPics_ !== null) {
           goog.array.forEach(selectedItemPics_.pics, function(item, index) {
             // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.

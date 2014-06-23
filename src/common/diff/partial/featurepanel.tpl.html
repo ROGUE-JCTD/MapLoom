@@ -52,7 +52,7 @@
                                 seperate-time="false" date-object="attribute" date-key="'newvalue'" date="false"></datetimepicker>
               </div>
               -->
-              <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable}">
+              <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable, 'has-error': !attribute.valid}">
                 <div ng-if="attribute.editable" class="input-group-btn">
                   <button ng-disabled="!isConflictPanel" type="button" class="btn btn-default dropdown-toggle attr-none"
                           data-toggle="dropdown">
@@ -74,13 +74,16 @@
                       'form-control' : attribute.editable
                     }"/>
               </div>
-              <div ng-switch-when="xsd:boolean" class="merge-select" ng-class="{'input-group': attribute.editable}">
+              <div ng-switch-when="xsd:boolean" class="merge-select" ng-class="{'input-group': attribute.editable, 'has-error': !attribute.valid}">
                 <div ng-if="attribute.editable" class="input-group-btn">
                   <button ng-disabled="!isConflictPanel" type="button" class="btn btn-default dropdown-toggle attr-none"
                           data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
+                    <li>
+                      <a ng-click="selectValue(attribute, null)">&nbsp;</a>
+                    </li>
                     <li ng-repeat="enum in attribute.enum">
                       <a ng-click="selectBooleanValue(attribute, $index)" translate="{{enum._value}}"></a>
                     </li>
@@ -96,7 +99,7 @@
               <div ng-switch-when="xsd:int" ng-class="{'has-error': !attribute.valid}">
                 <input ng-disabled="!isConflictPanel" ng-model="attribute.newvalue" type="text"
                        class="form-control attr-none"
-                       ng-change="validateInteger(attribute, 'newvalue')" ng-class="{
+                       ng-change="validateField(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
                       'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
@@ -105,19 +108,21 @@
               <div ng-switch-when="xsd:double" ng-class="{'has-error': !attribute.valid}">
                 <input ng-disabled="!isConflictPanel" ng-model="attribute.newvalue" type="text"
                        class="form-control attr-none"
-                       ng-change="validateDouble(attribute, 'newvalue')" ng-class="{
+                       ng-change="validateField(attribute, 'newvalue')" ng-class="{
                       'attr-added': attribute.changetype == 'ADDED',
                       'attr-modified': attribute.changetype == 'MODIFIED',
                       'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                     }"/>
               </div>
-              <input ng-switch-default ng-model="attribute.newvalue" type="text" class="form-control attr-none"
-                     ng-disabled="!isConflictPanel" placeholder=""
-                     ng-class="{
-                      'attr-added': attribute.changetype == 'ADDED',
-                      'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
-                    }">
+              <div ng-switch-default ng-class="{'has-error': !attribute.valid}">
+                <input ng-model="attribute.newvalue" type="text" class="form-control attr-none"
+                       ng-disabled="!isConflictPanel" ng-change="validateField(attribute, 'newvalue')" placeholder=""
+                       ng-class="{
+                        'attr-added': attribute.changetype == 'ADDED',
+                        'attr-modified': attribute.changetype == 'MODIFIED',
+                        'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
+                      }">
+              </div>
             </div>
             <div ng-if="authorsShown">
               <input ng-if="!isConflictPanel" value="{{computeAuthorString(attribute)}}" type="text" readOnly="readOnly"
