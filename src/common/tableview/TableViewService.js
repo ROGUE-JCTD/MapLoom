@@ -133,7 +133,8 @@
             metadata.filters = {};
           }
           for (var attrName in response.data.features[0].properties) {
-            if (response.data.features[0].properties.hasOwnProperty(attrName)) {
+            if (response.data.features[0].properties.hasOwnProperty(attrName) &&
+                attrName !== 'fotos' && attrName !== 'photos') {
               if (!goog.isDefAndNotNull(metadata.filters[attrName])) {
                 metadata.filters[attrName] = {filter: ''};
               }

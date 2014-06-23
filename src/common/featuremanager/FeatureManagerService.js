@@ -218,7 +218,6 @@
 
         selectedItemPics_ = pics;
 
-        console.log('selectedpics', selectedItemPics_);
         if (selectedItemPics_ !== null) {
           goog.array.forEach(selectedItemPics_.pics, function(item, index) {
             // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
@@ -691,7 +690,7 @@
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
-          if (property[0] === 'fotos' || property[0] === 'photos') {
+          if ((property[0] === 'fotos' || property[0] === 'photos') && goog.isObject(property[1])) {
             var newArray = [];
             forEachArrayish(property[1], function(photo) {
               newArray.push(photo.original);
