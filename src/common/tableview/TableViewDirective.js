@@ -117,10 +117,12 @@
               tableViewService.filter().then(function() {
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;
+                scope.selectedRow = null;
                 updateData();
               }, function(reject) {
                 scope.isSaving = false;
                 tableViewService.selectedLayer.get('metadata').loadingTable = false;
+                scope.selectedRow = null;
               });
             };
 
@@ -263,6 +265,64 @@
               }
             }
 
+            function getWfsFeaturesXml() {
+              var xml = '';
+              for (var index in scope.rows) {
+                var feature = scope.rows[index].feature;
+                xml += '' +
+                    '<wfs:Update' +
+                    ' xmlns:feature="http://www.geonode.org/" ' +
+                    'typeName="' + tableViewService.selectedLayer.get('metadata').name + '">';
+                for (var property in feature.properties) {
+                  var value = feature.properties[property];
+                  xml += '<wfs:Property>' +
+                      '<wfs:Name>' + property + '</wfs:Name>';
+                  if (goog.isDefAndNotNull(value)) {
+                    xml += '<wfs:Value>' + value + '</wfs:Value>';
+                  } else {
+                    xml += '<wfs:Value></wfs:Value>';
+                  }
+                  xml += '</wfs:Property>';
+                }
+                xml += '' +
+                    '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+                    '<ogc:FeatureId fid="' + feature.id + '" />' +
+                    '</ogc:Filter>' +
+                    '</wfs:Update>';
+              }
+              return xml;
+            }
+
+            function getWfsData() {
+              var xml = '' +
+                  '<?xml version="1.0" encoding="UTF-8"?>' +
+                  '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs"' +
+                  ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                  'service="WFS" version="1.0.0" handle="Updated feature(s) using MapLoom table view">' +
+                  getWfsFeaturesXml() +
+                  '</wfs:Transaction>';
+
+              return xml;
+            }
+
+            function postAllFeatures() {
+              if (config.username && config.password && (typeof config.headerData === 'undefined')) {
+                config.headerData = {
+                  'Content-Type': 'text/xml;charset=utf-8'
+                };
+              }
+
+              var xmlData = getWfsData();
+
+              var url = '/geoserver/wfs/WfsDispatcher';
+              $http.post(url, xmlData, {headers: {
+                'Content-Type': 'text/xml;charset=utf-8'
+              }})
+                  .success(function(data, status, headers, config) {
+                    scope.isSaving = false;
+                  });
+            }
+
             scope.saveTable = function() {
               if (scope.isSaving) {
                 return;
@@ -271,51 +331,10 @@
                 //returning a string, even an empty one, will stop xeditable from closing the table form
                 return 'Invalid fields detected';
               }
+
               scope.isSaving = true;
-              var featureIndex = 0;
-              var numFailed = 0;
-              var save = function() {
-                var originalPropertyArray = [];
-                var propertyArray = [];
-                var originalFeature = tableViewService.rows[featureIndex].feature;
-                var feature = scope.rows[featureIndex].feature;
+              postAllFeatures();
 
-                for (var prop in feature.properties) {
-                  propertyArray.push({0: prop, 1: feature.properties[prop]});
-                  originalPropertyArray.push({0: prop, 1: originalFeature.properties[prop]});
-                }
-
-                featureManagerService.setSelectedItem({type: 'feature', id: originalFeature.id,
-                  properties: originalPropertyArray});
-                featureManagerService.setSelectedItemProperties(originalPropertyArray);
-                featureManagerService.setSelectedLayer(tableViewService.selectedLayer);
-                featureManagerService.endAttributeEditing(true, false, propertyArray).then(function() {
-                  tableViewService.rows[featureIndex].feature = $.extend(true, {}, scope.rows[featureIndex].feature);
-                  featureIndex++;
-                  if (featureIndex < scope.rows.length) {
-                    save();
-                  } else {
-                    scope.isSaving = false;
-                    if (numFailed > 0) {
-                      dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',
-                          {value: numFailed}), [$translate('btn_ok')], false);
-                    }
-                  }
-                }, function() {
-                  featureIndex++;
-                  numFailed++;
-                  if (featureIndex < scope.rows.length) {
-                    save();
-                  } else {
-                    scope.isSaving = false;
-                    if (numFailed > 0) {
-                      dialogService.error($translate('save_attributes'), $translate('failed_to_save_features',
-                          {value: numFailed}), [$translate('btn_ok')], false);
-                    }
-                  }
-                });
-              };
-              save();
               $.bootstrapSortable();
             };
 

@@ -863,14 +863,14 @@
           '"><feature:' + featureType + ' xmlns:feature="http://www.geonode.org/">' +
           partial + '</feature:' + featureType + '></wfs:Insert>';
       goog.array.forEach(properties, function(obj) {
-        if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
-          selectedItem_.properties[obj[0]] = obj[1];
-        } else {
+        if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
           var newArray = [];
           forEachArrayish(obj[1], function(photo) {
             newArray.push(photo.original);
           });
           selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
+        } else {
+          selectedItem_.properties[obj[0]] = obj[1];
         }
       });
     } else {
@@ -891,14 +891,14 @@
             partial + filter +
             '</wfs:Update>';
         goog.array.forEach(properties, function(obj) {
-          if (obj[0] !== 'fotos' && obj[0] !== 'photos') {
-            selectedItem_.properties[obj[0]] = obj[1];
-          } else {
+          if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
             var newArray = [];
             forEachArrayish(obj[1], function(photo) {
               newArray.push(photo.original);
             });
             selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
+          } else {
+            selectedItem_.properties[obj[0]] = obj[1];
           }
         });
       }
@@ -923,6 +923,7 @@
           goog.isDefAndNotNull(json.WFS_TransactionResponse.TransactionResult.Status.SUCCESS)) {
         if (postType === wfsPostTypes_.INSERT) {
           selectedItem_.id = json.WFS_TransactionResponse.InsertResult.FeatureId._fid;
+          //Does this really need to be set? it doesn't seemed to be used anywhere.
           selectedItem_.type = 'Feature';
         }
         if (goog.isDefAndNotNull(coords)) {
