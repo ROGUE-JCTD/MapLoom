@@ -375,6 +375,16 @@
     };
 
     this.isGeoGit = function(layer, server, fullConfig) {
+      // This should always be the last thing that gets done.
+      var getFeatureType = function() {
+        service_.getFeatureType(layer).then(function() {
+          ol.proj.getTransform(metadata.projection, 'EPSG:4326');
+          rootScope.$broadcast('layerInfoLoaded', layer);
+        }, function(rejected) {
+          dialogService_.error(
+              translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
+        });
+      };
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
         if (!goog.isDefAndNotNull(metadata.isGeoGit)) {
@@ -402,8 +412,10 @@
                     } else {
                       metadata.repoId = repo;
                     }
+                    getFeatureType();
                   }, function(reject) {
                     dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+                    getFeatureType();
                   });
                   metadata.isGeoGit = true;
                   metadata.geogitStore = repoName;
@@ -419,18 +431,18 @@
                 });
               }, function() {
                 metadata.isGeoGit = false;
+                getFeatureType();
               });
             } else {
               metadata.isGeoGit = false;
+              getFeatureType();
             }
-            service_.getFeatureType(layer).then(function() {
-              ol.proj.getTransform(metadata.projection, 'EPSG:4326');
-              rootScope.$broadcast('layerInfoLoaded', layer);
-            }, function(rejected) {
-              dialogService_.error(
-                  translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
-            });
+          } else {
+            metadata.isGeoGit = false;
+            getFeatureType();
           }
+        } else {
+          getFeatureType();
         }
       }
     };
