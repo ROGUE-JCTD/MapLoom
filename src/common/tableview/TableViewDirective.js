@@ -233,13 +233,20 @@
               }
             };
 
+            var featuresModified = 0;
+
             function hasValidationErrors() {
               var numErrors = 0;
+              featuresModified = 0;
               for (var row in scope.rows) {
                 var feature = scope.rows[row].feature;
+                scope.rows[row].modified = false;
                 for (var prop in feature.properties) {
                   if (prop === 'photos' || prop === 'fotos') {
                     continue;
+                  }
+                  if (feature.properties[prop] !== tableViewService.rows[row].feature.properties[prop]) {
+                    scope.rows[row].modified = true;
                   }
                   if (feature.properties[prop] !== '' && feature.properties[prop] !== null) {
                     if (scope.restrictions[prop].type === 'int') {
@@ -255,6 +262,9 @@
                     numErrors++;
                   }
                 }
+                if (scope.rows[row].modified) {
+                  featuresModified++;
+                }
               }
               if (numErrors > 0) {
                 dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
@@ -268,6 +278,9 @@
             function getWfsFeaturesXml() {
               var xml = '';
               for (var index in scope.rows) {
+                if (!scope.rows[index].modified) {
+                  continue;
+                }
                 var feature = scope.rows[index].feature;
                 xml += '' +
                     '<wfs:Update' +
@@ -294,11 +307,20 @@
             }
 
             function getWfsData() {
+              var commitMessage = '';
+              if (featuresModified === 1) {
+                commitMessage = $translate('modified_1_feature',
+                    {'layer': tableViewService.selectedLayer.get('metadata').nativeName});
+              } else {
+                commitMessage = $translate('modified_x_features',
+                    {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName});
+              }
+              console.log('commit message: ', commitMessage);
               var xml = '' +
                   '<?xml version="1.0" encoding="UTF-8"?>' +
                   '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs"' +
                   ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-                  'service="WFS" version="1.0.0" handle="Updated feature(s) using MapLoom table view">' +
+                  'service="WFS" version="1.0.0" handle="' + commitMessage + '">' +
                   getWfsFeaturesXml() +
                   '</wfs:Transaction>';
 
@@ -332,8 +354,13 @@
                 return 'Invalid fields detected';
               }
 
+              if (featuresModified === 0) {
+                return;
+              }
+
               scope.isSaving = true;
               postAllFeatures();
+              scope.applyFilters();
 
               $.bootstrapSortable();
             };

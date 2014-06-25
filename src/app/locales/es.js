@@ -63,6 +63,7 @@
     'commit_merge': 'Confirmar Fusion',
     'added_1_feature': 'Añadió 1 elemento a \'{{layer}}\' a través MapLoom.',
     'modified_1_feature': 'Modificado 1 elemento de \'{{layer}}\' a través MapLoom.',
+    'modified_x_features': 'Modificado {{num}} elementos de \'{{layer}}\' a través MapLoom.',
     'removed_1_feature': 'Eliminado 1 elemento de \'{{layer}}\' a través MapLoom.',
     'applied_via_maploom': 'Aplica a través de MapLoom.',
     'conflicts_in': 'Los conflictos resueltos en \'{{layer}}\'',

@@ -149,7 +149,7 @@
             if (goog.isDefAndNotNull(service_.feature) && response.data.features[feat].id === service_.feature.id) {
               selectedFeature = true;
             }
-            row = {visible: true, selected: selectedFeature, feature: response.data.features[feat]};
+            row = {modified: false, selected: selectedFeature, feature: response.data.features[feat]};
 
             service_.rows[feat] = row;
           }

@@ -63,6 +63,7 @@
     'commit_merge': 'Commit Merge',
     'added_1_feature': 'Added 1 feature to \'{{layer}}\' via MapLoom.',
     'modified_1_feature': 'Modified 1 feature in \'{{layer}}\' via MapLoom.',
+    'modified_x_features': 'Modified {{num}} features in \'{{layer}}\' via MapLoom.',
     'removed_1_feature': 'Removed 1 feature from \'{{layer}}\' via MapLoom.',
     'applied_via_maploom': 'Applied via MapLoom.',
     'conflicts_in': 'Conflicts resolved in \'{{layer}}\'',
