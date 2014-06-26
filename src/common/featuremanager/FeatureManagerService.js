@@ -878,17 +878,20 @@
             selectedLayer_.get('metadata').name + '">' +
             partial + filter +
             '</wfs:Update>';
-        goog.array.forEach(properties, function(obj) {
-          if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
-            var newArray = [];
-            forEachArrayish(obj[1], function(photo) {
-              newArray.push(photo.original);
-            });
-            selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
-          } else {
-            selectedItem_.properties[obj[0]] = obj[1];
-          }
-        });
+        //properties will be null in the case of a geometry edit, so this needs to be handled
+        if (goog.isDefAndNotNull(properties)) {
+          goog.array.forEach(properties, function(obj) {
+            if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
+              var newArray = [];
+              forEachArrayish(obj[1], function(photo) {
+                newArray.push(photo.original);
+              });
+              selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
+            } else {
+              selectedItem_.properties[obj[0]] = obj[1];
+            }
+          });
+        }
       }
     }
 
