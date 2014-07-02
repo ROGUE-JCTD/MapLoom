@@ -112,9 +112,9 @@
                 return;
               } else if (goog.isDefAndNotNull(scope.coordinates) && scope.coordinates.changed &&
                   scope.coordDisplay.value === coordinateDisplays.DMS &&
-                  ol.coordinate.toStringHDMS(scope.coordinates.coords) !== scope.coordinates.originalText) {
+                  ol.coordinate.toStringHDMS(scope.coordinates.coords4326) !== scope.coordinates.originalText) {
                 dialogService.open($translate('location_lon_lat'), $translate('latlon_confirm',
-                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords)}), [$translate('yes_btn'),
+                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords4326)}), [$translate('yes_btn'),
                       $translate('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0: {
