@@ -295,20 +295,15 @@
         coordDisplay: '=coordDisplay'
       },
       link: function(scope) {
-        /*
-        if (scope.geom.projection !== 'EPSG:4326') {
-            scope.coordinateDisplays = [scope.geom.projection];
-          } else {
+        if (scope.geom.projection === 'EPSG:4326') {
           scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD];
+        } else {
+          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD, scope.geom.projection];
         }
-        */
-        scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD, coordinateDisplays.Other];
 
         var transformCoords = function(coords, srcPrjName, dstPrjName) {
           var point = new ol.geom.Point(coords);
-          console.log('====== old point: ', point);
           point.transform(ol.proj.get(srcPrjName), ol.proj.get(dstPrjName));
-          console.log('====== new point 4326: ', point);
           return point.flatCoordinates;
         };
 
@@ -320,16 +315,14 @@
         };
 
         var setUpCoordinates = function() {
-          console.log('---- scope.coordDisplay.value: ', scope.coordDisplay.value);
           updateCoords4326(scope.geom);
           if (scope.coordDisplay.value === coordinateDisplays.DMS) {
             scope.coordinates = ol.coordinate.toStringHDMS(scope.geom.coords4326);
           } else if (scope.coordDisplay.value === coordinateDisplays.DD) {
             scope.coordinates = ol.coordinate.toStringXY(scope.geom.coords4326, settings.DDPrecision);
-          } else if (scope.coordDisplay.value === coordinateDisplays.Other) {
-            scope.coordinates = ol.coordinate.toStringXY(scope.geom.coords, settings.DDPrecision);
           } else {
-            console.log('>>>>>>>>>>>> error');
+            // it is the srs of the layer
+            scope.coordinates = ol.coordinate.toStringXY(scope.geom.coords, settings.DDPrecision);
           }
         };
 
@@ -440,10 +433,10 @@
 
           // if the coordinate mode requires 4326 (DD or DMS), if projection is not 4326 already, we need to update the
           // geom's coordinates to reflect any changes
-          if (scope.geom.projection !== 'EPSG:4326' &&
-              scope.coordDisplay.value !== coordinateDisplays.Other) {
+          if ((scope.coordDisplay.value === coordinateDisplays.DD ||
+               scope.coordDisplay.value === coordinateDisplays.DMS) &&
+              scope.geom.projection !== 'EPSG:4326') {
             scope.geom.coords = transformCoords(scope.geom.coords, 'EPSG:4326', scope.geom.projection);
-            console.log('==== transformed coords back: ', scope.geom.coords);
             updateCoords4326(scope.geom);
           }
 
