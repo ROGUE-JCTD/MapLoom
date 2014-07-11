@@ -280,7 +280,8 @@
     'always_anonymous': 'Always Log On Anonymously',
     'script_error': 'The following script error has occurred: "{{error}}".  It is recommended that you reload the ' +
         'web page to resolve any potential complications.',
-    'show_changes': 'Show Changes'
+    'show_changes': 'Show Changes',
+    'sure_close_table': 'Are you sure you want to close the table?  Any unsaved changes will be lost.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

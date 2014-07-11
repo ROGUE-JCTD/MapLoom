@@ -207,6 +207,29 @@
               });
             };
 
+            scope.cancel = function() {
+              if (scope.isSaving) {
+                return;
+              }
+              var doWork = function() {
+                scope.tableviewform.$cancel();
+                element.closest('.modal').modal('hide');
+              };
+              if (scope.tableviewform.$visible) {
+                dialogService.warn($translate('warning'), $translate('sure_close_table'),
+                    [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                  switch (button) {
+                    case 0:
+                      doWork();
+                      break;
+                  }
+                });
+              } else {
+                doWork();
+              }
+
+            };
+
             $('#table-view-window').on('hidden.bs.modal', function(e) {
               if (scope.isSaving) {
                 return;

@@ -284,7 +284,8 @@
     'always_anonymous': 'Conecte Siempre Anónimamente',
     'script_error': 'Se ha producido un error de script siguiente: "{{error}}". Se recomienda volver a cargar ' +
         'la página web para resolver cualquier posible complicación.',
-    'show_changes': 'Mostrar Cambios'
+    'show_changes': 'Mostrar Cambios',
+    'sure_close_table': '¿Está seguro que desea cerrar la mesa? Se perderán todos los cambios no guardados.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
