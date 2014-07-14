@@ -183,6 +183,8 @@
     'save_this_map': 'Guardar a este mapa',
     'save_failed': 'No se pudo guardar',
     'map_save_failed': 'No se pudo guardar el mapa con el siguiente estado: {{value}}.',
+    'map_save_permission': 'Usted no tiene permiso para modificar este mapa. Usted puede guardar una copia ' +
+        'del mapa si desea mantener los cambios.',
     'fetch': 'Traer',
     'fetch_error': 'Hubo un error al tratar de buscar desde el control remoto, por favor intente de nuevo más tarde.',
     'fetch_timeout': 'Fetch está tomando más tiempo de lo que debería, es posible que todavía está trabajando así ' +

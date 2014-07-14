@@ -180,6 +180,8 @@
     'save_this_map': 'Save this map',
     'save_failed': 'Save failed',
     'map_save_failed': 'Map save failed with the following status: {{value}}.',
+    'map_save_permission': 'You do not have permission to edit this map.  You may save a copy of the map if ' +
+        'you want to keep your changes.',
     'fetch': 'Fetch',
     'fetch_error': 'There was an error trying to fetch from the remote, please try again later.',
     'fetch_timeout': 'Fetch is taking longer than it should, its possible that it is still working so' +

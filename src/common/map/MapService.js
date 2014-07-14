@@ -752,7 +752,11 @@
         service_.updateMap(data);
         console.log('----[ map.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
-        dialogService_.error(translate_('save_failed'), translate_('map_save_failed', {value: status}));
+        if (status == 403 || status == 401) {
+          dialogService_.error(translate_('save_failed'), translate_('map_save_permission'));
+        } else {
+          dialogService_.error(translate_('save_failed'), translate_('map_save_failed', {value: status}));
+        }
       });
     };
 
