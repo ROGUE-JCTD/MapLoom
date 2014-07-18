@@ -12,9 +12,10 @@
             scope.$on('startAttributeEdit', function(event, geometry, projection, properties, inserting) {
               scope.properties = [];
               scope.isSaving = false;
+              var tempProperties = {};
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
-              goog.array.forEach(properties, function(property, index, arr) {
-                if (goog.isDefAndNotNull(attributeTypes)) {
+              if (goog.isDefAndNotNull(attributeTypes)) {
+                goog.array.forEach(properties, function(property, index, arr) {
                   var prop;
                   if (goog.isDefAndNotNull(attributeTypes[property[0]]) &&
                       attributeTypes[property[0]]._type.search('gml:') === -1) {
@@ -31,10 +32,17 @@
                     }
                     prop.nillable = attributeTypes[prop[0]]._nillable;
                     scope.validateField(prop, 1);
-                    scope.properties.push(prop);
+                    tempProperties[property[0]] = prop;
+                  }
+                });
+
+                for (var propName in attributeTypes) {
+                  if (tempProperties.hasOwnProperty(propName)) {
+                    scope.properties.push(tempProperties[propName]);
                   }
                 }
-              });
+              }
+
               if (geometry.type.toLowerCase() == 'point') {
                 if (projection === 'EPSG:4326') {
                   scope.coordDisplay = {value: coordinateDisplays.DMS};

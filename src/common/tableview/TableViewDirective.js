@@ -363,8 +363,15 @@
               $http.post(url, xmlData, {headers: {
                 'Content-Type': 'text/xml;charset=utf-8'
               }})
-                  .success(function(data, status, headers, config) {
+                  .success(function() {
+                    scope.applyFilters();
+
+                    $.bootstrapSortable();
+                  }).error(function() {
                     scope.isSaving = false;
+                    dialogService.error($translate('save_attributes'), $translate('failed_to_save_features'),
+                        [$translate('btn_ok')], false);
+                    scope.tableviewform.$show();
                   });
             }
 
@@ -383,9 +390,6 @@
 
               scope.isSaving = true;
               postAllFeatures();
-              scope.applyFilters();
-
-              $.bootstrapSortable();
             };
 
           }

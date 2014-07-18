@@ -264,7 +264,7 @@
     'false': 'False',
     'failed_to_add_server': 'There was a problem trying to connect to the server you specified, check the url and' +
         ' credentials to make sure they are correct before trying again.',
-    'failed_to_save_features': '{{value}} features failed to save, please try to save again before closing' +
+    'failed_to_save_features': 'The features failed to save, please try to save again before closing' +
         ' the table or you will lose work.',
     'server_connect_failed': 'We were unable to connect to this server, would still like to add this server?',
     'disabled_layer': 'Layer is Disabled',

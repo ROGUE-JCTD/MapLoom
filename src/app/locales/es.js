@@ -268,8 +268,8 @@
     'false': 'Falso',
     'failed_to_add_server': 'Hubo un problema al intentar conectar con el servidor especificado, compruebe la URL y' +
         ' las credenciales para asegurarse de que son correctos antes de volver a intentarlo.',
-    'failed_to_save_features': '{{value}} caracteristicas no pudieron salvar, por favor tratar de salvar una' +
-        ' vez mas antes de cerrar la tabla o perdera el trabajo.',
+    'failed_to_save_features': 'Los elementos no pudieron salvar, por favor tratar de salvar una vez más antes de ' +
+        'cerrar la tabla o perderá el trabajo.',
     'server_connect_failed': 'No se pudo conectar con este servidor, todavia desea anadir este servidor?',
     'disabled_layer': 'Capa es Desactivado',
     'missing_layers_merge': 'Hay {{count}} elemento(s) que participan en la fusión que no son parte del mapa.  ' +
