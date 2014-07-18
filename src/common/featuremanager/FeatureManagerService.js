@@ -193,10 +193,21 @@
 
         if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
             goog.isDefAndNotNull(selectedItem_.properties)) {
+          var jsonValue = null;
           if (goog.isDefAndNotNull(selectedItem_.properties.fotos) && selectedItem_.properties.fotos !== '') {
-            pics = {name: 'fotos', pics: JSON.parse(selectedItem_.properties.fotos)};
+            if (goog.isArray(selectedItem_.properties.fotos)) {
+              jsonValue = selectedItem_.properties.fotos;
+            } else {
+              jsonValue = JSON.parse(selectedItem_.properties.fotos);
+            }
+            pics = {name: 'fotos', pics: jsonValue};
           } else if (goog.isDefAndNotNull(selectedItem_.properties.photos) && selectedItem_.properties.photos !== '') {
-            pics = {name: 'photos', pics: JSON.parse(selectedItem_.properties.photos)};
+            if (goog.isArray(selectedItem_.properties.photos)) {
+              jsonValue = selectedItem_.properties.photos;
+            } else {
+              jsonValue = JSON.parse(selectedItem_.properties.photos);
+            }
+            pics = {name: 'photos', pics: jsonValue};
           }
           if (goog.isDefAndNotNull(pics) &&
               pics.length === 0) {
@@ -243,7 +254,13 @@
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (k === 'fotos' || k === 'photos') {
               if (goog.isDefAndNotNull(v)) {
-                var picsAttr = JSON.parse(v);
+                var jsonValue = null;
+                if (goog.isArray(v)) {
+                  jsonValue = v;
+                } else {
+                  jsonValue = JSON.parse(v);
+                }
+                var picsAttr = jsonValue;
                 if (!goog.isArray(picsAttr)) {
                   picsAttr = [picsAttr];
                 }

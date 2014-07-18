@@ -69,6 +69,9 @@
 
             scope.removePhoto = function(property, photo) {
               goog.array.remove(property[1], photo);
+              if (property[1].length === 0) {
+                property[1] = null;
+              }
             };
 
             scope.validateField = function(property, key) {
