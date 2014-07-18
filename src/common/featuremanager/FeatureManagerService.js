@@ -247,10 +247,11 @@
         }
 
         // -- update the selectedItemProperties_
-        var props = null;
+        var tempProps = null;
+        var props = [];
 
         if (getItemType(selectedItem_) === 'feature') {
-          props = [];
+          tempProps = {};
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (k === 'fotos' || k === 'photos') {
               if (goog.isDefAndNotNull(v)) {
@@ -273,12 +274,26 @@
                     picsAttr[index] = {original: item, modified: item};
                   }
                 });
-                props.push([k, picsAttr]);
+                tempProps[k] = [k, picsAttr];
               }
             } else {
-              props.push([k, v]);
+              tempProps[k] = [k, v];
             }
           });
+        }
+        var propName = null;
+        if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
+          for (propName in selectedLayer_.get('metadata').schema) {
+            if (tempProps.hasOwnProperty(propName)) {
+              props.push(tempProps[propName]);
+            }
+          }
+        } else {
+          for (propName in tempProps) {
+            if (tempProps.hasOwnProperty(propName)) {
+              props.push(tempProps[propName]);
+            }
+          }
         }
 
         selectedItemProperties_ = props;
