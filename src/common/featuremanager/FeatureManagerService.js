@@ -247,11 +247,10 @@
         }
 
         // -- update the selectedItemProperties_
-        var tempProps = null;
+        var tempProps = {};
         var props = [];
 
         if (getItemType(selectedItem_) === 'feature') {
-          tempProps = {};
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (k === 'fotos' || k === 'photos') {
               if (goog.isDefAndNotNull(v)) {
