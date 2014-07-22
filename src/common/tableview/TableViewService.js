@@ -90,6 +90,7 @@
             service_.readOnly = true;
             return;
           }
+          service_.readOnly = false;
           for (var attrIndex in service_.attributeNameList) {
             var attr = service_.attributeNameList[attrIndex];
             var attrRestriction = {type: '', nillable: true};

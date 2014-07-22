@@ -141,6 +141,7 @@
 
             var updateData = function() {
               scope.rows = clone(tableViewService.rows);
+              scope.readOnly = tableViewService.readOnly;
               scope.attributes = tableViewService.attributeNameList;
               scope.currentPage = tableViewService.currentPage + 1;
               scope.totalPages = tableViewService.totalPages;
