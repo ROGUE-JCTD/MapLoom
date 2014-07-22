@@ -213,7 +213,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.populateLayersConfig(server)
             .then(function(response) {
               // set the id. it should always resolve to the length
-              if (server.layersConfig.length === 0 && !loaded) {
+              if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded) {
                 dialogService_.warn(translate_('add_server'), translate_('server_connect_failed'),
                     [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
                   switch (button) {
@@ -229,6 +229,10 @@ var SERVER_SERVICE_USE_PROXY = true;
                   }
                 });
               } else {
+                // If there are no layers on the server, layersConfig will be undefined.
+                if (!goog.isDefAndNotNull(server.layersConfig)) {
+                  server.layersConfig = [];
+                }
                 server.id = serverCount++;
                 servers.push(server);
                 rootScope_.$broadcast('server-added', server.id);
