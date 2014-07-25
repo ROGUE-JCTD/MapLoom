@@ -133,6 +133,9 @@
     // name of the layer to to which features will be added
     layerName: 'canchas_de_futbol', //'incidentes_copeco',
 
+    // Workspace URL
+    workspaceURL: 'http://www.geonode.org/',
+
     // projection of the layer
     layerProjection: 'EPSG:900913',
 
@@ -218,7 +221,7 @@
         'service= "WFS" version="' + settings.WFSVersion + '" ' +
         'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
         '<wfs:Insert>' +
-        '<feature:' + config.layerName + ' xmlns:feature="http://www.geonode.org/">' +
+        '<feature:' + config.layerName + ' xmlns:feature="' + config.workspaceURL + '">' +
         '<feature:' + config.geomAttributeName + '>' +
         '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' + config.layerProjection + '">' +
         '<gml:pos>' + lon + ' ' + lat + '</gml:pos>' +

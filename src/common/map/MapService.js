@@ -283,7 +283,7 @@
             '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
             '<wps:Body>' +
             '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '" outputFormat="GML2" ' +
-                'xmlns:geonode="http://www.geonode.org/">' +
+                'xmlns:' + layer.get('metadata').workspace + '="' + layer.get('metadata').workspaceURL + '">' +
             '<wfs:Query typeName="' + layerTypeName + '"/>' +
             '</wfs:GetFeature>' +
             '</wps:Body>' +
@@ -538,31 +538,37 @@
 
           // Test if layer is read-only
           if (goog.isDefAndNotNull(url)) {
-            var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
-                '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
-                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-                'service="WFS" version="1.0.0" ' +
-                'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd"> ' +
-                '<wfs:Update xmlns:feature="http://www.geonode.org/" typeName="' +
-                minimalConfig.name + '">' +
-                '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
-                '<ogc:FeatureId fid="garbage_id" />' +
-                '</ogc:Filter></wfs:Update>' +
-                '</wfs:Transaction>';
+            layer.get('metadata').readOnly = true;
+            var testReadOnly = function() {
+              var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
+                  '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
+                  'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                  'service="WFS" version="1.0.0" ' +
+                  'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd"> ' +
+                  '<wfs:Update xmlns:feature="' + layer.get('metadata').workspaceURL + '" typeName="' +
+                  minimalConfig.name + '">' +
+                  '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+                  '<ogc:FeatureId fid="garbage_id" />' +
+                  '</ogc:Filter></wfs:Update>' +
+                  '</wfs:Transaction>';
 
-            var wfsurl = url + '/wfs/WfsDispatcher';
-            httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
-              var x2js = new X2JS();
-              var json = x2js.xml_str2json(data);
-              if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
-                  goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException) &&
-                  json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
-                layer.get('metadata').readOnly = true;
-              }
-              geogitService_.isGeoGit(layer, server, fullConfig);
-            }).error(function(data, status, headers, config) {
-              layer.get('metadata').readOnly = true;
-              geogitService_.isGeoGit(layer, server, fullConfig);
+              var wfsurl = url + '/wfs/WfsDispatcher';
+              httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
+                var x2js = new X2JS();
+                var json = x2js.xml_str2json(data);
+                if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
+                    goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException) &&
+                    json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
+                } else {
+                  layer.get('metadata').readOnly = false;
+                }
+              }).error(function(data, status, headers, config) {
+              });
+            };
+            geogitService_.isGeoGit(layer, server, fullConfig).then(function() {
+              testReadOnly();
+            }, function() {
+              testReadOnly();
             });
           }
 

@@ -320,6 +320,7 @@
 
           layer.get('metadata').schema = schema;
           layer.get('metadata').editable = true;
+          layer.get('metadata').workspaceURL = json.schema._targetNamespace;
         }
         deferredResponse.resolve();
       }, function(reject) {
@@ -375,14 +376,17 @@
     };
 
     this.isGeoGit = function(layer, server, fullConfig) {
+      var deferredResponse = q.defer();
       // This should always be the last thing that gets done.
       var getFeatureType = function() {
         service_.getFeatureType(layer).then(function() {
           ol.proj.getTransform(metadata.projection, 'EPSG:4326');
           rootScope.$broadcast('layerInfoLoaded', layer);
+          deferredResponse.resolve();
         }, function(rejected) {
           dialogService_.error(
               translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
+          deferredResponse.reject();
         });
       };
       if (goog.isDefAndNotNull(layer)) {
@@ -444,7 +448,10 @@
         } else {
           getFeatureType();
         }
+      } else {
+        deferredResponse.reject();
       }
+      return deferredResponse.promise;
     };
   });
 }());

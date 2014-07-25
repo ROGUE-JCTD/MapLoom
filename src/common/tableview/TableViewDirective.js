@@ -308,7 +308,7 @@
                 var feature = scope.rows[index].feature;
                 xml += '' +
                     '<wfs:Update' +
-                    ' xmlns:feature="http://www.geonode.org/" ' +
+                    ' xmlns:feature="' + tableViewService.selectedLayer.get('metadata').workspaceURL + '" ' +
                     'typeName="' + tableViewService.selectedLayer.get('metadata').name + '">';
                 for (var property in feature.properties) {
                   var value = feature.properties[property];

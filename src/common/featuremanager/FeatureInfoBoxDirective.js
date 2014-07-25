@@ -43,11 +43,11 @@
               var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
 
               // if there is no schema, show the attribute. only filter out if there is schema and attr is set to hidden
-              if (!goog.isDefAndNotNull(schema)) {
+              if (!goog.isDefAndNotNull(schema) || !schema.hasOwnProperty(property)) {
                 return true;
               }
 
-              return featureManagerService.getSelectedLayer().get('metadata').schema[property].visible;
+              return schema[property].visible;
             };
 
 

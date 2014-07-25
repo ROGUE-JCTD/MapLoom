@@ -879,7 +879,7 @@
       var featureType = selectedLayer_.get('metadata').name.split(':')[1];
       commitMsg = translate_('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
       wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
-          '"><feature:' + featureType + ' xmlns:feature="http://www.geonode.org/">' +
+          '"><feature:' + featureType + ' xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '">' +
           partial + '</feature:' + featureType + '></wfs:Insert>';
       goog.array.forEach(properties, function(obj) {
         if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
@@ -899,13 +899,13 @@
       if (postType === wfsPostTypes_.DELETE) {
         commitMsg = translate_('removed_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
         wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
-            '" xmlns:feature="http://www.geonode.org/" typeName="' +
+            '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             filter + '</wfs:Delete>';
       } else if (postType === wfsPostTypes_.UPDATE) {
         commitMsg = translate_('modified_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
         wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
-            '" xmlns:feature="http://www.geonode.org/" typeName="' +
+            '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             partial + filter +
             '</wfs:Update>';
