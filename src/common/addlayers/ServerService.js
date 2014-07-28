@@ -208,6 +208,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         loaded = false;
       }
 
+      if (server.ptype === 'gxp_olsource') {
+        deferredResponse.resolve();
+        return deferredResponse.promise;
+      }
+
       var doWork = function() {
         console.log('---- MapService.layerInfo. trying to add server: ', server);
         service_.populateLayersConfig(server)
@@ -321,6 +326,13 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.getServerByPtype('gxp_mapquestsource').defaultServer = true;
       }
 
+      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapboxsource'))) {
+        config = {ptype: 'gxp_mapboxsource', name: 'MapBox', defaultServer: true};
+        service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_mapboxsource').defaultServer = true;
+      }
+
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_osmsource'))) {
         config = {ptype: 'gxp_osmsource', name: 'OpenStreetMap', defaultServer: true};
         service_.addServer(config);
@@ -371,25 +383,71 @@ var SERVER_SERVICE_USE_PROXY = true;
         server.layersConfig = [];
 
         if (server.ptype === 'gxp_bingsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'Bing';
+          }
           server.layersConfig = [
-            {Title: 'BingRoad', Name: 'BingRoad', sourceParams: {imagerySet: 'Road'}},
-            {Title: 'BingAerial', Name: 'BingAerial', sourceParams: {imagerySet: 'Aerial'}},
-            {Title: 'BingAerialWithLabels', Name: 'BingAerialWithLabels',
+            {Title: 'BingRoad', Name: 'Road', sourceParams: {imagerySet: 'Road'}},
+            {Title: 'BingAerial', Name: 'Aerial', sourceParams: {imagerySet: 'Aerial'}},
+            {Title: 'BingAerialWithLabels', Name: 'AerialWithLabels',
               sourceParams: {imagerySet: 'AerialWithLabels'}},
-            {Title: 'BingCollinsBart', Name: 'BingCollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
-            {Title: 'BingSurvey', Name: 'BingSurvey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
+            {Title: 'BingCollinsBart', Name: 'CollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
+            {Title: 'BingSurvey', Name: 'Survey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_mapquestsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'MapQuest';
+          }
           server.layersConfig = [
-            {Title: 'MapQuestSat', Name: 'MapQuestSat', sourceParams: {layer: 'sat'}},
-            {Title: 'MapQuestHybrid', Name: 'MapQuestHybrid', sourceParams: {layer: 'hyb'}},
-            {Title: 'MapQuestOSM', Name: 'MapQuestOSM', sourceParams: {layer: 'osm'}}
+            {Title: 'MapQuestSat', Name: 'sat', sourceParams: {layer: 'sat'}},
+            {Title: 'MapQuestHybrid', Name: 'hyb', sourceParams: {layer: 'hyb'}},
+            {Title: 'MapQuestOSM', Name: 'osm', sourceParams: {layer: 'osm'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'OpenStreetMap';
+          }
           server.layersConfig = [
             {Title: 'OpenStreetMap', Name: 'mapnik'}
+          ];
+          deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_mapboxsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'MapBox';
+          }
+          server.layersConfig = [
+            {Title: 'MapBoxBlueMarbleTopoBathyJan', Name: 'blue-marble-topo-bathy-jan',
+              sourceParams: {layer: 'blue-marble-topo-bathy-jan'}},
+            {Title: 'MapBoxBlueMarbleTopoBathyJul', Name: 'blue-marble-topo-bathy-jul',
+              sourceParams: {layer: 'blue-marble-topo-bathy-jul'}},
+            {Title: 'MapBoxBlueMarbleTopoJan', Name: 'blue-marble-topo-jan',
+              sourceParams: {layer: 'blue-marble-topo-jan'}},
+            {Title: 'MapBoxBlueMarbleTopoJul', Name: 'blue-marble-topo-jul',
+              sourceParams: {layer: 'blue-marble-topo-jul'}},
+            {Title: 'MapBoxControlRoom', Name: 'control-room',
+              sourceParams: {layer: 'control-room'}},
+            {Title: 'MapBoxGeographyClass', Name: 'geography-class',
+              sourceParams: {layer: 'geography-class'}},
+            {Title: 'MapBoxNaturalEarthHypso', Name: 'natural-earth-hypso',
+              sourceParams: {layer: 'natural-earth-hypso'}},
+            {Title: 'MapBoxNaturalEarthHypsoBathy', Name: 'natural-earth-hypso-bathy',
+              sourceParams: {layer: 'natural-earth-hypso-bathy'}},
+            {Title: 'MapBoxNaturalEarth1', Name: 'natural-earth-1',
+              sourceParams: {layer: 'natural-earth-1'}},
+            {Title: 'MapBoxNaturalEarth2', Name: 'natural-earth-2',
+              sourceParams: {layer: 'natural-earth-2'}},
+            {Title: 'MapBoxWorldDark', Name: 'world-dark',
+              sourceParams: {layer: 'world-dark'}},
+            {Title: 'MapBoxWorldLight', Name: 'world-light',
+              sourceParams: {layer: 'world-light'}},
+            {Title: 'MapBoxWorldPrint', Name: 'world-print',
+              sourceParams: {layer: 'world-print'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_wmscsource' ||
@@ -432,7 +490,11 @@ var SERVER_SERVICE_USE_PROXY = true;
               server.populatingLayersConfig = false;
             });
           }
+        } else {
+          deferredResponse.reject();
         }
+      } else {
+        deferredResponse.reject();
       }
 
       return deferredResponse.promise;

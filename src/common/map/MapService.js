@@ -421,6 +421,9 @@
      */
     this.addLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
+      if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
+        minimalConfig.name = 'sat';
+      }
       var fullConfig = null;
       if (goog.isDefAndNotNull(server)) {
         fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
@@ -484,6 +487,26 @@
         } else if (server.ptype === 'gxp_googlesource') {
           dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported',
               {type: 'gxp_googlesource'}));
+        } else if (server.ptype === 'gxp_mapboxsource') {
+          var parms = {
+            url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
+            crossOrigin: true
+          };
+          var mbsource = new ol.source.TileJSON(parms);
+
+          if (goog.isDefAndNotNull(mbsource)) {
+            layer = new ol.layer.Tile({
+              metadata: {
+                serverId: server.id,
+                name: minimalConfig.name,
+                title: fullConfig.Title
+              },
+              visible: minimalConfig.visibility,
+              source: mbsource
+            });
+          } else {
+            console.log('====[ Error: could not create base layer.');
+          }
         } else if (server.ptype === 'gxp_mapquestsource') {
           var source = new ol.source.MapQuest(fullConfig.sourceParams);
 
@@ -914,6 +937,15 @@
                       {'server': serverInfo.name, 'value': reject}), [translate_('btn_ok')], false);
                   console.log('====[ Error: Add server failed. ', reject);
                 });
+          } else {
+            orderedUniqueLength--;
+            if (orderedUniqueLength === 0) {
+              pulldownService_.serversLoading = false;
+              pulldownService_.addLayers = true;
+              service_.map.updateSize();
+              // add servers corresponding to basemaps
+              serverService_.configDefaultServers();
+            }
           }
         });
 
