@@ -117,7 +117,7 @@
               var path = historyService.pathFilter;
               var until = historyService.layer.get('metadata').branchName;
               // TODO: Make this work with a proxy once it supports authentication
-              var url = repo.url + '/log?output_format=csv&until=' + until + '&path=' +
+              var url = repo.url + '/log.csv?until=' + until + '&path=' +
                   path + '&sinceTime=' + sinceTime + '&untilTime=' + untilTime + '&summary=true';
               $window.open(url);
             };
