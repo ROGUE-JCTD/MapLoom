@@ -82,7 +82,7 @@
 </script>
 
 </head>
-<body>
+<body class="maploom-body">
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
 <% } %>
@@ -190,6 +190,12 @@
        tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
     <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
       <i class="glyphicon glyphicon-map-marker"></i>
+    </div>
+  </div>
+  <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
+       tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
+    <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
+      <i class="glyphicon glyphicon-fullscreen"></i>
     </div>
   </div>
 </div>

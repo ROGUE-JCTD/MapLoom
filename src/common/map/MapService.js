@@ -974,6 +974,14 @@
       }
     };
 
+    this.toggleFullscreen = function() {
+      if (googx.dom.fullscreen.isFullScreen()) {
+        googx.dom.fullscreen.exitFullScreen();
+      } else {
+        googx.dom.fullscreen.requestFullScreenWithKeys(goog.dom.getElementByClass('maploom-body'));
+      }
+    };
+
     this.createMap = function() {
       var coordDisplay;
 

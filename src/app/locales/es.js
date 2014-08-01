@@ -287,7 +287,8 @@
     'script_error': 'Se ha producido un error de script siguiente: "{{error}}". Se recomienda volver a cargar ' +
         'la página web para resolver cualquier posible complicación.',
     'show_changes': 'Mostrar Cambios',
-    'sure_close_table': '¿Está seguro que desea cerrar la mesa? Se perderán todos los cambios no guardados.'
+    'sure_close_table': '¿Está seguro que desea cerrar la mesa? Se perderán todos los cambios no guardados.',
+    'toggle_fullscreen': 'Cambiar a Pantalla Completa'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
