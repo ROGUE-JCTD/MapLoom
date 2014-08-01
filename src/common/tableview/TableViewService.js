@@ -133,13 +133,13 @@
           if (!goog.isDefAndNotNull(metadata.filters)) {
             metadata.filters = {};
           }
-          for (var attrName in response.data.features[0].properties) {
-            if (response.data.features[0].properties.hasOwnProperty(attrName) &&
-                attrName !== 'fotos' && attrName !== 'photos') {
-              if (!goog.isDefAndNotNull(metadata.filters[attrName])) {
-                metadata.filters[attrName] = {filter: ''};
+          for (var propName in metadata.schema) {
+            if (response.data.features[0].properties.hasOwnProperty(propName) &&
+                propName !== 'fotos' && propName !== 'photos') {
+              if (!goog.isDefAndNotNull(metadata.filters[propName])) {
+                metadata.filters[propName] = {filter: ''};
               }
-              service_.attributeNameList.push({name: attrName, filter: metadata.filters[attrName]});
+              service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
             }
           }
           var totalFeatures = response.data.totalFeatures;

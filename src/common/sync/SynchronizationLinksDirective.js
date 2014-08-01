@@ -3,7 +3,7 @@
   var module = angular.module('loom_synclinks_directive', []);
 
   module.directive('loomSynclinks',
-      function($translate, synchronizationService, dialogService) {
+      function($translate, synchronizationService, dialogService, mapService) {
         return {
           restrict: 'C',
           replace: true,
@@ -43,6 +43,7 @@
                   syncedLink.isSyncing = false;
                   link.singleSync = false;
                   dialogService.open($translate('synchronization'), $translate('synchronization_success'));
+                  mapService.dumpTileCache();
                 }, function(error) {
                   // Something failed
                   link.isSyncing = false;

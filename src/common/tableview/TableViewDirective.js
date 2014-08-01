@@ -368,6 +368,9 @@
                     scope.applyFilters();
 
                     $.bootstrapSortable();
+
+                    // refresh tiles
+                    mapService.dumpTileCache(tableViewService.selectedLayer.get('metadata').uniqueID);
                   }).error(function() {
                     scope.isSaving = false;
                     dialogService.error($translate('save_attributes'), $translate('failed_to_save_features'),
