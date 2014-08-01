@@ -360,7 +360,7 @@
 
               var xmlData = getWfsData();
 
-              var url = '/geoserver/wfs/WfsDispatcher';
+              var url = tableViewService.selectedLayer.get('metadata').url + '/wfs/WfsDispatcher';
               $http.post(url, xmlData, {headers: {
                 'Content-Type': 'text/xml;charset=utf-8'
               }})
