@@ -16,6 +16,7 @@
     "angular-cookies": "1.2.2",
     "jquery-sortable": "~0.9.11",
     "blueimp-bootstrap-image-gallery": "3.0.1",
+    "moment": "2.3.1",
     "bootstrap3-datetimepicker": "~2.1.11",
     "bootstrap-sortable":"*",
     "x2js": "*",
