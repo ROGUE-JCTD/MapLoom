@@ -73,37 +73,37 @@
                   diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                     if (goog.isDefAndNotNull(response.Feature)) {
                       if (goog.isDefAndNotNull(response.nextPage) && response.nextPage == 'true') {
-                        dialogService.warn($translate('warning'),
-                            $translate('too_many_changes'), [$translate('btn_ok')]);
+                        dialogService.warn($translate.instant('warning'),
+                            $translate.instant('too_many_changes'), [$translate.instant('btn_ok')]);
                         scope.isLoading = false;
                       } else {
-                        diffService.setTitle($translate('summary_of_changes'));
+                        diffService.setTitle($translate.instant('summary_of_changes'));
                         pulldownService.showDiffPanel();
                         scope.cancel();
                       }
                     } else {
-                      dialogService.open($translate('history'),
-                          $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
+                      dialogService.open($translate.instant('history'),
+                          $translate.instant('no_changes_in_time_range'), [$translate.instant('btn_ok')]);
                       scope.isLoading = false;
                     }
                   }, function(reject) {
                     //failed to get diff
                     console.log('Failed to get diff: ', reject);
-                    dialogService.error($translate('error'),
-                        $translate('diff_unknown_error'), [$translate('btn_ok')]);
+                    dialogService.error($translate.instant('error'),
+                        $translate.instant('diff_unknown_error'), [$translate.instant('btn_ok')]);
                     scope.isLoading = false;
                   });
                 } else {
                   // no commits
-                  dialogService.open($translate('history'),
-                      $translate('no_changes_in_time_range'), [$translate('btn_ok')]);
+                  dialogService.open($translate.instant('history'),
+                      $translate.instant('no_changes_in_time_range'), [$translate.instant('btn_ok')]);
                   scope.isLoading = false;
                 }
               }, function(reject) {
                 // failed to get log
                 console.log('Failed to get log: ', reject);
-                dialogService.error($translate('error'),
-                    $translate('diff_unknown_error'), [$translate('btn_ok')]);
+                dialogService.error($translate.instant('error'),
+                    $translate.instant('diff_unknown_error'), [$translate.instant('btn_ok')]);
                 scope.isLoading = false;
               });
             };

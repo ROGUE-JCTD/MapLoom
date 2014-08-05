@@ -8,10 +8,10 @@
           templateUrl: 'sync/partials/addsync.tpl.html',
           link: function(scope, element) {
             scope.geogitService = geogitService;
-            scope.name = $translate('link');
+            scope.name = $translate.instant('link');
 
             scope.$on('translation_change', function() {
-              scope.name = $translate('link');
+              scope.name = $translate.instant('link');
             });
 
             scope.createLink = function(name, repo, remote, localBranch, remoteBranch) {
@@ -19,7 +19,7 @@
             };
 
             var reset = function() {
-              scope.name = $translate('link');
+              scope.name = $translate.instant('link');
               scope.selectedRepo = null;
               scope.selectedRemote = null;
               scope.localBranch = null;
@@ -41,8 +41,8 @@
             scope.$watch('selectedRemote', function() {
               if (goog.isDefAndNotNull(scope.selectedRemote)) {
                 if (scope.selectedRemote.branches.length === 0) {
-                  dialogService.open($translate('fetch'), $translate('remote_not_fetched'),
-                      [$translate('btn_ok')], false).then(function(button) {
+                  dialogService.open($translate.instant('fetch'), $translate.instant('remote_not_fetched'),
+                      [$translate.instant('btn_ok')], false).then(function(button) {
                     switch (button) {
                       case 0:
                         // Fetch the remote
@@ -56,12 +56,12 @@
                             element.find('#loading').toggleClass('hidden');
                           });
                         }, function(error) {
-                          var message = $translate('fetch_error');
+                          var message = $translate.instant('fetch_error');
                           if (error.status == '408' || error.status == '504') {
-                            message = $translate('fetch_timeout');
+                            message = $translate.instant('fetch_timeout');
                           }
-                          dialogService.error($translate('fetch'), message,
-                              [$translate('btn_ok')], false);
+                          dialogService.error($translate.instant('fetch'), message,
+                              [$translate.instant('btn_ok')], false);
                           element.find('#loading').toggleClass('hidden');
                         });
                     }

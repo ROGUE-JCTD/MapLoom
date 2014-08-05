@@ -478,7 +478,7 @@
         assignAttributeTypes(panel.attributes, false);
         if (diffsNeeded_ === 0) {
           if (diffsInError_ > 0) {
-            dialogService_.error(translate_('error'), translate_('feature_diff_error'));
+            dialogService_.error(translate_.instant('error'), translate_.instant('feature_diff_error'));
           } else {
             if (feature.change == 'CONFLICT') {
               service_.merged.attributes = $.extend(true, [], service_.left.attributes);
@@ -519,7 +519,7 @@
         diffsNeeded_ -= 1;
         diffsInError_ += 1;
         if (diffsNeeded_ === 0) {
-          dialogService_.error(translate_('error'), translate_('feature_diff_error'));
+          dialogService_.error(translate_.instant('error'), translate_.instant('feature_diff_error'));
         }
         console.log('Feature diff failed: ', panel, reject);
       });

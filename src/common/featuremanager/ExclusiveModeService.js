@@ -232,8 +232,8 @@
             var newScore = totalScore();
             // if the newScore is greater than the old score then we failed
             if (newScore > score) {
-              dialogService_.open(translate_('right_angles'), translate_('right_angles_failed'),
-                  [translate_('btn_ok')], false);
+              dialogService_.open(translate_.instant('right_angles'), translate_.instant('right_angles_failed'),
+                  [translate_.instant('btn_ok')], false);
               return;
             }
             score = newScore;

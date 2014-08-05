@@ -410,11 +410,11 @@
         geometryType = geometryType.replace('Curve', 'LineString');
       }
       geometryType = geometryType.replace('Surface', 'Polygon');
-      exclusiveModeService_.startExclusiveMode(translate_('drawing_geometry'),
-          exclusiveModeService_.button(translate_('accept_feature'), function() {
+      exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
+          exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
-              dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
-                  [translate_('btn_ok')], false);
+              dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
+                  [translate_.instant('btn_ok')], false);
             } else {
               exclusiveModeService_.addMode = false;
               exclusiveModeService_.endExclusiveMode();
@@ -465,7 +465,7 @@
               }
               service_.startAttributeEditing(true);
             }
-          }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
+          }), exclusiveModeService_.button(translate_.instant('cancel_feature'), function() {
             exclusiveModeService_.addMode = false;
             exclusiveModeService_.endExclusiveMode();
             mapService_.removeDraw();
@@ -582,11 +582,11 @@
           mapService_.editLayer.getSource().addFeature(feature);
         }
       }
-      exclusiveModeService_.startExclusiveMode(translate_('editing_geometry'),
-          exclusiveModeService_.button(translate_('accept_feature'), function() {
+      exclusiveModeService_.startExclusiveMode(translate_.instant('editing_geometry'),
+          exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
-              dialogService_.warn(translate_('adding_feature'), translate_('must_create_feature'),
-                  [translate_('btn_ok')], false);
+              dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
+                  [translate_.instant('btn_ok')], false);
             } else {
               exclusiveModeService_.isSaving = true;
               service_.endGeometryEditing(true).then(function(resolve) {
@@ -594,11 +594,11 @@
                 exclusiveModeService_.isSaving = false;
               }, function(reject) {
                 exclusiveModeService_.isSaving = false;
-                dialogService_.error(translate_('error'), translate_('unable_to_save_geometry', {value: reject}),
-                    [translate_('btn_ok')], false);
+                dialogService_.error(translate_.instant('error'), translate_.instant('unable_to_save_geometry',
+                    {value: reject}), [translate_.instant('btn_ok')], false);
               });
             }
-          }), exclusiveModeService_.button(translate_('cancel_feature'), function() {
+          }), exclusiveModeService_.button(translate_.instant('cancel_feature'), function() {
             service_.endGeometryEditing(false).then(function(resolve) {
               exclusiveModeService_.endExclusiveMode();
             });
@@ -877,7 +877,7 @@
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
       var featureType = selectedLayer_.get('metadata').name.split(':')[1];
-      commitMsg = translate_('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+      commitMsg = translate_.instant('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
       wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
           '"><feature:' + featureType + ' xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '">' +
           partial + '</feature:' + featureType + '></wfs:Insert>';
@@ -897,13 +897,13 @@
           '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
           '</ogc:Filter>';
       if (postType === wfsPostTypes_.DELETE) {
-        commitMsg = translate_('removed_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+        commitMsg = translate_.instant('removed_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
         wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
             '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             filter + '</wfs:Delete>';
       } else if (postType === wfsPostTypes_.UPDATE) {
-        commitMsg = translate_('modified_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+        commitMsg = translate_.instant('modified_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
         wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
             '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
@@ -975,7 +975,7 @@
         deferredResponse.reject(json.ServiceExceptionReport.ServiceException);
       } else {
         console.log(json);
-        deferredResponse.reject(translate_('unknown_error'));
+        deferredResponse.reject(translate_.instant('unknown_error'));
       }
     }).error(function(data, status, headers, config) {
       console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);

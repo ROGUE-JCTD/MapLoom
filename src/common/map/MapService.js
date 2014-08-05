@@ -182,7 +182,7 @@
         }
       }
       if (index == this.map.getInteractions().getLength()) {
-        dialogService_.open(translate_('error'), translate_('drag_zoom_not_supported'));
+        dialogService_.open(translate_.instant('error'), translate_.instant('drag_zoom_not_supported'));
         return;
       }
 
@@ -436,8 +436,8 @@
       var nameSplit = null;
       var url = null;
       if (!goog.isDefAndNotNull(fullConfig)) {
-        //dialogService_.error(translate_('map_layers'), translate_('load_layer_failed',
-        //    {'layer': minimalConfig.name}), [translate_('btn_ok')], false);
+        //dialogService_.error(translate_.instant('map_layers'), translate_.instant('load_layer_failed',
+        //    {'layer': minimalConfig.name}), [translate_.instant('btn_ok')], false);
         layer = new ol.layer.Vector({
           metadata: {
             name: minimalConfig.name,
@@ -485,7 +485,7 @@
             source: new ol.source.BingMaps(sourceParams)
           });
         } else if (server.ptype === 'gxp_googlesource') {
-          dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported',
+          dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
               {type: 'gxp_googlesource'}));
         } else if (server.ptype === 'gxp_mapboxsource') {
           var parms = {
@@ -632,7 +632,7 @@
           });
 
         } else if (server.ptype === 'gxp_olsource') {
-          dialogService_.error(translate_('add_layers'), translate_('layer_type_not_supported',
+          dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
               {type: 'gxp_olsource'}));
         }
       }
@@ -782,9 +782,10 @@
         console.log('----[ map.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
-          dialogService_.error(translate_('save_failed'), translate_('map_save_permission'));
+          dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));
         } else {
-          dialogService_.error(translate_('save_failed'), translate_('map_save_failed', {value: status}));
+          dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_failed',
+              {value: status}));
         }
       });
     };
@@ -933,8 +934,8 @@
                     // add servers corresponding to basemaps
                     serverService_.configDefaultServers();
                   }
-                  dialogService_.error(translate_('server'), translate_('load_server_failed',
-                      {'server': serverInfo.name, 'value': reject}), [translate_('btn_ok')], false);
+                  dialogService_.error(translate_.instant('server'), translate_.instant('load_server_failed',
+                      {'server': serverInfo.name, 'value': reject}), [translate_.instant('btn_ok')], false);
                   console.log('====[ Error: Add server failed. ', reject);
                 });
           } else {
@@ -1033,7 +1034,7 @@
           }
         }
         if (index == this.getInteractions().getLength()) {
-          dialogService_.open(translate_('error'), translate_('drag_zoom_not_supported'));
+          dialogService_.open(translate_.instant('error'), translate_.instant('drag_zoom_not_supported'));
           return;
         }
 

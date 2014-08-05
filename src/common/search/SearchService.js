@@ -16,7 +16,7 @@
 
       searchlayer_ = new ol.layer.Vector({
         metadata: {
-          title: $translate('search'),
+          title: $translate.instant('search'),
           internalLayer: true
         },
         source: new ol.source.Vector({
@@ -38,7 +38,7 @@
       });
 
       $rootScope.$on('translation_change', function() {
-        searchlayer_.get('metadata').title = $translate('search');
+        searchlayer_.get('metadata').title = $translate.instant('search');
       });
 
       return this;

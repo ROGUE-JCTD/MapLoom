@@ -98,7 +98,7 @@
               // The dialog service works through promises, the promise will tell you what button
               // was pushed.
               dialogService.open('My Title', 'This is the message of the dialog.',
-                  [$translate('btn_ok'), 'Cancel'], false).then(function(button) {
+                  [$translate.instant('btn_ok'), 'Cancel'], false).then(function(button) {
                 switch (button) {
                   case 0:
                     console.log('OK was clicked!');
@@ -122,10 +122,10 @@
             var activeLang = 'en';
             scope.localize = function() {
               if (activeLang === 'en') {
-                $translate.uses('es');
+                $translate.use('es');
                 activeLang = 'es';
               } else {
-                $translate.uses('en');
+                $translate.use('en');
                 activeLang = 'en';
               }
               $rootScope.$broadcast('translation_change', activeLang);

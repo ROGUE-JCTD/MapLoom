@@ -1,27 +1,24 @@
 {
   "name": "MapLoom",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "devDependencies": {},
   "dependencies": {
     "bootstrap": "3.0.0",
-    "angular": "1.2.0-rc.2",
-    "angular-mocks": "1.2.0-rc.2",
+    "angular": "1.2.21",
+    "angular-mocks": "1.2.21",
     "angular-bootstrap": "0.6.0",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
     "proj4js": "./bower-local/proj4js",
     "ol3": "./bower-local/ol3",
-    "angular-translate": "1.1.0",
-    "angular-cookies": "1.2.2",
+    "angular-translate": "2.2.0",
+    "angular-cookies": "1.2.21",
     "jquery-sortable": "~0.9.11",
     "blueimp-bootstrap-image-gallery": "3.0.1",
     "moment": "2.3.1",
     "bootstrap3-datetimepicker": "~2.1.11",
-    "bootstrap-sortable":"*",
+    "bootstrap-sortable": "*",
     "x2js": "*",
     "angular-xeditable": "0.1.8"
-  },
-  "resolutions": {
-    "angular": "1.2.0-rc.2"
   }
 }

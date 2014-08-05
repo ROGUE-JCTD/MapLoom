@@ -179,7 +179,7 @@
             };
 
             scope.getPageText = function() {
-              return $translate('current_page', {currentPage: scope.currentPage, totalPages: scope.totalPages});
+              return $translate.instant('current_page', {currentPage: scope.currentPage, totalPages: scope.totalPages});
             };
 
             scope.previousPage = function() {
@@ -217,8 +217,8 @@
                 element.closest('.modal').modal('hide');
               };
               if (scope.tableviewform.$visible) {
-                dialogService.warn($translate('warning'), $translate('sure_close_table'),
-                    [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                dialogService.warn($translate.instant('warning'), $translate.instant('sure_close_table'),
+                    [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0:
                       doWork();
@@ -291,8 +291,9 @@
                 }
               }
               if (numErrors > 0) {
-                dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
-                    [$translate('btn_ok')], false);
+                dialogService.warn($translate.instant('save_attributes'), $translate.instant('invalid_fields',
+                    {value: numErrors}),
+                    [$translate.instant('btn_ok')], false);
                 return true;
               } else {
                 return false;
@@ -333,10 +334,10 @@
             function getWfsData() {
               var commitMessage = '';
               if (featuresModified === 1) {
-                commitMessage = $translate('modified_1_feature',
+                commitMessage = $translate.instant('modified_1_feature',
                     {'layer': tableViewService.selectedLayer.get('metadata').nativeName});
               } else {
-                commitMessage = $translate('modified_x_features',
+                commitMessage = $translate.instant('modified_x_features',
                     {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName});
               }
               console.log('commit message: ', commitMessage);
@@ -373,8 +374,9 @@
                     mapService.dumpTileCache(tableViewService.selectedLayer.get('metadata').uniqueID);
                   }).error(function() {
                     scope.isSaving = false;
-                    dialogService.error($translate('save_attributes'), $translate('failed_to_save_features'),
-                        [$translate('btn_ok')], false);
+                    dialogService.error($translate.instant('save_attributes'),
+                        $translate.instant('failed_to_save_features'),
+                        [$translate.instant('btn_ok')], false);
                     scope.tableviewform.$show();
                   });
             }

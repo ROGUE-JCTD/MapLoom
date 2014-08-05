@@ -62,7 +62,7 @@
                       var featureId = featureManagerService.getSelectedItem().id;
                       var fid = nativeLayer + '/' + featureId;
                       scope.loadingHistory = true;
-                      historyService.setTitle($translate('history_for', {value: featureId}));
+                      historyService.setTitle($translate.instant('history_for', {value: featureId}));
                       var promise = historyService.getHistory(layer, fid);
                       if (goog.isDefAndNotNull(promise)) {
                         promise.then(function() {
@@ -81,8 +81,8 @@
 
             scope.deleteFeature = function() {
               if (!scope.deletingFeature) {
-                dialogService.warn($translate('delete_feature'), $translate('sure_delete_feature'),
-                    [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                dialogService.warn($translate.instant('delete_feature'), $translate.instant('sure_delete_feature'),
+                    [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0:
                       scope.deletingFeature = true;
@@ -90,9 +90,9 @@
                         scope.deletingFeature = false;
                       }, function(reject) {
                         scope.deletingFeature = false;
-                        dialogService.error($translate('error'),
-                            $translate('unable_to_delete_feature', {value: reject}),
-                            [$translate('btn_ok')], false);
+                        dialogService.error($translate.instant('error'),
+                            $translate.instant('unable_to_delete_feature', {value: reject}),
+                            [$translate.instant('btn_ok')], false);
                       });
                       break;
                     case 1:
@@ -110,7 +110,7 @@
                 $('#table-view-window').modal('show');
               }, function() {
                 layer.get('metadata').loadingTable = false;
-                dialogService.error($translate('show_table'), $translate('show_table_failed'));
+                dialogService.error($translate.instant('show_table'), $translate.instant('show_table_failed'));
               });
             };
 

@@ -52,10 +52,10 @@
                           var leftName = scope.destinationBranch;
                           var rightName = scope.sourceBranch;
                           notificationService.addNotification({
-                            text: $translate('merge_successful'),
+                            text: $translate.instant('merge_successful'),
                             read: false,
                             type: 'loom-update-notification',
-                            emptyMessage: $translate('merge_no_changes'),
+                            emptyMessage: $translate.instant('merge_no_changes'),
                             repos: [
                               {
                                 name: 'geogit_repo',
@@ -81,22 +81,23 @@
                               goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                             handleConflicts(endTransactionFailure, transaction,
                                 dialogService, conflictService, $translate,
-                                $translate('transaction'), $translate('repository'), scope, $translate('transaction'));
+                                $translate.instant('transaction'), $translate.instant('repository'), scope,
+                                $translate.instant('transaction'));
                           } else {
-                            dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                            dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                             transaction.abort();
                             scope.cancel();
                             console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                           }
                         });
                       }, function(commitFailure) {
-                        dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                        dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                         transaction.abort();
                         scope.cancel();
                         console.log('ERROR: Commit failure: ', commitFailure);
                       });
                     }, function(statusFailure) {
-                      dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                      dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
                       console.log('ERROR: Status failure: ', statusFailure);
@@ -107,20 +108,20 @@
                           dialogService, conflictService, $translate, scope.destinationBranch, scope.sourceBranch,
                           scope, scope.sourceBranch);
                     } else {
-                      dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                      dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
                       console.log('ERROR: Merge failure: ', mergeOptions, mergeFailure);
                     }
                   });
                 }, function(checkoutFailure) {
-                  dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                  dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                   transaction.abort();
                   scope.cancel();
                   console.log('ERROR: Checkout failure: ', checkoutOptions, checkoutFailure);
                 });
               }, function(beginTransactionFailure) {
-                dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
               });

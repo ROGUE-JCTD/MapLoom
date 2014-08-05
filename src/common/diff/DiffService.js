@@ -95,7 +95,7 @@
 
       difflayer_ = new ol.layer.Vector({
         metadata: {
-          title: translate_('differences'),
+          title: translate_.instant('differences'),
           internalLayer: true
         },
         source: new ol.source.Vector({
@@ -104,7 +104,7 @@
         style: diffStyle
       });
       rootScope.$on('translation_change', function() {
-        difflayer_.get('metadata').title = translate_('differences');
+        difflayer_.get('metadata').title = translate_.instant('differences');
       });
       mapService_ = mapService;
       return this;
@@ -203,8 +203,8 @@
             }
             layerString += layer;
           }
-          dialogService_.warn(translate_('warning'), translate_('missing_layers_merge', {count: numOutside}) +
-              layerString, [translate_('btn_ok')], false);
+          dialogService_.warn(translate_.instant('warning'), translate_.instant('missing_layers_merge',
+              {count: numOutside}) + layerString, [translate_.instant('btn_ok')], false);
         }
       }
       rootScope.$broadcast('diff_performed', _repo);
@@ -222,10 +222,10 @@
           service_.repoId = repoId;
           if (goog.isArray(response.Feature)) {
             service_.populate(response.Feature, geogitService_.getRepoById(repoId).name,
-                translate_('from'), translate_('to'));
+                translate_.instant('from'), translate_.instant('to'));
           } else {
             service_.populate([response.Feature], geogitService_.getRepoById(repoId).name,
-                translate_('from'), translate_('to'));
+                translate_.instant('from'), translate_.instant('to'));
           }
         }
         deferredResponse.resolve(response);

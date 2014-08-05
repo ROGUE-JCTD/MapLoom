@@ -23,8 +23,8 @@
             };
 
             scope.removeLayer = function(layer) {
-              dialogService.warn($translate('remove_layer'), $translate('sure_remove_layer'),
-                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+              dialogService.warn($translate.instant('remove_layer'), $translate.instant('sure_remove_layer'),
+                  [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     mapService.map.removeLayer(layer);
@@ -79,7 +79,7 @@
                 $('#table-view-window').modal('show');
               }, function() {
                 layer.get('metadata').loadingTable = false;
-                dialogService.error($translate('show_table'), $translate('show_table_failed'));
+                dialogService.error($translate.instant('show_table'), $translate.instant('show_table_failed'));
               });
             };
 
@@ -89,7 +89,7 @@
             };
 
             scope.showHistory = function(layer) {
-              historyService.setTitle($translate('history_for', {value: layer.get('metadata').title}));
+              historyService.setTitle($translate.instant('history_for', {value: layer.get('metadata').title}));
               layer.get('metadata').loadingHistory = true;
               var promise = historyService.getHistory(layer);
               if (goog.isDefAndNotNull(promise)) {

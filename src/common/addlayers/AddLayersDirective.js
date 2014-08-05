@@ -12,7 +12,7 @@
             scope.currentServer = null;
             scope.filterLayers = null;
 
-            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate('filter_layers');
+            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
               var server = serverService.getServerById(serverId);
               if (goog.isDefAndNotNull(server)) {
@@ -22,7 +22,7 @@
             };
 
             scope.getConnectedString = function() {
-              return $translate('connected_as', {value: scope.currentServer.username});
+              return $translate.instant('connected_as', {value: scope.currentServer.username});
             };
 
             // default to the Local Geoserver. Note that when a map is saved and loaded again,
@@ -121,13 +121,13 @@
               var layers = mapService.getLayers(true, true);
               for (var index = 0; index < layers.length; index++) {
                 if (layers[index].get('metadata').serverId == id) {
-                  dialogService.error($translate('server'),
-                      $translate('remove_layers_first'), [$translate('btn_ok')]);
+                  dialogService.error($translate.instant('server'),
+                      $translate.instant('remove_layers_first'), [$translate.instant('btn_ok')]);
                   return;
                 }
               }
-              dialogService.warn($translate('server'), $translate('remove_server'),
-                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+              dialogService.warn($translate.instant('server'), $translate.instant('remove_server'),
+                  [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     serverService.removeServer(id);

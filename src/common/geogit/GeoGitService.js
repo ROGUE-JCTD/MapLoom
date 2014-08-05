@@ -189,7 +189,7 @@
           } else {
             console.log('Repository had no local branches: ', repo, response);
             service_.removeRepo(repo.id);
-            result.reject(translate_('no_local_branches'));
+            result.reject(translate_.instant('no_local_branches'));
             return;
           }
           if (goog.isDefAndNotNull(response.Remote.Branch)) {
@@ -207,7 +207,7 @@
         }, function(reject) {
           console.log('Unable to get the repository\'s branches:', repo, reject);
           service_.removeRepo(repo.id);
-          result.reject(translate_('unable_to_get_branches'));
+          result.reject(translate_.instant('unable_to_get_branches'));
         });
       };
       if (repo.admin) {
@@ -217,7 +217,7 @@
         service_.command(repo.id, 'remote', remoteOptions).then(loadBranches, function(reject) {
           console.log('Unable to get the repository\'s remotes:', repo, reject);
           service_.removeRepo(repo.id);
-          result.reject(translate_('unable_to_get_remotes'));
+          result.reject(translate_.instant('unable_to_get_remotes'));
         });
       } else {
         loadBranches(null);
@@ -385,7 +385,8 @@
           deferredResponse.resolve();
         }, function(rejected) {
           dialogService_.error(
-              translate_('error'), translate_('unable_to_get_feature_type') + ' (' + rejected.status + ')');
+              translate_.instant('error'), translate_.instant('unable_to_get_feature_type') +
+                  ' (' + rejected.status + ')');
           deferredResponse.reject();
         });
       };
@@ -418,7 +419,8 @@
                     }
                     getFeatureType();
                   }, function(reject) {
-                    dialogService_.error(translate_('error'), translate_('unable_to_add_remote') + reject);
+                    dialogService_.error(translate_.instant('error'),
+                        translate_.instant('unable_to_add_remote') + reject);
                     getFeatureType();
                   });
                   metadata.isGeoGit = true;

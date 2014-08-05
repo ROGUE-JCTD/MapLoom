@@ -42,8 +42,8 @@
                 element.closest('.modal').modal('hide');
               }, function() {
                 scope.loading = false;
-                dialogService.error($translate('error'),
-                    $translate('failed_to_add_server'), [$translate('btn_ok')]);
+                dialogService.error($translate.instant('error'),
+                    $translate.instant('failed_to_add_server'), [$translate.instant('btn_ok')]);
               });
             };
 
@@ -72,15 +72,15 @@
                 var layers = mapService.getLayers(true, true);
                 for (var index = 0; index < layers.length; index++) {
                   if (layers[index].get('metadata').serverId == scope.server.id) {
-                    dialogService.error($translate('server'),
-                        $translate('remove_layers_first'), [$translate('btn_ok')]);
+                    dialogService.error($translate.instant('server'),
+                        $translate.instant('remove_layers_first'), [$translate.instant('btn_ok')]);
                     element.closest('.modal').modal('hide');
                     scope.reset();
                     return;
                   }
                 }
-                dialogService.warn($translate('server'), $translate('edit_server'),
-                    [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+                dialogService.warn($translate.instant('server'), $translate.instant('edit_server'),
+                    [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0:
                       scope.server.url = scope.url;
@@ -115,7 +115,7 @@
                           complete: doWork
                         });
                       }, function(reject) {
-                        scope.server.username = $translate('anonymous');
+                        scope.server.username = $translate.instant('anonymous');
                         scope.server.authentication = undefined;
                         doWork();
                       });

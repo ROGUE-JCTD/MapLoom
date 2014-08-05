@@ -11,9 +11,9 @@
             scope.remoteService = remoteService;
             scope.saving = false;
 
-            angular.element('#remote-name')[0].attributes.placeholder.value = $translate('repo_name');
-            angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate('repo_username');
-            angular.element('#remotePassword')[0].attributes.placeholder.value = $translate('repo_password');
+            angular.element('#remote-name')[0].attributes.placeholder.value = $translate.instant('repo_name');
+            angular.element('#remoteUsername')[0].attributes.placeholder.value = $translate.instant('repo_username');
+            angular.element('#remotePassword')[0].attributes.placeholder.value = $translate.instant('repo_password');
 
             scope.finish = function(save) {
               if (save) {
@@ -49,7 +49,7 @@
             });
 
             scope.$on('translation_change', function() {
-              remoteService.selectedText = '*' + $translate('new_remote');
+              remoteService.selectedText = '*' + $translate.instant('new_remote');
             });
 
             scope.$on('repoRemoved', remoteService.reset);

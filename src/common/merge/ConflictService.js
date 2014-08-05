@@ -69,7 +69,7 @@
       if (!goog.isArray(service_.features)) {
         service_.features = [service_.features];
       }
-      diffService_.setTitle(translate_('merge_results'));
+      diffService_.setTitle(translate_.instant('merge_results'));
       diffService_.clickCallback = featureClicked;
       diffService_.mergeDiff = true;
       diffService_.populate(service_.features,
@@ -94,7 +94,7 @@
     this.buildMergeMessage = function(status, mergeBranch, useConflicts) {
       var i = 0;
       var layer = null;
-      var message = translate_('merged_branch', {'branch': mergeBranch}) + '.';
+      var message = translate_.instant('merged_branch', {'branch': mergeBranch}) + '.';
       if (goog.isDefAndNotNull(status.staged)) {
         var changes = {};
         if (goog.isDefAndNotNull(useConflicts) && useConflicts === true) {
@@ -117,7 +117,7 @@
           if (changes.hasOwnProperty(key)) {
             message += ' ';
             layer = changes[key];
-            message += translate_('conflicts_in', {'layer': key}) + ': ';
+            message += translate_.instant('conflicts_in', {'layer': key}) + ': ';
             for (i = 0; i < layer.conflicted.length; i++) {
               message += (i > 0 ? ', ' : '') + layer.conflicted[i];
             }
@@ -125,7 +125,7 @@
           }
         }
       }
-      message += ' ' + translate_('applied_via_maploom');
+      message += ' ' + translate_.instant('applied_via_maploom');
       return message;
     };
   });
@@ -170,20 +170,21 @@
                   goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                 handleConflicts(endTransactionFailure);
               } else {
-                dialogService_.error(translate_('error'), translate_('conflict_unknown_error'));
+                dialogService_.error(translate_.instant('error'), translate_.instant('conflict_unknown_error'));
                 console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
               }
             });
           }, function(reject) {
             // couldn't commit
-            dialogService_.error(translate_('error'), translate_('conflict_unknown_error'));
+            dialogService_.error(translate_.instant('error'), translate_.instant('conflict_unknown_error'));
             console.log('ERROR: Failed to commit merge: ', reject);
           });
         }, function(reject) {
         });
       } else {
         // couldn't resolve all conflicts
-        dialogService_.error(translate_('error'), translate_('unable_to_resolve_conflicts', {value: conflictsInError}));
+        dialogService_.error(translate_.instant('error'), translate_.instant('unable_to_resolve_conflicts',
+            {value: conflictsInError}));
         console.log('ERROR: ' + conflictsInError + ' conflicts could not be resolved.');
       }
     } else {
@@ -264,8 +265,9 @@
   }
 
   function handleConflicts(mergeFailure) {
-    var myDialog = dialogService_.warn(translate_('merge_conflicts'), translate_('conflicts_encountered'),
-        [translate_('abort'), translate_('resolve_conflicts')], false);
+    var myDialog = dialogService_.warn(translate_.instant('merge_conflicts'),
+        translate_.instant('conflicts_encountered'),
+        [translate_.instant('abort'), translate_.instant('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {
@@ -273,13 +275,13 @@
           service_.transaction.abort();
           break;
         case 1:
-          service_.ourName = translate_('transaction');
-          service_.theirName = translate_('repository');
+          service_.ourName = translate_.instant('transaction');
+          service_.theirName = translate_.instant('repository');
           service_.ours = mergeFailure.ours;
           service_.theirs = mergeFailure.theirs;
           service_.ancestor = mergeFailure.ancestor;
           service_.features = mergeFailure.Feature;
-          service_.mergeBranch = translate_('transaction');
+          service_.mergeBranch = translate_.instant('transaction');
           service_.beginResolution();
           break;
       }

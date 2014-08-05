@@ -178,7 +178,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                 });
               }, function(reject) {
                 if (goog.isDefAndNotNull(reject) && reject.anonymous) {
-                  server.username = translate_('anonymous');
+                  server.username = translate_.instant('anonymous');
                   server.config.alwaysAnonymous = reject.alwaysAnonymous;
                   server.authentication = undefined;
                   doWork();
@@ -219,8 +219,8 @@ var SERVER_SERVICE_USE_PROXY = true;
             .then(function(response) {
               // set the id. it should always resolve to the length
               if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded) {
-                dialogService_.warn(translate_('add_server'), translate_('server_connect_failed'),
-                    [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
+                dialogService_.warn(translate_.instant('add_server'), translate_.instant('server_connect_failed'),
+                    [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0:
                       server.id = serverCount++;
@@ -251,7 +251,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (goog.isDefAndNotNull(server.url)) {
         if (server.url.indexOf(location_.host()) === -1) {
           if (server.config.alwaysAnonymous) {
-            server.username = translate_('anonymous');
+            server.username = translate_.instant('anonymous');
             server.authentication = undefined;
             doWork();
           } else {
@@ -275,7 +275,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                     complete: doWork
                   });
                 }, function(reject) {
-                  server.username = translate_('anonymous');
+                  server.username = translate_.instant('anonymous');
                   server.authentication = undefined;
                   server.config.alwaysAnonymous = reject.alwaysAnonymous;
                   doWork();
@@ -284,7 +284,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         } else {
           server.username = configService_.username;
           server.isLocal = true;
-          server.name = translate_('local_geoserver');
+          server.name = translate_.instant('local_geoserver');
           doWork();
         }
       } else {
@@ -454,7 +454,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
           console.log('---- ServerService.Sending GetCapabilities.server: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
-            dialogService_.error(translate_('error'), translate_('server_url_not_specified'));
+            dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
             var parser = new ol.format.WMSCapabilities();

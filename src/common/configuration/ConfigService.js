@@ -104,7 +104,7 @@
         this.configuration.map.zoom = 0;
       }
 
-      $translate.uses(this.currentLanguage);
+      $translate.use(this.currentLanguage);
 
       return this;
     };

@@ -47,12 +47,12 @@
             }
 
             scope.getCommitAuthor = function(commit) {
-              return commit.author['name'].length > 0 ? commit.author['name'] : $translate('anonymous');
+              return commit.author['name'].length > 0 ? commit.author['name'] : $translate.instant('anonymous');
             };
 
             scope.getCommitTime = function(commit) {
               var date = moment(new Date(commit.author.timestamp));
-              date.lang($translate.uses());
+              date.lang($translate.proposedLanguage());
               return date.format('L') + ' @ ' + date.format('LT');
             };
 
@@ -82,23 +82,23 @@
               diffService.performDiff(historyService.repoId, diffOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.Feature)) {
                   if (goog.isDefAndNotNull(response.nextPage) && response.nextPage === true) {
-                    dialogService.warn($translate('warning'),
-                        $translate('too_many_changes'), [$translate('btn_ok')]);
+                    dialogService.warn($translate.instant('warning'),
+                        $translate.instant('too_many_changes'), [$translate.instant('btn_ok')]);
                   } else {
-                    diffService.setTitle($translate('summary_of_changes'));
+                    diffService.setTitle($translate.instant('summary_of_changes'));
                     pulldownService.showDiffPanel();
                     //diffService_.clickCallback = featureClicked;
                   }
                 } else {
-                  dialogService.open($translate('history'),
-                      $translate('no_changes_in_commit'), [$translate('btn_ok')]);
+                  dialogService.open($translate.instant('history'),
+                      $translate.instant('no_changes_in_commit'), [$translate.instant('btn_ok')]);
                 }
                 commit.loading = false;
                 scope.loadingDiff = false;
               }, function(reject) {
                 //failed to get diff
-                dialogService.error($translate('error'),
-                    $translate('diff_unknown_error'), [$translate('btn_ok')]);
+                dialogService.error($translate.instant('error'),
+                    $translate.instant('diff_unknown_error'), [$translate.instant('btn_ok')]);
                 scope.loadingDiff = false;
                 commit.loading = false;
               });

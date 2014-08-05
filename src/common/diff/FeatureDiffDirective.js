@@ -25,24 +25,24 @@
               }
               switch (featureDiffService.change) {
                 case 'ADDED':
-                  scope.rightTitle = $translate('new_feature');
+                  scope.rightTitle = $translate.instant('new_feature');
                   break;
                 case 'REMOVED':
-                  scope.rightTitle = $translate('removed_feature');
+                  scope.rightTitle = $translate.instant('removed_feature');
                   break;
                 case 'MODIFIED':
-                  scope.leftTitle = $translate('original_feature');
-                  scope.rightTitle = $translate('changed_feature');
+                  scope.leftTitle = $translate.instant('original_feature');
+                  scope.rightTitle = $translate.instant('changed_feature');
                   break;
                 case 'MERGED':
                   scope.leftTitle = featureDiffService.leftName;
-                  scope.mergedTitle = $translate('merged_feature');
+                  scope.mergedTitle = $translate.instant('merged_feature');
                   scope.rightTitle = featureDiffService.rightName;
                   break;
                 case 'CONFLICT':
                   scope.editable = true;
                   scope.leftTitle = featureDiffService.leftName;
-                  scope.mergedTitle = $translate('merged_feature');
+                  scope.mergedTitle = $translate.instant('merged_feature');
                   scope.rightTitle = featureDiffService.rightName;
                   break;
               }
@@ -101,8 +101,9 @@
                 }
               }
               if (numErrors > 0) {
-                dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
-                    [$translate('btn_ok')], false);
+                dialogService.warn($translate.instant('save_attributes'), $translate.instant('invalid_fields',
+                    {value: numErrors}),
+                    [$translate.instant('btn_ok')], false);
                 return;
               } else {
                 featureDiffService.feature.olFeature.setGeometry(featureDiffService.merged.olFeature.getGeometry());
@@ -148,12 +149,12 @@
                     scope.authorsLoaded = true;
                     $rootScope.$broadcast('show-authors');
                   } else {
-                    dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                    dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                     scope.isLoading = false;
                   }
                 }, function(reject) {
                   console.log('ERROR: Log Failure: ', options, reject);
-                  dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                  dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                   scope.isLoading = false;
                 });
                 return;
@@ -184,7 +185,7 @@
                       if (numPanels === 0) {
                         scope.isLoading = false;
                         if (numFailed > 0) {
-                          dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                          dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                         } else {
                           scope.authorsLoaded = true;
                           $rootScope.$broadcast('show-authors');
@@ -195,7 +196,7 @@
                       numFailed++;
                       console.log('ERROR: Blame Failure: ', options, reject);
                       if (numPanels === 0) {
-                        dialogService.error($translate('error'), $translate('author_fetch_failed'));
+                        dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                         scope.isLoading = false;
                       }
                     });
@@ -233,14 +234,14 @@
                 options.oldCommitId = featureDiffService.getAncestorId();
                 options.newCommitId = featureDiffService.getTheirsId();
               }
-              options.commitMessage = $translate('reverted_changes_to_feature',
-                  {feature: featureDiffService.feature.id}) + ' ' + $translate('applied_via_maploom');
+              options.commitMessage = $translate.instant('reverted_changes_to_feature',
+                  {feature: featureDiffService.feature.id}) + ' ' + $translate.instant('applied_via_maploom');
               options.mergeMessage = options.commitMessage;
               var repoId = featureDiffService.getRepoId();
               geogitService.beginTransaction(repoId).then(function(transaction) {
                 transaction.command('revertfeature', options).then(function() {
                   transaction.finalize().then(function() {
-                    dialogService.open($translate('undo_successful'), $translate('changes_undone'));
+                    dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));
                     scope.undoEnabled = false;
                     historyService.refreshHistory(layerName);
                     mapService.dumpTileCache(layerName);
@@ -249,9 +250,10 @@
                         goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
                       handleConflicts(repoId, endTransactionFailure, transaction,
                           dialogService, conflictService, $translate,
-                          $translate('transaction'), $translate('repository'), scope, $translate('transaction'));
+                          $translate.instant('transaction'), $translate.instant('repository'), scope,
+                          $translate.instant('transaction'));
                     } else {
-                      dialogService.error($translate('error'), $translate('merge_unknown_error'));
+                      dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
                       console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
@@ -260,25 +262,25 @@
                 }, function(mergeFailure) {
                   if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
                     handleConflicts(repoId, mergeFailure, transaction,
-                        dialogService, conflictService, $translate, branch, $translate('fixed_feature'),
-                        scope, $translate('fixed_feature'));
+                        dialogService, conflictService, $translate, branch, $translate.instant('fixed_feature'),
+                        scope, $translate.instant('fixed_feature'));
                   } else {
-                    dialogService.error($translate('error'), $translate('undo_unknown_error'));
+                    dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
                     transaction.abort();
                     scope.cancel();
                     console.log('ERROR: Revert failure: ', options, mergeFailure);
                   }
                 });
               }, function(beginTransactionFailure) {
-                dialogService.error($translate('error'), $translate('undo_unknown_error'));
+                dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
               });
             };
 
             scope.undoChanges = function() {
-              dialogService.warn($translate('warning'), $translate('sure_undo_changes'),
-                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+              dialogService.warn($translate.instant('warning'), $translate.instant('sure_undo_changes'),
+                  [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                 if (button === 0) {
                   undo();
                 }

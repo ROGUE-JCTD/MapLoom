@@ -45,15 +45,15 @@
               return '';
             };
 
-            var content = '<div class="popover-label">' + $translate('server_name') + ':</div>' +
+            var content = '<div class="popover-label">' + $translate.instant('server_name') + ':</div>' +
                 '<div class="popover-value">' + safeName() + '</div>' +
-                '<div class="popover-label">' + $translate('title') + ':</div>' +
+                '<div class="popover-label">' + $translate.instant('title') + ':</div>' +
                 '<div class="popover-value">' + safeTitle() + '</div>' +
-                '<div class="popover-label">' + $translate('workspace') + ':</div>' +
+                '<div class="popover-label">' + $translate.instant('workspace') + ':</div>' +
                 '<div class="popover-value">' + safeWorkspace() + '</div>' +
-                '<div class="popover-label">' + $translate('abstract') + ':</div>' +
+                '<div class="popover-label">' + $translate.instant('abstract') + ':</div>' +
                 '<div class="popover-value">' + safeAbstract() + '</div>' +
-                '<div class="popover-label">' + $translate('keywords') + ':</div>' +
+                '<div class="popover-label">' + $translate.instant('keywords') + ':</div>' +
                 '<div class="popover-value">' + buildKeywords() + '</div>';
 
             element.popover({
@@ -75,15 +75,15 @@
 
             scope.$watch('layer', function() {
               element.popover('destroy');
-              var content = '<div class="popover-label">' + $translate('server_name') + ':</div>' +
+              var content = '<div class="popover-label">' + $translate.instant('server_name') + ':</div>' +
                   '<div class="popover-value">' + safeName() + '</div>' +
-                  '<div class="popover-label">' + $translate('title') + ':</div>' +
+                  '<div class="popover-label">' + $translate.instant('title') + ':</div>' +
                   '<div class="popover-value">' + safeTitle() + '</div>' +
-                  '<div class="popover-label">' + $translate('workspace') + ':</div>' +
+                  '<div class="popover-label">' + $translate.instant('workspace') + ':</div>' +
                   '<div class="popover-value">' + safeWorkspace() + '</div>' +
-                  '<div class="popover-label">' + $translate('abstract') + ':</div>' +
+                  '<div class="popover-label">' + $translate.instant('abstract') + ':</div>' +
                   '<div class="popover-value">' + safeAbstract() + '</div>' +
-                  '<div class="popover-label">' + $translate('keywords') + ':</div>' +
+                  '<div class="popover-label">' + $translate.instant('keywords') + ':</div>' +
                   '<div class="popover-value">' + buildKeywords() + '</div>';
 
               element.popover({

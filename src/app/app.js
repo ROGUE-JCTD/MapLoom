@@ -1,5 +1,5 @@
 (function() {
-  var module = angular.module('ngBoilerplate', [
+  var module = angular.module('MapLoom', [
     'templates-app',
     'templates-common',
     'loom',
@@ -44,7 +44,8 @@
             return;
           }
           errorDialogShowing = true;
-          dialogService.error($translate('error'), $translate('script_error', {error: msg})).then(function() {
+          dialogService.error($translate.instant('error'), $translate.instant('script_error',
+              {error: msg})).then(function() {
             errorDialogShowing = false;
           });
         };

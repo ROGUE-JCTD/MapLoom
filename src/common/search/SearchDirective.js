@@ -56,7 +56,7 @@
                 searchService.performSearch(scope.searchQuery).then(function(results) {
                   scope.searchResults = results;
                   if (results.length === 0) {
-                    dialogService.open($translate('search'), $translate('search_no_results'));
+                    dialogService.open($translate.instant('search'), $translate.instant('search_no_results'));
                   } else if (results.length === 1) {
                     zoomToResult(results[0]);
                     searchService.populateSearchLayer(results);
@@ -71,9 +71,10 @@
                   scope.searchInProgress = false;
                   scope.searchResults = [];
                   if (goog.isDefAndNotNull(_status)) {
-                    dialogService.error($translate('search'), $translate('search_error_status', {status: _status}));
+                    dialogService.error($translate.instant('search'), $translate.instant('search_error_status',
+                        {status: _status}));
                   } else {
-                    dialogService.error($translate('search'), $translate('search_error'));
+                    dialogService.error($translate.instant('search'), $translate.instant('search_error'));
                   }
                 });
               } else {

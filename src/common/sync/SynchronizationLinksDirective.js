@@ -42,14 +42,16 @@
                 scope.syncService.sync(link).then(function(syncedLink) {
                   syncedLink.isSyncing = false;
                   link.singleSync = false;
-                  dialogService.open($translate('synchronization'), $translate('synchronization_success'));
+                  dialogService.open($translate.instant('synchronization'),
+                      $translate.instant('synchronization_success'));
                   mapService.dumpTileCache();
                 }, function(error) {
                   // Something failed
                   link.isSyncing = false;
                   link.singleSync = false;
                   if (!(goog.isDefAndNotNull(error) && error === false)) {
-                    dialogService.error($translate('synchronization'), $translate('synchronization_failed'));
+                    dialogService.error($translate.instant('synchronization'),
+                        $translate.instant('synchronization_failed'));
                   }
                 });
               }

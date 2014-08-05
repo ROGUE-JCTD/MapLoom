@@ -3,6 +3,6 @@
 
   module.controller('LoomNotificationController',
       function($scope, $translate, notificationService) {
-        $scope.notificationStartTime = $translate('since_time', {time: notificationService.startTime});
+        $scope.notificationStartTime = $translate.instant('since_time', {time: notificationService.startTime});
       });
 })();

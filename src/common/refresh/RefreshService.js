@@ -106,23 +106,23 @@
                 //formulate notification string
                 notificationText = '';
                 if (added > 0) {
-                  notificationText += added + ' ' + translate_('added');
+                  notificationText += added + ' ' + translate_.instant('added');
 
                   if (modified > 0 || removed > 0) {
                     notificationText += ', ';
                   }
                 }
                 if (modified > 0) {
-                  notificationText += modified + ' ' + translate_('modified');
+                  notificationText += modified + ' ' + translate_.instant('modified');
 
                   if (removed > 0) {
                     notificationText += ', ';
                   }
                 }
                 if (removed > 0) {
-                  notificationText += removed + ' ' + translate_('removed');
+                  notificationText += removed + ' ' + translate_.instant('removed');
                 }
-                notificationText += ' ' + translate_('in_lower_case') + ' ' + metadata.title;
+                notificationText += ' ' + translate_.instant('in_lower_case') + ' ' + metadata.title;
               } else {
                 featureList = null;
               }
@@ -135,7 +135,7 @@
               text: notificationText,
               read: false,
               type: 'loom-update-notification',
-              emptyMessage: translate_('too_many_changes_refresh', {value: 50}),
+              emptyMessage: translate_.instant('too_many_changes_refresh', {value: 50}),
               repos: [
                 {
                   name: metadata.geogitStore,
@@ -163,8 +163,9 @@
                 geogitService_.command(metadata.repoId, 'log', logOptions)
                     .then(function(response) {
                       if (goog.isDefAndNotNull(response.commit)) {
-                        dialogService_.warn(translate_('warning'), translate_('newer_feature_version'),
-                            [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
+                        dialogService_.warn(translate_.instant('warning'), translate_.instant('newer_feature_version'),
+                            [translate_.instant('yes_btn'), translate_.instant('no_btn')],
+                            false).then(function(button) {
                           switch (button) {
                             case 0:
                               doFeatureDiff(response.commit.id);

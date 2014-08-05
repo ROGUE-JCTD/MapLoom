@@ -17,11 +17,11 @@
               scope.diffService = diffService;
               scope.featureClicked = diffService.clickCallback;
               scope.mergeButtons = diffService.mergeDiff;
-              scope.conflictsText = $translate('complete_merge');
+              scope.conflictsText = $translate.instant('complete_merge');
               if (scope.numConflicts === 1) {
-                scope.conflictsText = $translate('single_conflict');
+                scope.conflictsText = $translate.instant('single_conflict');
               } else if (scope.numConflicts > 1) {
-                scope.conflictsText = $translate('multiple_conflicts', {value: scope.numConflicts});
+                scope.conflictsText = $translate.instant('multiple_conflicts', {value: scope.numConflicts});
               }
             }
 
@@ -35,8 +35,8 @@
             scope.$watch('diffService.clickCallback', updateVariables);
 
             scope.cancel = function() {
-              dialogService.warn($translate('warning'), $translate('sure_cancel_merge'),
-                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+              dialogService.warn($translate.instant('warning'), $translate.instant('sure_cancel_merge'),
+                  [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     diffService.clearDiff();
@@ -50,8 +50,8 @@
             };
 
             scope.done = function() {
-              dialogService.open($translate('commit_merge'), $translate('sure_commit_merge'),
-                  [$translate('yes_btn'), $translate('no_btn')], false).then(function(button) {
+              dialogService.open($translate.instant('commit_merge'), $translate.instant('sure_commit_merge'),
+                  [$translate.instant('yes_btn'), $translate.instant('no_btn')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     conflictService.commit();

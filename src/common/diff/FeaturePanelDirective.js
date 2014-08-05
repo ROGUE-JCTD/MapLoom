@@ -41,7 +41,7 @@
             }
 
             scope.translate = function(value) {
-              return $translate(value);
+              return $translate.instant(value);
             };
 
             scope.computeAuthorString = function(attribute) {

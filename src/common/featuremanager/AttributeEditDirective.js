@@ -57,7 +57,7 @@
             });
 
             scope.translate = function(value) {
-              return $translate(value);
+              return $translate.instant(value);
             };
 
             var reset = function() {
@@ -118,15 +118,15 @@
                 }
               }
               if (numErrors > 0) {
-                dialogService.warn($translate('save_attributes'), $translate('invalid_fields', {value: numErrors}),
-                    [$translate('btn_ok')], false);
+                dialogService.warn($translate.instant('save_attributes'), $translate.instant('invalid_fields',
+                    {value: numErrors}), [$translate.instant('btn_ok')], false);
                 return;
               } else if (goog.isDefAndNotNull(scope.coordinates) && scope.coordinates.changed &&
                   scope.coordDisplay.value === coordinateDisplays.DMS &&
                   ol.coordinate.toStringHDMS(scope.coordinates.coords4326) !== scope.coordinates.originalText) {
-                dialogService.open($translate('location_lon_lat'), $translate('latlon_confirm',
-                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords4326)}), [$translate('yes_btn'),
-                      $translate('no_btn')], false).then(function(button) {
+                dialogService.open($translate.instant('location_lon_lat'), $translate.instant('latlon_confirm',
+                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords4326)}), [$translate.instant('yes_btn'),
+                      $translate.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0: {
                       scope.isSaving = true;
@@ -139,8 +139,8 @@
                                      scope.isSaving = false;
                                      var message = scope.inserting ?
                                 'unable_to_save_feature' : 'unable_to_save_attributes';
-                                     dialogService.error($translate('error'), $translate(message, {'value': reject}),
-                                     [$translate('btn_ok')], false);
+                                     dialogService.error($translate.instant('error'), $translate.instant(message,
+                                         {'value': reject}), [$translate.instant('btn_ok')], false);
                                    });
                     }
                   }
@@ -158,8 +158,8 @@
                     scope.isSaving = false;
                     var message = scope.inserting ?
                         'unable_to_save_feature' : 'unable_to_save_attributes';
-                    dialogService.error($translate('error'), $translate(message, {'value': reject}),
-                        [$translate('btn_ok')], false);
+                    dialogService.error($translate.instant('error'), $translate.instant(message, {'value': reject}),
+                        [$translate.instant('btn_ok')], false);
                   });
             };
 

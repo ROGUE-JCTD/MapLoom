@@ -112,7 +112,8 @@
     this.addLink = function(link) {
       for (var index = 0; index < synchronizationLinks_.length; index++) {
         if (synchronizationLinks_[index].equals(link) || link.name === synchronizationLinks_[index].name) {
-          dialogService_.open(translate_('add_sync'), translate_('link_already_exists'), [translate_('btn_ok')], false);
+          dialogService_.open(translate_.instant('add_sync'), translate_.instant('link_already_exists'),
+              [translate_.instant('btn_ok')], false);
           return;
         }
       }
@@ -221,7 +222,7 @@
           if (goog.isObject(pullFailed) && goog.isDefAndNotNull(pullFailed.conflicts)) {
             var branch = link.getRemote().name + '/' + link.getRemoteBranch();
             link.isSyncing = false;
-            handleConflicts(pullFailed, transaction, link.getRepo().id, translate_('local'),
+            handleConflicts(pullFailed, transaction, link.getRepo().id, translate_.instant('local'),
                 link.getRemote().name, branch);
             result.reject(false);
           } else {
@@ -239,8 +240,8 @@
             }
             if (showMessage) {
               errorMessageOn = true;
-              dialogService_.error(translate_('error'), translate_(message),
-                  [translate_('btn_ok')], false).then(function(button) {
+              dialogService_.error(translate_.instant('error'), translate_.instant(message),
+                  [translate_.instant('btn_ok')], false).then(function(button) {
                 switch (button) {
                   case 0:
                     errorMessageOn = false;
@@ -263,8 +264,9 @@
   });
 
   function handleConflicts(mergeFailure, transaction, repoId, ourName, theirName, mergeBranch) {
-    var myDialog = dialogService_.warn(translate_('pull_conflicts'), translate_('conflicts_encountered'),
-        [translate_('abort'), translate_('resolve_conflicts')], false);
+    var myDialog = dialogService_.warn(translate_.instant('pull_conflicts'),
+        translate_.instant('conflicts_encountered'),
+        [translate_.instant('abort'), translate_.instant('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {

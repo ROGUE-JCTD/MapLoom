@@ -36,7 +36,7 @@
       geogitService_ = geogitService;
       synchronizationService_ = synchronizationService;
 
-      service_.selectedText = '*' + $translate('new_remote');
+      service_.selectedText = '*' + $translate.instant('new_remote');
 
       return this;
     };
@@ -68,13 +68,13 @@
           if (logInfo.data.response.sinceCommit.id == service_.selectedRepoInitialCommit) {
             result.resolve(url);
           } else {
-            result.reject(translate_('repo_not_compatible'));
+            result.reject(translate_.instant('repo_not_compatible'));
           }
         } else {
           result.reject(logInfo.data.response.error);
         }
       }, function(reject) {
-        result.reject(translate_('not_a_repo'));
+        result.reject(translate_.instant('not_a_repo'));
       });
     };
 
@@ -84,7 +84,7 @@
         if (service_.compatibleRepos.length > 1) {
           $('#remoteSelectDialog').modal('toggle');
         } else if (service_.compatibleRepos.length < 1) {
-          service_.verificationResult.reject(translate_('no_compatible_repos'));
+          service_.verificationResult.reject(translate_.instant('no_compatible_repos'));
         } else {
           service_.verificationResult.resolve(service_.compatibleRepos[0]);
         }
@@ -95,14 +95,14 @@
       this.selectedRepo = null;
       this.selectedRepoInitialCommit = null;
       this.selectedRemote = null;
-      this.selectedText = '*' + translate_('new_remote');
+      this.selectedText = '*' + translate_.instant('new_remote');
       this.editing = false;
       resetForm();
     };
 
     this.selectRemote = function(remote) {
       if (remote === null) {
-        this.selectedText = '*' + translate_('new_remote');
+        this.selectedText = '*' + translate_.instant('new_remote');
       } else {
         this.selectedText = remote.name;
       }
@@ -111,8 +111,8 @@
     };
 
     this.removeRemote = function() {
-      dialogService_.warn(translate_('remote'), translate_('remote_remove'),
-          [translate_('yes_btn'), translate_('no_btn')], false).then(function(button) {
+      dialogService_.warn(translate_.instant('remote'), translate_.instant('remote_remove'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
         switch (button) {
           case 0:
             var options = new GeoGitRemoteOptions();
@@ -144,11 +144,11 @@
       geogitService_.command(service_.selectedRepo.id, 'remote', options).then(function(response) {
         var fetchOptions = new GeoGitFetchOptions();
         fetchOptions.remote = service_.remoteName;
-        var successMessage = translate_('remote_add_success', {value: service_.remoteName});
+        var successMessage = translate_.instant('remote_add_success', {value: service_.remoteName});
         if (service_.editing) {
           service_.selectedText = service_.remoteName;
           service_.remoteURL = url;
-          successMessage = translate_('remote_edit_success', {value: service_.remoteName});
+          successMessage = translate_.instant('remote_edit_success', {value: service_.remoteName});
         }
         geogitService_.command(service_.selectedRepo.id, 'fetch', fetchOptions).then(function() {
           geogitService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
@@ -159,7 +159,7 @@
                 rootScope_.$broadcast('remoteAdded', repo, service_.remoteName);
               }
             }
-            dialogService_.open(translate_('remote'), successMessage, [translate_('btn_ok')], false);
+            dialogService_.open(translate_.instant('remote'), successMessage, [translate_.instant('btn_ok')], false);
             result.resolve();
             if (!service_.editing) {
               resetForm();
@@ -174,24 +174,24 @@
         }, function(error) {
           geogitService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
           result.resolve();
-          var message = translate_('fetch_error');
+          var message = translate_.instant('fetch_error');
           if (error.status == '408' || error.status == '504') {
-            message = translate_('fetch_timeout');
+            message = translate_.instant('fetch_timeout');
           }
-          dialogService_.error(translate_('fetch'), message,
-              [translate_('btn_ok')], false);
+          dialogService_.error(translate_.instant('fetch'), message,
+              [translate_.instant('btn_ok')], false);
           resetForm();
         });
       }, function(error) {
         if (error === 'REMOTE_ALREADY_EXISTS') {
-          error = translate_('remote_already_exists');
+          error = translate_.instant('remote_already_exists');
         } else if (service_.editing) {
-          error = translate_('remote_edit_error');
+          error = translate_.instant('remote_edit_error');
         } else {
-          error = translate_('remote_add_error');
+          error = translate_.instant('remote_add_error');
         }
-        dialogService_.error(translate_('remote'), error,
-            [translate_('btn_ok')], false);
+        dialogService_.error(translate_.instant('remote'), error,
+            [translate_.instant('btn_ok')], false);
         result.resolve();
         resetForm();
       });
@@ -264,7 +264,7 @@
           if (error.status == '406' || error.status == '404') {
             checkCompatiblity(url, service_.verificationResult);
           } else {
-            service_.verificationResult.reject(translate_('could_not_connect'));
+            service_.verificationResult.reject(translate_.instant('could_not_connect'));
           }
         });
 
@@ -273,7 +273,7 @@
           service_.verificationResult = null;
         }, function(error) {
           service_.verificationResult = null;
-          dialogService_.error(translate_('remote'), error, [translate_('btn_ok')], false);
+          dialogService_.error(translate_.instant('remote'), error, [translate_.instant('btn_ok')], false);
           result.resolve();
           service_.editing = false;
         });
