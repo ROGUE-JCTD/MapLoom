@@ -11,7 +11,6 @@
     "jquery": "~2.0.3",
     "proj4js": "./bower-local/proj4js",
     "ol3": "./bower-local/ol3",
-    "closure-library": "*",
     "angular-translate": "1.1.0",
     "angular-cookies": "1.2.2",
     "jquery-sortable": "~0.9.11",
