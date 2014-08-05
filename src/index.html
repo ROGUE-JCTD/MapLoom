@@ -106,11 +106,18 @@
       <div class="loom-search"></div>
       <div id="pulldown-menu" class="panel-group in">
         <div id="pulldown-content">
-          <div class="panel" ng-show="notificationsPanel">
+          <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#notification-panel">
+                 data-target="#notification-panel" tooltip="{{notificationStartTime}}" tooltip-append-to-body="true"
+                 tooltip-placement="right">
               <span translate="notifications_tab">Notifications</span>
-              <span class="loom-notification-badge pull-right"></span>
+              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle"
+                   ng-click="toggleModal('#generate-notification-dialog')"
+                   tooltip-placement="top" tooltip="{{'generate_notification' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-time panel-header-button pull-right"></div>
+              <span class="loom-notification-badge pull-right" tooltip="{{'unread_notifications' | translate}}"
+                    tooltip-append-to-body="true"
+                    tooltip-placement="top"></span>
             </div>
             <div id="notification-panel" class="panel-collapse collapse pulldown-panel">
               <div notification-empty-text="'no_notifications' | translate"
@@ -214,6 +221,10 @@
 </div>
 <div loom-modal id="historyDiffWindow" modal-title="{{'select_date_range' | translate}}" close-button="false">
   <div loom-history-diff id="historyDiff">
+  </div>
+</div>
+<div loom-modal id="generate-notification-dialog" modal-title="{{'select_start_time' | translate}}" close-button="false">
+  <div loom-generate-notification id="generateNotification">
   </div>
 </div>
 <div loom-modal id="addSyncWindow" modal-title="{{'add_sync' | translate}}">
