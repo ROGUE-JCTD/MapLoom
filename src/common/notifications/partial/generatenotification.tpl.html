@@ -1,0 +1,14 @@
+<div class="modal-body">
+  <div class="history-loading loom-loading" spinner-width="4" spinner-radius="48" spinner-hidden="!isLoading"></div>
+  <form ng-if="!contentHidden" class="form">
+    <div ng-if="active">
+      <div class="form-group">
+        <datetimepicker date-object="startDate" date-key="0"></datetimepicker>
+      </div>
+    </div>
+  </form>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="onDiff()">{{'summarize_btn' | translate}}</button>
+  </div>
+</div>

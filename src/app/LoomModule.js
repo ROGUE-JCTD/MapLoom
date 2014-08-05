@@ -4,6 +4,7 @@
     'loom_map',
     'loom_notifications',
     'loom_notification_poster',
+    'loom_notification_controller',
     'loom_update_notification',
     'loom_history',
     'loom_history_controller',

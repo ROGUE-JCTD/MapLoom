@@ -8,12 +8,17 @@
   var translate_ = null;
 
   module.provider('notificationService', function() {
+    this.startTime = null;
+
     this.$get = function($rootScope, $timeout, $translate) {
       rootScope = $rootScope;
       translate_ = $translate;
+      var momentDate = moment(new Date());
+      momentDate.lang($translate.uses());
+      this.startTime = momentDate.format('LT');
       var updateTimestamps = function() {
         for (i = 0; i < notifications.length; i = i + 1) {
-          var momentDate = moment(notifications[i].time);
+          momentDate = moment(notifications[i].time);
           momentDate.lang($translate.uses());
           notifications[i].timestr = momentDate.fromNow();
         }

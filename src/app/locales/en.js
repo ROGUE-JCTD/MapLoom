@@ -127,6 +127,7 @@
     'merge_successful': 'Merge Successful',
     'merge_no_changes': 'The merge resulted in no changes.',
     'select_date_range': 'Select Date Range',
+    'select_start_time': 'Select Start Time',
     'link': 'Link',
     'link_already_exists': 'The link already exists.',
     'synchronize': 'Synchronize',
@@ -284,7 +285,10 @@
         'web page to resolve any potential complications.',
     'show_changes': 'Show Changes',
     'sure_close_table': 'Are you sure you want to close the table?  Any unsaved changes will be lost.',
-    'toggle_fullscreen': 'Toggle Full Screen'
+    'toggle_fullscreen': 'Toggle Full Screen',
+    'since_time': 'Running since {{time}}',
+    'unread_notifications': 'Unread Notifications',
+    'generate_notification': 'Generate Notification'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

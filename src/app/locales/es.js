@@ -129,6 +129,7 @@
     'merge_successful': 'Fusion Exitosa',
     'merge_no_changes': 'La fusion resulto en ningun cambio.',
     'select_date_range': 'Seleccionar el Rango de Datos',
+    'select_start_time': 'Seleccione la Hora de Inicio',
     'link': 'Enlace',
     'link_already_exists': 'El enlace ya existe.',
     'synchronize': 'Sincronizar',
@@ -288,7 +289,10 @@
         'la página web para resolver cualquier posible complicación.',
     'show_changes': 'Mostrar Cambios',
     'sure_close_table': '¿Está seguro que desea cerrar la mesa? Se perderán todos los cambios no guardados.',
-    'toggle_fullscreen': 'Cambiar a Pantalla Completa'
+    'toggle_fullscreen': 'Cambiar a Pantalla Completa',
+    'since_time': 'En funcionamiento desde {{time}}',
+    'unread_notifications': 'Notificaciones Sin Leer',
+    'generate_notification': 'Generar una Notificación'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
