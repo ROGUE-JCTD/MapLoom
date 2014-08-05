@@ -87,7 +87,7 @@
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
           <em id="map-name">
-            <div class="map-title-text ellipsis">{{ mapService.title || "New Map"}}</div>
+            <div class="map-title-text ellipsis">{{ mapService.getTitle() }}</div>
             <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
                tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
                ng-class="{'hide': !configService.username}" data-toggle="modal"></i>

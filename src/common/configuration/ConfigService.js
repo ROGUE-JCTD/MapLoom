@@ -46,7 +46,7 @@
       service_ = this;
       this.configuration = {
         about: {
-          title: 'New Map',
+          title: $translate.instant('new_map'),
           abstract: ''
         },
         map: {

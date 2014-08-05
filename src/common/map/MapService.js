@@ -684,6 +684,13 @@
       return layer;
     };
 
+    this.getTitle = function() {
+      if (goog.isDefAndNotNull(this.title) && this.title !== '') {
+        return this.title;
+      }
+      return translate_.instant('new_map');
+    };
+
     this.getCenter = function() {
       return this.map.getView().getCenter();
     };
