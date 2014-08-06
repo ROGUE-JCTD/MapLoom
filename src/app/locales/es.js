@@ -292,7 +292,9 @@
     'toggle_fullscreen': 'Cambiar a Pantalla Completa',
     'since_time': 'En funcionamiento desde {{time}}',
     'unread_notifications': 'Notificaciones Sin Leer',
-    'generate_notification': 'Generar una Notificación'
+    'generate_notification': 'Generar una Notificación',
+    'no_layers_notification': 'La generación de una notificación requiere una capa GeoGit funcionar. ' +
+        'Por favor, añada una capa GeoGit al mapa.'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

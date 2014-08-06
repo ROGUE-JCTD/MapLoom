@@ -3,7 +3,7 @@
   var module = angular.module('loom_generate_notification_directive', []);
 
   module.directive('loomGenerateNotification',
-      function($rootScope, $translate, mapService, geogitService, refreshService) {
+      function($rootScope, $translate, mapService, geogitService, refreshService, dialogService) {
         return {
           templateUrl: 'notifications/partial/generatenotification.tpl.html',
           link: function(scope, element, attrs) {
@@ -45,10 +45,7 @@
               if (!goog.isArray(layers)) {
                 layers = [layers];
               }
-              if (layers.length < 1) {
-                scope.isLoading = false;
-                return;
-              }
+
               var repos = {};
               var layer = null;
               var metadata = null;
@@ -67,6 +64,12 @@
                 if (repos.hasOwnProperty(repoId)) {
                   repoArray.push(repoId);
                 }
+              }
+
+              if (repoArray.length < 1) {
+                scope.isLoading = false;
+                dialogService.warn($translate.instant('warning'), $translate.instant('no_layers_notification'));
+                return;
               }
 
               var repoIndex = 0;

@@ -288,7 +288,9 @@
     'toggle_fullscreen': 'Toggle Full Screen',
     'since_time': 'Running since {{time}}',
     'unread_notifications': 'Unread Notifications',
-    'generate_notification': 'Generate Notification'
+    'generate_notification': 'Generate Notification',
+    'no_layers_notification': 'Generating a notification requires a GeoGit layer to function.  ' +
+        'Please add a GeoGit layer to the map.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

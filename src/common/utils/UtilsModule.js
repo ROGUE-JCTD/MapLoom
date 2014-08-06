@@ -150,7 +150,7 @@
           if (!scope.$$phase && !$rootScope.$$phase) {
             scope.$apply(function() {
               var momentDate = moment(new Date(dateOptions.defaultDate));
-              momentDate.lang($translate.proposedLanguage());
+              momentDate.lang($translate.use());
               if (scope.time === 'true' && scope.date === 'true') {
                 scope.dateObject[scope.dateKey] = newDate.toISOString();
                 scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
@@ -164,7 +164,7 @@
             });
           } else {
             var momentDate = moment(new Date(dateOptions.defaultDate));
-            momentDate.lang($translate.proposedLanguage());
+            momentDate.lang($translate.use());
             if (scope.time === 'true' && scope.date === 'true') {
               scope.dateObject[scope.dateKey] = newDate.toISOString();
               scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
@@ -180,12 +180,12 @@
 
         var dateOptions = {
           pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
-          language: $translate.proposedLanguage()
+          language: $translate.use()
         };
 
         var timeOptions = {
           pickDate: false,
-          language: $translate.proposedLanguage()
+          language: $translate.use()
         };
 
         if (scope.defaultDate) {
@@ -234,15 +234,15 @@
             var date;
             if (scope.date === 'true' && scope.time === 'true') {
               date = moment(dateOptions.defaultDate);
-              date.lang($translate.proposedLanguage());
+              date.lang($translate.use());
               scope.disabledText = date.format('L') + ' ' + date.format('LT');
             } else if (scope.time === 'true') {
               date = moment(new Date(timeOptions.defaultDate));
-              date.lang($translate.proposedLanguage());
+              date.lang($translate.use());
               scope.disabledText = date.format('LT');
             } else if (scope.date === 'true') {
               date = moment.utc(dateOptions.defaultDate);
-              date.lang($translate.proposedLanguage());
+              date.lang($translate.use());
               scope.disabledText = date.format('L');
             }
           } else {

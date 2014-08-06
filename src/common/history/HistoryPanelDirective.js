@@ -52,7 +52,7 @@
 
             scope.getCommitTime = function(commit) {
               var date = moment(new Date(commit.author.timestamp));
-              date.lang($translate.proposedLanguage());
+              date.lang($translate.use());
               return date.format('L') + ' @ ' + date.format('LT');
             };
 

@@ -14,12 +14,12 @@
       rootScope = $rootScope;
       translate_ = $translate;
       var momentDate = moment(new Date());
-      momentDate.lang($translate.proposedLanguage());
+      momentDate.lang($translate.use());
       this.startTime = momentDate.format('LT');
       var updateTimestamps = function() {
         for (i = 0; i < notifications.length; i = i + 1) {
           momentDate = moment(notifications[i].time);
-          momentDate.lang($translate.proposedLanguage());
+          momentDate.lang($translate.use());
           notifications[i].timestr = momentDate.fromNow();
         }
         $timeout(updateTimestamps, 10000, true);
@@ -36,7 +36,7 @@
       notification.id = nextNotificationId;
       notification.time = new Date();
       var momentDate = moment(notification.time);
-      momentDate.lang(translate_.proposedLanguage());
+      momentDate.lang(translate_.use());
       notification.timestr = momentDate.fromNow();
       nextNotificationId = nextNotificationId + 1;
       notifications.push(notification);
