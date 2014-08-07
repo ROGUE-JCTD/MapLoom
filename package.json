@@ -30,6 +30,7 @@
     "grunt-conventional-changelog": "~0.1.1",
     "grunt-bump": "0.0.6",
     "closure-linter-wrapper": "~0.2.8",
-    "grunt-gjslint": "~0.1.3"
+    "grunt-gjslint": "~0.1.3",
+    "grunt-newer": "~0.7.0"
   }
 }
