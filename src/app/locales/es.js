@@ -294,7 +294,9 @@
     'unread_notifications': 'Notificaciones Sin Leer',
     'generate_notification': 'Generar una Notificación',
     'no_layers_notification': 'La generación de una notificación requiere una capa GeoGit funcionar. ' +
-        'Por favor, añada una capa GeoGit al mapa.'
+        'Por favor, añada una capa GeoGit al mapa.',
+    'single_sync': 'Realizar la Sincronización',
+    'continuous_sync': 'Sincronización Automática de Palanca'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

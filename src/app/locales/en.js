@@ -290,7 +290,9 @@
     'unread_notifications': 'Unread Notifications',
     'generate_notification': 'Generate Notification',
     'no_layers_notification': 'Generating a notification requires a GeoGit layer to function.  ' +
-        'Please add a GeoGit layer to the map.'
+        'Please add a GeoGit layer to the map.',
+    'single_sync': 'Perform Synchronization',
+    'continuous_sync': 'Toggle Auto-Synchronization'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
