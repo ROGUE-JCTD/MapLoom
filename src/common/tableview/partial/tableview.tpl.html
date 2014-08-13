@@ -1,11 +1,5 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
-  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()" translate="apply_filters"
-          ng-disabled="tableviewform.$visible">
-  </button>
-  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()" translate="clear_filters"
-          ng-disabled="tableviewform.$visible">
-  </button>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-striped table-hover sortable">
@@ -15,7 +9,15 @@
             <th ng-repeat="attr in attributes">{{attr.name}}</th>
           </tr>
           <tr ng-if="filterOn">
-            <td class="filter-row first-filter-row" translate="filter"></td>
+            <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>
+              <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()"
+                      translate="apply_filters"
+                      ng-disabled="tableviewform.$visible">
+              </button>
+              <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()"
+                      translate="clear_filters"
+                      ng-disabled="tableviewform.$visible">
+              </button></td>
               <td class="filter-row" ng-repeat="attr in attributes">
                 <input class="form-control" type="text" ng-model="attr.filter.filter">
               </td>

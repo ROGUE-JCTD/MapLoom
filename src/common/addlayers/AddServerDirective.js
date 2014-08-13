@@ -57,7 +57,7 @@
 
             scope.getPlaceholder = function() {
               if (scope.type === 'WMS') {
-                return 'http://url/wms';
+                return 'http://url/geoserver/wms';
               } else if (scope.type === 'TMS') {
                 return 'http://url/1.0.0/';
               }

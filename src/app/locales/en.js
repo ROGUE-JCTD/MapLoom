@@ -218,6 +218,8 @@
     'decimal_degrees': 'Decimal Degrees',
     'other': 'Other',
     'search': 'Search',
+    'search_locations': 'Search Locations',
+    'search_results': 'Search Results',
     'search_no_results': 'No results matched the search query.',
     'search_error_status': 'Search failed with response code ({{status}}).',
     'search_error': 'An unknown error occurred while performing the search.',

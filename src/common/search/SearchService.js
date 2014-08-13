@@ -16,7 +16,7 @@
 
       searchlayer_ = new ol.layer.Vector({
         metadata: {
-          title: $translate.instant('search'),
+          title: $translate.instant('search_results'),
           internalLayer: true
         },
         source: new ol.source.Vector({

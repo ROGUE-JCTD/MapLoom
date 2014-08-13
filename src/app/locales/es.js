@@ -221,6 +221,8 @@
     'decimal_degrees': 'Grados Decimales',
     'other': 'Otro',
     'search': 'Búsqueda',
+    'search_locations': 'Ubicaciones de Búsqueda',
+    'search_results': 'Resultados de la Búsqueda',
     'search_no_results': 'No hay resultados que coincidan con la consulta de búsqueda.',
     'search_error_status': 'Buscar fallado con el código de respuesta ({{status}}).',
     'search_error': 'Se ha producido un error desconocido mientras se realiza la búsqueda.',
