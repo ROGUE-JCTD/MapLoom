@@ -4,23 +4,24 @@
     <div class="panel panel-default">
       <table class="table-striped table-hover sortable">
         <thead>
+          <tr ng-if="filterOn">
+              <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>
+                  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()"
+                          translate="apply_filters"
+                          ng-disabled="tableviewform.$visible">
+                  </button>
+                  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()"
+                          translate="clear_filters"
+                          ng-disabled="tableviewform.$visible">
+                  </button></td>
+              <td class="filter-row" ng-repeat="attr in attributes">
+                  <input class="form-control" type="text" ng-model="attr.filter.filter">
+                  <!--<loomFilterOptions attrName="{{attr.name}}"></loomFilterOptions>-->
+              </td>
+          </tr>
           <tr>
             <th>{{'feature_id' | translate}}</th>
             <th ng-repeat="attr in attributes">{{attr.name}}</th>
-          </tr>
-          <tr ng-if="filterOn">
-            <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>
-              <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()"
-                      translate="apply_filters"
-                      ng-disabled="tableviewform.$visible">
-              </button>
-              <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()"
-                      translate="clear_filters"
-                      ng-disabled="tableviewform.$visible">
-              </button></td>
-              <td class="filter-row" ng-repeat="attr in attributes">
-                <input class="form-control" type="text" ng-model="attr.filter.filter">
-              </td>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
