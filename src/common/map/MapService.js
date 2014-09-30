@@ -1,3 +1,8 @@
+var heatmapVectorSource_global = null;
+var heatmapLoadFeatures_global = function(response) {
+  heatmapVectorSource_global.addFeatures(heatmapVectorSource_global.readFeatures(response));
+};
+
 (function() {
   var module = angular.module('loom_map_service', ['ngCookies']);
 
@@ -1088,6 +1093,97 @@
         this.map.addInteraction(draw);
       }
     };
+
+    this.showHeatmap = function(layer) {
+      console.log('----[ mapService.showHeatmap: ', layer);
+      if (goog.isDefAndNotNull(layer)) {
+
+        var meta = layer.get('metadata');
+        meta.heatmapVisible = true;
+        heatmapVectorSource_global = new ol.source.ServerVector({
+          format: new ol.format.GeoJSON(),
+          loader: function(extent, resolution, projection) {
+            var url = meta.url + '/wfs?service=WFS&' +
+                'version=1.1.0&request=GetFeature&typename=' + meta.name +
+                '&outputFormat=text/javascript&format_options=callback:heatmapLoadFeatures_global' +
+                '&srsname=EPSG:3857&bbox=' + extent.join(',') + ',EPSG:3857';
+            $.ajax({
+              url: url,
+              dataType: 'jsonp'
+            });
+          },
+          strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
+            maxZoom: 19
+          })),
+          projection: 'EPSG:3857'
+        });
+
+        var vector = new ol.layer.Heatmap({
+          metadata: {
+            name: 'heatmap:' + meta.name,
+            title: 'heatmap:' + meta.title,
+            heatmapLayer: true,
+            uniqueID: sha1(meta.name),
+            editable: false
+          },
+          source: heatmapVectorSource_global,
+          style: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: 'rgba(0, 0, 255, 1.0)',
+              width: 2
+            })
+          })
+        });
+
+        vector.getSource().on('addfeature', function(event) {
+          //console.out('af: ', event);
+          // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+          // standards-violating <magnitude> tag in each Placemark.  We extract it from
+          // the Placemark's name instead.
+          //var name = event.feature.get('name');
+          //var magnitude = parseFloat(name.substr(2));
+          //event.feature.set('weight', magnitude - 5);
+        });
+
+        console.log('heatmap layer: ', vector);
+        this.map.addLayer(vector);
+
+        /* // ---- works
+        var vector = new ol.layer.Heatmap({
+          metadata: {
+            name: 'heatmap',
+            title: 'heatmap',
+            editable: false
+          },
+          source: new ol.source.KML({
+            extractStyles: false,
+            projection: 'EPSG:3857',
+            url: 'http://192.168.1.12/static/maploom/assets/data/kml/2012_Earthquakes_Mag5.kml'
+          }),
+          radius: 5
+        });
+
+        vector.getSource().on('addfeature', function(event) {
+          // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+          // standards-violating <magnitude> tag in each Placemark.  We extract it from
+          // the Placemark's name instead.
+          //var name = event.feature.get('name');
+          //var magnitude = parseFloat(name.substr(2));
+          //event.feature.set('weight', magnitude - 5);
+        });
+
+        console.log('heatmap layer: ', vector);
+        //s = angular.element('html').injector().get('mapService')
+        this.map.addLayer(vector);
+        */
+
+        // TODO: somewhere better?
+        layer.get('metadata').loadingHeatmap = false;
+
+        rootScope_.$broadcast('layer-added');
+      }
+    };
+
 
     this.addModify = function() {
       if (!goog.isDefAndNotNull(modify)) {

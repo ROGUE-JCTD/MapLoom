@@ -83,6 +83,7 @@
     'show_table': 'Mostrar Tabla',
     'show_table_failed': 'Se ha producido un error desconocido al recuperar los elementos. ' +
         'Por favor, inténtelo de nuevo.',
+    'show_heatmap': 'Mostrar Heatmap',
     'show_pics': 'Mostrar Imagenes',
     'edit_geometry': 'Editar Geometria',
     'edit_attributes': 'Editar Atributos',

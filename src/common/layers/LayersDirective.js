@@ -83,6 +83,16 @@
               });
             };
 
+            scope.isLoadingHeatmap = function(layer) {
+              var loading = layer.get('metadata').loadingHeatmap;
+              return goog.isDefAndNotNull(loading) && loading === true;
+            };
+
+            scope.showHeatmap = function(layer) {
+              layer.get('metadata').loadingHeatmap = true;
+              mapService.showHeatmap(layer);
+            };
+
             scope.isLoadingHistory = function(layer) {
               var loadingHistory = layer.get('metadata').loadingHistory;
               return goog.isDefAndNotNull(loadingHistory) && loadingHistory === true;
