@@ -15,8 +15,8 @@
                           ng-disabled="tableviewform.$visible">
                   </button></td>
               <td class="filter-row" ng-repeat="attr in attributes">
-                  <input class="form-control" type="text" ng-model="attr.filter.filter">
-                  <!--<loomFilterOptions attrName="{{attr.name}}"></loomFilterOptions>-->
+                  <!--<input class="form-control" type="text" ng-model="attr.filter.filter">-->
+                  <filteroptions attribute="attr" type="restrictions[attr.name].type"></filteroptions>
               </td>
           </tr>
           <tr>

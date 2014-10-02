@@ -1,4 +1,22 @@
 <div class="input-group">
-    <input class="form-control" type="text" ng-model="attr.filter.filter">
-    <span class="input-group-addon"></span>
+    <input class="form-control" type="text" ng-model="attribute.filter.filter">
+    <div class="input-group-btn" ng-if="typeRestriction === ''">
+        <button type="button" class="btn btn-default dropdown-toggle">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a value="exactMatch" ng-click="exactMatch()" class="filter-option"
+                   ng-class="{'filter-options-selected': (attribute.filter.searchType === 'exactMatch')}">
+                    Match
+                </a>
+            </li>
+            <li>
+                <a value="strContains" ng-click="strContains()" class="filter-option"
+                   ng-class="{'filter-options-selected': (attribute.filter.searchType === 'strContains')}">
+                    Contains
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>

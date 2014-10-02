@@ -74,11 +74,13 @@
           '<And>';
       //the <And> will need to change if we add a non-exclusive search option
 
-      var searchType = 'numRange';
+      var searchType;
 
       console.log('metadata', metadata);
       for (var attrName in metadata.filters) {
-        console.log('attrname in filter', attrName);
+        searchType = metadata.filters[attrName].searchType;
+        console.log('filter type', searchType);
+
         var schemaType = metadata.schema[attrName]._type;
         if (metadata.filters[attrName].filter !== '') {
           if (searchType === 'strContains') {
@@ -209,7 +211,7 @@
             if (data.features[0].properties.hasOwnProperty(propName) &&
                 propName !== 'fotos' && propName !== 'photos') {
               if (!goog.isDefAndNotNull(metadata.filters[propName])) {
-                metadata.filters[propName] = {filter: ''};
+                metadata.filters[propName] = {filter: '', searchType: 'exactMatch'};
               }
               service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
             }

@@ -1,16 +1,26 @@
 (function() {
   var module = angular.module('loom_filter_options_directive', []);
-  module.directive('loomFilterOptions',
-      function(/*tableViewService*/) {
+  module.directive('filteroptions',
+      function(tableViewService) {
         return {
           restrict: 'E',
           templateUrl: 'tableview/partial/filteroptions.tpl.html',
           scope: {
-            attrName: '='
+            attribute: '=',
+            typeRestriction: '=type'
           },
           replace: true,
           link: function(scope, element) {
-            console.log('filter options scope.attrName', scope.attrName);
+            console.log('attrType', scope.typeRestriction);
+            scope.exactMatch = function() {
+              scope.attribute.filter.searchType = 'exactMatch';
+            };
+            scope.strContains = function() {
+              scope.attribute.filter.searchType = 'strContains';
+            };
+            scope.numRange = function() {
+              scope.attribute.filter.searchType = 'numRange';
+            };
           }
         };
       }
