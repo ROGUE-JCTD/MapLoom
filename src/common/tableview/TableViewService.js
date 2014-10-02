@@ -59,7 +59,6 @@
       var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
           '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
           ' outputFormat="JSON"' +
-          ' srsName="' + metadata.projection + '"' +
           ' maxFeatures="' + service_.resultsPerPage + '"' +
           ' startIndex="' + (service_.resultsPerPage * service_.currentPage) + '"' +
           ' xmlns:wfs="http://www.opengis.net/wfs"' +
@@ -67,9 +66,9 @@
           ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
           ' xsi:schemaLocation="http://www.opengis.net/wfs' +
           ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
-          '<wfs:Query typeName="' +
-          metadata.name +
-          '">' +
+          '<wfs:Query typeName="' + metadata.name + '"' +
+          ' srsName="' + metadata.projection + '"' +
+          '>' +
           '<ogc:Filter>' +
           '<And>';
       //the <And> will need to change if we add a non-exclusive search option
