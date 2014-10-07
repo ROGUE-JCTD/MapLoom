@@ -54,13 +54,25 @@
       return this.loadData();
     };
 
-    function getfilterXML() {
-      var metadata = service_.selectedLayer.get('metadata');
+    function getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage) {
+      var paginationParamsStr = '';
+      if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
+        paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
+            (resultsPerPage * currentPage) + '"';
+      }
+
+      var bboxStr = '';
+      if (goog.isDefAndNotNull(bbox)) {
+        //TODO will this need the projection?
+        bboxStr = ' bbox="' + bbox.join(',') + '"';
+      }
+
+      var metadata = layer.get('metadata');
       var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
           '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
           ' outputFormat="JSON"' +
-          ' maxFeatures="' + service_.resultsPerPage + '"' +
-          ' startIndex="' + (service_.resultsPerPage * service_.currentPage) + '"' +
+          bboxStr +
+          paginationParamsStr +
           ' xmlns:wfs="http://www.opengis.net/wfs"' +
           ' xmlns:ogc="http://www.opengis.net/ogc"' +
           ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
@@ -73,33 +85,31 @@
           '<And>';
       //the <And> will need to change if we add a non-exclusive search option
 
-      var searchType;
-
       console.log('metadata', metadata);
-      for (var attrName in metadata.filters) {
-        searchType = metadata.filters[attrName].searchType;
+      for (var attrName in filters) {
+        var searchType = filters[attrName].searchType;
         console.log('filter type', searchType);
 
         var schemaType = metadata.schema[attrName]._type;
-        if (metadata.filters[attrName].filter !== '') {
+        if (filters[attrName].filter !== '') {
           if (searchType === 'strContains') {
             xml +=
                 '<ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="!">' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>*' + metadata.filters[attrName].filter + '*</ogc:Literal>' +
+                '<ogc:Literal>*' + filters[attrName].filter + '*</ogc:Literal>' +
                 '</ogc:PropertyIsLike>';
           } else if (searchType === 'exactMatch') {
             xml +=
                 '<ogc:PropertyIsEqualTo>' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + metadata.filters[attrName].filter + '</ogc:Literal>' +
+                '<ogc:Literal>' + filters[attrName].filter + '</ogc:Literal>' +
                 '</ogc:PropertyIsEqualTo>';
           } else if (searchType === 'numRange') {
             if (schemaType === 'xsd:int' || schemaType === 'xsd:integer' || schemaType === 'xsd:decimal' ||
                 schemaType === 'xsd:double') {
               xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + metadata.filters[attrName].filter + '</ogc:Literal>' +
+                  '<ogc:Literal>' + filters[attrName].filter + '</ogc:Literal>' +
                   '</ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyIsLessThan>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
@@ -118,6 +128,29 @@
 
       return xml;
     }
+
+    //TODO: add bbox to filters.geom instead
+    this.getFeaturesWfs = function(layer, filters, bbox, resultsPerPage, currentPage) {
+      console.log('---- tableviewservice.getFeaturesWfs: ', layer, filters, bbox, resultsPerPage, currentPage);
+      var deferredResponse = q_.defer();
+
+      var metadata = layer.get('metadata');
+      var postURL = metadata.url + '/wfs/WfsDispatcher';
+      var xmlData = getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
+      console.log('xmldata', xmlData);
+      http_.post(postURL, xmlData, {
+        headers: {
+          'Content-Type': 'text/xml;charset=utf-8'
+        }
+      }).success(function(data, status, headers, config) {
+        deferredResponse.resolve(data);
+      }).error(function(data, status, headers, config) {
+        console.log('post error', data, status, headers, config);
+        deferredResponse.reject(status);
+      });
+      return deferredResponse.promise;
+    };
+
     this.loadData = function() {
       console.log('getting data for table');
       var deferredResponse = q_.defer();
@@ -152,7 +185,8 @@
       }
 
       var postURL = this.selectedLayer.get('metadata').url + '/wfs/WfsDispatcher';
-      var xmlData = getfilterXML();
+      var xmlData = getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null, service_.resultsPerPage,
+          service_.currentPage);
       console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {headers: {
         'Content-Type': 'text/xml;charset=utf-8'

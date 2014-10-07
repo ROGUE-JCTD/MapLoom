@@ -178,6 +178,11 @@
 
             };
 
+            scope.showHeatmap = function() {
+              var meta = tableViewService.selectedLayer.get('metadata');
+              mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
+            };
+
             scope.getPageText = function() {
               return $translate.instant('current_page', {currentPage: scope.currentPage, totalPages: scope.totalPages});
             };
