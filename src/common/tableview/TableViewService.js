@@ -99,11 +99,11 @@
                 schemaType === 'xsd:double') {
               xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + metadata.filters[attrName].filter + '</ogc:Literal>' +
+                  '<ogc:Literal>' + metadata.filters[attrName].start + '</ogc:Literal>' +
                   '</ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyIsLessThan>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>53</ogc:Literal>' +
+                  '<ogc:Literal>' + metadata.filters[attrName].end + '</ogc:Literal>' +
                   '</ogc:PropertyIsLessThan>';
             }
           }

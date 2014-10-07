@@ -11,7 +11,19 @@
           },
           replace: true,
           link: function(scope, element) {
-            console.log('attrType', scope.typeRestriction);
+            console.log('attribute', scope.attribute);
+
+            /*scope.$on(
+                'click.bs.dropdown.data-api',
+                function(e) { e.stopPropagation(); }
+            );
+            element.on('click', '.filter-option', function(e) {
+              console.log('e', e.isPropagationStopped());
+              //e.stopPropagation(); // This replace if conditional.
+              //e.preventDefault();
+              console.log('e', e.isPropagationStopped());
+            });*/
+
             scope.exactMatch = function() {
               scope.attribute.filter.searchType = 'exactMatch';
             };

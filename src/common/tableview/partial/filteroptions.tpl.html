@@ -1,18 +1,44 @@
 <div class="input-group">
     <input class="form-control" type="text" ng-model="attribute.filter.filter">
-    <div class="input-group-btn" ng-if="typeRestriction === ''">
+    <div class="input-group-btn">
         <button type="button" class="btn btn-default dropdown-toggle">
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
             <li>
-                <a value="exactMatch" ng-click="exactMatch()" class="filter-option"
+                <a value="exactMatch" ng-click="exactMatch(); $event.stopPropagation();" class="filter-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'exactMatch')}">
-                    Match
+                    Exact Match
                 </a>
             </li>
-            <li>
-                <a value="strContains" ng-click="strContains()" class="filter-option"
+            <!--<li ng-if="typeRestriction === 'int' || typeRestriction === 'double'">-->
+                <!--<a value="exactMatch" ng-click="numRange()" class="filter-option"-->
+                   <!--ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">-->
+                    <!--Range-->
+                <!--</a>-->
+            <!--</li>-->
+            <!--<li ng-if="typeRestriction === ''">-->
+                <!--<a value="strContains" ng-click="strContains()" class="filter-option"-->
+                   <!--ng-class="{'filter-options-selected': (attribute.filter.searchType === 'strContains')}">-->
+                    <!--Contains-->
+                <!--</a>-->
+            <!--</li>-->
+            <li ng-switch="typeRestriction">
+                <a value="Range" ng-switch-when="int" ng-click="numRange(); $event.stopPropagation();" class="filter-option"
+                   ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
+                    Range
+                </a>
+                <div ng-switch-when="double" ng-click="numRange(); $event.stopPropagation();" class="filter-option panel-heading"
+                   ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}"
+                   data-toggle="collapse" data-target="#range-panel">
+                    Range
+                    <div class="panel collapsed" id="range-panel">
+                        <input type="text" ng-model="attribute.filter.start">
+                        to
+                        <input type="text" ng-model="attribute.filter.end">
+                    </div>
+                </div>
+                <a ng-switch-default ng-click="strContains(); $event.stopPropagation();" class="filter-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'strContains')}">
                     Contains
                 </a>
