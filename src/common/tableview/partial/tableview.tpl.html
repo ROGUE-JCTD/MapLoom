@@ -75,7 +75,10 @@
         <i class="glyphicon glyphicon-text-width"></i>
     </button>
     <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="!tableviewform.$visible && selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
-        <i class="glyphicon glyphicon-globe"></i>
+      <i class="glyphicon glyphicon-globe"></i>
+    </button>
+    <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
+      <i class="glyphicon glyphicon-fire"></i>
     </button>
     <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
             ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"

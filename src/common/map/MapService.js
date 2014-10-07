@@ -10,6 +10,7 @@
   var configService_ = null;
   var dialogService_ = null;
   var pulldownService_ = null;
+  var tableViewService_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -120,7 +121,7 @@
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogitService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, $rootScope, $q) {
+                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -133,6 +134,7 @@
       translate_ = $translate;
       rootScope_ = $rootScope;
       pulldownService_ = pulldownService;
+      tableViewService_ = tableViewService;
       q_ = $q;
 
       // create map on init so that other components can use map on their init
@@ -1088,6 +1090,82 @@
         this.map.addInteraction(draw);
       }
     };
+
+    this.showHeatmap = function(layer, filters) {
+
+      if (goog.isDefAndNotNull(filters)) {
+        console.log('----[ mapService.showHeatmap from tableview for layer: ', layer, ', filters: ', filters);
+      } else {
+        console.log('----[ mapService.showHeatmap for layer, no filter ', layer);
+      }
+
+      var heatmapLayerName = '';
+      var heatmapLayerTitle = '';
+
+      if (goog.isDefAndNotNull(filters)) {
+        heatmapLayerName = 'TableView';
+        heatmapLayerTitle = heatmapLayerName;
+      } else {
+        var meta = layer.get('metadata');
+        meta.heatmapVisible = true;
+        heatmapLayerName = meta.name;
+        heatmapLayerTitle = meta.title;
+      }
+
+      var source = new ol.source.ServerVector({
+        format: new ol.format.GeoJSON(),
+        loader: function(extent, resolution, projection) {
+          tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
+            source.addFeatures(source.readFeatures(response));
+          }, function(reject) {
+            //TODO: show msg failed to get features
+          }, function(update) {
+            //TODO:
+          });
+        },
+        strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
+          maxZoom: 19
+        })),
+        projection: 'EPSG:3857'
+      });
+
+      var vector = new ol.layer.Heatmap({
+        metadata: {
+          name: 'heatmap:' + heatmapLayerName,
+          title: 'heatmap:' + heatmapLayerTitle,
+          heatmapLayer: true,
+          uniqueID: sha1(heatmapLayerName),
+          editable: false
+        },
+        source: source,
+        style: new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 255, 1.0)',
+            width: 2
+          })
+        })
+      });
+
+      vector.getSource().on('addfeature', function(event) {
+        //console.out('af: ', event);
+        // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+        // standards-violating <magnitude> tag in each Placemark.  We extract it from
+        // the Placemark's name instead.
+        //var name = event.feature.get('name');
+        //var magnitude = parseFloat(name.substr(2));
+        //event.feature.set('weight', magnitude - 5);
+      });
+
+      console.log('heatmap layer: ', vector);
+      this.map.addLayer(vector);
+      rootScope_.$broadcast('layer-added');
+
+      // TODO: somewhere better?
+      if (goog.isDefAndNotNull(layer)) {
+        layer.get('metadata').loadingHeatmap = false;
+      }
+    };
+
 
     this.addModify = function() {
       if (!goog.isDefAndNotNull(modify)) {

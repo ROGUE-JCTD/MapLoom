@@ -82,6 +82,7 @@
     'show_history': 'Show History',
     'show_table': 'Show Table',
     'show_table_failed': 'An unknown error occurred when retrieving the features. Please try again.',
+    'show_heatmap': 'Show Heatmap',
     'show_pics': 'Show Photos',
     'edit_geometry': 'Edit Geometry',
     'edit_attributes': 'Edit Attributes',
