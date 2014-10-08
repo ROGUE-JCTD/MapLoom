@@ -65,7 +65,8 @@
   });
 
   module.directive('loomTableView',
-      function(tableFilter, mapService, $http, tableViewService, featureManagerService, dialogService, $translate) {
+      function(tableFilter, mapService, $http, tableViewService, featureManagerService, dialogService, $translate,
+               statisticsService, $rootScope) {
         return {
           restrict: 'C',
           templateUrl: 'tableview/partial/tableview.tpl.html',
@@ -181,6 +182,12 @@
             scope.showHeatmap = function() {
               var meta = tableViewService.selectedLayer.get('metadata');
               mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
+            };
+
+            scope.showStatistics = function() {
+              $('#statistics-view-window').modal('show');
+              var statistics = statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11]);
+              $rootScope.$broadcast('getStatistics', statistics);
             };
 
             scope.getPageText = function() {

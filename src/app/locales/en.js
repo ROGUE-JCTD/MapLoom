@@ -295,7 +295,8 @@
     'no_layers_notification': 'Generating a notification requires a GeoGit layer to function.  ' +
         'Please add a GeoGit layer to the map.',
     'single_sync': 'Perform Synchronization',
-    'continuous_sync': 'Toggle Auto-Synchronization'
+    'continuous_sync': 'Toggle Auto-Synchronization',
+    'statistics_view': 'View Statistics'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

@@ -80,6 +80,9 @@
     <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-fire"></i>
     </button>
+    <button type="button" class="btn btn-default table-btn" ng-click="showStatistics()" tooltip="{{'statistics_view' | translate}}" tooltip-append-to-body="true">
+      <i class="glyphicon glyphicon-stats"></i>
+    </button>
     <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
             ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"
             tooltip="{{'previous_page' | translate}}" tooltip-append-to-body="true">

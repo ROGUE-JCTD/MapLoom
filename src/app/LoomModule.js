@@ -21,6 +21,7 @@
     'loom_merge',
     'loom_sync',
     'loom_legend',
+    'loom_statistics',
     'loom_table_view',
     'loom_utils',
     'loom_refresh',
