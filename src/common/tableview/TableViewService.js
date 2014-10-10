@@ -88,9 +88,8 @@
       console.log('metadata', metadata);
       for (var attrName in filters) {
         var searchType = filters[attrName].searchType;
-        console.log('filter type', searchType);
+        //console.log('filters[attrName]', filters[attrName]);
 
-        var schemaType = metadata.schema[attrName]._type;
         if (filters[attrName].filter !== '') {
           if (searchType === 'strContains') {
             xml +=
@@ -105,20 +104,19 @@
                 '<ogc:Literal>' + filters[attrName].filter + '</ogc:Literal>' +
                 '</ogc:PropertyIsEqualTo>';
           } else if (searchType === 'numRange') {
-            if (schemaType === 'xsd:int' || schemaType === 'xsd:integer' || schemaType === 'xsd:decimal' ||
-                schemaType === 'xsd:double') {
+            if (goog.isDefAndNotNull(filters[attrName].start)) {
               xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
                   '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
-                  '</ogc:PropertyIsGreaterThanOrEqualTo>' +
-                  '<ogc:PropertyIsLessThan>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>';
+            }
+            if (goog.isDefAndNotNull(filters[attrName].end)) {
+              xml += '<ogc:PropertyIsLessThan>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + metadata.filters[attrName].end + '</ogc:Literal>' +
+                  '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
                   '</ogc:PropertyIsLessThan>';
             }
           }
-          //for number types use equalTo
-          //datetime, use between
         }
       }
       xml += '</And>' +

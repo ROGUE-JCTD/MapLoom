@@ -41,7 +41,8 @@
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <div ng-switch-when="datetime">
                   <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
-                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties" date-key="attr.name" default-date="false" seperate-time="false"></datetimepicker>
+                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties"
+                        date-key="attr.name" default-date="false" seperate-time="false"></datetimepicker>
               </div>
               <div ng-switch-default class="input-group">
                 <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name]}}</span>
@@ -80,17 +81,19 @@
     <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-fire"></i>
     </button>
-    <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
-            ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"
-            tooltip="{{'previous_page' | translate}}" tooltip-append-to-body="true">
-      <i class="glyphicon glyphicon-chevron-left"></i>
-    </button>
-    <div class="table-page-indicator">{{getPageText()}}</div>
-    <button id='next-page-btn' type="button" class="btn btn-default table-btn"
-            ng-controller="next-tt-controller" ng-click="onNext()" ng-disabled="currentPage == totalPages"
-            tooltip="{{'next_page' | translate}}" tooltip-append-to-body="true">
-      <i class="glyphicon glyphicon-chevron-right"></i>
-    </button>
+    <!--<div id="table-page-nav">-->
+        <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
+                ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"
+                tooltip="{{'previous_page' | translate}}" tooltip-append-to-body="true">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+        </button>
+        <div class="table-page-indicator">{{getPageText()}}</div>
+        <button id='next-page-btn' type="button" class="btn btn-default table-btn"
+                ng-controller="next-tt-controller" ng-click="onNext()" ng-disabled="currentPage == totalPages"
+                tooltip="{{'next_page' | translate}}" tooltip-append-to-body="true">
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </button>
+    <!--</div>-->
     <button type="button" class="btn btn-default table-btn pull-right" ng-click="cancel()">{{'close_btn' | translate}}</button>
   </form>
 </div>

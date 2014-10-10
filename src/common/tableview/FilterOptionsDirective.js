@@ -13,16 +13,14 @@
           link: function(scope, element) {
             console.log('attribute', scope.attribute);
 
-            /*scope.$on(
-                'click.bs.dropdown.data-api',
-                function(e) { e.stopPropagation(); }
-            );
-            element.on('click', '.filter-option', function(e) {
-              console.log('e', e.isPropagationStopped());
-              //e.stopPropagation(); // This replace if conditional.
-              //e.preventDefault();
-              console.log('e', e.isPropagationStopped());
-            });*/
+            if (scope.typeRestriction === 'int' || scope.typeRestriction === 'double') {
+              scope.filterType = 'number';
+            } else if (scope.typeRestriction === 'datetime' || scope.typeRestriction === 'date' ||
+                scope.typeRestriction === 'time') {
+              scope.filterType = 'date';
+            } else {
+              scope.filterType = 'text';
+            }
 
             scope.exactMatch = function() {
               scope.attribute.filter.searchType = 'exactMatch';
@@ -32,6 +30,20 @@
             };
             scope.numRange = function() {
               scope.attribute.filter.searchType = 'numRange';
+            };
+
+            scope.updateFilterText = function() {
+              var filter = scope.attribute.filter;
+              if (goog.isDefAndNotNull(filter.start) && filter.start !== '' &&
+                  goog.isDefAndNotNull(filter.end) && filter.end !== '') {
+                filter.filter = filter.start + ' to ' + filter.end;
+              } else if (goog.isDefAndNotNull(filter.start) && filter.start !== '') {
+                filter.filter = filter.start + ' to max';
+              } else if (goog.isDefAndNotNull(filter.end) && filter.end !== '') {
+                filter.filter = 'min to ' + filter.end;
+              } else {
+                filter.filter = '';
+              }
             };
           }
         };
