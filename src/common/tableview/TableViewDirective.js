@@ -187,15 +187,16 @@
 
             scope.showStatistics = function() {
               scope.isGettingStatistics = true;
-              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11]).then(function() {
-                scope.isGettingStatistics = false;
-                // Show timer on the button, then show once getStatistics is finished.
-                $('#statistics-view-window').modal('show');
-              var statistics = statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11]);
-                $rootScope.$broadcast('getStatistics', statistics);
-              }, function(reject) {
-                scope.isGettingStatistics = false;
-              });
+              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11])
+                  .then(function(statistics) {
+                    scope.isGettingStatistics = false;
+                    // Show timer on the button, then show once getStatistics is finished.
+                    $('#statistics-view-window').modal('show');
+                    console.log('stats_object>>>', statistics);
+                    $rootScope.$broadcast('getStatistics', statistics);
+                  }, function(reject) {
+                    scope.isGettingStatistics = false;
+                  });
             };
 
             scope.getPageText = function() {

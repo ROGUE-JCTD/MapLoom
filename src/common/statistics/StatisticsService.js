@@ -16,7 +16,7 @@
     this.getBarData = function(layer, field) {
       return [
         {bin: 'Station 1', value: 98},
-       {bin: 'Station 2', value: 96},
+        {bin: 'Station 2', value: 96},
         {bin: 'Station 3', value: 75},
         {bin: 'Station 4', value: 48}
       ];
@@ -27,8 +27,7 @@
         type: 'number',
         populatedCount: 1462,
         totalCount: 2043,
-        unqiueValues: {
-          '10.5': 23
+        uniqueValues: {
         },
         min: 36.618,
         max: 86.2747,
@@ -39,6 +38,10 @@
         stdDev: 15.324,
         coefficient: 0.0123
       };
+
+      for (i = 0; i < 4; i++) {
+        number.uniqueValues[i] = Math.floor((Math.random() * 100) + 1);
+      }
 
       strStats = {
         type: 'string',
@@ -78,8 +81,7 @@
       var statistics = {};
       statistics.field = field;
       statistics.fieldname = field.name;
-      statistics.barData = service_.getBarData(layer, field);
-      statistics.summaryStatistics = service_.getSummaryStatistics(layer, field);
+      statistics.statistics = service_.getSummaryStatistics(layer, field);
 
       deferred.resolve(statistics);
       return deferred.promise;
