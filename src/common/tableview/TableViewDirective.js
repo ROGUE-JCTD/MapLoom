@@ -72,6 +72,7 @@
           templateUrl: 'tableview/partial/tableview.tpl.html',
           link: function(scope, element) {
             scope.isSaving = false;
+            scope.isGettingStatistics = false;
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -185,9 +186,16 @@
             };
 
             scope.showStatistics = function() {
-              $('#statistics-view-window').modal('show');
+              scope.isGettingStatistics = true;
+              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11]).then(function() {
+                scope.isGettingStatistics = false;
+                // Show timer on the button, then show once getStatistics is finished.
+                $('#statistics-view-window').modal('show');
               var statistics = statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11]);
-              $rootScope.$broadcast('getStatistics', statistics);
+                $rootScope.$broadcast('getStatistics', statistics);
+              }, function(reject) {
+                scope.isGettingStatistics = false;
+              });
             };
 
             scope.getPageText = function() {

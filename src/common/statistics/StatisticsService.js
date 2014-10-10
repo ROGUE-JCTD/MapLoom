@@ -36,13 +36,16 @@
     };
 
     this.getStatistics = function(layer, field) {
+      var deferred = q_.defer();
+
       var statistics = {};
       statistics.field = field;
       statistics.fieldname = field.name;
       statistics.barData = service_.getBarData(layer, field);
       statistics.summaryStatistics = service_.getSummaryStatistics(layer, field);
 
-      return statistics;
+      deferred.resolve(statistics);
+      return deferred.promise;
     };
 
 
