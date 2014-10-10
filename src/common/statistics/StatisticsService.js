@@ -15,24 +15,61 @@
 
     this.getBarData = function(layer, field) {
       return [
-        {name: 'Station 1', score: 98},
-        {name: 'Station 2', score: 96},
-        {name: 'Station 3', score: 75},
-        {name: 'Station 4', score: 48}
+        {bin: 'Station 1', value: 98},
+       {bin: 'Station 2', value: 96},
+        {bin: 'Station 3', value: 75},
+        {bin: 'Station 4', value: 48}
       ];
     };
 
     this.getSummaryStatistics = function(layer, field) {
-      return {
-        count: 1462,
-        unqiueValues: 1091,
+      number = {
+        type: 'number',
+        populatedCount: 1462,
+        totalCount: 2043,
+        unqiueValues: {
+          '10.5': 23
+        },
         min: 36.618,
         max: 86.2747,
         range: 49.6567,
         sum: 106165,
         mean: 72.6165,
-        median: 74.2404
+        median: 74.2404,
+        stdDev: 15.324,
+        coefficient: 0.0123
       };
+
+      strStats = {
+        type: 'string',
+        count: 13,
+        uniqueValueCounts: {
+          'In Progress': 12,
+          'Finalized': 1100
+        }
+      };
+
+      dateStats = {
+        type: 'date',
+        count: 13,
+        uniqueValueCounts: {
+          '12321323434': 11,
+          '12321323423': 23
+        },
+        min: 12321323423,
+        max: 12321323434,
+        range: 49.6567,
+        // sum will likely not make sense in date/time/datetime cases
+        sum: 106165,
+        // delta in ms
+        mean: 72.6165,
+        median: 74.2404,
+        stdDev: 15.324,
+        coefficient: 0.0123
+      };
+
+      return number;
+
     };
 
     this.getStatistics = function(layer, field) {
