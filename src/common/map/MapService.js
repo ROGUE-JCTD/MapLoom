@@ -255,6 +255,74 @@
       view.fitExtent(extent, map.getSize());
     };
 
+    this.summarizeAttribute = function(layer, filters, attributeName) {
+      var deferredResponse = q_.defer();
+
+      if (!goog.isDefAndNotNull(layer)) {
+        deferredResponse.resolve();
+        return deferredResponse.promise;
+      }
+
+      var wfsPayload = tableViewService_.getFeaturesPostPayloadXML(layer, filters, null, null, null, true);
+      console.log('wfsPayload: ', wfsPayload);
+
+      if (!service_.layerIsEditable(layer)) {
+        var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
+
+        var wpsPostData = '' +
+            '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+            'xmlns="http://www.opengis.net/wps/1.0.0" ' +
+            'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ' +
+            'xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" ' +
+            'xmlns:ogc="http://www.opengis.net/ogc" ' +
+            'xmlns:wcs="http://www.opengis.net/wcs/1.1.1" ' +
+            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+            'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ' +
+            'http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">' +
+            '<ows:Identifier>py:summarize_attrib</ows:Identifier>' +
+            '<wps:DataInputs>' +
+            '<wps:Input>' +
+            '<ows:Identifier>features</ows:Identifier>' +
+            '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
+            '<wps:Body>' +
+            wfsPayload +
+            '</wps:Body>' +
+            '</wps:Reference>' +
+            '</wps:Input>' +
+            '</wps:DataInputs>' +
+            '<wps:ResponseForm>' +
+            '<wps:RawDataOutput>' +
+            '<ows:Identifier>result</ows:Identifier>' +
+            '</wps:RawDataOutput>' +
+            '</wps:ResponseForm>' +
+            '</wps:Execute>';
+
+        httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
+          console.log('----[ mapService.summarizeAttribute.success', data, status, headers, config);
+          var x2js = new X2JS();
+          var json = x2js.xml_str2json(data);
+          if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
+              goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
+            console.log('----[ Warning: summarizeAttribute failed', data, status, headers, config);
+            deferredResponse.resolve();
+            return;
+          }
+          console.log('----[ summarizeAttribute.accepted', data, status, headers, config);
+          deferredResponse.resolve();
+        }).error(function(data, status, headers, config) {
+          console.log('----[ Warning: mapService.summarizeAttribute error', data, status, headers, config);
+          deferredResponse.resolve();
+        });
+
+      } else {
+        console.log('--------- invalid layer type');
+        deferredResponse.resolve();
+      }
+      return deferredResponse.promise;
+    };
+
+
     this.zoomToLayerFeatures = function(layer) {
       var deferredResponse = q_.defer();
 

@@ -54,7 +54,7 @@
       return this.loadData();
     };
 
-    function getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage) {
+    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
       var paginationParamsStr = '';
       if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
         paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
@@ -68,8 +68,12 @@
       }
 
       var metadata = layer.get('metadata');
-      var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
-          '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
+      var xml = '';
+      if (!goog.isDefAndNotNull(exclude_header) || exclude_header === false) {
+        xml += '<?xml version="1.0" encoding="UTF-8"?>';
+      }
+
+      xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
           ' outputFormat="JSON"' +
           bboxStr +
           paginationParamsStr +
@@ -127,7 +131,7 @@
           '</wfs:GetFeature>';
 
       return xml;
-    }
+    };
 
     //TODO: add bbox to filters.geom instead
     this.getFeaturesWfs = function(layer, filters, bbox, resultsPerPage, currentPage) {
@@ -136,7 +140,7 @@
 
       var metadata = layer.get('metadata');
       var postURL = metadata.url + '/wfs/WfsDispatcher';
-      var xmlData = getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
+      var xmlData = service_.getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
       console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {
         headers: {
@@ -185,8 +189,8 @@
       }
 
       var postURL = this.selectedLayer.get('metadata').url + '/wfs/WfsDispatcher';
-      var xmlData = getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null, service_.resultsPerPage,
-          service_.currentPage);
+      var xmlData = service_.getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null,
+          service_.resultsPerPage, service_.currentPage);
       console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {headers: {
         'Content-Type': 'text/xml;charset=utf-8'

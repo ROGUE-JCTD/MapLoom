@@ -186,8 +186,12 @@
             };
 
             scope.showStatistics = function() {
-              scope.isGettingStatistics = true;
-              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11])
+              var meta = tableViewService.selectedLayer.get('metadata');
+              mapService.summarizeAttribute(tableViewService.selectedLayer, meta.filters, scope.attributes[1]);
+
+              /*
+              mapService.summarizeAttribute();
+              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[1])
                   .then(function(statistics) {
                     scope.isGettingStatistics = false;
                     // Show timer on the button, then show once getStatistics is finished.
@@ -196,6 +200,7 @@
                   }, function(reject) {
                     scope.isGettingStatistics = false;
                   });
+              */
             };
 
             scope.getPageText = function() {
