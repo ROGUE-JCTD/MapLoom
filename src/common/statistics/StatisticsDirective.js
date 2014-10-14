@@ -246,21 +246,12 @@
                   .attr('fill', function(d, i) {
                     return color(i);})
                   .classed('pie-chart-slice black-stroke', true)
-                  .attr('tooltip-append-to-body', true)
-                  .attr('tooltip', function(d) {
-                    return d.key;
-                  })
                   .attr('id', function(d, index) {
                     return 'pie-chart-slice-path-' + index;})
                   .attr('d', function(d) {
                     console.log(arc(d));
                     return arc(d);
                   });
-
-              $('.pie-chart-slice').tooltip({
-                'container': 'body',
-                'placement': 'bottom'
-              });
 
               if (labelSlices) {
                 arcs.append('text')
@@ -280,14 +271,11 @@
               var addSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
                 d3.select(target).classed(sliceHoverClass, true);
-                $(target).tooltip({title: 'test'});
-                $(target).tooltip('show');
               };
 
               var removeSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
                 d3.select(target).classed(sliceHoverClass, false);
-                $(target).tooltip('hide');
               };
 
               for (var index = 0; index < data.length; index++) {
