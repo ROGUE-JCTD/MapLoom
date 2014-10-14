@@ -2,5 +2,27 @@
   <div class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isExecuting"></div>
       <h4>Statistics for <b>{{data.fieldname}}</b>.</h4>
       <!--<div loom-statistics-bar-graph bar-height="20" bar-padding="5" margin="300" data="{{data.barData}}"></div>-->
-      <div loom-statistics-pie-chart id="loom-statistics-pie-chart"></div>
+      <div class="btn-group-wrap pull-left">
+        <div class="btn-group">
+          <a type="button" ng-click="selectChart('bar')" tooltip-append-to-body="true" ng-show="fieldTypeSupportsHistogram(data.statistics.type)"
+             tooltip-placement="top" tooltip="{{'view_histogram' | translate}}"
+             class="btn btn-sm btn-default" ng-class="{disabled: isSelected('bar')}">
+            <i class="glyphicon glyphicon-stats"></i>
+          </a>
+          <a type="button" ng-click="selectChart('pie')" ng-show="fieldTypeSupportsHistogram(data.statistics.type)"
+             class="btn btn-sm btn-default" tooltip-append-to-body="true"
+             tooltip-placement="top" tooltip="{{'show_pie_chart' | translate}}" ng-class="{disabled: isSelected('pie')}">
+            <i class="glyphicon glyphicon-adjust"></i>
+          </a>
+          <a type="button" ng-click="selectChart('date_heatmap')" ng-show="fieldTypeSupportsDateHeatMap(data.statistics.type)"
+             class="btn btn-sm btn-default" tooltip-append-to-body="true"
+             tooltip-placement="top" tooltip="{{'show_date_heatmap' | translate}}" ng-class="{disabled: isSelected('date_heatmap')}">
+            <div class="loom-loading" spinner-radius="16"></div>
+        <i class="glyphicon glyphicon-calendar"></i>
+        </a>
+        </div>
+      </div>
+      <div id="statistics-chart-area">
+        <div loom-statistics-pie-chart id="loom-statistics-pie-chart" ng-show="isSelected('pie')"></div>
+      </div>
 </div>

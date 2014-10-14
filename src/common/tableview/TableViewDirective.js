@@ -192,7 +192,6 @@
                     scope.isGettingStatistics = false;
                     // Show timer on the button, then show once getStatistics is finished.
                     $('#statistics-view-window').modal('show');
-                    console.log('stats_object>>>', statistics);
                     $rootScope.$broadcast('getStatistics', statistics);
                   }, function(reject) {
                     scope.isGettingStatistics = false;

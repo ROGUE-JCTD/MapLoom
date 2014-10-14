@@ -11,6 +11,7 @@
 
             var resetVariables = function() {
               scope.data = null;
+              scope.selectedChartType = 'pie';
             };
 
             resetVariables();
@@ -39,6 +40,30 @@
             }
 
             $(window).resize(resizeModal);
+
+            scope.fieldTypeSupportsHistogram = function(fieldType) {
+              if (goog.isDefAndNotNull(fieldType)) {
+                return true;
+              }
+              return false;
+            };
+
+            scope.fieldTypeSupportsDateHeatMap = function(fieldType) {
+              if (goog.isDefAndNotNull(fieldType)) {
+                if (fieldType === 'date' || fieldType === 'datetime') {
+                  return true;
+                }
+              }
+              return false;
+            };
+
+            scope.selectChart = function(chartType) {
+              scope.selectedChartType = chartType;
+            };
+
+            scope.isSelected = function(chartType) {
+              return scope.selectedChartType === chartType;
+            };
 
           }
         };
@@ -74,7 +99,7 @@
                 return;
               }
 
-              var width = d3.select(element[0]).node().offsetWidth + margin,
+              var width = d3.select(element[0]).node().getBBox.width,
                   height = data.length * (barHeight + barPadding),
                   color = d3.scale.category20(),
                   xScale = d3.scale.linear()
@@ -130,6 +155,7 @@
             //var barHeight = parseInt(attrs.barHeight, 10) || 20;
             //var barPadding = parseInt(attrs.barPadding, 10) || 5;
             //var labelColor = attrs.labelColor || 'black';
+            var labelSlices = false;
 
             //d3.select(element[0])
 
@@ -153,23 +179,59 @@
                 scope.reset();
               }
 
-              var margin = {top: 10, bottom: 10, left: 10, right: 10};
+              var margin = {top: 30, bottom: 30, left: 10, right: 10};
               //var w = width - margin.left - margin.right;
-              var divWidth = 550 / 2;
-              var h = 300 - margin.top - margin.bottom;
-              var r = (h - 20) / 2;
+              // get the width of the parent div with this (after everything has rendered)
+              // d3.select('#statistics-chart-area').node().offsetWidth
+              var divWidth = 538;
+              var divHeight = 300;
+              var chartHeight = divHeight - margin.top - margin.bottom;
+              var r = chartHeight / 2;
               var color = d3.scale.category20();
 
               data = d3.entries(data);
+
+              var legendDiv = d3.select(element[0])
+                  .append('div')
+                  .attr('class', 'pie-chart-legend');
+
+              var legend = legendDiv
+                  .append('table')
+                  .attr('class', 'pie-chart-legend-table');
+
+              var tr = legend.append('tbody')
+                  .selectAll('tr')
+                  .data(data)
+                  .enter()
+                  .append('tr')
+                  .attr('id', function(d, index) {
+                    return 'pie-legend-row-' + index;
+                  });
+
+              tr.append('td')
+                  .append('svg')
+                  .attr('width', '16')
+                  .attr('height', '16')
+                  .append('rect')
+                  .attr('width', '16')
+                  .attr('height', '16')
+                  .attr('fill', function(d, i) {
+                    return color(i);
+                  });
+
+              tr.append('td').text(function(d) {
+                return d.key;
+              })
+                  .classed('pie-chart-legend-text', true);
 
               var svg = d3.select(element[0])
                   .append('svg:svg')
                   .attr('id', 'pie-chart')
                   .data([data])
-                  .attr('width', '100%')
-                  .attr('height', h)
-                  .append('svg:g')
-                  .attr('transform', 'translate(' + divWidth / 2 + ',' + r + ')');
+                  .attr('width', divWidth)
+                  .attr('height', divHeight)
+                  .append('svg:g').
+                  attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')');
 
               var w = $('#pie-chart').width();
               console.log('WDITH:', w);
@@ -185,7 +247,7 @@
               arcs.append('path')
                   .attr('fill', function(d, i) {
                     return color(i);})
-                  .classed({'pie-chart-slice': true, 'black-stroke': true})
+                  .classed('pie-chart-slice black-stroke', true)
                   .attr('tooltip-append-to-body', true)
                   .attr('tooltip', function(d) {
                     return d.key;
@@ -197,31 +259,36 @@
                     return arc(d);
                   });
 
-              arcs.append('text')
-                  .classed({'pie-chart-text': true, 'no-select': true})
-                  .attr('id', function(d, index) {
-                    return 'pie-chart-slice-text-' + index;})
-                  .attr('transform', function(d) {
-                    d.innerRadius = 0;
-                    d.outerRadius = r;
-                    return 'translate(' + arc.centroid(d) + ')';}).attr('text-anchor', 'middle').text(function(d, i) {
-                    return data[i].key;}
-                  );
+              $('.pie-chart-slice').tooltip({
+                'container': 'body',
+                'placement': 'bottom'
+              });
+
+              if (labelSlices) {
+                arcs.append('text')
+                    .classed('pie-chart-text no-select', true)
+                    .attr('id', function(d, index) {
+                      return 'pie-chart-slice-text-' + index;})
+                    .attr('transform', function(d) {
+                      d.innerRadius = 0;
+                      d.outerRadius = r;
+                      return 'translate(' + arc.centroid(d) + ')';})
+                    .attr('text-anchor', 'middle')
+                    .text(function(d, i) {
+                      return data[i].key;}
+                    );
+              }
 
               var addSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
-                classes = {};
-                classes[sliceHoverClass] = true;
-                d3.select(target).classed(classes);
+                d3.select(target).classed(sliceHoverClass, true);
                 $(target).tooltip({title: 'test'});
                 $(target).tooltip('show');
               };
 
               var removeSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
-                classes = {};
-                classes[sliceHoverClass] = false;
-                d3.select(target).classed(classes);
+                d3.select(target).classed(sliceHoverClass, false);
                 $(target).tooltip('hide');
               };
 
