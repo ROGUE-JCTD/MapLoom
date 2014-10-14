@@ -35,8 +35,6 @@
               var bodyHeight = contentHeight;// - angular.element('#table-view-window .modal-footer')[0].clientHeight;
               angular.element('#statistics-view-window .modal-body')[0].style.height = bodyHeight + 'px';
 
-              //resize the panel to account for the filter text box and padding
-              angular.element('#statistics-view-window .panel')[0].style.height = bodyHeight - 134 + 'px';
             }
 
             $(window).resize(resizeModal);
