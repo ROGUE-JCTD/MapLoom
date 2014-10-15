@@ -4,9 +4,9 @@
       <!--<div loom-statistics-bar-graph bar-height="20" bar-padding="5" margin="300" data="{{data.barData}}"></div>-->
       <div class="btn-group-wrap pull-left">
         <div class="btn-group">
-          <a type="button" ng-click="selectChart('bar')" tooltip-append-to-body="true" ng-show="fieldTypeSupportsHistogram(data.statistics.type)"
+          <a type="button" ng-click="selectChart('histogram')" tooltip-append-to-body="true" ng-show="fieldTypeSupportsHistogram(data.statistics.type)"
              tooltip-placement="top" tooltip="{{'view_histogram' | translate}}"
-             class="btn btn-sm btn-default" ng-class="{disabled: isSelected('bar')}">
+             class="btn btn-sm btn-default" ng-class="{disabled: isSelected('histogram')}">
             <i class="glyphicon glyphicon-stats"></i>
           </a>
           <a type="button" ng-click="selectChart('pie')" ng-show="fieldTypeSupportsHistogram(data.statistics.type)"
@@ -24,5 +24,6 @@
       </div>
       <div id="statistics-chart-area">
         <div loom-statistics-pie-chart id="loom-statistics-pie-chart" ng-show="isSelected('pie')"></div>
+        <div loom-statistics-bar-graph id="loom-statistics-bar-chart" ng-show="isSelected('histogram')"></div>
       </div>
 </div>

@@ -25,7 +25,7 @@
               var headerHeight = angular.element('#statistics-view-window .modal-header')[0].clientHeight;
 
               var contentHeight = containerHeight - headerHeight;
-              //if conatainerHeight is 0 then the modal is closed so we shouldn't bother resizing
+
               if (containerHeight === 0) {
                 return;
               }
@@ -73,18 +73,18 @@
           restrict: 'EA',
 
           link: function(scope, element, attrs) {
-            var margin = parseInt(attrs.margin, 10) || 20;
-            var barHeight = parseInt(attrs.barHeight, 10) || 20;
-            var barPadding = parseInt(attrs.barPadding, 10) || 5;
-            var labelColor = attrs.labelColor || 'black';
+            //var margin = parseInt(attrs.margin, 10) || 20;
+            //var barHeight = parseInt(attrs.barHeight, 10) || 20;
+            //var barPadding = parseInt(attrs.barPadding, 10) || 5;
+            //var labelColor = attrs.labelColor || 'black';
 
             var svg = d3.select(element[0])
                 .append('svg')
                 .style('width', '100%');
 
             scope.$watch('data', function(newVals, oldVals) {
-              if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals.barData)) {
-                scope.render(newVals.barData);
+              if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
+                scope.render(newVals);
               }
             }, true);
 
@@ -93,51 +93,44 @@
 
               console.log('>>> Rendering bar chart data: ', data);
 
-              if (!data) {
+              if (!data || !(goog.isDefAndNotNull(data.statistics) &&
+                  goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 return;
               }
 
-              var width = d3.select(element[0]).node().getBBox.width,
-                  height = data.length * (barHeight + barPadding),
-                  color = d3.scale.category20(),
-                  xScale = d3.scale.linear()
-                      .domain([0, d3.max(data, function(d) {
-                        return d.score;
-                      })])
-                      .range([0, width]);
+              var margin = {top: 30, bottom: 30, left: 10, right: 10};
+              var barPadding = 8;
+
+              histogram = d3.entries(data.statistics.uniqueValues);
+
+              var divWidth = 538;
+              var chartWidth = divWidth - (margin.left - margin.right);
+              var width = (chartWidth / histogram.length) - barPadding;
+              var height = 300;
+              var color = d3.scale.category20();
+              var yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max]).range([height, 0]);
+
 
               // set the height based on the calculations above
               svg.attr('height', height);
 
               //create the rectangles for the bar chart
               svg.selectAll('rect')
-                  .data(data).enter()
+                  .data(histogram).enter()
                   .append('rect')
-                  .attr('height', barHeight)
-                  .attr('width', 300)
-                  .attr('x', Math.round(margin / 2))
-                  .attr('y', function(d, i) {
-                    return i * (barHeight + barPadding);
+                  .classed('black-stroke', true)
+                  .attr('height', function(d) { return height - yScale(d.value); })
+                  .attr('width', width)
+                  .attr('y', function(d) {
+                    return yScale(d.value);
                   })
-                  .attr('fill', function(d) { return color(d.score); })
-                  .attr('width', function(d) {
-                    return xScale(d.score);
-                  });
-
-              svg.selectAll('text')
-                  .data(data)
-                  .enter()
-                  .append('text')
-                  .attr('fill', labelColor)
-                  .attr('y', function(d, i) {
-                    return i * (barHeight + barPadding) + 15;
+                  .attr('x', function(d, i) {
+                    return i * (width + barPadding);
                   })
-                  .attr('x', 15)
-                  .text(function(d) {
-                    return d.name + ' (scored: ' + d.score + ')';
+                  .attr('fill', function(d) {
+                    return color(d.value);
                   });
             };
-
           }
         };
       });
@@ -158,10 +151,8 @@
             //d3.select(element[0])
 
             scope.$watch('data', function(newVals, oldVals) {
-              console.log('>>> Data has changed: ', newVals);
-              if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals.statistics) &&
-                  goog.isDefAndNotNull(newVals.statistics.uniqueValues)) {
-                scope.render(newVals.statistics.uniqueValues);
+              if (goog.isDefAndNotNull(newVals)) {
+                scope.renders(newVals);
               }
             }, true);
 
@@ -169,12 +160,12 @@
               $('#pie-chart').remove();
             };
 
-            scope.render = function(data) {
+            scope.renders = function(data) {
 
-              if (!data) {
-                return;
-              } else {
+              if (!data || !(goog.isDefAndNotNull(data.statistics) &&
+                  goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 scope.reset();
+                return;
               }
 
               var margin = {top: 30, bottom: 30, left: 10, right: 10};
@@ -187,7 +178,7 @@
               var r = chartHeight / 2;
               var color = d3.scale.category20();
 
-              data = d3.entries(data);
+              uniqueValues = d3.entries(data.statistics.uniqueValues);
 
               var legendDiv = d3.select(element[0])
                   .append('div')
@@ -199,7 +190,7 @@
 
               var tr = legend.append('tbody')
                   .selectAll('tr')
-                  .data(data)
+                  .data(uniqueValues)
                   .enter()
                   .append('tr')
                   .attr('id', function(d, index) {
@@ -225,7 +216,7 @@
               var svg = d3.select(element[0])
                   .append('svg:svg')
                   .attr('id', 'pie-chart')
-                  .data([data])
+                  .data([uniqueValues])
                   .attr('width', divWidth)
                   .attr('height', divHeight)
                   .append('svg:g').
@@ -264,7 +255,7 @@
                       return 'translate(' + arc.centroid(d) + ')';})
                     .attr('text-anchor', 'middle')
                     .text(function(d, i) {
-                      return data[i].key;}
+                      return uniqueValues[i].key;}
                     );
               }
 
@@ -278,7 +269,7 @@
                 d3.select(target).classed(sliceHoverClass, false);
               };
 
-              for (var index = 0; index < data.length; index++) {
+              for (var index = 0; index < uniqueValues.length; index++) {
                 var pathSelector = '#pie-chart-slice-path-' + index;
                 $(pathSelector).hover(addSliceHoverClasses, removeSliceHoverClasses);
               }
