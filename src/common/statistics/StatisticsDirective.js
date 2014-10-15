@@ -11,7 +11,7 @@
 
             var resetVariables = function() {
               scope.data = null;
-              scope.selectedChartType = 'pie';
+              scope.selected = 'pie';
             };
 
             resetVariables();
@@ -56,60 +56,84 @@
             };
 
             scope.selectChart = function(chartType) {
-              scope.selectedChartType = chartType;
+              return scope.selected = chartType;
             };
 
             scope.isSelected = function(chartType) {
-              return scope.selectedChartType === chartType;
+              return scope.selected === chartType;
             };
 
           }
         };
       });
 
-  module.directive('loomStatisticsBarGraph',
+  module.directive('loomStatisticsChart',
       function() {
         return {
           restrict: 'EA',
 
           link: function(scope, element, attrs) {
-            //var margin = parseInt(attrs.margin, 10) || 20;
-            //var barHeight = parseInt(attrs.barHeight, 10) || 20;
-            //var barPadding = parseInt(attrs.barPadding, 10) || 5;
-            //var labelColor = attrs.labelColor || 'black';
-
-            var svg = d3.select(element[0])
-                .append('svg')
-                .style('width', '100%');
+            var divWidth = 538;
+            var divHeight = 300;
+            var margin = {top: 30, bottom: 30, left: 70, right: 10};
 
             scope.$watch('data', function(newVals, oldVals) {
               if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
-                scope.render(newVals);
+                scope.data = newVals;
+                scope.render();
               }
             }, true);
 
-            scope.render = function(data) {
-              svg.selectAll('*').remove();
+            scope.$watch('selected', function(newVals, oldVals) {
+              console.log('Selected: ', scope.selected);
+              scope.render();
+            }, true);
 
-              console.log('>>> Rendering bar chart data: ', data);
+            scope.render = function() {
+              if (scope.selected === 'pie') {
+                return scope.renderPieChart();
+              }
+              return scope.renderHistogram();
+            };
+
+            scope.clearData = function() {
+              d3.select(element[0]).selectAll('*').remove();
+            };
+
+            scope.color = function() {
+              return d3.scale.category20();
+            };
+
+            scope.renderHistogram = function() {
+              var data = scope.data;
+              scope.clearData();
 
               if (!data || !(goog.isDefAndNotNull(data.statistics) &&
                   goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 return;
               }
 
-              var margin = {top: 30, bottom: 30, left: 10, right: 10};
               var barPadding = 8;
-
-              histogram = d3.entries(data.statistics.uniqueValues);
-
-              var divWidth = 538;
-              var chartWidth = divWidth - (margin.left - margin.right);
+              var histogram = d3.entries(data.statistics.uniqueValues);
+              var chartWidth = divWidth + margin.left + margin.right;
               var width = (chartWidth / histogram.length) - barPadding;
               var height = 300;
-              var color = d3.scale.category20();
+              var color = scope.color();
               var yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max]).range([height, 0]);
+              var sliceHoverClass = 'path-red-fill';
 
+              var svg = d3.select(element[0])
+                  .append('svg:svg')
+                  .attr('width', '100%');
+
+              var yAxis = d3.svg.axis()
+                  .scale(yScale)
+                  .orient('left');
+
+              svg.append('g')
+                  .attr('class', 'x axis')
+                  .attr('transform', 'translate(' + width + ',0)')
+                  .call(yAxis);
 
               // set the height based on the calculations above
               svg.attr('height', height);
@@ -118,100 +142,58 @@
               svg.selectAll('rect')
                   .data(histogram).enter()
                   .append('rect')
+                  .attr('id', function(d, index) {
+                    return 'histogram-chart-slice-path-' + index;})
                   .classed('black-stroke', true)
                   .attr('height', function(d) { return height - yScale(d.value); })
                   .attr('width', width)
                   .attr('y', function(d) {
-                    return yScale(d.value);
+                    return yScale(d.value) + margin.top;
                   })
                   .attr('x', function(d, i) {
-                    return i * (width + barPadding);
+                    return i * (width + barPadding) + margin.left;
                   })
-                  .attr('fill', function(d) {
-                    return color(d.value);
-                  });
-            };
-          }
-        };
-      });
-
-  module.directive('loomStatisticsPieChart',
-      function() {
-        return {
-          restrict: 'EA',
-
-          link: function(scope, element, attrs) {
-            var sliceHoverClass = attrs['slice-hover-class'] || 'path-red-fill';
-            //var margin = parseInt(attrs.margin, 10) || 20;
-            //var barHeight = parseInt(attrs.barHeight, 10) || 20;
-            //var barPadding = parseInt(attrs.barPadding, 10) || 5;
-            //var labelColor = attrs.labelColor || 'black';
-            var labelSlices = false;
-
-            //d3.select(element[0])
-
-            scope.$watch('data', function(newVals, oldVals) {
-              if (goog.isDefAndNotNull(newVals)) {
-                scope.renders(newVals);
-              }
-            }, true);
-
-            scope.reset = function() {
-              $('#pie-chart').remove();
-            };
-
-            scope.renders = function(data) {
-
-              if (!data || !(goog.isDefAndNotNull(data.statistics) &&
-                  goog.isDefAndNotNull(data.statistics.uniqueValues))) {
-                scope.reset();
-                return;
-              }
-
-              var margin = {top: 30, bottom: 30, left: 10, right: 10};
-              //var w = width - margin.left - margin.right;
-              // get the width of the parent div with this (after everything has rendered)
-              // d3.select('#statistics-chart-area').node().offsetWidth
-              var divWidth = 538;
-              var divHeight = 300;
-              var chartHeight = divHeight - margin.top - margin.bottom;
-              var r = chartHeight / 2;
-              var color = d3.scale.category20();
-
-              uniqueValues = d3.entries(data.statistics.uniqueValues);
-
-              var legendDiv = d3.select(element[0])
-                  .append('div')
-                  .attr('class', 'pie-chart-legend');
-
-              var legend = legendDiv
-                  .append('table')
-                  .attr('class', 'pie-chart-legend-table');
-
-              var tr = legend.append('tbody')
-                  .selectAll('tr')
-                  .data(uniqueValues)
-                  .enter()
-                  .append('tr')
-                  .attr('id', function(d, index) {
-                    return 'pie-legend-row-' + index;
-                  });
-
-              tr.append('td')
-                  .append('svg')
-                  .attr('width', '16')
-                  .attr('height', '16')
-                  .append('rect')
-                  .attr('width', '16')
-                  .attr('height', '16')
                   .attr('fill', function(d, i) {
                     return color(i);
                   });
 
-              tr.append('td').text(function(d) {
-                return d.key;
-              })
-                  .classed('pie-chart-legend-text', true);
+              var addSliceHoverClasses = function(event) {
+                var target = '#' + event.currentTarget.id;
+                d3.select(target).classed(sliceHoverClass, true);
+              };
+
+              var removeSliceHoverClasses = function(event) {
+                var target = '#' + event.currentTarget.id;
+                d3.select(target).classed(sliceHoverClass, false);
+              };
+
+              for (var index = 0; index < uniqueValues.length; index++) {
+                var pathSelector = '#histogram-chart-slice-path-' + index;
+                $(pathSelector).hover(addSliceHoverClasses, removeSliceHoverClasses);
+              }
+
+              scope.renderLegend(uniqueValues);
+            };
+
+            scope.renderPieChart = function() {
+              var data = scope.data;
+              scope.clearData();
+              if (!data || !(goog.isDefAndNotNull(data.statistics) &&
+                  goog.isDefAndNotNull(data.statistics.uniqueValues))) {
+                return;
+              }
+
+              //var w = width - margin.left - margin.right;
+              // get the width of the parent div with this (after everything has rendered)
+              // d3.select('#statistics-chart-area').node().offsetWidth
+              var chartHeight = divHeight - margin.top - margin.bottom;
+              var r = chartHeight / 2;
+              var color = scope.color();
+              var sliceHoverClass = 'path-red-fill';
+
+              uniqueValues = d3.entries(data.statistics.uniqueValues);
+
+              scope.renderLegend(uniqueValues);
 
               var svg = d3.select(element[0])
                   .append('svg:svg')
@@ -219,8 +201,8 @@
                   .data([uniqueValues])
                   .attr('width', divWidth)
                   .attr('height', divHeight)
-                  .append('svg:g').
-                  attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')');
+                  .append('svg:g')
+                  .attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')');
 
               var w = $('#pie-chart').width();
               console.log('WDITH:', w);
@@ -244,21 +226,6 @@
                     return arc(d);
                   });
 
-              if (labelSlices) {
-                arcs.append('text')
-                    .classed('pie-chart-text no-select', true)
-                    .attr('id', function(d, index) {
-                      return 'pie-chart-slice-text-' + index;})
-                    .attr('transform', function(d) {
-                      d.innerRadius = 0;
-                      d.outerRadius = r;
-                      return 'translate(' + arc.centroid(d) + ')';})
-                    .attr('text-anchor', 'middle')
-                    .text(function(d, i) {
-                      return uniqueValues[i].key;}
-                    );
-              }
-
               var addSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
                 d3.select(target).classed(sliceHoverClass, true);
@@ -273,6 +240,47 @@
                 var pathSelector = '#pie-chart-slice-path-' + index;
                 $(pathSelector).hover(addSliceHoverClasses, removeSliceHoverClasses);
               }
+            };
+
+            scope.renderLegend = function(data) {
+
+              if (!goog.isDefAndNotNull(data)) {
+                return;
+              }
+
+              var color = scope.color();
+              var legendDiv = d3.select(element[0])
+                  .append('div')
+                  .attr('class', 'statistics-legend');
+
+              var legend = legendDiv
+                  .append('table')
+                  .attr('class', 'statistics-legend-table');
+
+              var tr = legend.append('tbody')
+                  .selectAll('tr')
+                  .data(data)
+                  .enter()
+                  .append('tr')
+                  .attr('id', function(d, index) {
+                    return scope.selected + 'legend-row-' + index;
+                  });
+
+              tr.append('td')
+                  .append('svg')
+                  .attr('width', '16')
+                  .attr('height', '16')
+                  .append('rect')
+                  .attr('width', '16')
+                  .attr('height', '16')
+                  .attr('fill', function(d, i) {
+                    return color(i);
+                  });
+
+              tr.append('td').text(function(d) {
+                return d.key;
+              })
+                  .classed('statistics-legend-text', true);
             };
           }
         };
