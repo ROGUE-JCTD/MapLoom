@@ -75,7 +75,7 @@
           link: function(scope, element, attrs) {
             var divWidth = 538;
             var divHeight = 300;
-            var margin = {top: 30, bottom: 30, left: 70, right: 10};
+            var margin = {top: 30, bottom: 30, left: 150, right: 10};
 
             scope.$watch('data', function(newVals, oldVals) {
               if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
@@ -113,30 +113,23 @@
                 return;
               }
 
-              var barPadding = 8;
               var histogram = d3.entries(data.statistics.uniqueValues);
               var chartWidth = divWidth + margin.left + margin.right;
-              var width = (chartWidth / histogram.length) - barPadding;
-              var height = 300;
+              var baseHeight = 300;
+              var chartHeight = baseHeight + margin.top - margin.bottom;
+              var height = baseHeight - margin.top - margin.bottom;
               var color = scope.color();
               var yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max]).range([height, 0]);
+              var xScale = d3.scale.ordinal().domain(d3.keys(data.statistics.uniqueValues))
+                  .rangeBands([margin.left + 10, chartWidth], 0.25, 0.25);
               var sliceHoverClass = 'path-red-fill';
 
               var svg = d3.select(element[0])
                   .append('svg:svg')
                   .attr('width', '100%');
 
-              var yAxis = d3.svg.axis()
-                  .scale(yScale)
-                  .orient('left');
-
-              svg.append('g')
-                  .attr('class', 'x axis')
-                  .attr('transform', 'translate(' + width + ',0)')
-                  .call(yAxis);
-
               // set the height based on the calculations above
-              svg.attr('height', height);
+              svg.attr('height', chartHeight);
 
               //create the rectangles for the bar chart
               svg.selectAll('rect')
@@ -145,17 +138,41 @@
                   .attr('id', function(d, index) {
                     return 'histogram-chart-slice-path-' + index;})
                   .classed('black-stroke', true)
-                  .attr('height', function(d) { return height - yScale(d.value); })
-                  .attr('width', width)
+                  .attr('width', xScale.rangeBand())
                   .attr('y', function(d) {
-                    return yScale(d.value) + margin.top;
+                    return yScale(d.value);
                   })
                   .attr('x', function(d, i) {
-                    return i * (width + barPadding) + margin.left;
+                    return xScale(d.key);
                   })
                   .attr('fill', function(d, i) {
                     return color(i);
-                  });
+                  })
+                  .transition().delay(function(d, i) { return i * 20;}).ease('quad').duration(300)
+                  .attr('height', function(d) { return height - yScale(d.value); });
+
+              var yAxis = d3.svg.axis()
+                  .scale(yScale)
+                  .orient('left');
+
+              svg.append('g')
+                  .attr('class', 'y axis')
+                  .attr('transform', 'translate(' + margin.left + ',0)')
+                  .call(yAxis)
+                  .selectAll('text')
+                  .classed('no-select', true);
+
+              var xAxis = d3.svg.axis()
+                  .scale(xScale)
+                  .orient('bottom');
+
+              svg.append('g')
+                  .attr('class', 'x axis')
+                  .attr('transform', 'translate(0,' + (chartHeight - 50) + ')')
+                  .call(xAxis)
+                  .selectAll('text')
+                  .classed('no-select', true);
+
 
               var addSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
@@ -280,7 +297,7 @@
               tr.append('td').text(function(d) {
                 return d.key;
               })
-                  .classed('statistics-legend-text', true);
+                  .classed('statistics-legend-text no-select', true);
             };
           }
         };
