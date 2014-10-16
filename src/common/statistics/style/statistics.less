@@ -36,6 +36,7 @@
   position: absolute;
   top: 120px;
   overflow: auto;
+  width: 150px;
 }
 
 #statistics-btns {
@@ -43,12 +44,41 @@
 }
 
 #statistics-view-window .modal-dialog{
-  width: 60%;
-  min-width: 400px;
+  min-width: 800px;
 }
+
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+#statistics-hud-bar{
+  float: right;
+  min-width: 90px;
+  padding-left: 0px;
+}
+
+.statistics-title {
+  font-variant: small-caps;
+  font-size: 17px;
+}
+
+.statistics-value {
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -3px;
+}
+
+.table-center {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.statistics-hud-group {
+  padding: 3px 0px 3px;
+  display: block;
 }

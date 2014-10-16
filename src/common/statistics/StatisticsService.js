@@ -29,7 +29,7 @@
         totalCount: 2043,
         uniqueValues: {
         },
-        min: 0,
+        min: 100,
         max: 0,
         range: 49.6567,
         sum: 106165,

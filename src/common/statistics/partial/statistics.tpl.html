@@ -1,6 +1,7 @@
 <div class="modal-body">
-  <div class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isExecuting"></div>
-      <h4>Statistics for <b>{{data.fieldname}}</b>.</h4>
+  <div class="panel-body">
+      <h4>Summary Statistics for {{data.fieldname}}.</h4>
+
       <!--<div loom-statistics-bar-graph bar-height="20" bar-padding="5" margin="300" data="{{data.barData}}"></div>-->
       <div class="btn-group-wrap pull-left" id="statistics-btns">
         <div class="btn-group">
@@ -21,7 +22,46 @@
         </a>
         </div>
       </div>
+
+      <ul id="statistics-hud-bar">
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'mean' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.mean}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'maximum' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.max}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'minimum' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.min}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'sum' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.sum}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'range' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.range}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'standard deviation' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.stdDev}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">{{'coefficient' | translate}}</div>
+          <div class="statistics-value">{{data.statistics.coefficient}}</div>
+        </li>
+        <li class="table-center statistics-hud-group">
+          <div class="statistics-title">count</div>
+          <div class="statistics-value">{{data.statistics.totalCount}}</div>
+        </li>
+      </ul>
+
       <div id="statistics-chart-area">
+        <div id="loom-statistics-legend"></div>
         <div loom-statistics-chart id="loom-statistics-chart"></div>
       </div>
+
+  </div>
 </div>
