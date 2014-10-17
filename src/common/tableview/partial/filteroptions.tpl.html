@@ -1,6 +1,6 @@
 <div class="input-group">
     <input ng-if="filterType !== 'date'" class="form-control" type="text" ng-model="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'">
-    <datetimepicker id="start-date" ng-blur="updateFilterText()" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
+    <datetimepicker id="start-date" style="padding-top: 12px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
                     ng-if="filterType === 'date'" default-date="false" seperate-time="false"></datetimepicker>
     <div class="input-group-btn">
         <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': (attribute.filter.searchType !== 'exactMatch')}">
