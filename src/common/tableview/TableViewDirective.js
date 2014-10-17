@@ -222,13 +222,10 @@
               tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
               scope.isGettingStatistics = true;
               var meta = tableViewService.selectedLayer.get('metadata');
-              console.log('QQQQQQQ------- attribute object[1]:', scope.selectedAttribute.name);
               mapService.summarizeAttribute(tableViewService.selectedLayer,
                   meta.filters, scope.selectedAttribute.name).then(function(statistics) {
-                stats = statisticsService.getSummaryStatistics();
-                goog.object.extend(stats, statistics);
-                console.log('zzzzzzzzz stats: ', stats);
-
+                stats = statisticsService.getStatistics(tableViewService.selectedLayer, scope.selectedAttribute);
+                goog.object.extend(stats.statistics, statistics);
                 tableViewService.selectedLayer.loadingStatistics = false;
                 $('#statistics-view-window').modal('show');
                 $rootScope.$broadcast('getStatistics', stats);
