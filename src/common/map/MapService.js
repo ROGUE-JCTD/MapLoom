@@ -259,7 +259,7 @@
       var deferredResponse = q_.defer();
 
       if (!goog.isDefAndNotNull(layer)) {
-        deferredResponse.resolve();
+        deferredResponse.reject('Invalid Layer');
         return deferredResponse.promise;
       }
 
@@ -268,7 +268,6 @@
 
       if (!service_.layerIsEditable(layer)) {
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
-
         var wpsPostData = '' +
             '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
@@ -282,6 +281,12 @@
             'http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">' +
             '<ows:Identifier>py:summarize_attrib</ows:Identifier>' +
             '<wps:DataInputs>' +
+            '<wps:Input>' +
+            '<ows:Identifier>attributeName</ows:Identifier>' +
+            '<wps:Data>' +
+            '<wps:LiteralData>' + attributeName + '</wps:LiteralData>' +
+            '</wps:Data>' +
+            '</wps:Input>' +
             '<wps:Input>' +
             '<ows:Identifier>features</ows:Identifier>' +
             '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
@@ -300,24 +305,16 @@
 
         httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
           console.log('----[ mapService.summarizeAttribute.success', data, status, headers, config);
-          var x2js = new X2JS();
-          var json = x2js.xml_str2json(data);
-          if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
-              goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
-            console.log('----[ Warning: summarizeAttribute failed', data, status, headers, config);
-            deferredResponse.resolve();
-            return;
-          }
-          console.log('----[ summarizeAttribute.accepted', data, status, headers, config);
-          deferredResponse.resolve();
+          console.log('---- data response: ', data);
+          deferredResponse.resolve(data);
         }).error(function(data, status, headers, config) {
           console.log('----[ Warning: mapService.summarizeAttribute error', data, status, headers, config);
-          deferredResponse.resolve();
+          deferredResponse.reject('Service Error');
         });
 
       } else {
         console.log('--------- invalid layer type');
-        deferredResponse.resolve();
+        deferredResponse.reject('Invalid layer type');
       }
       return deferredResponse.promise;
     };

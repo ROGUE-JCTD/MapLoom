@@ -185,22 +185,30 @@
               mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
             };
 
-            scope.showStatistics = function() {
-              var meta = tableViewService.selectedLayer.get('metadata');
-              mapService.summarizeAttribute(tableViewService.selectedLayer, meta.filters, scope.attributes[1]);
+            scope.isLoadingStatistics = function() {
+              if (!goog.isDefAndNotNull(tableViewService.selectedLayer)) {
+                return false;
+              }
 
-              /*
-              mapService.summarizeAttribute();
-              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[1])
-                  .then(function(statistics) {
-                    scope.isGettingStatistics = false;
-                    // Show timer on the button, then show once getStatistics is finished.
-                    $('#statistics-view-window').modal('show');
-                    $rootScope.$broadcast('getStatistics', statistics);
-                  }, function(reject) {
-                    scope.isGettingStatistics = false;
-                  });
-              */
+              var loading = tableViewService.selectedLayer.get('metadata').loadingStatistics;
+              return goog.isDefAndNotNull(loading) && loading === true;
+            };
+
+            scope.showStatistics = function(attribute) {
+              tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
+              scope.isGettingStatistics = true;
+              var meta = tableViewService.selectedLayer.get('metadata');
+              console.log('QQQQQQQ------- attribute object[1]:', scope.attributes[0].name);
+              mapService.summarizeAttribute(tableViewService.selectedLayer,
+                  meta.filters, scope.attributes[0].name).then(function(statistics) {
+                tableViewService.selectedLayer.loadingStatistics = false;
+                $('#statistics-view-window').modal('show');
+                $rootScope.$broadcast('getStatistics', statistics);
+              }, function(reject) {
+                tableViewService.selectedLayer.loadingStatistics = false;
+              }, function(update) {
+                console.log('-- update');
+              });
             };
 
             scope.getPageText = function() {
