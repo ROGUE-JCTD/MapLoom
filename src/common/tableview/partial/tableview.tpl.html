@@ -2,7 +2,7 @@
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
-      <table class="table-striped table-hover sortable">
+      <table class="table-striped table-hover" ng-class="{sortable: isSortable}">
         <thead>
           <tr ng-if="filterOn">
               <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>

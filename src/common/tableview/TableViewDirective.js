@@ -73,6 +73,7 @@
           link: function(scope, element) {
             scope.isSaving = false;
             scope.isGettingStatistics = false;
+            scope.isSortable = false;
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -94,7 +95,9 @@
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
               resizeModal();
-              $.bootstrapSortable();
+              if (scope.isSortable) {
+                $.bootstrapSortable();
+              }
             });
 
             $(window).resize(resizeModal);
@@ -388,7 +391,9 @@
                   .success(function() {
                     scope.applyFilters();
 
-                    $.bootstrapSortable();
+                    if (scope.isSortable) {
+                      $.bootstrapSortable();
+                    }
 
                     // refresh tiles
                     mapService.dumpTileCache(tableViewService.selectedLayer.get('metadata').uniqueID);
