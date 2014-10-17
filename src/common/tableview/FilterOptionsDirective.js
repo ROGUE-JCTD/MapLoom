@@ -15,9 +15,12 @@
 
             if (scope.typeRestriction === 'int' || scope.typeRestriction === 'double') {
               scope.filterType = 'number';
-            } else if (scope.typeRestriction === 'datetime' || scope.typeRestriction === 'date' ||
-                scope.typeRestriction === 'time') {
+            } else if (scope.typeRestriction === 'datetime') {
+              scope.filterType = 'datetime';
+            } else if (scope.typeRestriction === 'date') {
               scope.filterType = 'date';
+            } else if (scope.typeRestriction === 'time') {
+              scope.filterType = 'time';
             } else {
               scope.filterType = 'text';
             }

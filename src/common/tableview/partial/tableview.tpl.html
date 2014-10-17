@@ -35,15 +35,21 @@
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <span ng-switch-when="double" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
-              <span ng-switch-when="date" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
-              <span ng-switch-when="time" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
-                    e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <div ng-switch-when="datetime">
                   <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
                   <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
                         default-date="false" seperate-time="false"></datetimepicker>
               </div>
+                <div ng-switch-when="date">
+                    <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy"}}</span>
+                    <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
+                                    default-date="false" seperate-time="false" time="false"></datetimepicker>
+                </div>
+                <div ng-switch-when="time">
+                    <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"h:mma"}}</span>
+                    <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
+                                    default-date="false" seperate-time="false" date="false"></datetimepicker>
+                </div>
               <div ng-switch-default class="input-group">
                 <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name]}}</span>
                 <div ng-if="tableviewform.$visible" class="input-group-btn" ng-class="{'dropup': $last}">

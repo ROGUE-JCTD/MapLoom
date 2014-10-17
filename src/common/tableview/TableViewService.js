@@ -88,7 +88,7 @@
       console.log('metadata', metadata);
       for (var attrName in filters) {
         var searchType = filters[attrName].searchType;
-        //console.log('filters[attrName]', filters[attrName]);
+        var resType = service_.restrictionList[attrName].type;
 
         if (searchType === 'strContains' && filters[attrName].text !== '') {
           xml +=
@@ -97,8 +97,7 @@
               '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
               '</ogc:PropertyIsLike>';
         } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
-          var resType = service_.restrictionList[attrName].type;
-          if (resType === 'datetime' || resType === 'date' || resType === 'time') {
+          if (resType === 'datetime') {
             var dateStringSansTime = filters[attrName].text.split('T')[0];
 
             var beginDate = moment(new Date(dateStringSansTime));
@@ -114,7 +113,7 @@
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
                 '<ogc:Literal>' + endDate.toISOString() + '</ogc:Literal>' +
                 '</ogc:PropertyIsLessThan>';
-          } else {
+          } else if (resType !== 'time') {
             xml +=
                 '<ogc:PropertyIsEqualTo>' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
@@ -122,17 +121,41 @@
                 '</ogc:PropertyIsEqualTo>';
           }
         } else if (searchType === 'numRange') {
-          if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
-            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
-                '</ogc:PropertyIsGreaterThanOrEqualTo>';
-          }
-          if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
-            xml += '<ogc:PropertyIsLessThan>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
-                '</ogc:PropertyIsLessThan>';
+          if (resType === 'datetime' || resType === 'date') {
+            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
+              var startStringSansTime = filters[attrName].start.split('T')[0];
+              var firstDate = moment(new Date(startStringSansTime));
+              firstDate.add(firstDate.zone(), 'm');
+
+              xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + firstDate.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>';
+            }
+            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
+              var endStringSansTime = filters[attrName].end.split('T')[0];
+              var secondDate = moment(new Date(endStringSansTime));
+              secondDate.add(secondDate.zone(), 'm');
+              secondDate.add(24, 'h');
+
+              xml += '<ogc:PropertyIsLessThan>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + secondDate.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsLessThan>';
+            }
+          } else {
+            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
+              xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>';
+            }
+            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
+              xml += '<ogc:PropertyIsLessThan>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
+                  '</ogc:PropertyIsLessThan>';
+            }
           }
         }
       }
