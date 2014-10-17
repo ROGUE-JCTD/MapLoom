@@ -177,6 +177,11 @@
                 scope.selectedAttribute.selected = false;
               }
               if (attr) {
+                if (scope.selectedAttribute == attr) {
+                  attr.selected = false;
+                  scope.selectedAttribute = null;
+                  return;
+                }
                 attr.selected = true;
               }
               scope.selectedAttribute = attr;
