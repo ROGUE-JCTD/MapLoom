@@ -11,7 +11,7 @@
 
             var resetVariables = function() {
               scope.data = null;
-              scope.selected = 'pie';
+              scope.selected = 'histogram';
             };
 
             resetVariables();
@@ -124,9 +124,12 @@
                   .rangeBands([margin.left + 10, chartWidth], 0.25, 0.25);
               var sliceHoverClass = 'path-red-fill';
 
+              scope.renderLegend(histogram);
+
               var svg = d3.select(element[0])
                   .append('svg:svg')
-                  .attr('width', divWidth);
+                  .attr('width', divWidth)
+                  .style('margin-left', d3.select('.statistics-legend').node().offsetWidth);
 
               // set the height based on the calculations above
               svg.attr('height', divHeight);
@@ -183,12 +186,10 @@
                 d3.select(target).classed(sliceHoverClass, false);
               };
 
-              for (var index = 0; index < uniqueValues.length; index++) {
+              for (var index = 0; index < histogram.length; index++) {
                 var pathSelector = '#histogram-chart-slice-path-' + index;
                 $(pathSelector).hover(addSliceHoverClasses, removeSliceHoverClasses);
               }
-
-              scope.renderLegend(uniqueValues);
             };
 
             scope.renderPieChart = function() {
@@ -218,10 +219,8 @@
                   .attr('width', divWidth)
                   .attr('height', divHeight)
                   .append('svg:g')
-                  .attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')');
-
-              var w = $('#pie-chart').width();
-              console.log('WDITH:', w);
+                  .attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')')
+                  .style('margin-left', d3.select('.statistics-legend').node().offsetWidth);
 
               var pie = d3.layout.pie().value(function(d) {return d.value;});
               var arc = d3.svg.arc().outerRadius(r);
@@ -263,8 +262,9 @@
               if (!goog.isDefAndNotNull(data)) {
                 return;
               }
-
+              var maxLength = 0;
               var color = scope.color();
+
               var legendDiv = d3.select(element[0])
                   .append('div')
                   .attr('class', 'statistics-legend');
@@ -295,7 +295,13 @@
 
               tr.append('td')
                   .text(function(d) {
-                    return d.key;
+                    if (goog.isDefAndNotNull(d.key)) {
+                      if (d.key.length > maxLength) {
+                        maxLength = d.key.length;
+                      }
+                      return d.key;
+                    }
+                    return;
                   })
                   .classed('statistics-legend-text no-select', true)
                   .attr('data-toggle', 'tooltip')
@@ -303,6 +309,15 @@
                   .attr('title', function(d) {
                         return d.key + ': ' + d.value;
                       });
+
+              var calculatedWidth = 29 + (5 * maxLength);
+              if (calculatedWidth > 125) {
+                calculatedWidth = 125;
+              }
+              tableWidth = legend.node().offsetWidth;
+              $('.statistics-legend').width(tableWidth);
+              //d3.select('.statistics-legend').style('width', tableWidth + 'px');
+              //console.log('calculated width', tableWidth + 'px');
             };
           }
         };
