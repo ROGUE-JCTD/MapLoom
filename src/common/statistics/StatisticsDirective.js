@@ -314,10 +314,7 @@
               if (calculatedWidth > 125) {
                 calculatedWidth = 125;
               }
-              tableWidth = legend.node().offsetWidth;
-              $('.statistics-legend').width(tableWidth);
-              //d3.select('.statistics-legend').style('width', tableWidth + 'px');
-              //console.log('calculated width', tableWidth + 'px');
+              d3.select('.statistics-legend').style('width', calculatedWidth + 'px');
             };
           }
         };
