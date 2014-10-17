@@ -74,6 +74,7 @@
             scope.isSaving = false;
             scope.isGettingStatistics = false;
             scope.isSortable = false;
+
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -142,6 +143,7 @@
               scope.restrictions = tableViewService.restrictionList;
               scope.selectedRow = null;
               scope.filterOn = true;
+              scope.selectedAttribute = null;
             };
 
             var updateData = function() {
@@ -170,6 +172,16 @@
               scope.selectedRow = feature;
             };
 
+            scope.selectAttribute = function(attr) {
+              if (scope.selectedAttribute) {
+                scope.selectedAttribute.selected = false;
+              }
+              if (attr) {
+                attr.selected = true;
+              }
+              scope.selectedAttribute = attr;
+            };
+
             scope.goToMap = function() {
               var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
                   tableViewService.selectedLayer.get('metadata').projection,
@@ -189,8 +201,12 @@
             };
 
             scope.showStatistics = function() {
+              if (!goog.isDefAndNotNull(scope.selectedAttribute)) {
+                return;
+              }
               scope.isGettingStatistics = true;
-              statisticsService.getStatistics(tableViewService.selectedLayer, scope.attributes[11])
+
+              statisticsService.getStatistics(tableViewService.selectedLayer, scope.selectedAttribute)
                   .then(function(statistics) {
                     scope.isGettingStatistics = false;
                     // Show timer on the button, then show once getStatistics is finished.

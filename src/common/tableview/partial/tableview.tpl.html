@@ -21,7 +21,7 @@
           </tr>
           <tr>
             <th>{{'feature_id' | translate}}</th>
-            <th ng-repeat="attr in attributes">{{attr.name}}</th>
+            <th ng-repeat="attr in attributes" class="pointer" ng-click="selectAttribute(attr)" ng-class="{selectedAttribute: attr.selected}">{{attr.name}}</th>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
@@ -80,7 +80,7 @@
     <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-fire"></i>
     </button>
-    <button type="button" class="btn btn-default table-btn" ng-click="showStatistics()" tooltip="{{'statistics_view' | translate}}" tooltip-append-to-body="true">
+    <button type="button" class="btn btn-default table-btn" ng-click="showStatistics()" ng-class="{disabled: !selectedAttribute}" tooltip="{{'statistics_view' | translate}}" tooltip-append-to-body="true">
       <i class="glyphicon glyphicon-stats"></i>
     </button>
     <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
