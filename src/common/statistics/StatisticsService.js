@@ -29,8 +29,8 @@
         totalCount: 2043,
         uniqueValues: {
         },
-        min: 36.618,
-        max: 86.2747,
+        min: 100,
+        max: 0,
         range: 49.6567,
         sum: 106165,
         mean: 72.6165,
@@ -39,9 +39,17 @@
         coefficient: 0.0123
       };
 
-      for (i = 0; i < 4; i++) {
-        number.uniqueValues[i] = Math.floor((Math.random() * 100) + 1);
+      for (i = 0; i < Math.floor((Math.random() * 35) + 1); i++) {
+        var random = Math.floor((Math.random() * 100) + 1);
+        number.uniqueValues[i] = random;
+
+        if (random > number.max || typeof(number.max) === 'undefined') {
+          number.max = random;
+        } else if (random < number.min || typeof(number.min) === 'undefined') {
+          number.min = random;
+        }
       }
+
 
       strStats = {
         type: 'string',

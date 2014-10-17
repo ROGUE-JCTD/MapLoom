@@ -73,6 +73,8 @@
           link: function(scope, element) {
             scope.isSaving = false;
             scope.isGettingStatistics = false;
+            scope.isSortable = false;
+
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -94,7 +96,9 @@
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
               resizeModal();
-              $.bootstrapSortable();
+              if (scope.isSortable) {
+                $.bootstrapSortable();
+              }
             });
 
             $(window).resize(resizeModal);
@@ -139,6 +143,7 @@
               scope.restrictions = tableViewService.restrictionList;
               scope.selectedRow = null;
               scope.filterOn = true;
+              scope.selectedAttribute = null;
             };
 
             var updateData = function() {
@@ -165,6 +170,21 @@
                 feature.selected = true;
               }
               scope.selectedRow = feature;
+            };
+
+            scope.selectAttribute = function(attr) {
+              if (scope.selectedAttribute) {
+                scope.selectedAttribute.selected = false;
+              }
+              if (attr) {
+                if (scope.selectedAttribute == attr) {
+                  attr.selected = false;
+                  scope.selectedAttribute = null;
+                  return;
+                }
+                attr.selected = true;
+              }
+              scope.selectedAttribute = attr;
             };
 
             scope.goToMap = function() {
@@ -194,16 +214,24 @@
               return goog.isDefAndNotNull(loading) && loading === true;
             };
 
-            scope.showStatistics = function(attribute) {
+            scope.showStatistics = function() {
+              if (!goog.isDefAndNotNull(scope.selectedAttribute)) {
+                return;
+              }
+
               tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
               scope.isGettingStatistics = true;
               var meta = tableViewService.selectedLayer.get('metadata');
-              console.log('QQQQQQQ------- attribute object[1]:', scope.attributes[0].name);
+              console.log('QQQQQQQ------- attribute object[1]:', scope.selectedAttribute.name);
               mapService.summarizeAttribute(tableViewService.selectedLayer,
-                  meta.filters, scope.attributes[0].name).then(function(statistics) {
+                  meta.filters, scope.selectedAttribute.name).then(function(statistics) {
+                stats = statisticsService.getSummaryStatistics();
+                goog.object.extend(stats, statistics);
+                console.log('zzzzzzzzz stats: ', stats);
+
                 tableViewService.selectedLayer.loadingStatistics = false;
                 $('#statistics-view-window').modal('show');
-                $rootScope.$broadcast('getStatistics', statistics);
+                $rootScope.$broadcast('getStatistics', stats);
               }, function(reject) {
                 tableViewService.selectedLayer.loadingStatistics = false;
               }, function(update) {
@@ -401,7 +429,9 @@
                   .success(function() {
                     scope.applyFilters();
 
-                    $.bootstrapSortable();
+                    if (scope.isSortable) {
+                      $.bootstrapSortable();
+                    }
 
                     // refresh tiles
                     mapService.dumpTileCache(tableViewService.selectedLayer.get('metadata').uniqueID);

@@ -26,14 +26,63 @@
   min-height: 330px
 }
 
-.pie-chart-legend-text {
+.statistics-legend-text {
   .pie-chart-text();
   padding-left: 5px;
   padding-bottom: 3px;
 }
 
-.pie-chart-legend {
+.statistics-legend {
   position: absolute;
   top: 120px;
   overflow: auto;
+  width: 135px;
+}
+
+#statistics-btns {
+  margin-bottom: 10px;
+}
+
+#statistics-view-window hr{
+  border: none;
+}
+
+#statistics-view-window .modal-dialog{
+  min-width: 900px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#statistics-hud-bar{
+  float: right;
+  min-width: 90px;
+  padding-left: 0px;
+}
+
+.statistics-title {
+  font-variant: small-caps;
+  font-size: 17px;
+}
+
+.statistics-value {
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -3px;
+}
+
+.table-center {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.statistics-hud-group {
+  padding: 3px 0px 3px;
+  display: block;
 }
