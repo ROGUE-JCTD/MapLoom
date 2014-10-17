@@ -90,32 +90,49 @@
         var searchType = filters[attrName].searchType;
         //console.log('filters[attrName]', filters[attrName]);
 
-        if (filters[attrName].filter !== '') {
-          if (searchType === 'strContains') {
-            xml +=
-                '<ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="!">' +
+        if (searchType === 'strContains' && filters[attrName].text !== '') {
+          xml +=
+              '<ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="!">' +
+              '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+              '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
+              '</ogc:PropertyIsLike>';
+        } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
+          var resType = service_.restrictionList[attrName].type;
+          if (resType === 'datetime' || resType === 'date' || resType === 'time') {
+            var dateStringSansTime = filters[attrName].text.split('T')[0];
+
+            var beginDate = moment(new Date(dateStringSansTime));
+            //zone() returns the local time zone's offset from GMT in minutes
+            beginDate.add(beginDate.zone(), 'm');
+            var endDate = moment(beginDate).add(24, 'h');
+
+            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>*' + filters[attrName].filter + '*</ogc:Literal>' +
-                '</ogc:PropertyIsLike>';
-          } else if (searchType === 'exactMatch') {
+                '<ogc:Literal>' + beginDate.toISOString() + '</ogc:Literal>' +
+                '</ogc:PropertyIsGreaterThanOrEqualTo>' +
+                '<ogc:PropertyIsLessThan>' +
+                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                '<ogc:Literal>' + endDate.toISOString() + '</ogc:Literal>' +
+                '</ogc:PropertyIsLessThan>';
+          } else {
             xml +=
                 '<ogc:PropertyIsEqualTo>' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + filters[attrName].filter + '</ogc:Literal>' +
+                '<ogc:Literal>' + filters[attrName].text + '</ogc:Literal>' +
                 '</ogc:PropertyIsEqualTo>';
-          } else if (searchType === 'numRange') {
-            if (goog.isDefAndNotNull(filters[attrName].start)) {
-              xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
-                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
-                  '</ogc:PropertyIsGreaterThanOrEqualTo>';
-            }
-            if (goog.isDefAndNotNull(filters[attrName].end)) {
-              xml += '<ogc:PropertyIsLessThan>' +
-                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
-                  '</ogc:PropertyIsLessThan>';
-            }
+          }
+        } else if (searchType === 'numRange') {
+          if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
+            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
+                '</ogc:PropertyIsGreaterThanOrEqualTo>';
+          }
+          if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
+            xml += '<ogc:PropertyIsLessThan>' +
+                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
+                '</ogc:PropertyIsLessThan>';
           }
         }
       }
@@ -166,13 +183,13 @@
       if (goog.isDefAndNotNull(metadata.filters)) {
         for (var attrName in metadata.filters) {
           var attr = metadata.filters[attrName];
-          if (goog.isDefAndNotNull(attr.filter) && attr.filter !== '') {
+          if (goog.isDefAndNotNull(attr.text) && attr.text !== '') {
             if (hasFilter) {
               filter += ' and ';
             } else {
               hasFilter = true;
             }
-            filter += attrName + ' like \'%' + attr.filter + '%\'';
+            filter += attrName + ' like \'%' + attr.text + '%\'';
           }
         }
         if (hasFilter) {
@@ -242,7 +259,7 @@
             if (data.features[0].properties.hasOwnProperty(propName) &&
                 propName !== 'fotos' && propName !== 'photos') {
               if (!goog.isDefAndNotNull(metadata.filters[propName])) {
-                metadata.filters[propName] = {filter: '', searchType: 'exactMatch'};
+                metadata.filters[propName] = {text: '', searchType: 'exactMatch'};
               }
               service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
             }

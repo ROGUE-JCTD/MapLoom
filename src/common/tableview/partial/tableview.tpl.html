@@ -15,7 +15,7 @@
                           ng-disabled="tableviewform.$visible">
                   </button></td>
               <td class="filter-row" ng-repeat="attr in attributes">
-                  <!--<input class="form-control" type="text" ng-model="attr.filter.filter">-->
+                  <!--<input class="form-control" type="text" ng-model="attr.filter.text">-->
                   <filteroptions attribute="attr" type="restrictions[attr.name].type"></filteroptions>
               </td>
           </tr>
@@ -41,8 +41,8 @@
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <div ng-switch-when="datetime">
                   <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
-                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties"
-                        date-key="attr.name" default-date="false" seperate-time="false"></datetimepicker>
+                  <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
+                        default-date="false" seperate-time="false"></datetimepicker>
               </div>
               <div ng-switch-default class="input-group">
                 <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name]}}</span>

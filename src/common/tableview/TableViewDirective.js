@@ -128,7 +128,7 @@
 
             scope.clearFilters = function() {
               for (var attrIndex in scope.attributes) {
-                scope.attributes[attrIndex].filter.filter = '';
+                scope.attributes[attrIndex].filter.text = '';
               }
               scope.applyFilters();
             };

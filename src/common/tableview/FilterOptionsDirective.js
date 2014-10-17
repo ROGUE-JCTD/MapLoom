@@ -36,13 +36,13 @@
               var filter = scope.attribute.filter;
               if (goog.isDefAndNotNull(filter.start) && filter.start !== '' &&
                   goog.isDefAndNotNull(filter.end) && filter.end !== '') {
-                filter.filter = filter.start + ' to ' + filter.end;
+                filter.text = filter.start + ' to ' + filter.end;
               } else if (goog.isDefAndNotNull(filter.start) && filter.start !== '') {
-                filter.filter = filter.start + ' to max';
+                filter.text = filter.start + ' to max';
               } else if (goog.isDefAndNotNull(filter.end) && filter.end !== '') {
-                filter.filter = 'min to ' + filter.end;
+                filter.text = 'min to ' + filter.end;
               } else {
-                filter.filter = '';
+                filter.text = '';
               }
             };
           }
