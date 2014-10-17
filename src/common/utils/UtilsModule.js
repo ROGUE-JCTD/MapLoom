@@ -110,7 +110,6 @@
       replace: true,
       scope: {
         dateObject: '=dateObject',
-        dateKey: '=dateKey',
         editable: '@editable',
         defaultDate: '=defaultDate'
       },
@@ -136,7 +135,7 @@
         var updateDateTime = function() {
           var newDate = new Date();
           var date = element.find('.datepicker').data('DateTimePicker');
-          if (goog.isDefAndNotNull(date)) {
+          if (goog.isDefAndNotNull(date) && goog.isDefAndNotNull(date.getDate())) {
             date = date.getDate();
             newDate.setFullYear(date.year(), date.month(), date.date());
             newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
@@ -152,13 +151,13 @@
               var momentDate = moment(new Date(dateOptions.defaultDate));
               momentDate.lang($translate.use());
               if (scope.time === 'true' && scope.date === 'true') {
-                scope.dateObject[scope.dateKey] = newDate.toISOString();
+                scope.dateObject = newDate.toISOString();
                 scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
               } else if (scope.time === 'true') {
-                scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[1];
+                scope.dateObject = newDate.toISOString().split('T')[1];
                 scope.disabledText = momentDate.format('LT');
               } else if (scope.date === 'true') {
-                scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[0];
+                scope.dateObject = newDate.toISOString().split('T')[0];
                 scope.disabledText = momentDate.format('L');
               }
             });
@@ -166,13 +165,13 @@
             var momentDate = moment(new Date(dateOptions.defaultDate));
             momentDate.lang($translate.use());
             if (scope.time === 'true' && scope.date === 'true') {
-              scope.dateObject[scope.dateKey] = newDate.toISOString();
+              scope.dateObject = newDate.toISOString();
               scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
             } else if (scope.time === 'true') {
-              scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[1];
+              scope.dateObject = newDate.toISOString().split('T')[1];
               scope.disabledText = momentDate.format('LT');
             } else if (scope.date === 'true') {
-              scope.dateObject[scope.dateKey] = newDate.toISOString().split('T')[0];
+              scope.dateObject = newDate.toISOString().split('T')[0];
               scope.disabledText = momentDate.format('L');
             }
           }
@@ -195,29 +194,28 @@
         }
 
         var updateDate = function() {
-          if (goog.isDefAndNotNull(scope.dateObject[scope.dateKey])) {
+          if (goog.isDefAndNotNull(scope.dateObject) && scope.dateObject !== '') {
             if (scope.date === 'false') {
-              var testDate = new Date(scope.dateObject[scope.dateKey]);
+              var testDate = new Date(scope.dateObject);
               if ('Invalid Date' == testDate) {
-                timeOptions.defaultDate = '2014-03-10T' + scope.dateObject[scope.dateKey];
+                timeOptions.defaultDate = '2014-03-10T' + scope.dateObject;
               } else {
-                timeOptions.defaultDate = scope.dateObject[scope.dateKey];
+                timeOptions.defaultDate = scope.dateObject;
               }
               if (scope.seperateTime === 'false') {
                 dateOptions.defaultDate = timeOptions.defaultDate;
               }
             } else if (scope.time === 'false') {
-              dateOptions.defaultDate = scope.dateObject[scope.dateKey].replace('Z', '');
+              dateOptions.defaultDate = scope.dateObject.replace('Z', '');
             } else {
-              if (scope.dateObject[scope.dateKey].search('Z') === -1) {
-                scope.dateObject[scope.dateKey] += 'Z';
+              if (scope.dateObject.search('Z') === -1) {
+                scope.dateObject += 'Z';
               }
-              dateOptions.defaultDate = scope.dateObject[scope.dateKey];
-              timeOptions.defaultDate = scope.dateObject[scope.dateKey];
+              dateOptions.defaultDate = scope.dateObject;
+              timeOptions.defaultDate = scope.dateObject;
             }
           }
         };
-
         updateDate();
 
         var setUpPickers = function() {

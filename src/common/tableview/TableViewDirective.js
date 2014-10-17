@@ -90,7 +90,7 @@
               angular.element('#table-view-window .modal-body')[0].style.height = bodyHeight + 'px';
 
               //resize the panel to account for the filter text box and padding
-              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 134 + 'px';
+              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 85 + 'px';
             }
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
@@ -133,7 +133,7 @@
 
             scope.clearFilters = function() {
               for (var attrIndex in scope.attributes) {
-                scope.attributes[attrIndex].filter.filter = '';
+                scope.attributes[attrIndex].filter.text = '';
               }
               scope.applyFilters();
             };

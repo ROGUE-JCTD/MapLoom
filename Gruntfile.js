@@ -16,6 +16,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('grunt-recess');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-gjslint');
@@ -531,7 +532,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= app_files.js %>'
         ],
-        tasks: [ 'jshint:src', 'karma:unit:run', 'gjslint', 'copy:build_appjs' ]
+        tasks: [ 'newer:jshint:src', 'karma:unit:run', 'newer:gjslint', 'copy:build_appjs' ]
       },
 
       /**

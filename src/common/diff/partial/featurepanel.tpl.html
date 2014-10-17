@@ -28,7 +28,7 @@
                         'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED'
                       }">
                 <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none" editable="{{attribute.editable}}"
-                                seperate-time="false" date-object="attribute" date-key="'newvalue'"></datetimepicker>
+                                seperate-time="false" date-object="attribute.newvalue"></datetimepicker>
               </div>
               <!--
               There are a lot of problems with the handling of date and time fields, commenting out until we have the time
@@ -40,7 +40,7 @@
                       }">
                 <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none"
                                 editable="{{attribute.editable}}"
-                                seperate-time="false" date-object="attribute" date-key="'newvalue'" time="false"></datetimepicker>
+                                seperate-time="false" date-object="attribute" time="false"></datetimepicker>
               </div>
               <div ng-switch-when="xsd:time" ng-class="{
                         'attr-added': attribute.changetype == 'ADDED',
@@ -49,7 +49,7 @@
                       }">
                 <datetimepicker ng-disabled="!isConflictPanel" class="merge-datetime attr-none"
                                 editable="{{attribute.editable}}"
-                                seperate-time="false" date-object="attribute" date-key="'newvalue'" date="false"></datetimepicker>
+                                seperate-time="false" date-object="attribute" date="false"></datetimepicker>
               </div>
               -->
               <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable, 'has-error': !attribute.valid}">
