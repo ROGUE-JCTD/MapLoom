@@ -72,7 +72,6 @@
           templateUrl: 'tableview/partial/tableview.tpl.html',
           link: function(scope, element) {
             scope.isSaving = false;
-            scope.isGettingStatistics = false;
             scope.isSortable = false;
 
             function resizeModal() {
@@ -210,7 +209,7 @@
                 return false;
               }
 
-              var loading = tableViewService.selectedLayer.get('metadata').loadingStatistics;
+              var loading = tableViewService.selectedLayer.get('metadata').isLoadingStatistics;
               return goog.isDefAndNotNull(loading) && loading === true;
             };
 
@@ -220,17 +219,16 @@
               }
 
               tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
-              scope.isGettingStatistics = true;
               var meta = tableViewService.selectedLayer.get('metadata');
               mapService.summarizeAttribute(tableViewService.selectedLayer,
                   meta.filters, scope.selectedAttribute.name).then(function(statistics) {
                 stats = statisticsService.getStatistics(tableViewService.selectedLayer, scope.selectedAttribute);
                 goog.object.extend(stats.statistics, statistics);
-                tableViewService.selectedLayer.loadingStatistics = false;
+                tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
                 $('#statistics-view-window').modal('show');
                 $rootScope.$broadcast('getStatistics', stats);
               }, function(reject) {
-                tableViewService.selectedLayer.loadingStatistics = false;
+                tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
               }, function(update) {
                 console.log('-- update');
               });
