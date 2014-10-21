@@ -228,7 +228,8 @@
             else if (schemaType === 'xsd:int' || schemaType === 'xsd:integer') {
               attrRestriction.type = 'int';
             }
-            else if (schemaType === 'xsd:double' || schemaType === 'xsd:decimal') {
+            else if (schemaType === 'xsd:double' || schemaType === 'xsd:decimal' ||
+                schemaType === 'xsd:long' || schemaType === 'xsd:short') {
               attrRestriction.type = 'double';
             }
             else if (schemaType === 'xsd:dateTime') {
