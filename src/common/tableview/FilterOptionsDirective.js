@@ -12,6 +12,7 @@
           replace: true,
           link: function(scope, element) {
             console.log('attribute', scope.attribute);
+            scope.dirty = false;
 
             if (scope.typeRestriction === 'int' || scope.typeRestriction === 'double') {
               scope.filterType = 'number';
@@ -27,9 +28,22 @@
             };
             scope.strContains = function() {
               scope.attribute.filter.searchType = 'strContains';
+              scope.checkFilterStatus();
             };
             scope.numRange = function() {
               scope.attribute.filter.searchType = 'numRange';
+              scope.checkFilterStatus();
+              scope.updateFilterText();
+            };
+
+            scope.checkFilterStatus = function() {
+              var filter = scope.attribute.filter;
+              if ((filter.text !== '' && filter.searchType === 'strContains') ||
+                  ((filter.start !== '' || filter.end !== '') && filter.searchType === 'numRange')) {
+                scope.dirty = true;
+              } else {
+                scope.dirty = false;
+              }
             };
 
             scope.updateFilterText = function() {

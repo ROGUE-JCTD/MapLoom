@@ -131,10 +131,19 @@
               });
             };
 
-            scope.clearFilters = function() {
+            var wipeFilterFields = function() {
               for (var attrIndex in scope.attributes) {
                 scope.attributes[attrIndex].filter.text = '';
+                if (goog.isDef(scope.attributes[attrIndex].filter.start)) {
+                  scope.attributes[attrIndex].filter.start = '';
+                }
+                if (goog.isDef(scope.attributes[attrIndex].filter.end)) {
+                  scope.attributes[attrIndex].filter.end = '';
+                }
               }
+            };
+            scope.clearFilters = function() {
+              wipeFilterFields();
               scope.applyFilters();
             };
 
@@ -156,6 +165,7 @@
             var clearSession = function() {
               tableViewService.clear();
               scope.restrictions = {};
+              wipeFilterFields();
 
               scope.selectedRow = null;
               scope.rows = null;

@@ -1,9 +1,10 @@
 <div class="input-group">
-    <input ng-if="filterType !== 'date'" class="form-control" type="text" ng-model="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'">
+    <input ng-if="filterType !== 'date'" class="form-control" type="text" ng-model="attribute.filter.text"
+           ng-change="checkFilterStatus()" ng-disabled="attribute.filter.searchType === 'numRange'">
     <datetimepicker id="start-date" style="padding-top: 12px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
                     ng-if="filterType === 'date'" default-date="false" seperate-time="false"></datetimepicker>
     <div class="input-group-btn">
-        <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': (attribute.filter.searchType !== 'exactMatch')}">
+        <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': dirty}">
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
@@ -15,18 +16,18 @@
             </li>
             <li ng-switch="filterType">
                 <a ng-switch-when="number" ng-click="numRange(); updateFilterText; $event.stopPropagation();"
-                   class="filter-option date-time-option" ng-blur="updateFilterText()"
+                   class="filter-option date-time-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
                     Range
                 </a>
                 <form ng-switch-when="number" class="form-horizontal" ng-click="numRange(); updateFilterText; $event.stopPropagation();">
                     <div class="form-group filter-form-group">
                         <label for="start-num" class="col-sm-2 control-label range-label">From:</label>
-                        <input id="start-num" class="col-sm-8" model="attribute.filter.start">
+                        <input id="start-num" class="col-sm-8" ng-model="attribute.filter.start" ng-change="checkFilterStatus()">
                     </div>
                     <div class="form-group filter-form-group">
                         <label for="end-num" class="col-sm-2 control-label range-label">To:</label>
-                        <input id="end-num" class="col-sm-8" model="attribute.filter.end">
+                        <input id="end-num" class="col-sm-8" ng-model="attribute.filter.end" ng-change="checkFilterStatus()">
                     </div>
                 </form>
                 <a ng-switch-when="text" ng-click="strContains(); $event.stopPropagation();" class="filter-option"
