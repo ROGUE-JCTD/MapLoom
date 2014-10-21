@@ -22,6 +22,15 @@
       ];
     };
 
+    this.randomString = function() {
+      var text = '';
+      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      for (var i = 0; i < Math.floor(Math.random() * 50); i++) {
+        text += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return text;
+    };
+
     this.getSummaryStatistics = function(layer, field) {
       number = {
         type: 'number',
@@ -29,8 +38,8 @@
         totalCount: 2043,
         uniqueValues: {
         },
-        min: 100,
-        max: 0,
+        min: undefined,
+        max: undefined,
         range: 49.6567,
         sum: 106165,
         mean: 72.6165,
@@ -54,11 +63,32 @@
       strStats = {
         type: 'string',
         count: 13,
-        uniqueValueCounts: {
-          'In Progress': 12,
-          'Finalized': 1100
-        }
+        uniqueValues: {
+        },
+        min: undefined,
+        max: undefined,
+        range: 49.6567,
+        sum: 106165,
+        mean: 72.6165,
+        median: 74.2404,
+        stdDev: 15.324,
+        coefficient: 0.0123
       };
+
+
+      for (i = 0; i < Math.floor((Math.random() * 300) + 1); i++) {
+        var randomstr = Math.floor((Math.random() * 100) + 1);
+        strStats.uniqueValues[this.randomString()] = randomstr;
+
+        if (randomstr > strStats.max || typeof(strStats.max) === 'undefined') {
+          strStats.max = randomstr;
+        }
+
+        if (randomstr < strStats.min || typeof(strStats.min) === 'undefined') {
+          strStats.min = randomstr;
+        }
+
+      }
 
       dateStats = {
         type: 'date',
@@ -79,7 +109,7 @@
         coefficient: 0.0123
       };
 
-      return number;
+      return strStats;
 
     };
 

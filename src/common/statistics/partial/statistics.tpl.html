@@ -3,8 +3,7 @@
       <h4>Summary Statistics for {{data.fieldname}}.</h4>
 
       <!--<div loom-statistics-bar-graph bar-height="20" bar-padding="5" margin="300" data="{{data.barData}}"></div>-->
-      <div class="btn-group-wrap pull-left" id="statistics-btns">
-        <div class="btn-group">
+        <div class="btn-group" id="statistics-btns">
           <a type="button" ng-click="selectChart('histogram')" tooltip-append-to-body="true" ng-if="fieldTypeSupportsHistogram(data.statistics.type)"
              tooltip-placement="top" tooltip="{{'view_histogram' | translate}}"
              class="btn btn-sm btn-default" ng-class="{disabled: isSelected('histogram')}">
@@ -18,11 +17,9 @@
           <a type="button" ng-click="selectChart('date_heatmap')"
              class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-if="fieldTypeSupportsDateHeatMap(data.statistics.type)"
              tooltip-placement="top" tooltip="{{'show_date_heatmap' | translate}}" ng-class="{disabled: isSelected('date_heatmap')}">
-        <i class="glyphicon glyphicon-calendar"></i>
-        </a>
+            <i class="glyphicon glyphicon-calendar"></i>
+          </a>
         </div>
-      </div>
-      <hr/>
 
       <ul id="statistics-hud-bar">
         <li class="table-center statistics-hud-group">

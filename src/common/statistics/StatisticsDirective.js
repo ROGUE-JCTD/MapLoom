@@ -32,7 +32,7 @@
 
               element[0].parentElement.style.height = contentHeight + 'px';
 
-              var bodyHeight = contentHeight;// - angular.element('#table-view-window .modal-footer')[0].clientHeight;
+              var bodyHeight = contentHeight;
               angular.element('#statistics-view-window .modal-body')[0].style.height = bodyHeight + 'px';
 
             }
@@ -73,20 +73,29 @@
           restrict: 'EA',
 
           link: function(scope, element, attrs) {
-            var divWidth = 538;
-            var divHeight = 360;
-            var margin = {top: 30, bottom: 10, left: 45, right: 10};
+
+            scope.divWidth = 800;
+            scope.divHeight = 450;
+            scope.margin = {top: 30, bottom: 10, left: 45, right: 10};
 
             scope.$watch('data', function(newVals, oldVals) {
               if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
                 scope.data = newVals;
                 console.log('New Data value: ', newVals);
+                if (goog.isDefAndNotNull(scope.data) || goog.isDefAndNotNull(scope.data.statistics) &&
+                    goog.isDefAndNotNull(scope.data.statistics.uniqueValues)) {
+                  scope.maxLabelLength = d3.max(d3.keys(scope.data.statistics.uniqueValues), function(val) {
+                    if (typeof(val) === 'string') {
+                      return val.length;
+                    }
+                    return val;
+                  });
+                }
                 scope.render();
               }
             }, true);
 
             scope.$watch('selected', function(newVals, oldVals) {
-              console.log('Selected: ', scope.selected);
               scope.render();
             }, true);
 
@@ -95,6 +104,12 @@
                 return scope.renderPieChart();
               }
               return scope.renderHistogram();
+            };
+
+            scope.resetVariables = function() {
+              scope.divWidth = 800;
+              scope.divHeight = 450;
+              scope.margin = {top: 30, bottom: 10, left: 45, right: 10};
             };
 
             scope.clearData = function() {
@@ -107,32 +122,62 @@
 
             scope.renderHistogram = function() {
               var data = scope.data;
-              scope.clearData();
 
               if (!data || !(goog.isDefAndNotNull(data.statistics) &&
                   goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 return;
               }
+              scope.resetVariables();
+              scope.clearData();
 
               var histogram = d3.entries(data.statistics.uniqueValues);
-              var chartWidth = divWidth - margin.left - margin.right;
-              var chartHeight = divHeight - margin.top - margin.bottom;
+              var maxxAxisLabelWidth = 40;
+
+              var distributeWidth = Math.max(scope.divWidth, 33 * histogram.length);
+              scope.divWidth = distributeWidth;
+              var chartWidth = scope.divWidth - scope.margin.left - scope.margin.right;
+              var chartHeight = scope.divHeight - scope.margin.top - scope.margin.bottom;
               var color = scope.color();
               var yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max])
-                  .range([chartHeight, margin.bottom]);
+                  .range([chartHeight, scope.margin.bottom]);
               var xScale = d3.scale.ordinal().domain(d3.keys(data.statistics.uniqueValues))
-                  .rangeBands([margin.left + 10, chartWidth], 0.25, 0.25);
+                  .rangeBands([scope.margin.left + 10, chartWidth], 0.25, 0.25);
               var sliceHoverClass = 'path-red-fill';
+
+              var xAxisLabelCollision = goog.isDefAndNotNull(scope.maxLabelLength) &&
+                  7 * 0.4 * scope.maxLabelLength + 10 > xScale.rangeBand();
+
+              if (xAxisLabelCollision) {
+                chartHeight = chartHeight - maxxAxisLabelWidth;
+                yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max])
+                  .range([chartHeight, scope.margin.bottom]);
+              }
 
               scope.renderLegend(histogram);
 
               var svg = d3.select(element[0])
+                  .append('div')
+                  .attr('id', 'loom-statistics-histogram')
+                  .attr('width', scope.divWidth)
                   .append('svg:svg')
-                  .attr('width', divWidth)
-                  .style('margin-left', d3.select('.statistics-legend').node().offsetWidth);
+                  .attr('width', scope.divWidth);
 
               // set the height based on the calculations above
-              svg.attr('height', divHeight);
+              svg.attr('height', scope.divHeight);
+
+              var yAxis = d3.svg.axis()
+                  .scale(yScale)
+                  .orient('left');
+
+              svg.append('g')
+                  .attr('class', 'y axis')
+                  .attr('transform', 'translate(' + scope.margin.left + ',0)')
+                  .call(yAxis)
+                  .selectAll('text')
+                  .classed('no-select', true);
+
+              svg.selectAll('g').filter(function(d) { return d; })
+                  .classed('minor', true);
 
               //create the rectangles for the bar chart
               svg.selectAll('rect')
@@ -153,28 +198,36 @@
                   })
                   .attr('height', function(d) { return chartHeight - yScale(d.value) + 1; });
 
-              var yAxis = d3.svg.axis()
-                  .scale(yScale)
-                  .orient('left');
-
-              svg.append('g')
-                  .attr('class', 'y axis')
-                  .attr('transform', 'translate(' + margin.left + ',0)')
-                  .call(yAxis)
-                  .selectAll('text')
-                  .classed('no-select', true);
-
               var xAxis = d3.svg.axis()
                   .scale(xScale)
-                  .orient('bottom');
+                  .orient('bottom')
+                  .tickPadding(10)
+                  .tickFormat(function(d) {
+                    if (goog.isDefAndNotNull(d) && (d.length * 7 * 0.4 > maxxAxisLabelWidth - 15)) {
+                      var trunc = d.substring(0, 8);
+                      if (d.length > 8) {
+                        trunc += '...';
+                      }
+                      return trunc;
+                    }
+                    return d;
+                  });
 
               svg.append('g')
                   .attr('class', 'x axis')
-                  .attr('transform', 'translate(0,' + (chartHeight + margin.bottom) + ')')
+                  .attr('transform', 'translate(0,' + (chartHeight + scope.margin.bottom) + ')')
                   .call(xAxis)
                   .selectAll('text')
-                  .classed('no-select', true);
+                  .classed('no-select x-axis-label', true);
 
+              if (xAxisLabelCollision) {
+                svg.selectAll('.x-axis-label')
+                    .attr('transform', 'rotate(90)')
+                    .style('text-anchor', 'start')
+                    .attr('y', 0)
+                    .attr('x', 9)
+                    .attr('dy', '.35em');
+              }
 
               var addSliceHoverClasses = function(event) {
                 var target = '#' + event.currentTarget.id;
@@ -194,16 +247,20 @@
 
             scope.renderPieChart = function() {
               var data = scope.data;
-              scope.clearData();
+
               if (!data || !(goog.isDefAndNotNull(data.statistics) &&
                   goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 return;
               }
+              scope.clearData();
+              scope.resetVariables();
 
               //var w = width - margin.left - margin.right;
               // get the width of the parent div with this (after everything has rendered)
               // d3.select('#statistics-chart-area').node().offsetWidth
-              var chartHeight = divHeight - margin.top - margin.bottom;
+              scope.divWidth = 600;
+              var chartWidth = scope.divWidth - scope.margin.left - scope.margin.right;
+              var chartHeight = scope.divHeight - scope.margin.top - scope.margin.bottom;
               var r = chartHeight / 2;
               var color = scope.color();
               var sliceHoverClass = 'path-red-fill';
@@ -213,13 +270,16 @@
               scope.renderLegend(uniqueValues);
 
               var svg = d3.select(element[0])
+                  .append('div')
+                  .attr('id', 'loom-statistics-pie')
+                  .attr('width', scope.divWidth)
                   .append('svg:svg')
+                  .attr('width', chartWidth)
+                  .attr('height', chartHeight)
                   .attr('id', 'pie-chart')
                   .data([uniqueValues])
-                  .attr('width', divWidth)
-                  .attr('height', divHeight)
                   .append('svg:g')
-                  .attr('transform', 'translate(' + divWidth / 2 + ',' + divHeight / 2 + ')')
+                  .attr('transform', 'translate(' + chartWidth / 2 + ',' + chartHeight / 2 + ')')
                   .style('margin-left', d3.select('.statistics-legend').node().offsetWidth);
 
               var pie = d3.layout.pie().value(function(d) {return d.value;});
@@ -237,7 +297,6 @@
                   .attr('id', function(d, index) {
                     return 'pie-chart-slice-path-' + index;})
                   .attr('d', function(d) {
-                    console.log(arc(d));
                     return arc(d);
                   });
 
@@ -262,7 +321,7 @@
               if (!goog.isDefAndNotNull(data)) {
                 return;
               }
-              var maxLength = 0;
+
               var color = scope.color();
 
               var legendDiv = d3.select(element[0])
@@ -294,14 +353,8 @@
                   });
 
               tr.append('td')
-                  .text(function(d) {
-                    if (goog.isDefAndNotNull(d.key)) {
-                      if (d.key.length > maxLength) {
-                        maxLength = d.key.length;
-                      }
-                      return d.key;
-                    }
-                    return;
+                  .text(function(d, i) {
+                    return d.key;
                   })
                   .classed('statistics-legend-text no-select', true)
                   .attr('data-toggle', 'tooltip')
@@ -309,12 +362,6 @@
                   .attr('title', function(d) {
                         return d.key + ': ' + d.value;
                       });
-
-              var calculatedWidth = 29 + (5 * maxLength);
-              if (calculatedWidth > 125) {
-                calculatedWidth = 125;
-              }
-              d3.select('.statistics-legend').style('width', calculatedWidth + 'px');
             };
           }
         };
