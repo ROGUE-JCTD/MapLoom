@@ -74,10 +74,6 @@
 
           link: function(scope, element, attrs) {
 
-            scope.divWidth = 800;
-            scope.divHeight = 450;
-            scope.margin = {top: 30, bottom: 10, left: 45, right: 10};
-
             scope.$watch('data', function(newVals, oldVals) {
               if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
                 scope.data = newVals;
@@ -107,10 +103,12 @@
             };
 
             scope.resetVariables = function() {
-              scope.divWidth = 800;
+              scope.divWidth = 550;
               scope.divHeight = 450;
               scope.margin = {top: 30, bottom: 10, left: 45, right: 10};
             };
+
+            scope.resetVariables();
 
             scope.clearData = function() {
               d3.select(element[0]).selectAll('*').remove();
