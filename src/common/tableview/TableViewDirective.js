@@ -152,6 +152,7 @@
               scope.selectedRow = null;
               scope.filterOn = true;
               scope.selectedAttribute = null;
+              wipeFilterFields();
             };
 
             var updateData = function() {
@@ -165,7 +166,6 @@
             var clearSession = function() {
               tableViewService.clear();
               scope.restrictions = {};
-              wipeFilterFields();
 
               scope.selectedRow = null;
               scope.rows = null;
