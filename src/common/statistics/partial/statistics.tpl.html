@@ -22,35 +22,35 @@
         </div>
 
       <ul id="statistics-hud-bar">
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.mean">
           <div class="statistics-title">{{'mean' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.mean | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.max">
           <div class="statistics-title">{{'maximum' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.max | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.min">
           <div class="statistics-title">{{'minimum' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.min | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.sum">
           <div class="statistics-title">{{'sum' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.sum | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.range">
           <div class="statistics-title">{{'range' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.range | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.stdDev">
           <div class="statistics-title">{{'standard deviation' | translate}}</div>
           <div class="statistics-value">{{data.statistics.stdDev | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.variance">
           <div class="statistics-title">{{'variance' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.variance | number:2}}</div>
         </li>
-        <li class="table-center statistics-hud-group">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.totalCount">
           <div class="statistics-title">{{'count' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.totalCount | number:2}}</div>
         </li>
