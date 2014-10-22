@@ -296,7 +296,10 @@
         'Please add a GeoGit layer to the map.',
     'single_sync': 'Perform Synchronization',
     'continuous_sync': 'Toggle Auto-Synchronization',
-    'statistics_view': 'View Statistics'
+    'statistics_view': 'View Statistics',
+    'exact_match': 'Exact Match',
+    'range': 'Range',
+    'contains': 'Contains'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

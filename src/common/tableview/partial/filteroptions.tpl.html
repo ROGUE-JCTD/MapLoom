@@ -11,25 +11,25 @@
             <li>
                 <a value="exactMatch" ng-click="exactMatch(); $event.stopPropagation();" class="filter-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'exactMatch')}">
-                    Exact Match
+                  {{'exact_match' | translate}}
                 </a>
             </li>
             <li ng-switch="filterType">
                 <a ng-switch-when="number" ng-click="numRange(); updateFilterText; $event.stopPropagation();"
                    class="filter-option date-time-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
-                    Range
+                  {{'range' | translate}}
                 </a>
                   <form ng-switch-when="number" class="form-horizontal" ng-click="numRange(); updateFilterText; $event.stopPropagation();" ng-if="attribute.filter.searchType === 'numRange'">
                     <div class="advanced-filter">
                     <table class="range-filter-table">
                       <tbody>
                         <tr class="form-group">
-                          <td><label for="start-num" valign="middle" class="col-sm-2 control-label range-label">From:</label></td>
+                          <td><label for="start-num" valign="middle" class="col-sm-2 control-label range-label">{{'from' | translate}}:</label></td>
                           <td><input id="start-num" type="text" class="col-sm-12 form-control" ng-model="attribute.filter.start" ng-change="checkFilterStatus()"></td>
                         </tr>
                         <tr class="form-group">
-                          <td><label for="end-num" class="col-sm-2 control-label range-label">To:</label></td>
+                          <td><label for="end-num" class="col-sm-2 control-label range-label">{{'to' | translate}}:</label></td>
                           <td><input id="end-num" type="text" class="col-sm-12 form-control" ng-model="attribute.filter.end" ng-change="checkFilterStatus()"></td>
                         </tr>
                       </tbody>
@@ -38,24 +38,24 @@
                 </form>
                 <a ng-switch-when="text" ng-click="strContains(); $event.stopPropagation();" class="filter-option"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'strContains')}">
-                    Contains
+                  {{'contains' | translate}}
                 </a>
                 <a ng-switch-when="date" ng-click="numRange(); updateFilterText; $event.stopPropagation();"
                    class="filter-option date-time-option" ng-blur="updateFilterText()"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
-                    Range
+                  {{'range' | translate}}
                 </a>
                 <form ng-switch-when="date" class="form-horizontal" ng-click="numRange(); updateFilterText; $event.stopPropagation();">
                   <div class="advanced-filter" ng-if="attribute.filter.searchType === 'numRange'">
                     <table class="range-filter-table">
                       <tbody>
                       <tr>
-                        <td><label for="start-date" class="col-sm-2 control-label range-label">From:</label></td>
+                        <td><label for="start-date" class="col-sm-2 control-label range-label">{{'from' | translate}}:</label></td>
                         <td><datetimepicker id="start-date" class="col-sm-12" date-object="attribute.filter.start"
                                             default-date="false" seperate-time="false"></datetimepicker></td>
                       </tr>
                       <tr>
-                        <td><label for="end-date" class="col-sm-2 control-label range-label">To:</label></td>
+                        <td><label for="end-date" class="col-sm-2 control-label range-label">{{'to' | translate}}:</label></td>
                         <td><datetimepicker id="end-date" class="col-md-12" date-object="attribute.filter.end"
                                             default-date="false" seperate-time="false"></datetimepicker></td>
                       </tr>
