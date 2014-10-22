@@ -140,6 +140,7 @@
                 if (goog.isDef(scope.attributes[attrIndex].filter.end)) {
                   scope.attributes[attrIndex].filter.end = '';
                 }
+                scope.attributes[attrIndex].filter.searchType = 'exactMatch';
               }
             };
             scope.clearFilters = function() {

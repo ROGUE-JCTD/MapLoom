@@ -25,6 +25,7 @@
 
             scope.exactMatch = function() {
               scope.attribute.filter.searchType = 'exactMatch';
+              scope.checkFilterStatus();
             };
             scope.strContains = function() {
               scope.attribute.filter.searchType = 'strContains';
@@ -38,8 +39,9 @@
 
             scope.checkFilterStatus = function() {
               var filter = scope.attribute.filter;
-              if ((filter.text !== '' && filter.searchType === 'strContains') ||
-                  ((filter.start !== '' || filter.end !== '') && filter.searchType === 'numRange')) {
+              if (filter.text !== '' && filter.searchType === 'strContains' || (filter.searchType === 'numRange' &&
+                  ((goog.isDef(filter.start) && filter.start !== '') ||
+                      (goog.isDef(filter.end) && filter.end !== '')))) {
                 scope.dirty = true;
               } else {
                 scope.dirty = false;
