@@ -220,17 +220,13 @@
 
               tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
               var meta = tableViewService.selectedLayer.get('metadata');
-              mapService.summarizeAttribute(tableViewService.selectedLayer,
+              statisticsService.summarizeAttribute(tableViewService.selectedLayer,
                   meta.filters, scope.selectedAttribute.name).then(function(statistics) {
-                stats = statisticsService.getStatistics(tableViewService.selectedLayer, scope.selectedAttribute);
-                goog.object.extend(stats.statistics, statistics);
                 tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
                 $('#statistics-view-window').modal('show');
-                $rootScope.$broadcast('getStatistics', stats);
+                $rootScope.$broadcast('getStatistics', statistics);
               }, function(reject) {
                 tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
-              }, function(update) {
-                console.log('-- update');
               });
             };
 
