@@ -86,7 +86,7 @@
 
                   for (var key in obj) {
                     if (obj.hasOwnProperty(key)) {
-
+                      var label = scope.validateChartText(key);
                       if (!goog.isDefAndNotNull(scope.uniqueValueMin) || obj[key] < scope.uniqueValueMin) {
                         scope.uniqueValueMin = obj[key];
                       }
@@ -95,8 +95,8 @@
                         scope.uniqueValueMax = obj[key];
                       }
 
-                      if (!goog.isDefAndNotNull(scope.maxLabelLength) || key.length > scope.maxLabelLength) {
-                        scope.maxLabelLength = key.length;
+                      if (!goog.isDefAndNotNull(scope.maxLabelLength) || label.length > scope.maxLabelLength) {
+                        scope.maxLabelLength = label.length;
                       }
                     }
                   }
