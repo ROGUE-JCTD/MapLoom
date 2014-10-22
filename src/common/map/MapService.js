@@ -1094,6 +1094,9 @@
     this.showHeatmap = function(layer, filters) {
 
       if (goog.isDefAndNotNull(filters)) {
+        // clone the filter object so that when user changes teh layer filter, it doesn't affect this heatmap that has
+        // already been created
+        filters = goog.object.clone(filters);
         console.log('----[ mapService.showHeatmap from tableview for layer: ', layer, ', filters: ', filters);
       } else {
         console.log('----[ mapService.showHeatmap for layer, no filter ', layer);
