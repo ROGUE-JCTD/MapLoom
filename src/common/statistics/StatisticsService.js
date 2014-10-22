@@ -21,7 +21,6 @@
 
     this.summarizeAttribute = function(layer, filters, attributeName) {
       var deferredResponse = q_.defer();
-
       if (!goog.isDefAndNotNull(layer)) {
         deferredResponse.reject('Invalid Layer');
         return deferredResponse.promise;

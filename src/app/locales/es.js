@@ -300,7 +300,10 @@
         'Por favor, añada una capa GeoGit al mapa.',
     'single_sync': 'Realizar la Sincronización',
     'continuous_sync': 'Sincronización Automática de Palanca',
-    'statistics_view': 'Ver las estadísticas'
+    'statistics_view': 'Ver las estadísticas',
+    'exact_match': 'Igualar Exactamente',
+    'range': 'Oscilar',
+    'contains': 'Contener'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

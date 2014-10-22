@@ -129,7 +129,7 @@
 }
 
 .selectedAttribute {
-  color: gray;
+  background-color: @selectedTableRowColor !important;
 }
 
 .pointer {
@@ -149,7 +149,7 @@
 }
 
 .dirty-filter {
-  background-color: #ebebeb !important;
+  background-color: @selectedTableRowColor !important;
   border-color: #adadad !important;
 }
 
@@ -160,4 +160,28 @@
 .filter-form-group {
   margin-left: auto !important;
 
+}
+
+.range-filter-table {
+  margin-left: 10px;
+
+  .form-control {
+    padding-left: 3px;
+    border-radius: 4px;
+  }
+}
+
+.advanced-filter {
+  border-top: 1px solid gray;
+  padding: 3px;
+}
+
+.no-radius .input-group-addon {
+  border-radius: 0px;
+}
+
+.filter-input-group {
+  .input-group-btn > button {
+    border-left-width: 0px;
+  }
 }

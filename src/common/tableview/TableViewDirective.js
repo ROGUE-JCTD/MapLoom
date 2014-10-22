@@ -131,10 +131,20 @@
               });
             };
 
-            scope.clearFilters = function() {
+            var wipeFilterFields = function() {
               for (var attrIndex in scope.attributes) {
                 scope.attributes[attrIndex].filter.text = '';
+                if (goog.isDef(scope.attributes[attrIndex].filter.start)) {
+                  scope.attributes[attrIndex].filter.start = '';
+                }
+                if (goog.isDef(scope.attributes[attrIndex].filter.end)) {
+                  scope.attributes[attrIndex].filter.end = '';
+                }
+                scope.attributes[attrIndex].filter.searchType = 'exactMatch';
               }
+            };
+            scope.clearFilters = function() {
+              wipeFilterFields();
               scope.applyFilters();
             };
 
@@ -143,6 +153,7 @@
               scope.selectedRow = null;
               scope.filterOn = true;
               scope.selectedAttribute = null;
+              wipeFilterFields();
             };
 
             var updateData = function() {

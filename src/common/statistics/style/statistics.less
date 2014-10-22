@@ -32,11 +32,26 @@
   padding-bottom: 3px;
 }
 
+@statistics-legend-width: 135px;
+
 .statistics-legend {
-  position: absolute;
-  top: 120px;
-  overflow: auto;
-  width: 135px;
+  overflow-x: auto;
+  overflow-y: auto;
+  width: @statistics-legend-width;
+  padding: 5px;
+  display: block;
+  float: left;
+  height: 450px;
+}
+
+#loom-statistics-histogram {
+  margin-left: @statistics-legend-width + 15px;
+  overflow-x: auto;
+}
+
+#loom-statistics-pie {
+  margin-left: @statistics-legend-width + 15px;
+  overflow-x: auto;
 }
 
 #statistics-btns {
@@ -53,6 +68,7 @@
 
 #statistics-view-window .modal-body{
   background-color: white;
+  padding: 15px;
 }
 
 .axis path,
@@ -65,7 +81,8 @@
 #statistics-hud-bar{
   float: right;
   min-width: 90px;
-  padding-left: 0px;
+  padding-left: 3px;
+  margin-right: -25px;
 }
 
 .statistics-title {
@@ -90,3 +107,4 @@
   padding: 3px 0px 3px;
   display: block;
 }
+
