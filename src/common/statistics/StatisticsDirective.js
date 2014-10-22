@@ -80,12 +80,36 @@
                 console.log('New Data value: ', newVals);
                 if (goog.isDefAndNotNull(scope.data) || goog.isDefAndNotNull(scope.data.statistics) &&
                     goog.isDefAndNotNull(scope.data.statistics.uniqueValues)) {
-                  scope.maxLabelLength = d3.max(d3.keys(scope.data.statistics.uniqueValues), function(val) {
-                    if (typeof(val) === 'string') {
-                      return val.length;
+
+                  scope.resetVariables();
+                  obj = scope.data.statistics.uniqueValues;
+
+                  for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+
+                      if (!goog.isDefAndNotNull(scope.uniqueValueMin) || obj[key] < scope.uniqueValueMin) {
+                        scope.uniqueValueMin = obj[key];
+                      }
+
+                      if (!goog.isDefAndNotNull(scope.uniqueValueMax) || obj[key] > scope.uniqueValueMax) {
+                        scope.uniqueValueMax = obj[key];
+                      }
+
+                      if (!goog.isDefAndNotNull(scope.maxLabelLength) || key.length > scope.maxLabelLength) {
+                        scope.maxLabelLength = key.length;
+                      }
                     }
-                    return val;
-                  });
+                  }
+
+                  if (scope.uniqueValueMin === scope.uniqueValueMax) {
+                    scope.uniqueValueMin = 0;
+                  }
+                  if (scope.uniqueValueMin > scope.uniqueValueMax) {
+                    var max = scope.uniqueValueMin;
+                    scope.uniqueValueMin = scope.uniqueValueMax;
+                    scope.uniqueValueMax = max;
+                  }
+
                 }
                 scope.render();
               }
@@ -106,6 +130,9 @@
               scope.divWidth = 550;
               scope.divHeight = 450;
               scope.margin = {top: 30, bottom: 10, left: 45, right: 10};
+              scope.uniqueValueMin = null;
+              scope.uniqueValueMax = null;
+              scope.maxLabelLength = null;
             };
 
             scope.resetVariables();
@@ -125,7 +152,6 @@
                   goog.isDefAndNotNull(data.statistics.uniqueValues))) {
                 return;
               }
-              scope.resetVariables();
               scope.clearData();
 
               var histogram = d3.entries(data.statistics.uniqueValues);
@@ -136,18 +162,18 @@
               var chartWidth = scope.divWidth - scope.margin.left - scope.margin.right;
               var chartHeight = scope.divHeight - scope.margin.top - scope.margin.bottom;
               var color = scope.color();
-              var yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max])
+              var yScale = d3.scale.linear().domain([scope.uniqueValueMin, scope.uniqueValueMax])
                   .range([chartHeight, scope.margin.bottom]);
               var xScale = d3.scale.ordinal().domain(d3.keys(data.statistics.uniqueValues))
                   .rangeBands([scope.margin.left + 10, chartWidth], 0.25, 0.25);
               var sliceHoverClass = 'path-red-fill';
 
               var xAxisLabelCollision = goog.isDefAndNotNull(scope.maxLabelLength) &&
-                  7 * 0.4 * scope.maxLabelLength + 10 > xScale.rangeBand();
+                  7 * 0.4 * scope.maxLabelLength + 20 > xScale.rangeBand();
 
               if (xAxisLabelCollision) {
                 chartHeight = chartHeight - maxxAxisLabelWidth;
-                yScale = d3.scale.linear().domain([data.statistics.min, data.statistics.max])
+                yScale = d3.scale.linear().domain([scope.uniqueValueMin, scope.uniqueValueMax])
                   .range([chartHeight, scope.margin.bottom]);
               }
 
@@ -208,7 +234,7 @@
                       }
                       return trunc;
                     }
-                    return d;
+                    return scope.validateChartText(d);
                   });
 
               svg.append('g')
@@ -243,6 +269,13 @@
               }
             };
 
+            scope.validateChartText = function(text) {
+              if (text === '') {
+                return '[Empty String]';
+              }
+              return text;
+            };
+
             scope.renderPieChart = function() {
               var data = scope.data;
 
@@ -251,7 +284,6 @@
                 return;
               }
               scope.clearData();
-              scope.resetVariables();
 
               //var w = width - margin.left - margin.right;
               // get the width of the parent div with this (after everything has rendered)
@@ -352,13 +384,13 @@
 
               tr.append('td')
                   .text(function(d, i) {
-                    return d.key;
+                    return scope.validateChartText(d.key);
                   })
                   .classed('statistics-legend-text no-select', true)
                   .attr('data-toggle', 'tooltip')
                   .attr('data-placement', 'right')
                   .attr('title', function(d) {
-                        return d.key + ': ' + d.value;
+                    return scope.validateChartText(d.key) + ': ' + d.value;
                       });
             };
           }

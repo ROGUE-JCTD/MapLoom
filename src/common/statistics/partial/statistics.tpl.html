@@ -23,36 +23,36 @@
 
       <ul id="statistics-hud-bar">
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'mean' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.mean}}</div>
+          <div class="statistics-title">{{'mean' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.mean | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'maximum' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.max}}</div>
+          <div class="statistics-title">{{'maximum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.max | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'minimum' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.min}}</div>
+          <div class="statistics-title">{{'minimum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.min | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'sum' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.sum}}</div>
+          <div class="statistics-title">{{'sum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.sum | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'range' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.range}}</div>
+          <div class="statistics-title">{{'range' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.range | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
           <div class="statistics-title">{{'standard deviation' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.stdDev}}</div>
+          <div class="statistics-value">{{data.statistics.stdDev | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">{{'coefficient' | translate}}</div>
-          <div class="statistics-value">{{data.statistics.coefficient}}</div>
+          <div class="statistics-title">{{'variance' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.variance | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group">
-          <div class="statistics-title">count</div>
-          <div class="statistics-value">{{data.statistics.totalCount}}</div>
+          <div class="statistics-title">{{'count' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.totalCount | number:2}}</div>
         </li>
       </ul>
 
