@@ -299,7 +299,15 @@
     'statistics_view': 'View Statistics',
     'exact_match': 'Exact Match',
     'range': 'Range',
-    'contains': 'Contains'
+    'minimum': 'Minimum',
+    'maximum': 'Maximum',
+    'mean': 'Mean',
+    'median': 'Median',
+    'sum': 'Sum',
+    'variance': 'Variance',
+    'standard_deviation': 'Standard Deviation',
+    'count': 'Count',
+    'populated_count': 'Populated Count'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

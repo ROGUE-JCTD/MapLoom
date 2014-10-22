@@ -26,6 +26,10 @@
           <div class="statistics-title">{{'mean' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.mean | number:2}}</div>
         </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.median">
+          <div class="statistics-title">{{'median' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.median | number:2}}</div>
+        </li>
         <li class="table-center statistics-hud-group" ng-if="data.statistics.max">
           <div class="statistics-title">{{'maximum' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.max | number:2}}</div>
@@ -43,7 +47,7 @@
           <div class="statistics-value">{{data.statistics.range | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group" ng-if="data.statistics.stdDev">
-          <div class="statistics-title">{{'standard deviation' | translate}}</div>
+          <div class="statistics-title">{{'standard_deviation' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.stdDev | number:2}}</div>
         </li>
         <li class="table-center statistics-hud-group" ng-if="data.statistics.variance">
@@ -53,6 +57,10 @@
         <li class="table-center statistics-hud-group" ng-if="data.statistics.totalCount">
           <div class="statistics-title">{{'count' | translate | lowercase}}</div>
           <div class="statistics-value">{{data.statistics.totalCount | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.populatedCount">
+          <div class="statistics-title">{{'populated_count' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.populatedCount | number:2}}</div>
         </li>
       </ul>
 

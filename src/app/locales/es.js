@@ -303,7 +303,16 @@
     'statistics_view': 'Ver las estadísticas',
     'exact_match': 'Igualar Exactamente',
     'range': 'Oscilar',
-    'contains': 'Contener'
+    'contains': 'Contener',
+    'minimum': 'Minimo',
+    'maximum': 'Maximo',
+    'mean': 'Promedio',
+    'median': 'Media',
+    'sum': 'Soma',
+    'variance': 'Varianza',
+    'standard_deviation': 'Desviacion Estandar',
+    'count': 'Cuentas',
+    'populated_count': 'Llenado Cuentas'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
