@@ -299,6 +299,7 @@
     'statistics_view': 'View Statistics',
     'exact_match': 'Exact Match',
     'range': 'Range',
+    'contains': 'Contains',
     'minimum': 'Minimum',
     'maximum': 'Maximum',
     'mean': 'Mean',
