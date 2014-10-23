@@ -212,7 +212,9 @@
 
             scope.showHeatmap = function() {
               var meta = tableViewService.selectedLayer.get('metadata');
-              mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
+              var layer = mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
+              scope.cancel();
+              mapService.zoomToLayerFeatures(layer);
             };
 
             scope.isLoadingStatistics = function() {
@@ -291,7 +293,6 @@
               } else {
                 doWork();
               }
-
             };
 
             $('#table-view-window').on('hidden.bs.modal', function(e) {

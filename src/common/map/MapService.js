@@ -1154,6 +1154,8 @@
       if (goog.isDefAndNotNull(layer)) {
         layer.get('metadata').loadingHeatmap = false;
       }
+
+      return layer;
     };
 
 
