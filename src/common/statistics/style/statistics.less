@@ -1,0 +1,110 @@
+.black-stroke {
+  stroke-width: 2px;
+  stroke: black;
+  opacity: .9;
+}
+
+.pie-chart-text {
+  font-size: 13px;
+}
+
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.path-red-fill {
+  fill: #FF4136;
+}
+
+#statistics-chart-area {
+  min-height: 330px
+}
+
+.statistics-legend-text {
+  .pie-chart-text();
+  padding-left: 5px;
+  padding-bottom: 3px;
+}
+
+@statistics-legend-width: 135px;
+
+.statistics-legend {
+  overflow-x: auto;
+  overflow-y: auto;
+  width: @statistics-legend-width;
+  padding: 5px;
+  display: block;
+  float: left;
+  height: 450px;
+}
+
+#loom-statistics-histogram {
+  margin-left: @statistics-legend-width + 15px;
+  overflow-x: auto;
+}
+
+#loom-statistics-pie {
+  margin-left: @statistics-legend-width + 15px;
+  overflow-x: auto;
+}
+
+#statistics-btns {
+  margin-bottom: 10px;
+}
+
+#statistics-view-window hr{
+  border: none;
+}
+
+#statistics-view-window .modal-dialog{
+  min-width: 900px;
+}
+
+#statistics-view-window .modal-body{
+  background-color: white;
+  padding: 15px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#statistics-hud-bar{
+  float: right;
+  min-width: 90px;
+  padding-left: 3px;
+  margin-right: -25px;
+}
+
+.statistics-title {
+  font-variant: small-caps;
+  font-size: 17px;
+}
+
+.statistics-value {
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -3px;
+}
+
+.table-center {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.statistics-hud-group {
+  padding: 3px 0px 3px;
+  display: block;
+}
+

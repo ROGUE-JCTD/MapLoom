@@ -1094,6 +1094,9 @@
     this.showHeatmap = function(layer, filters) {
 
       if (goog.isDefAndNotNull(filters)) {
+        // clone the filter object so that when user changes teh layer filter, it doesn't affect this heatmap that has
+        // already been created
+        filters = goog.object.clone(filters);
         console.log('----[ mapService.showHeatmap from tableview for layer: ', layer, ', filters: ', filters);
       } else {
         console.log('----[ mapService.showHeatmap for layer, no filter ', layer);
@@ -1118,9 +1121,7 @@
           tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
             source.addFeatures(source.readFeatures(response));
           }, function(reject) {
-            //TODO: show msg failed to get features
-          }, function(update) {
-            //TODO:
+            dialogService_.open(translate_.instant('error'), translate_.instant('error'));
           });
         },
         strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
@@ -1146,17 +1147,6 @@
         })
       });
 
-      vector.getSource().on('addfeature', function(event) {
-        //console.out('af: ', event);
-        // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
-        // standards-violating <magnitude> tag in each Placemark.  We extract it from
-        // the Placemark's name instead.
-        //var name = event.feature.get('name');
-        //var magnitude = parseFloat(name.substr(2));
-        //event.feature.set('weight', magnitude - 5);
-      });
-
-      console.log('heatmap layer: ', vector);
       this.map.addLayer(vector);
       rootScope_.$broadcast('layer-added');
 

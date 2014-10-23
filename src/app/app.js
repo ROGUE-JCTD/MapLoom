@@ -44,11 +44,17 @@
             return;
           }
           errorDialogShowing = true;
+          console.log('==== onErrorCallback, error msg:', msg);
+          var msg_string = msg;
+          if (typeof msg != 'string') {
+            msg_string = 'message not string. view console for object detail';
+          }
           dialogService.error($translate.instant('error'), $translate.instant('script_error',
-              {error: msg})).then(function() {
+              {error: msg_string})).then(function() {
             errorDialogShowing = false;
           });
         };
+
 
         // Enable Proj4JS
         ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS && typeof Proj4js == 'object';

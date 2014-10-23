@@ -2,7 +2,7 @@
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
-      <table class="table-striped table-hover sortable">
+      <table class="table-striped table-hover" ng-class="{sortable: isSortable}">
         <thead>
           <tr ng-if="filterOn">
               <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>
@@ -21,7 +21,7 @@
           </tr>
           <tr>
             <th>{{'feature_id' | translate}}</th>
-            <th ng-repeat="attr in attributes">{{attr.name}}</th>
+            <th ng-repeat="attr in attributes" class="pointer" ng-click="selectAttribute(attr)" ng-class="{selectedAttribute: attr.selected}">{{attr.name}}</th>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
@@ -72,21 +72,29 @@
         </tr>
       </table>
     </div>
-    <button type="button" class="btn btn-primary table-btn" ng-click="tableviewform.$submit()" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
-    <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel(); applyFilters()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
-      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()"
-          ng-show="!tableviewform.$visible && !readOnly" tooltip="{{'edit_attributes' | translate}}" tooltip-append-to-body="true">
-        <i class="glyphicon glyphicon-edit"></i>
-    </button>
-    <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()" tooltip="{{'word_wrap' | translate}}" tooltip-append-to-body="true">
-        <i class="glyphicon glyphicon-text-width"></i>
-    </button>
-    <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="!tableviewform.$visible && selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
-      <i class="glyphicon glyphicon-globe"></i>
-    </button>
-    <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
-      <i class="glyphicon glyphicon-fire"></i>
-    </button>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary table-btn" ng-click="tableviewform.$submit()" ng-show="tableviewform.$visible">{{'save_btn' | translate}}</button>
+      <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$cancel(); applyFilters()" ng-show="tableviewform.$visible">{{'cancel_btn' | translate}}</button>
+        <button type="button" class="btn btn-default table-btn" ng-click="tableviewform.$show()"
+            ng-show="!tableviewform.$visible && !readOnly" tooltip="{{'edit_attributes' | translate}}" tooltip-append-to-body="true">
+          <i class="glyphicon glyphicon-edit"></i>
+      </button>
+      <button type="button" class="btn btn-default table-btn" ng-click="toggleWordWrap()" tooltip="{{'word_wrap' | translate}}" tooltip-append-to-body="true">
+          <i class="glyphicon glyphicon-text-width"></i>
+      </button>
+      <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="!tableviewform.$visible && selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
+        <i class="glyphicon glyphicon-globe"></i>
+      </button>
+      <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
+        <i class="glyphicon glyphicon-fire"></i>
+      </button>
+      <button type="button" ng-click="showStatistics()" class="btn btn-default table-btn" tooltip-append-to-body="true"  ng-class="{disabled: !selectedAttribute}"
+         tooltip-placement="top" tooltip="{{'statistics_view' | translate}}" tooltip-append-to-body="true">
+        <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingStatistics()"></div>
+        <i class="glyphicon glyphicon-stats"></i>
+      </button>
+    </div>
+
     <!--<div id="table-page-nav">-->
         <button id='previous-page-btn' type="button" class="btn btn-default table-btn"
                 ng-controller="previous-tt-controller" ng-click="onPrevious()" ng-disabled="currentPage < 2"

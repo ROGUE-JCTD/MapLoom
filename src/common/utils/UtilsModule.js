@@ -132,7 +132,15 @@
         } else {
           scope.seperateTime = attrs.seperateTime;
         }
+
+        var hasValidDate = false;
+
         var updateDateTime = function() {
+          if (!hasValidDate) {
+            scope.dateObject = '';
+            return;
+          }
+
           var newDate = new Date();
           var date = element.find('.datepicker').data('DateTimePicker');
           if (goog.isDefAndNotNull(date) && goog.isDefAndNotNull(date.getDate())) {
@@ -141,27 +149,12 @@
             newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
           }
           var time = element.find('.timepicker').data('DateTimePicker');
-          if (goog.isDefAndNotNull(time)) {
+          if (goog.isDefAndNotNull(time) && goog.isDefAndNotNull(time.getDate())) {
             time = time.getDate();
             newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
           }
 
-          if (!scope.$$phase && !$rootScope.$$phase) {
-            scope.$apply(function() {
-              var momentDate = moment(new Date(dateOptions.defaultDate));
-              momentDate.lang($translate.use());
-              if (scope.time === 'true' && scope.date === 'true') {
-                scope.dateObject = newDate.toISOString();
-                scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
-              } else if (scope.time === 'true') {
-                scope.dateObject = newDate.toISOString().split('T')[1];
-                scope.disabledText = momentDate.format('LT');
-              } else if (scope.date === 'true') {
-                scope.dateObject = newDate.toISOString().split('T')[0];
-                scope.disabledText = momentDate.format('L');
-              }
-            });
-          } else {
+          var applyDate = function() {
             var momentDate = moment(new Date(dateOptions.defaultDate));
             momentDate.lang($translate.use());
             if (scope.time === 'true' && scope.date === 'true') {
@@ -174,6 +167,14 @@
               scope.dateObject = newDate.toISOString().split('T')[0];
               scope.disabledText = momentDate.format('L');
             }
+          };
+
+          if (!scope.$$phase && !$rootScope.$$phase) {
+            scope.$apply(function() {
+              applyDate();
+            });
+          } else {
+            applyDate();
           }
         };
 
@@ -218,17 +219,39 @@
         };
         updateDate();
 
+        var handleInvalidDate = function(e) {
+          e.stopPropagation();
+
+          if (e.date._i === '') {
+            element.find('.form-control').val('');
+          }
+        };
+        var onChange = function(e) {
+          if (!goog.isDefAndNotNull(e.date)) {
+            return;
+          }
+          if (e.date.isSame(e.oldDate)) {
+            hasValidDate = false;
+          } else {
+            hasValidDate = true;
+          }
+          updateDateTime();
+        };
         var setUpPickers = function() {
           if (scope.date === 'true') {
             element.find('.datepicker').datetimepicker(dateOptions);
-            element.find('.datepicker').on('change.dp', updateDateTime);
+            //element.find('.datepicker').on('change.dp', updateDateTime);
+            element.find('.datepicker').on('change.dp', onChange);
+            element.find('.datepicker').on('error.dp', handleInvalidDate);
           }
           if (scope.time === 'true' && (scope.seperateTime === 'true' || scope.date === 'false')) {
             element.find('.timepicker').datetimepicker(timeOptions);
-            element.find('.timepicker').on('change.dp', updateDateTime);
+            element.find('.timepicker').on('change.dp', onChange);
+            //element.find('.timepicker').on('change.dp', updateDateTime);
+            element.find('.timepicker').on('error.dp', handleInvalidDate);
           }
           if (goog.isDefAndNotNull(dateOptions.defaultDate) || goog.isDefAndNotNull(timeOptions.defaultDate)) {
-            updateDateTime();
+            //updateDateTime();
             var date;
             if (scope.date === 'true' && scope.time === 'true') {
               date = moment(dateOptions.defaultDate);
@@ -251,10 +274,10 @@
 
         var dateObjectChanged = function() {
           updateDate();
-          if (scope.date === 'true') {
+          if (scope.date === 'true' && hasValidDate) {
             element.find('.datepicker').data('DateTimePicker').setDate(dateOptions.defaultDate);
           }
-          if (scope.time === 'true' && (scope.seperateTime === 'true' || scope.date === 'false')) {
+          if (scope.time === 'true' && (scope.seperateTime === 'true' || scope.date === 'false') && hasValidDate) {
             element.find('.timepicker').data('DateTimePicker').setDate(dateOptions.defaultDate);
           }
           updateDateTime();

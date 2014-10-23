@@ -12,6 +12,7 @@
           replace: true,
           link: function(scope, element) {
             console.log('attribute', scope.attribute);
+            scope.dirty = false;
 
             if (scope.typeRestriction === 'int' || scope.typeRestriction === 'double') {
               scope.filterType = 'number';
@@ -27,12 +28,27 @@
 
             scope.exactMatch = function() {
               scope.attribute.filter.searchType = 'exactMatch';
+              scope.checkFilterStatus();
             };
             scope.strContains = function() {
               scope.attribute.filter.searchType = 'strContains';
+              scope.checkFilterStatus();
             };
             scope.numRange = function() {
               scope.attribute.filter.searchType = 'numRange';
+              scope.checkFilterStatus();
+              scope.updateFilterText();
+            };
+
+            scope.checkFilterStatus = function() {
+              var filter = scope.attribute.filter;
+              if (filter.text !== '' && filter.searchType === 'strContains' || (filter.searchType === 'numRange' &&
+                  ((goog.isDef(filter.start) && filter.start !== '') ||
+                      (goog.isDef(filter.end) && filter.end !== '')))) {
+                scope.dirty = true;
+              } else {
+                scope.dirty = false;
+              }
             };
 
             scope.updateFilterText = function() {

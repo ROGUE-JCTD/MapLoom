@@ -1,0 +1,77 @@
+<div class="modal-body">
+  <div class="panel-body">
+      <h4>Summary Statistics for {{data.fieldname}}.</h4>
+
+      <!--<div loom-statistics-bar-graph bar-height="20" bar-padding="5" margin="300" data="{{data.barData}}"></div>-->
+        <div class="btn-group" id="statistics-btns">
+          <a type="button" ng-click="selectChart('histogram')" tooltip-append-to-body="true" ng-if="fieldTypeSupportsHistogram(data.statistics.type)"
+             tooltip-placement="top" tooltip="{{'view_histogram' | translate}}"
+             class="btn btn-sm btn-default" ng-class="{disabled: isSelected('histogram')}">
+            <i class="glyphicon glyphicon-stats"></i>
+          </a>
+          <a type="button" ng-click="selectChart('pie')"
+             class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-if="fieldTypeSupportsHistogram(data.statistics.type)"
+             tooltip-placement="top" tooltip="{{'show_pie_chart' | translate}}" ng-class="{disabled: isSelected('pie')}">
+            <i class="glyphicon glyphicon-adjust"></i>
+          </a>
+          <a type="button" ng-click="selectChart('date_heatmap')"
+             class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-if="fieldTypeSupportsDateHeatMap(data.statistics.type)"
+             tooltip-placement="top" tooltip="{{'show_date_heatmap' | translate}}" ng-class="{disabled: isSelected('date_heatmap')}">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </a>
+        </div>
+
+      <ul id="statistics-hud-bar">
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.mean">
+          <div class="statistics-title">{{'mean' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.mean | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.median">
+          <div class="statistics-title">{{'median' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.median | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.max">
+          <div class="statistics-title">{{'maximum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.max | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.min">
+          <div class="statistics-title">{{'minimum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.min | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.sum">
+          <div class="statistics-title">{{'sum' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.sum | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.range">
+          <div class="statistics-title">{{'range' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.range | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.stdDev">
+          <div class="statistics-title">{{'standard_deviation' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.stdDev | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.variance">
+          <div class="statistics-title">{{'variance' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.variance | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.totalCount">
+          <div class="statistics-title">{{'count' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.totalCount | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.populatedCount">
+          <div class="statistics-title">{{'populated_count' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.populatedCount | number:2}}</div>
+        </li>
+        <li class="table-center statistics-hud-group" ng-if="data.statistics.uniqueValueCount">
+          <div class="statistics-title">{{'unique_values' | translate | lowercase}}</div>
+          <div class="statistics-value">{{data.statistics.uniqueValueCount | number:2}}</div>
+        </li>
+      </ul>
+
+      <div id="statistics-chart-area">
+        <div id="loom-statistics-legend"></div>
+        <div loom-statistics-chart id="loom-statistics-chart"></div>
+      </div>
+
+  </div>
+</div>

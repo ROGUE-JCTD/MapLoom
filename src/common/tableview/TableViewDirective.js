@@ -65,12 +65,15 @@
   });
 
   module.directive('loomTableView',
-      function(tableFilter, mapService, $http, tableViewService, featureManagerService, dialogService, $translate) {
+      function(tableFilter, mapService, $http, tableViewService, featureManagerService, dialogService, $translate,
+               statisticsService, $rootScope) {
         return {
           restrict: 'C',
           templateUrl: 'tableview/partial/tableview.tpl.html',
           link: function(scope, element) {
             scope.isSaving = false;
+            scope.isSortable = false;
+
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
               var headerHeight = angular.element('#table-view-window .modal-header')[0].clientHeight;
@@ -92,7 +95,9 @@
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
               resizeModal();
-              $.bootstrapSortable();
+              if (scope.isSortable) {
+                $.bootstrapSortable();
+              }
             });
 
             $(window).resize(resizeModal);
@@ -126,10 +131,20 @@
               });
             };
 
-            scope.clearFilters = function() {
+            var wipeFilterFields = function() {
               for (var attrIndex in scope.attributes) {
                 scope.attributes[attrIndex].filter.text = '';
+                if (goog.isDef(scope.attributes[attrIndex].filter.start)) {
+                  scope.attributes[attrIndex].filter.start = '';
+                }
+                if (goog.isDef(scope.attributes[attrIndex].filter.end)) {
+                  scope.attributes[attrIndex].filter.end = '';
+                }
+                scope.attributes[attrIndex].filter.searchType = 'exactMatch';
               }
+            };
+            scope.clearFilters = function() {
+              wipeFilterFields();
               scope.applyFilters();
             };
 
@@ -137,6 +152,8 @@
               scope.restrictions = tableViewService.restrictionList;
               scope.selectedRow = null;
               scope.filterOn = true;
+              scope.selectedAttribute = null;
+              wipeFilterFields();
             };
 
             var updateData = function() {
@@ -165,6 +182,21 @@
               scope.selectedRow = feature;
             };
 
+            scope.selectAttribute = function(attr) {
+              if (scope.selectedAttribute) {
+                scope.selectedAttribute.selected = false;
+              }
+              if (attr) {
+                if (scope.selectedAttribute == attr) {
+                  attr.selected = false;
+                  scope.selectedAttribute = null;
+                  return;
+                }
+                attr.selected = true;
+              }
+              scope.selectedAttribute = attr;
+            };
+
             scope.goToMap = function() {
               var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
                   tableViewService.selectedLayer.get('metadata').projection,
@@ -181,6 +213,32 @@
             scope.showHeatmap = function() {
               var meta = tableViewService.selectedLayer.get('metadata');
               mapService.showHeatmap(tableViewService.selectedLayer, meta.filters);
+            };
+
+            scope.isLoadingStatistics = function() {
+              if (!goog.isDefAndNotNull(tableViewService.selectedLayer)) {
+                return false;
+              }
+
+              var loading = tableViewService.selectedLayer.get('metadata').isLoadingStatistics;
+              return goog.isDefAndNotNull(loading) && loading === true;
+            };
+
+            scope.showStatistics = function() {
+              if (!goog.isDefAndNotNull(scope.selectedAttribute)) {
+                return;
+              }
+
+              tableViewService.selectedLayer.get('metadata').isLoadingStatistics = true;
+              var meta = tableViewService.selectedLayer.get('metadata');
+              statisticsService.summarizeAttribute(tableViewService.selectedLayer,
+                  meta.filters, scope.selectedAttribute.name).then(function(statistics) {
+                tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
+                $('#statistics-view-window').modal('show');
+                $rootScope.$broadcast('getStatistics', statistics);
+              }, function(reject) {
+                tableViewService.selectedLayer.get('metadata').isLoadingStatistics = false;
+              });
             };
 
             scope.getPageText = function() {
@@ -373,7 +431,9 @@
                   .success(function() {
                     scope.applyFilters();
 
-                    $.bootstrapSortable();
+                    if (scope.isSortable) {
+                      $.bootstrapSortable();
+                    }
 
                     // refresh tiles
                     mapService.dumpTileCache(tableViewService.selectedLayer.get('metadata').uniqueID);

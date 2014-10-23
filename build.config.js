@@ -82,6 +82,7 @@ module.exports = {
       'vendor/ol3/ol-simple.js',
       'vendor/proj4js/proj4js-compressed.js',
       'vendor/proj4js/defs/*',
+      'vendor/d3/d3.min.js',
       //'vendor/ol3/ol-whitespace.js',
 
       //-- files for image gallery
