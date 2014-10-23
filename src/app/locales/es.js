@@ -312,7 +312,8 @@
     'variance': 'Varianza',
     'standard_deviation': 'Desviacion Estandar',
     'count': 'Cuentas',
-    'populated_count': 'Llenado Cuentas'
+    'populated_count': 'Llenado Cuentas',
+    'unique_values': 'Valor Único'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

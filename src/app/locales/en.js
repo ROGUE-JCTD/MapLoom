@@ -308,7 +308,8 @@
     'variance': 'Variance',
     'standard_deviation': 'Standard Deviation',
     'count': 'Count',
-    'populated_count': 'Populated Count'
+    'populated_count': 'Populated Count',
+    'unique_values': 'Unique Values'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
