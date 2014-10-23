@@ -153,7 +153,7 @@
               scope.selectedRow = null;
               scope.filterOn = true;
               scope.selectedAttribute = null;
-              wipeFilterFields();
+              //wipeFilterFields();
             };
 
             var updateData = function() {

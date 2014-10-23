@@ -92,7 +92,7 @@
       console.log('metadata', metadata);
       for (var attrName in filters) {
         var searchType = filters[attrName].searchType;
-        var resType = service_.restrictionList[attrName].type;
+        var resType = metadata.schema[attrName]._type;
 
         if (searchType === 'strContains' && filters[attrName].text !== '') {
           xml +=
@@ -101,7 +101,7 @@
               '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
               '</ogc:PropertyIsLike>';
         } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
-          if (resType === 'datetime') {
+          if (resType === 'xsd:dateTime' || resType === 'xsd:date' || resType === 'xsd:time') {
             var dateStringSansTime = filters[attrName].text.split('T')[0];
 
             var beginDate = moment(new Date(dateStringSansTime));
@@ -278,32 +278,29 @@
 
         var row;
         service_.rows = [];
-        if (data.features.length > 0) {
-          service_.attributeNameList = [];
-          if (!goog.isDefAndNotNull(metadata.filters)) {
-            metadata.filters = {};
-          }
-          for (var propName in metadata.schema) {
-            if (data.features[0].properties.hasOwnProperty(propName) &&
-                propName !== 'fotos' && propName !== 'photos') {
-              if (!goog.isDefAndNotNull(metadata.filters[propName])) {
-                metadata.filters[propName] = {text: '', searchType: 'exactMatch'};
-              }
-              service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
+        service_.attributeNameList = [];
+        if (!goog.isDefAndNotNull(metadata.filters)) {
+          metadata.filters = {};
+        }
+        for (var propName in metadata.schema) {
+          if (metadata.schema[propName]._type.search('gml:') === -1 && propName !== 'fotos' && propName !== 'photos') {
+            if (!goog.isDefAndNotNull(metadata.filters[propName])) {
+              metadata.filters[propName] = {text: '', searchType: 'exactMatch'};
             }
+            service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
           }
-          var totalFeatures = data.totalFeatures;
-          service_.totalPages = Math.ceil(totalFeatures / service_.resultsPerPage);
-          getRestrictions();
-          for (var feat in data.features) {
-            var selectedFeature = false;
-            if (goog.isDefAndNotNull(service_.feature) && data.features[feat].id === service_.feature.id) {
-              selectedFeature = true;
-            }
-            row = {modified: false, selected: selectedFeature, feature: data.features[feat]};
+        }
+        var totalFeatures = data.totalFeatures;
+        service_.totalPages = Math.ceil(totalFeatures / service_.resultsPerPage);
+        getRestrictions();
+        for (var feat in data.features) {
+          var selectedFeature = false;
+          if (goog.isDefAndNotNull(service_.feature) && data.features[feat].id === service_.feature.id) {
+            selectedFeature = true;
+          }
+          row = {modified: false, selected: selectedFeature, feature: data.features[feat]};
 
-            service_.rows[feat] = row;
-          }
+          service_.rows[feat] = row;
         }
         deferredResponse.resolve();
       }).error(function(data, status, headers, config) {
