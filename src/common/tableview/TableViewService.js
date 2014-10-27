@@ -21,6 +21,7 @@
     this.resultsPerPage = 25;
     this.currentPage = 0;
     this.totalPages = 0;
+    this.totalFeatures = 0;
 
     this.nextPage = function() {
       this.currentPage++;
@@ -290,8 +291,8 @@
             service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
           }
         }
-        var totalFeatures = data.totalFeatures;
-        service_.totalPages = Math.ceil(totalFeatures / service_.resultsPerPage);
+        service_.totalFeatures = data.totalFeatures;
+        service_.totalPages = Math.ceil(service_.totalFeatures / service_.resultsPerPage);
         getRestrictions();
         for (var feat in data.features) {
           var selectedFeature = false;

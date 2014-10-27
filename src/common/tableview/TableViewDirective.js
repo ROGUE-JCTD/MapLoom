@@ -162,6 +162,7 @@
               scope.attributes = tableViewService.attributeNameList;
               scope.currentPage = tableViewService.currentPage + 1;
               scope.totalPages = tableViewService.totalPages;
+              scope.totalFeatures = tableViewService.totalFeatures;
             };
 
             var clearSession = function() {
