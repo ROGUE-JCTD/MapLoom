@@ -495,4 +495,14 @@
       }
     };
   });
+
+  module.filter('removeCharacters', function() {
+    return function(str, subStr) {
+      if (goog.isDefAndNotNull(str) && goog.isDefAndNotNull(subStr)) {
+        return goog.string.remove(str, subStr);
+      } else {
+        return str;
+      }
+    };
+  });
 })();
