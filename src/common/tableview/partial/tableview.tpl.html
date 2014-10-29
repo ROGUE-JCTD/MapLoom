@@ -5,15 +5,9 @@
       <table class="table-striped table-hover" ng-class="{sortable: isSortable}">
         <thead>
           <tr ng-if="filterOn">
-              <td class="filter-row first-filter-row"><span class="filters-label">{{'filter' | translate}}</span>
-                  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="applyFilters()"
-                          translate="apply_filters"
-                          ng-disabled="tableviewform.$visible">
-                  </button>
-                  <button ng-if="filterOn" type="button" class="filter-button btn btn-default" ng-click="clearFilters()"
-                          translate="clear_filters"
-                          ng-disabled="tableviewform.$visible">
-                  </button></td>
+              <td class="filter-row first-filter-row">
+                  <span class="filters-label">{{'filter' | translate}}</span>
+              </td>
               <td class="filter-row" ng-repeat="attr in attributes">
                   <!--<input class="form-control" type="text" ng-model="attr.filter.text">-->
                   <filteroptions attribute="attr" type="restrictions[attr.name].type"></filteroptions>
@@ -107,6 +101,13 @@
                 tooltip="{{'next_page' | translate}}" tooltip-append-to-body="true">
             <i class="glyphicon glyphicon-chevron-right"></i>
         </button>
+
+      <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn pull-right" ng-click="clearFilters()"
+              translate="clear_filters" ng-disabled="tableviewform.$visible">
+      </button>
+      <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn pull-right" ng-click="applyFilters()"
+              translate="apply_filters" style="margin-right:5px;" ng-disabled="tableviewform.$visible">
+      </button>
     <!--</div>-->
 
     <div class="table-view-footer-text no-select">{{totalFeatures | number:0}} {{'features' | translate}}</div>
