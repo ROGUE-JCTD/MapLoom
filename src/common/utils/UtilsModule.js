@@ -151,6 +151,7 @@
           var time = element.find('.timepicker').data('DateTimePicker');
           if (goog.isDefAndNotNull(time) && goog.isDefAndNotNull(time.getDate())) {
             time = time.getDate();
+            newDate.setFullYear(1970, 0, 1);
             newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
           }
 
@@ -161,7 +162,7 @@
               scope.dateObject = newDate.toISOString();
               scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
             } else if (scope.time === 'true') {
-              scope.dateObject = newDate.toISOString().split('T')[1];
+              scope.dateObject = newDate.toISOString();//.split('T')[1];
               scope.disabledText = momentDate.format('LT');
             } else if (scope.date === 'true') {
               scope.dateObject = newDate.toISOString().split('T')[0];
@@ -196,6 +197,7 @@
 
         var updateDate = function() {
           if (goog.isDefAndNotNull(scope.dateObject) && scope.dateObject !== '') {
+            hasValidDate = true;
             if (scope.date === 'false') {
               var testDate = new Date(scope.dateObject);
               if ('Invalid Date' == testDate) {
@@ -215,6 +217,8 @@
               dateOptions.defaultDate = scope.dateObject;
               timeOptions.defaultDate = scope.dateObject;
             }
+          } else {
+            hasValidDate = false;
           }
         };
         updateDate();
@@ -251,7 +255,7 @@
             element.find('.timepicker').on('error.dp', handleInvalidDate);
           }
           if (goog.isDefAndNotNull(dateOptions.defaultDate) || goog.isDefAndNotNull(timeOptions.defaultDate)) {
-            //updateDateTime();
+            updateDateTime();
             var date;
             if (scope.date === 'true' && scope.time === 'true') {
               date = moment(dateOptions.defaultDate);

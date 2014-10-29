@@ -36,7 +36,7 @@
               <span ng-switch-when="double" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <div ng-switch-when="datetime">
-                  <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mma"}}</span>
+                  <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mm a"}}</span>
                   <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
                         default-date="false" seperate-time="false"></datetimepicker>
               </div>
@@ -46,7 +46,7 @@
                                     default-date="false" seperate-time="false" time="false"></datetimepicker>
                 </div>
                 <div ng-switch-when="time">
-                    <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"h:mma"}}</span>
+                    <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name] | date:"h:mm a"}}</span>
                     <datetimepicker ng-if="tableviewform.$visible" id="table-datetime" date-object="row.feature.properties[attr.name]"
                                     default-date="false" seperate-time="false" date="false"></datetimepicker>
                 </div>

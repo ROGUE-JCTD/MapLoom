@@ -1,11 +1,13 @@
 
 <div class="input-group filter-input-group">
-    <input ng-if="filterType !== 'date' && filterType !== 'datetime'" class="form-control" type="text" ng-model="attribute.filter.text"
+    <input ng-if="filterType !== 'date' && filterType !== 'datetime' && filterType !== 'time'" class="form-control" type="text" ng-model="attribute.filter.text"
            ng-change="checkFilterStatus()" ng-disabled="attribute.filter.searchType === 'numRange'">
     <datetimepicker id="start-date" class="no-radius" style="padding-top: 15px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
                     ng-if="filterType === 'datetime'" default-date="false" seperate-time="false"></datetimepicker>
     <datetimepicker id="start-date" class="no-radius" style="padding-top: 15px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
                     ng-if="filterType === 'date'" default-date="false" time="false" seperate-time="false"></datetimepicker>
+    <datetimepicker id="start-date" class="no-radius" style="padding-top: 15px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
+                    ng-if="filterType === 'time'" default-date="false" date="false" seperate-time="false"></datetimepicker>
     <div class="input-group-btn">
         <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': dirty}">
             <span class="caret"></span>
@@ -69,35 +71,47 @@
                 <a ng-switch-when="date" ng-click="numRange(); updateFilterText; $event.stopPropagation();"
                    class="filter-option date-time-option" ng-blur="updateFilterText()"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
-                    Range
+                    {{'range' | translate}}
                 </a>
                 <form ng-switch-when="date" class="form-horizontal" ng-click="numRange(); updateFilterText; $event.stopPropagation();">
-                    <div class="form-group filter-form-group">
-                        <label for="start-date" class="col-sm-2 control-label range-label">From:</label>
-                        <datetimepicker id="start-date" class="col-sm-8" date-object="attribute.filter.start"
-                                        default-date="false" seperate-time="false" time="false"></datetimepicker>
-                    </div>
-                    <div class="form-group filter-form-group">
-                        <label for="end-date" class="col-sm-2 control-label range-label">To:</label>
-                        <datetimepicker id="end-date" class="col-md-8" date-object="attribute.filter.end"
-                                        default-date="false" seperate-time="false" time="false"></datetimepicker>
-                    </div>
+                  <div class="advanced-filter" ng-if="attribute.filter.searchType === 'numRange'">
+                      <table class="range-filter-table">
+                          <tbody>
+                          <tr>
+                              <td><label for="start-date" class="col-sm-2 control-label range-label">{{'from' | translate}}:</label></td>
+                              <td><datetimepicker id="start-date" class="col-sm-12" date-object="attribute.filter.start"
+                                                  default-date="false" seperate-time="false" time="false"></datetimepicker></td>
+                          </tr>
+                          <tr>
+                              <td><label for="end-date" class="col-sm-2 control-label range-label">{{'to' | translate}}:</label></td>
+                              <td><datetimepicker id="end-date" class="col-md-12" date-object="attribute.filter.end"
+                                                  default-date="false" seperate-time="false" time="false"></datetimepicker></td>
+                          </tr>
+                          </tbody>
+                      </table>
+                  </div>
                 </form>
                 <a ng-switch-when="time" ng-click="numRange(); updateFilterText; $event.stopPropagation();"
                    class="filter-option date-time-option" ng-blur="updateFilterText()"
                    ng-class="{'filter-options-selected': (attribute.filter.searchType === 'numRange')}">
-                    Range
+                    {{'range' | translate}}
                 </a>
                 <form ng-switch-when="time" class="form-horizontal" ng-click="numRange(); updateFilterText; $event.stopPropagation();">
-                    <div class="form-group filter-form-group">
-                        <label for="start-date" class="col-sm-2 control-label range-label">From:</label>
-                        <datetimepicker id="start-date" class="col-sm-8" date-object="attribute.filter.start"
-                                        default-date="false" seperate-time="false" date="false"></datetimepicker>
-                    </div>
-                    <div class="form-group filter-form-group">
-                        <label for="end-date" class="col-sm-2 control-label range-label">To:</label>
-                        <datetimepicker id="end-date" class="col-md-8" date-object="attribute.filter.end"
-                                        default-date="false" seperate-time="false" date="false"></datetimepicker>
+                    <div class="advanced-filter" ng-if="attribute.filter.searchType === 'numRange'">
+                        <table class="range-filter-table">
+                            <tbody>
+                            <tr>
+                                <td><label for="start-date" class="col-sm-2 control-label range-label">{{'from' | translate}}:</label></td>
+                                <td><datetimepicker id="start-date" class="col-sm-12" date-object="attribute.filter.start"
+                                                    default-date="false" seperate-time="false" date="false"></datetimepicker></td>
+                            </tr>
+                            <tr>
+                                <td><label for="end-date" class="col-sm-2 control-label range-label">{{'to' | translate}}:</label></td>
+                                <td><datetimepicker id="end-date" class="col-md-12" date-object="attribute.filter.end"
+                                                    default-date="false" seperate-time="false" date="false"></datetimepicker></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </form>
             </li>

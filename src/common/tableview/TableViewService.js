@@ -90,7 +90,6 @@
           '<And>';
       //the <And> will need to change if we add a non-exclusive search option
 
-      console.log('metadata', metadata);
       for (var attrName in filters) {
         var searchType = filters[attrName].searchType;
         var resType = metadata.schema[attrName]._type;
@@ -102,7 +101,7 @@
               '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
               '</ogc:PropertyIsLike>';
         } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
-          if (resType === 'xsd:dateTime' || resType === 'xsd:date' || resType === 'xsd:time') {
+          if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
             var dateStringSansTime = filters[attrName].text.split('T')[0];
 
             var beginDate = moment(new Date(dateStringSansTime));
@@ -118,7 +117,20 @@
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
                 '<ogc:Literal>' + endDate.toISOString() + '</ogc:Literal>' +
                 '</ogc:PropertyIsLessThan>';
-          } else if (resType !== 'time') {
+          } else if (resType === 'xsd:time') {
+            var startTime = new Date(filters[attrName].text);
+            startTime.setSeconds(0);
+            var endTime = new Date(filters[attrName].text);
+            endTime.setSeconds(59.999);
+            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                '<ogc:Literal>' + startTime.toISOString() + '</ogc:Literal>' +
+                '</ogc:PropertyIsGreaterThanOrEqualTo>' +
+                '<ogc:PropertyIsLessThan>' +
+                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                '<ogc:Literal>' + endTime.toISOString() + '</ogc:Literal>' +
+                '</ogc:PropertyIsLessThan>';
+          } else {
             xml +=
                 '<ogc:PropertyIsEqualTo>' +
                 '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
@@ -126,7 +138,7 @@
                 '</ogc:PropertyIsEqualTo>';
           }
         } else if (searchType === 'numRange') {
-          if (resType === 'datetime' || resType === 'date') {
+          if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
             if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
               var startStringSansTime = filters[attrName].start.split('T')[0];
               var firstDate = moment(new Date(startStringSansTime));
@@ -146,6 +158,25 @@
               xml += '<ogc:PropertyIsLessThan>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
                   '<ogc:Literal>' + secondDate.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsLessThan>';
+            }
+          } else if (resType === 'xsd:time') {
+            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
+              var firstTime = new Date(filters[attrName].start);
+              firstTime.setSeconds(0);
+
+              xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + firstTime.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>';
+            }
+            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
+              var secondTime = new Date(filters[attrName].end);
+              secondTime.setSeconds(59.999);
+
+              xml += '<ogc:PropertyIsLessThan>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + secondTime.toISOString() + '</ogc:Literal>' +
                   '</ogc:PropertyIsLessThan>';
             }
           } else {
@@ -174,13 +205,12 @@
 
     //TODO: add bbox to filters.geom instead
     this.getFeaturesWfs = function(layer, filters, bbox, resultsPerPage, currentPage) {
-      console.log('---- tableviewservice.getFeaturesWfs: ', layer, filters, bbox, resultsPerPage, currentPage);
+      //console.log('---- tableviewservice.getFeaturesWfs: ', layer, filters, bbox, resultsPerPage, currentPage);
       var deferredResponse = q_.defer();
 
       var metadata = layer.get('metadata');
       var postURL = metadata.url + '/wfs/WfsDispatcher';
       var xmlData = service_.getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
-      console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {
         headers: {
           'Content-Type': 'text/xml;charset=utf-8'
@@ -195,7 +225,6 @@
     };
 
     this.loadData = function() {
-      console.log('getting data for table');
       var deferredResponse = q_.defer();
       var metadata = service_.selectedLayer.get('metadata');
       var projection = metadata.projection;
@@ -221,9 +250,7 @@
           }
         }
         if (hasFilter) {
-          console.log('filtering, filter obj:', filter);
           url += '&cql_filter=' + encodeURIComponent(filter);
-          console.log('filtering, filter url:', url);
         }
       }
 
