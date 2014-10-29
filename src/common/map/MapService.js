@@ -756,6 +756,11 @@
       // -- save layers
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         var config = layer.get('metadata').config;
+        if (!goog.isDefAndNotNull(config)) {
+          console.log('Not saving layer: ', layer.get('metadata').name,
+              'because the layer does not have a configuration object.');
+          return false;
+        }
         // Note: when a server is removed, its id diverges from the index. since in geonode's config object it is all
         // index based, updating it to be the index in case the id is no longer the index
         var serverIndex = serverService_.getServerIndex(config.source);
