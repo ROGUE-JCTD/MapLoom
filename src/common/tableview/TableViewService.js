@@ -5,6 +5,9 @@
   var service_ = null;
   var q_ = null;
 
+  var searching = false;
+  var searchText = '';
+
   module.provider('tableViewService', function() {
     this.$get = function($q, $http) {
       http_ = $http;
@@ -55,51 +58,18 @@
       return this.loadData();
     };
 
-    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
-      var paginationParamsStr = '';
-      if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
-        paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
-            (resultsPerPage * currentPage) + '"';
-      }
-
-      var bboxStr = '';
-      if (goog.isDefAndNotNull(bbox)) {
-        //TODO will this need the projection?
-        bboxStr = ' bbox="' + bbox.join(',') + '"';
-      }
-
-      var metadata = layer.get('metadata');
+    var getFilterXML = function(layer, filters) {
       var xml = '';
-      if (!goog.isDefAndNotNull(exclude_header) || exclude_header === false) {
-        xml += '<?xml version="1.0" encoding="UTF-8"?>';
-      }
-
-      xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
-          ' outputFormat="JSON"' +
-          bboxStr +
-          paginationParamsStr +
-          ' xmlns:wfs="http://www.opengis.net/wfs"' +
-          ' xmlns:ogc="http://www.opengis.net/ogc"' +
-          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
-          ' xsi:schemaLocation="http://www.opengis.net/wfs' +
-          ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
-          '<wfs:Query typeName="' + metadata.name + '"' +
-          ' srsName="' + metadata.projection + '"' +
-          '>' +
-          '<ogc:Filter>' +
-          '<And>';
-      //the <And> will need to change if we add a non-exclusive search option
-
       for (var attrName in filters) {
         var searchType = filters[attrName].searchType;
-        var resType = metadata.schema[attrName]._type;
+        var resType = layer.get('metadata').schema[attrName]._type;
 
         if (searchType === 'strContains' && filters[attrName].text !== '') {
           xml +=
-              '<ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="!">' +
-              '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-              '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
-              '</ogc:PropertyIsLike>';
+              '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
+                  '</ogc:PropertyIsLike>';
         } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
           if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
             var dateStringSansTime = filters[attrName].text.split('T')[0];
@@ -133,9 +103,9 @@
           } else {
             xml +=
                 '<ogc:PropertyIsEqualTo>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + filters[attrName].text + '</ogc:Literal>' +
-                '</ogc:PropertyIsEqualTo>';
+                    '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                    '<ogc:Literal>' + filters[attrName].text + '</ogc:Literal>' +
+                    '</ogc:PropertyIsEqualTo>';
           }
         } else if (searchType === 'numRange') {
           if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
@@ -195,8 +165,66 @@
           }
         }
       }
-      xml += '</And>' +
-          '</ogc:Filter>' +
+      return xml;
+    };
+    var getSearchXML = function(layer, filters) {
+      var xml = '';
+      for (var attrName in filters) {
+        var resType = layer.get('metadata').schema[attrName]._type;
+        if (resType === 'xsd:string' || resType === 'simpleType') {
+          xml +=
+              '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>*' + searchText + '*</ogc:Literal>' +
+                  '</ogc:PropertyIsLike>';
+        }
+      }
+      return xml;
+    };
+    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
+      var paginationParamsStr = '';
+      if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
+        paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
+            (resultsPerPage * currentPage) + '"';
+      }
+
+      var bboxStr = '';
+      if (goog.isDefAndNotNull(bbox)) {
+        //TODO will this need the projection?
+        bboxStr = ' bbox="' + bbox.join(',') + '"';
+      }
+
+      var metadata = layer.get('metadata');
+      var xml = '';
+      if (!goog.isDefAndNotNull(exclude_header) || exclude_header === false) {
+        xml += '<?xml version="1.0" encoding="UTF-8"?>';
+      }
+
+      xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
+          ' outputFormat="JSON"' +
+          bboxStr +
+          paginationParamsStr +
+          ' xmlns:wfs="http://www.opengis.net/wfs"' +
+          ' xmlns:ogc="http://www.opengis.net/ogc"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          ' xsi:schemaLocation="http://www.opengis.net/wfs' +
+          ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
+          '<wfs:Query typeName="' + metadata.name + '"' +
+          ' srsName="' + metadata.projection + '"' +
+          '>' +
+          '<ogc:Filter>';
+      //the <And> will need to change if we add a non-exclusive search option
+
+      if (!searching) {
+        xml += '<And>';
+        xml += getFilterXML(layer, filters);
+        xml += '</And>';
+      } else {
+        xml += '<Or>';
+        xml += getSearchXML(layer, filters);
+        xml += '</Or>';
+      }
+      xml += '</ogc:Filter>' +
           '</wfs:Query>' +
           '</wfs:GetFeature>';
 
@@ -227,35 +255,10 @@
     this.loadData = function() {
       var deferredResponse = q_.defer();
       var metadata = service_.selectedLayer.get('metadata');
-      var projection = metadata.projection;
-      var url = metadata.url + '/wfs?version=' + settings.WFSVersion +
-          '&srsName=' + projection +
-          '&outputFormat=JSON&request=GetFeature&typeNames=' +
-          metadata.name +
-          '&maxFeatures=' + service_.resultsPerPage +
-          '&startIndex=' + (service_.resultsPerPage * service_.currentPage);
-
-      var filter = '';
-      var hasFilter = false;
-      if (goog.isDefAndNotNull(metadata.filters)) {
-        for (var attrName in metadata.filters) {
-          var attr = metadata.filters[attrName];
-          if (goog.isDefAndNotNull(attr.text) && attr.text !== '') {
-            if (hasFilter) {
-              filter += ' and ';
-            } else {
-              hasFilter = true;
-            }
-            filter += attrName + ' like \'%' + attr.text + '%\'';
-          }
-        }
-        if (hasFilter) {
-          url += '&cql_filter=' + encodeURIComponent(filter);
-        }
-      }
 
       var postURL = this.selectedLayer.get('metadata').url + '/wfs/WfsDispatcher';
-      var xmlData = service_.getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null,
+      var xmlData;
+      xmlData = service_.getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null,
           service_.resultsPerPage, service_.currentPage);
       console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {headers: {
@@ -342,6 +345,17 @@
       });*/
 
       return deferredResponse.promise;
+    };
+
+    this.search = function(text) {
+      searching = true;
+      searchText = text;
+      this.currentPage = 0;
+    };
+    this.stopSearch = function() {
+      searching = false;
+      searchText = '';
+      this.currentPage = 0;
     };
   });
 }());

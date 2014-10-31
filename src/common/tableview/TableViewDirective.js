@@ -73,6 +73,8 @@
           link: function(scope, element) {
             scope.isSaving = false;
             scope.isSortable = false;
+            scope.isSearching = false;
+            scope.searchText = '';
 
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
@@ -90,7 +92,7 @@
               angular.element('#table-view-window .modal-body')[0].style.height = bodyHeight + 'px';
 
               //resize the panel to account for the filter text box and padding
-              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 85 + 'px';
+              angular.element('#table-view-window .panel')[0].style.height = bodyHeight - 125 + 'px';
             }
 
             angular.element('#table-view-window').on('shown.bs.modal', function() {
@@ -465,6 +467,24 @@
               postAllFeatures();
             };
 
+            scope.searchTable = function() {
+              scope.isSearching = !scope.isSearching;
+              scope.isSaving = true;
+              if (scope.isSearching) {
+                tableViewService.search(scope.searchText);
+                tableViewService.loadData().then(function() {
+                  updateData();
+                  scope.isSaving = false;
+                });
+              } else {
+                tableViewService.stopSearch();
+                scope.searchText = '';
+                tableViewService.loadData().then(function() {
+                  updateData();
+                  scope.isSaving = false;
+                });
+              }
+            };
           }
         };
       });

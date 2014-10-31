@@ -1,5 +1,22 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
+  <span class="table-search-group">
+    <div class="table-search-box input-group input-group-sm">
+      <input type="text" class="form-control" ng-model="searchText" placeholder="{{'search_table' | translate}}">
+      <span class="input-group-btn">
+        <a class="btn btn-default" ng-click="searchTable()" type="button">
+          <i ng-if="!isSearching" class="glyphicon glyphicon-search"></i>
+          <i ng-if="isSearching" class="glyphicon glyphicon-remove"></i>
+        </a>
+      </span>
+    </div>
+  </span>
+  <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn" ng-click="applyFilters()"
+          translate="apply_filters" ng-disabled="tableviewform.$visible">
+  </button>
+  <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn" ng-click="clearFilters()"
+          translate="clear_filters" ng-disabled="tableviewform.$visible">
+  </button>
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-striped table-hover" ng-class="{sortable: isSortable}">
@@ -101,13 +118,6 @@
                 tooltip="{{'next_page' | translate}}" tooltip-append-to-body="true">
             <i class="glyphicon glyphicon-chevron-right"></i>
         </button>
-
-      <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn pull-right" ng-click="clearFilters()"
-              translate="clear_filters" ng-disabled="tableviewform.$visible">
-      </button>
-      <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn pull-right" ng-click="applyFilters()"
-              translate="apply_filters" style="margin-right:5px;" ng-disabled="tableviewform.$visible">
-      </button>
     <!--</div>-->
 
     <div class="table-view-footer-text no-select">{{totalFeatures | number:0}} {{'features' | translate}}</div>
