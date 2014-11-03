@@ -280,13 +280,14 @@
     'missing_layers_merge': 'Hay {{count}} elemento(s) que participan en la fusión que no son parte del mapa.  ' +
         'Con el fin de obtener la información de esquema más preciso para esa capa, se recomienda que usted cancela ' +
         'la combinación, agregue las capas que faltan, y vuelve a intentarlo. Capa(s) faltante:',
-    'toggle_filters': 'Cambiar los Filtros',
+    'advanced_filters': 'Filtros Avanzados',
+    'basic_filters': 'Filtros Básicos',
     'apply_filters': 'Aplicar Filtros',
     'clear_filters': 'Borrar Filtros',
     'previous_page': 'Página Anterior',
     'next_page': 'Página Siguiente',
     'current_page': 'Página {{currentPage}} de {{totalPages}}',
-    'filter': 'Filtro:',
+    'filter': 'Filtrar por Atributo:',
     'merge_commit': 'Fusion Confirmada',
     'always_anonymous': 'Conecte Siempre Anónimamente',
     'script_error': 'Se ha producido un error de script siguiente: "{{error}}". Se recomienda volver a cargar ' +

@@ -1,27 +1,33 @@
 <div class="modal-body">
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
-  <span class="table-search-group">
+  <span ng-if="!advFilters" class="table-search-group">
     <div class="table-search-box input-group input-group-sm">
-      <input type="text" class="form-control" ng-model="searchText" placeholder="{{'search_table' | translate}}">
+      <input type="text" class="form-control" ng-model="search.text" placeholder="{{'search_table' | translate}}">
       <span class="input-group-btn">
         <a class="btn btn-default" ng-click="searchTable()" type="button">
-          <i ng-if="!isSearching" class="glyphicon glyphicon-search"></i>
-          <i ng-if="isSearching" class="glyphicon glyphicon-remove"></i>
+          <i ng-if="!search.isSearching" class="glyphicon glyphicon-search"></i>
+          <i ng-if="search.isSearching" class="glyphicon glyphicon-remove"></i>
         </a>
       </span>
     </div>
   </span>
-  <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn" ng-click="applyFilters()"
+  <button ng-if="advFilters" type="button" class="filter-button btn btn-default table-btn" ng-click="applyFilters()"
           translate="apply_filters" ng-disabled="tableviewform.$visible">
   </button>
-  <button ng-if="filterOn" type="button" class="filter-button btn btn-default table-btn" ng-click="clearFilters()"
+  <button ng-if="advFilters" type="button" class="filter-button btn btn-default table-btn" ng-click="clearFilters()"
           translate="clear_filters" ng-disabled="tableviewform.$visible">
   </button>
+  <button type="button" class="filter-button btn btn-default table-btn" ng-click="toggleAdvancedFilters()"
+          translate="advanced_filters" ng-disabled="tableviewform.$visible" data-toggle="button">
+  </button>
+    <!--<button ng-if="!advFilters" type="button" class="filter-button btn btn-default table-btn" ng-click="toggleAdvancedFilters()"-->
+            <!--translate="advanced_filters" ng-disabled="tableviewform.$visible">-->
+    <!--</button>-->
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-striped table-hover" ng-class="{sortable: isSortable}">
         <thead>
-          <tr ng-if="filterOn">
+          <tr ng-if="advFilters" style="border-bottom: 2px solid #ddd;">
               <td class="filter-row first-filter-row">
                   <span class="filters-label">{{'filter' | translate}}</span>
               </td>

@@ -276,13 +276,14 @@
     'missing_layers_merge': 'There are {{count}} feature(s) involved in the merge that are not part of the map.  ' +
         'In order to get the most accurate schema information for that layer, it is recommended that you cancel the ' +
         'merge, add the missing layers, and try again. Missing layer(s): ',
-    'toggle_filters': 'Toggle Filters',
+    'advanced_filters': 'Advanced Filters',
+    'basic_filters': 'Basic Filters',
     'apply_filters': 'Apply Filters',
     'clear_filters': 'Clear Filters',
     'previous_page': 'Previous Page',
     'next_page': 'Next Page',
     'current_page': 'Page {{currentPage}} of {{totalPages}}',
-    'filter': 'Filter:',
+    'filter': 'Filter by Attribute:',
     'merge_commit': 'Merge Commit',
     'always_anonymous': 'Always Log On Anonymously',
     'script_error': 'The following script error has occurred: "{{error}}".  It is recommended that you reload the ' +

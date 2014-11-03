@@ -172,6 +172,7 @@
       for (var attrName in filters) {
         var resType = layer.get('metadata').schema[attrName]._type;
         if (resType === 'xsd:string' || resType === 'simpleType') {
+          console.log('service getSearchXML', searchText);
           xml +=
               '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
@@ -350,6 +351,7 @@
     this.search = function(text) {
       searching = true;
       searchText = text;
+      console.log('service.search', searchText);
       this.currentPage = 0;
     };
     this.stopSearch = function() {

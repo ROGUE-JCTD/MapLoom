@@ -73,8 +73,9 @@
           link: function(scope, element) {
             scope.isSaving = false;
             scope.isSortable = false;
-            scope.isSearching = false;
-            scope.searchText = '';
+            //these need to be kept in an object to avoid conflicts between the directive scope and ng-if scope
+            scope.search = {isSearching: false, text: ''};
+            scope.advFilters = false;
 
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
@@ -114,8 +115,12 @@
               }
             };
 
-            scope.toggleFilters = function() {
-              scope.filterOn = !scope.filterOn;
+            scope.toggleAdvancedFilters = function() {
+              scope.search.isSearching = false;
+              scope.search.text = '';
+              tableViewService.stopSearch();
+              scope.clearFilters();
+              scope.advFilters = !scope.advFilters;
             };
 
             scope.applyFilters = function() {
@@ -153,7 +158,7 @@
             var newTableSession = function() {
               scope.restrictions = tableViewService.restrictionList;
               scope.selectedRow = null;
-              scope.filterOn = true;
+              //scope.advFilters = false;
               scope.selectedAttribute = null;
               //wipeFilterFields();
             };
@@ -468,17 +473,18 @@
             };
 
             scope.searchTable = function() {
-              scope.isSearching = !scope.isSearching;
+              console.log('scope.searchTable', scope.search.isSearching, scope.search.text);
+              scope.search.isSearching = !scope.search.isSearching;
               scope.isSaving = true;
-              if (scope.isSearching) {
-                tableViewService.search(scope.searchText);
+              if (scope.search.isSearching) {
+                tableViewService.search(scope.search.text);
                 tableViewService.loadData().then(function() {
                   updateData();
                   scope.isSaving = false;
                 });
               } else {
                 tableViewService.stopSearch();
-                scope.searchText = '';
+                scope.search.text = '';
                 tableViewService.loadData().then(function() {
                   updateData();
                   scope.isSaving = false;
