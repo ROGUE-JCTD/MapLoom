@@ -44,7 +44,7 @@
         <tr ng-repeat="row in rows" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
           <td>{{row.feature.id}}</td>
           <td ng-repeat="attr in attributes track by $index" ng-class="{'table-editing': tableviewform.$visible}">
-            <div ng-switch on="restrictions[attr.name].type">
+            <div ng-switch on="restrictions[attr.name].type" ng-class="{'wide-table-element': advFilters}">
               <span ng-switch-when="" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <span ng-switch-when="noEdit">{{row.feature.properties[attr.name]}}</span>

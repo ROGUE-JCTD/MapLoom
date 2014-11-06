@@ -58,59 +58,64 @@
       return this.loadData();
     };
 
-    var getFilterXML = function(layer, filters) {
+    var getFilterXML = function(attrName, resType, filter) {
       var xml = '';
-      for (var attrName in filters) {
-        var searchType = filters[attrName].searchType;
-        var resType = layer.get('metadata').schema[attrName]._type;
 
-        if (searchType === 'strContains' && filters[attrName].text !== '') {
-          xml +=
-              '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
-                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>*' + filters[attrName].text + '*</ogc:Literal>' +
-                  '</ogc:PropertyIsLike>';
-        } else if (searchType === 'exactMatch' && filters[attrName].text !== '') {
-          if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
-            var dateStringSansTime = filters[attrName].text.split('T')[0];
-
-            var beginDate = moment(new Date(dateStringSansTime));
-            //zone() returns the local time zone's offset from GMT in minutes
-            beginDate.add(beginDate.zone(), 'm');
-            var endDate = moment(beginDate).add(24, 'h');
-
-            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + beginDate.toISOString() + '</ogc:Literal>' +
-                '</ogc:PropertyIsGreaterThanOrEqualTo>' +
-                '<ogc:PropertyIsLessThan>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + endDate.toISOString() + '</ogc:Literal>' +
-                '</ogc:PropertyIsLessThan>';
-          } else if (resType === 'xsd:time') {
-            var startTime = new Date(filters[attrName].text);
-            startTime.setSeconds(0);
-            var endTime = new Date(filters[attrName].text);
-            endTime.setSeconds(59.999);
-            xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + startTime.toISOString() + '</ogc:Literal>' +
-                '</ogc:PropertyIsGreaterThanOrEqualTo>' +
-                '<ogc:PropertyIsLessThan>' +
-                '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                '<ogc:Literal>' + endTime.toISOString() + '</ogc:Literal>' +
-                '</ogc:PropertyIsLessThan>';
-          } else {
+      switch (filter.searchType) {
+        case 'strContains':
+          if (filter.text !== '') {
             xml +=
-                '<ogc:PropertyIsEqualTo>' +
+                '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
                     '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                    '<ogc:Literal>' + filters[attrName].text + '</ogc:Literal>' +
-                    '</ogc:PropertyIsEqualTo>';
+                    '<ogc:Literal>*' + filter.text + '*</ogc:Literal>' +
+                    '</ogc:PropertyIsLike>';
           }
-        } else if (searchType === 'numRange') {
+          break;
+        case 'exactMatch':
+          if (filter.text !== '') {
+            console.log('getting filter xml, exact match', resType);
+            if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
+              var dateStringSansTime = filter.text.split('T')[0];
+
+              var beginDate = moment(new Date(dateStringSansTime));
+              //zone() returns the local time zone's offset from GMT in minutes
+              beginDate.add(beginDate.zone(), 'm');
+              var endDate = moment(beginDate).add(24, 'h');
+
+              xml += '<And><ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + beginDate.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyIsLessThan>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + endDate.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsLessThan></And>';
+            } else if (resType === 'xsd:time') {
+              var startTime = new Date(filter.text);
+              startTime.setSeconds(0);
+              var endTime = new Date(filter.text);
+              endTime.setSeconds(59.999);
+              xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + startTime.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsGreaterThanOrEqualTo>' +
+                  '<ogc:PropertyIsLessThan>' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>' + endTime.toISOString() + '</ogc:Literal>' +
+                  '</ogc:PropertyIsLessThan>';
+            } else {
+              xml +=
+                  '<ogc:PropertyIsEqualTo>' +
+                      '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                      '<ogc:Literal>' + filter.text + '</ogc:Literal>' +
+                      '</ogc:PropertyIsEqualTo>';
+            }
+          }
+          break;
+        case 'numRange':
           if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
-            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
-              var startStringSansTime = filters[attrName].start.split('T')[0];
+            if (goog.isDefAndNotNull(filter.start) && filter.start !== '') {
+              var startStringSansTime = filter.start.split('T')[0];
               var firstDate = moment(new Date(startStringSansTime));
               firstDate.add(firstDate.zone(), 'm');
 
@@ -119,8 +124,8 @@
                   '<ogc:Literal>' + firstDate.toISOString() + '</ogc:Literal>' +
                   '</ogc:PropertyIsGreaterThanOrEqualTo>';
             }
-            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
-              var endStringSansTime = filters[attrName].end.split('T')[0];
+            if (goog.isDefAndNotNull(filter.end) && filter.end !== '') {
+              var endStringSansTime = filter.end.split('T')[0];
               var secondDate = moment(new Date(endStringSansTime));
               secondDate.add(secondDate.zone(), 'm');
               secondDate.add(24, 'h');
@@ -131,8 +136,8 @@
                   '</ogc:PropertyIsLessThan>';
             }
           } else if (resType === 'xsd:time') {
-            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
-              var firstTime = new Date(filters[attrName].start);
+            if (goog.isDefAndNotNull(filter.start) && filter.start !== '') {
+              var firstTime = new Date(filter.start);
               firstTime.setSeconds(0);
 
               xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
@@ -140,8 +145,8 @@
                   '<ogc:Literal>' + firstTime.toISOString() + '</ogc:Literal>' +
                   '</ogc:PropertyIsGreaterThanOrEqualTo>';
             }
-            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
-              var secondTime = new Date(filters[attrName].end);
+            if (goog.isDefAndNotNull(filter.end) && filter.end !== '') {
+              var secondTime = new Date(filter.end);
               secondTime.setSeconds(59.999);
 
               xml += '<ogc:PropertyIsLessThan>' +
@@ -150,38 +155,25 @@
                   '</ogc:PropertyIsLessThan>';
             }
           } else {
-            if (goog.isDefAndNotNull(filters[attrName].start) && filters[attrName].start !== '') {
+            if (goog.isDefAndNotNull(filter.start) && filter.start !== '') {
               xml += '<ogc:PropertyIsGreaterThanOrEqualTo>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + filters[attrName].start + '</ogc:Literal>' +
+                  '<ogc:Literal>' + filter.start + '</ogc:Literal>' +
                   '</ogc:PropertyIsGreaterThanOrEqualTo>';
             }
-            if (goog.isDefAndNotNull(filters[attrName].end) && filters[attrName].end !== '') {
+            if (goog.isDefAndNotNull(filter.end) && filter.end !== '') {
               xml += '<ogc:PropertyIsLessThan>' +
                   '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>' + filters[attrName].end + '</ogc:Literal>' +
+                  '<ogc:Literal>' + filter.end + '</ogc:Literal>' +
                   '</ogc:PropertyIsLessThan>';
             }
           }
-        }
+          break;
       }
+
       return xml;
     };
-    var getSearchXML = function(layer, filters) {
-      var xml = '';
-      for (var attrName in filters) {
-        var resType = layer.get('metadata').schema[attrName]._type;
-        if (resType === 'xsd:string' || resType === 'simpleType') {
-          console.log('service getSearchXML', searchText);
-          xml +=
-              '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
-                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                  '<ogc:Literal>*' + searchText + '*</ogc:Literal>' +
-                  '</ogc:PropertyIsLike>';
-        }
-      }
-      return xml;
-    };
+
     this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
       var paginationParamsStr = '';
       if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
@@ -214,15 +206,40 @@
           ' srsName="' + metadata.projection + '"' +
           '>' +
           '<ogc:Filter>';
-      //the <And> will need to change if we add a non-exclusive search option
 
       if (!searching) {
         xml += '<And>';
-        xml += getFilterXML(layer, filters);
-        xml += '</And>';
       } else {
         xml += '<Or>';
-        xml += getSearchXML(layer, filters);
+      }
+
+      var timeSearch = false;
+
+      for (var attrName in filters) {
+        var resType = layer.get('metadata').schema[attrName]._type;
+
+        if (!searching) {
+          xml += getFilterXML(attrName, resType, filters[attrName]);
+        } else {
+          var filter = {text: searchText, searchType: 'strContains', start: '', end: ''};
+          //parse search text to determine filter type
+          var date = moment(searchText);
+          console.log(date);
+          if (date.isValid()) {
+            timeSearch = true;
+            filter.searchType = 'exactMatch';
+            filter.text = date.toISOString();
+          }
+
+          if (timeSearch === false || (timeSearch === true && (resType === 'xsd:dateTime' || resType === 'xsd:date'))) {
+            xml += getFilterXML(attrName, resType, filter);
+          }
+        }
+      }
+
+      if (!searching) {
+        xml += '</And>';
+      } else {
         xml += '</Or>';
       }
       xml += '</ogc:Filter>' +
@@ -351,7 +368,6 @@
     this.search = function(text) {
       searching = true;
       searchText = text;
-      console.log('service.search', searchText);
       this.currentPage = 0;
     };
     this.stopSearch = function() {
