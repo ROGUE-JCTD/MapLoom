@@ -80,7 +80,15 @@
     };
 
     this.getSelectedItemPics = function() {
-      return selectedItemPics_;
+      var picStrings = [];
+      goog.array.forEach(selectedItemPics_.pics, function(item, index) {
+        if (goog.isObject(item)) {
+          picStrings[index] = item.modified;
+        } else {
+          picStrings[index] = item;
+        }
+      });
+      return picStrings;
     };
 
     this.getSelectedItemProperties = function() {
@@ -227,8 +235,6 @@
               selectedItemPics_.pics[index] = item;
             }
           });
-
-          //console.log('selectedItemPics_: ', selectedItemPics_);
         }
 
         // -- select the geometry if it is a feature, clear otherwise
@@ -269,7 +275,7 @@
                   // otherwise list it as is so that a feature can point to an full url
                   if (goog.isString(item) && item.indexOf('http') === -1) {
                     picsAttr[index] = {original: item, modified: '/file-service/' + item};
-                  } else {
+                  } else if (goog.isString(item)) {
                     picsAttr[index] = {original: item, modified: item};
                   }
                 });
@@ -380,7 +386,7 @@
           options.index = activeIndex;
         }
 
-        blueimp.Gallery(selectedItemPics_.pics, options);
+        blueimp.Gallery(this.getSelectedItemPics(), options);
       }
     };
 
