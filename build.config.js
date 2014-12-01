@@ -78,12 +78,10 @@ module.exports = {
       'vendor/angular-cookies/angular-cookies.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
-      //'vendor/ol3/ol.js',
-      'vendor/ol3/ol-simple.js',
-      'vendor/proj4js/proj4js-compressed.js',
-      'vendor/proj4js/defs/*',
+      'vendor/proj4js/proj4.js',
+      'vendor/proj4js/epsg.js',
+      'vendor/ol3/ol-debug.js',
       'vendor/d3/d3.min.js',
-      //'vendor/ol3/ol-whitespace.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',

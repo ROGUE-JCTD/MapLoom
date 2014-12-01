@@ -45,7 +45,7 @@
 
               var geom = WKT.read(repoFeature.geometry);
               if (goog.isDefAndNotNull(crs)) {
-                geom.transform(crs, mapService.map.getView().getView2D().getProjection());
+                geom.transform(crs, mapService.map.getView().getProjection());
               }
               var feature = {
                 repo: repos[i].name,

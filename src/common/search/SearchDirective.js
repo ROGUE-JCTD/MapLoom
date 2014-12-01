@@ -15,9 +15,9 @@
 
             function zoomToResult(result) {
               var boxMin = ol.proj.transform([result.boundingbox[2], result.boundingbox[0]], 'EPSG:4326',
-                  mapService.map.getView().getView2D().getProjection());
+                  mapService.map.getView().getProjection());
               var boxMax = ol.proj.transform([result.boundingbox[3], result.boundingbox[1]], 'EPSG:4326',
-                  mapService.map.getView().getView2D().getProjection());
+                  mapService.map.getView().getProjection());
               var newBounds = [boxMin[0], boxMin[1], boxMax[0], boxMax[1]];
               var x = newBounds[3] - newBounds[1];
               var y = newBounds[2] - newBounds[0];

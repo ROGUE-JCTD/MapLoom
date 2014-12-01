@@ -45,11 +45,11 @@
     };
 
     this.performSearch = function(address) {
-      var currentView = mapService_.map.getView().getView2D().calculateExtent([$(window).height(), $(window).width()]);
+      var currentView = mapService_.map.getView().calculateExtent([$(window).height(), $(window).width()]);
       var minBox = ol.proj.transform([currentView[0], currentView[1]],
-          mapService_.map.getView().getView2D().getProjection(), 'EPSG:4326');
+          mapService_.map.getView().getProjection(), 'EPSG:4326');
       var maxBox = ol.proj.transform([currentView[2], currentView[3]],
-          mapService_.map.getView().getView2D().getProjection(), 'EPSG:4326');
+          mapService_.map.getView().getProjection(), 'EPSG:4326');
       currentView[0] = minBox[0];
       currentView[1] = minBox[1];
       currentView[2] = maxBox[0];
@@ -93,7 +93,7 @@
       forEachArrayish(results, function(result) {
         var olFeature = new ol.Feature();
         olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',
-            mapService_.map.getView().getView2D().getProjection())));
+            mapService_.map.getView().getProjection())));
         searchlayer_.getSource().addFeature(olFeature);
       });
     };

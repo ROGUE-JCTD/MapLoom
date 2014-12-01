@@ -56,8 +56,12 @@
         };
 
 
-        // Enable Proj4JS
-        ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS && typeof Proj4js == 'object';
+        // Enable Proj4JS and add projection definitions
+        if (goog.isDefAndNotNull(proj4) && typeof proj4 == 'function') {
+          ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS;
+          //add all the proj definitions contained in epsg.js
+          epsg(proj4);
+        }
 
         $scope.mapService = mapService;
         $scope.refreshService = refreshService;

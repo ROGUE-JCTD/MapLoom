@@ -224,7 +224,7 @@
         scale = 0;
       }
 
-      var view = map.getView().getView2D();
+      var view = map.getView();
 
       if (!goog.isDefAndNotNull(extent)) {
         extent = view.getProjection().getExtent();
@@ -351,7 +351,7 @@
           newExtent[2] -= xDelta;
           newExtent[3] -= yDelta;
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
-              service_.map.getView().getView2D().getProjection());
+              service_.map.getView().getProjection());
           newExtent = ol.extent.applyTransform(newExtent, transform);
         }
         return newExtent;
@@ -536,6 +536,8 @@
             }
           }
 
+          console.log('config crs', fullConfig.CRS);
+          console.log('getCode', service_.getCRSCode(fullConfig.CRS));
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -1026,10 +1028,10 @@
         interactions: ol.interaction.defaults().extend([
           new ol.interaction.DragRotate()
         ]),
-        renderer: ol.RendererHint.CANVAS,
+        //renderer: ol.RendererHint.CANVAS,
         ol3Logo: false,
         target: 'map',
-        view: new ol.View2D({
+        view: new ol.View({
           center: this.configuration.map.center,
           zoom: this.configuration.map.zoom,
           maxZoom: 17,
@@ -1063,7 +1065,7 @@
     this.addToEditLayer = function(geom, crs) {
       this.clearEditLayer();
       var newFeature = new ol.Feature();
-      var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
+      var newGeom = transformGeometry(geom, crs, this.map.getView().getProjection());
       newFeature.setGeometry(newGeom);
       this.editLayer.getSource().addFeature(newFeature);
       this.map.addLayer(this.editLayer);
