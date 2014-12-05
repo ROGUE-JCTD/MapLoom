@@ -80,14 +80,17 @@
     };
 
     this.getSelectedItemPics = function() {
-      var picStrings = [];
-      goog.array.forEach(selectedItemPics_.pics, function(item, index) {
-        if (goog.isObject(item)) {
-          picStrings[index] = item.modified;
-        } else {
-          picStrings[index] = item;
-        }
-      });
+      var picStrings = null;
+      if (goog.isDefAndNotNull(selectedItemPics_)) {
+        picStrings = [];
+        goog.array.forEach(selectedItemPics_.pics, function(item, index) {
+          if (goog.isObject(item)) {
+            picStrings[index] = item.modified;
+          } else {
+            picStrings[index] = item;
+          }
+        });
+      }
       return picStrings;
     };
 
