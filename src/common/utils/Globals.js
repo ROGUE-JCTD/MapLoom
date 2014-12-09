@@ -260,3 +260,20 @@ var sha1 = function(msg) {
   return localtemp.toLowerCase();
 
 };
+
+
+// give http://myip/geoserver/wms, ir will return http://myip/geoserver
+// it handles extra slash at the end of the url if it has one
+var removeUrlLastRoute = function(urlWithRoutes) {
+  var newUrl = null;
+
+  if (goog.isDefAndNotNull(urlWithRoutes)) {
+    if (urlWithRoutes.lastIndexOf('/') === urlWithRoutes.length - 1) {
+      urlWithRoutes = urlWithRoutes.substring(0, urlWithRoutes.lastIndexOf('/'));
+    }
+
+    newUrl = urlWithRoutes.substring(0, urlWithRoutes.lastIndexOf('/'));
+  }
+
+  return newUrl;
+};

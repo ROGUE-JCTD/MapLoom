@@ -384,9 +384,14 @@
           rootScope.$broadcast('layerInfoLoaded', layer);
           deferredResponse.resolve();
         }, function(rejected) {
-          dialogService_.error(
-              translate_.instant('error'), translate_.instant('unable_to_get_feature_type') +
-                  ' (' + rejected.status + ')');
+          console.log('====[ ', translate_.instant('error'), ': ', translate_.instant('unable_to_get_feature_type'),
+              ', Status Code: ', rejected.status);
+          // Suppressing error so that when arbitrary wms layers are added from a url like the following, the user is
+          // not given a harsh dialog:
+          //http://ebolamaps.who.int/arcgis/services/OPENDATA/Laboratories/MapServer/WMSServer
+          //dialogService_.error(
+          //    translate_.instant('error'), translate_.instant('unable_to_get_feature_type') +
+          //        ' (' + rejected.status + ')');
           deferredResponse.reject();
         });
       };
