@@ -82,6 +82,7 @@ module.exports = {
       'vendor/proj4js/epsg.js',
       'vendor/ol3/ol-debug.js',
       'vendor/d3/d3.min.js',
+      'vendor/proj4/dist/proj4-src.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',

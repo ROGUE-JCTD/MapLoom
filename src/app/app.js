@@ -55,12 +55,12 @@
           });
         };
 
-
         // Enable Proj4JS and add projection definitions
-        if (goog.isDefAndNotNull(proj4) && typeof proj4 == 'function') {
-          ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS;
-          //add all the proj definitions contained in epsg.js
-          epsg(proj4);
+        ol.HAVE_PROJ4JS = ol.ENABLE_PROJ4JS && typeof proj4 == 'function';
+
+        // load the predefined projections available when there is no network connectivity
+        if (ol.HAVE_PROJ4JS === true) {
+          maploomProj4Defs(proj4.defs);
         }
 
         $scope.mapService = mapService;

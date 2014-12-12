@@ -57,7 +57,7 @@ module.exports = function ( grunt ) {
       options: {
         flags: [
           '--disable 220', //ignore error code 220 from gjslint
-          '--max_line_length 120',
+          '--max_line_length 500',
           '--jslint_error all'
         ],
         reporter: {

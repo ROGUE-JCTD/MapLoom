@@ -434,6 +434,18 @@
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
           server, ', opt_layerOrder: ', opt_layerOrder);
 
+      // ping proj4js to pre-download projection if we don't have it
+      if (goog.isDefAndNotNull(fullConfig)) {
+        var projcode = service_.getCRSCode(fullConfig.CRS);
+        if (goog.isDefAndNotNull(projcode)) {
+          console.log('----[ addLayer, early ol.proj.get for: ', projcode);
+          var yoyoy = ol.proj.get(projcode);
+          console.log('layerPrjObject', yoyoy);
+          ol.proj.getTransform(projcode, 'EPSG:4326');
+        }
+      }
+
+
       var layer = null;
       var nameSplit = null;
       var url = null;
@@ -675,6 +687,8 @@
 
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
+          var layerPrjObject = ol.proj.get(meta.projection);
+          console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
 
