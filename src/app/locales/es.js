@@ -2,6 +2,7 @@
   var translations = {
     'new_map': 'Nuevo Mapa',
     'layer_type_not_supported': 'El tipo de capa no soportado',
+    'projection_not_supported': 'Proyección no soportado',
     'notifications_tab': 'Notificaciones',
     'no_notifications': 'Ninguna notificación',
     'map_layers': 'Capas',

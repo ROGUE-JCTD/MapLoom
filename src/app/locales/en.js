@@ -2,6 +2,7 @@
   var translations = {
     'new_map': 'New Map',
     'layer_type_not_supported': 'Layer type not supported',
+    'projection_not_supported': 'Projection not supported',
     'notifications_tab': 'Notifications',
     'no_notifications': 'No notifications',
     'map_layers': 'Layers',
