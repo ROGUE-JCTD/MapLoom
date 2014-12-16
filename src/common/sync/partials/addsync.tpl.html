@@ -25,11 +25,11 @@
         <label>{{'repo' | translate}}: </label>
       </div>
       <div class="col-md-5">
-        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogitService.adminRepos | filter:{unique:'true'}">
+        <select class="form-control" ng-model="selectedRepo" required ng-options="repo.name for repo in geogigService.adminRepos | filter:{unique:'true'}">
         </select>
       </div>
       <div class="col-md-5">
-        <select class="form-control" ng-show="selectedRepo" ng-model="localBranch" required ng-options="branch for branch in geogitService.getRepoById(selectedRepo.id).branches">
+        <select class="form-control" ng-show="selectedRepo" ng-model="localBranch" required ng-options="branch for branch in geogigService.getRepoById(selectedRepo.id).branches">
         </select>
       </div>
     </div>
@@ -38,11 +38,11 @@
         <label>{{'remote' | translate}}: </label>
       </div>
       <div class="col-md-5">
-        <select class="form-control" ng-show="selectedRepo" ng-model="selectedRemote" required ng-options="remote.name for remote in geogitService.getRepoById(selectedRepo.id).remotes">
+        <select class="form-control" ng-show="selectedRepo" ng-model="selectedRemote" required ng-options="remote.name for remote in geogigService.getRepoById(selectedRepo.id).remotes">
         </select>
       </div>
       <div class="col-md-5">
-        <select class="form-control" ng-show="selectedRemote" ng-model="remoteBranch" required ng-options="branch for branch in geogitService.getRepoById(selectedRepo.id).remotes[selectedRemote.id].branches">
+        <select class="form-control" ng-show="selectedRemote" ng-model="remoteBranch" required ng-options="branch for branch in geogigService.getRepoById(selectedRepo.id).remotes[selectedRemote.id].branches">
         </select>
       </div>
     </div>

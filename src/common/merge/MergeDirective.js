@@ -3,12 +3,12 @@
   var module = angular.module('loom_merge_directive', []);
 
   module.directive('loomMerge',
-      function($translate, geogitService, dialogService, notificationService, historyService,
+      function($translate, geogigService, dialogService, notificationService, historyService,
                conflictService, mapService, featureDiffService, configService) {
         return {
           templateUrl: 'merge/partials/merge.tpl.html',
           link: function(scope, element, attrs) {
-            scope.geogitService = geogitService;
+            scope.geogigService = geogigService;
             scope.merging = false;
             scope.listFilter = function(otherItem) {
               return function(item) {
@@ -30,18 +30,18 @@
             scope.onMerge = function() {
               scope.merging = true;
               var repoId = scope.selectedRepoId;
-              geogitService.beginTransaction(repoId).then(function(transaction) {
-                var checkoutOptions = new GeoGitCheckoutOptions();
+              geogigService.beginTransaction(repoId).then(function(transaction) {
+                var checkoutOptions = new GeoGigCheckoutOptions();
                 checkoutOptions.branch = scope.destinationBranch;
                 transaction.command('checkout', checkoutOptions).then(function(checkoutResult) {
-                  var mergeOptions = new GeoGitMergeOptions();
+                  var mergeOptions = new GeoGigMergeOptions();
                   mergeOptions.commit = scope.sourceBranch;
                   mergeOptions.noCommit = true;
                   mergeOptions.authorName = configService.configuration.userprofilename;
                   mergeOptions.authorEmail = configService.configuration.userprofileemail;
                   transaction.command('merge', mergeOptions).then(function(mergeResult) {
                     transaction.command('status').then(function(statusResult) {
-                      var commitOptions = new GeoGitCommitOptions();
+                      var commitOptions = new GeoGigCommitOptions();
                       commitOptions.all = true;
                       commitOptions.message =
                           conflictService.buildMergeMessage(statusResult, scope.sourceBranch, false);
@@ -58,7 +58,7 @@
                             emptyMessage: $translate.instant('merge_no_changes'),
                             repos: [
                               {
-                                name: 'geogit_repo',
+                                name: 'geogig_repo',
                                 features: mergeResult.Merge.Feature
                               }
                             ],

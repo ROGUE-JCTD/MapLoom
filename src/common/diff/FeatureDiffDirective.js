@@ -4,7 +4,7 @@
 
   module.directive('loomFeatureDiff',
       function($rootScope, $translate, featureDiffService, conflictService, configService, historyService,
-               notificationService, featureBlameService, mapService, dialogService, geogitService) {
+               notificationService, featureBlameService, mapService, dialogService, geogigService) {
         return {
           restrict: 'C',
           templateUrl: 'diff/partial/featurediff.tpl.html',
@@ -135,11 +135,11 @@
               scope.isLoading = true;
               if (featureDiffService.change === 'ADDED' || featureDiffService.change === 'REMOVED') {
                 var id = featureDiffService.getTheirsId();
-                var options = new GeoGitLogOptions();
+                var options = new GeoGigLogOptions();
                 options.until = id;
                 options.show = 1;
                 var panel = featureDiffService.right;
-                geogitService.command(featureDiffService.getRepoId(), 'log', options).then(function(response) {
+                geogigService.command(featureDiffService.getRepoId(), 'log', options).then(function(response) {
                   if (goog.isDefAndNotNull(response.commit)) {
                     forEachArrayish(panel.attributes, function(attribute) {
                       attribute.commit = response.commit;
@@ -165,7 +165,7 @@
                 numPanels--;
               }
               var blameFunc = function(panel, id) {
-                var options = new GeoGitBlameOptions();
+                var options = new GeoGigBlameOptions();
                 options.path = featureDiffService.feature.id;
                 options.commit = id;
                 featureBlameService.performBlame(featureDiffService.getRepoId(), options)
@@ -223,7 +223,7 @@
             var undo = function() {
               var branch = featureDiffService.layer.get('metadata').branchName;
               var layerName = featureDiffService.layer.get('metadata').uniqueID;
-              var options = new GeoGitRevertFeatureOptions();
+              var options = new GeoGigRevertFeatureOptions();
               options.authorName = configService.configuration.userprofilename;
               options.authorEmail = configService.configuration.userprofileemail;
               options.path = featureDiffService.feature.id;
@@ -238,7 +238,7 @@
                   {feature: featureDiffService.feature.id}) + ' ' + $translate.instant('applied_via_maploom');
               options.mergeMessage = options.commitMessage;
               var repoId = featureDiffService.getRepoId();
-              geogitService.beginTransaction(repoId).then(function(transaction) {
+              geogigService.beginTransaction(repoId).then(function(transaction) {
                 transaction.command('revertfeature', options).then(function() {
                   transaction.finalize().then(function() {
                     dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));

@@ -3,7 +3,7 @@
 
   var service_ = null;
   var serverService_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var httpService_ = null;
   var cookieStoreService_ = null;
   var cookiesService_ = null;
@@ -120,7 +120,7 @@
 
 
   module.provider('mapService', function() {
-    this.$get = function($translate, serverService, geogitService, $http, pulldownService,
+    this.$get = function($translate, serverService, geogigService, $http, pulldownService,
                          $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
@@ -129,7 +129,7 @@
       configService_ = configService;
       console.log(cookiesService_, cookieStoreService_);
       serverService_ = serverService;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       dialogService_ = dialogService;
       translate_ = $translate;
       rootScope_ = $rootScope;
@@ -671,7 +671,7 @@
               }).error(function(data, status, headers, config) {
               });
             };
-            geogitService_.isGeoGit(layer, server, fullConfig).then(function() {
+            geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
               testReadOnly();
             }, function() {
               testReadOnly();

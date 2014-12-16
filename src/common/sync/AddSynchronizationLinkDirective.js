@@ -3,11 +3,11 @@
   var module = angular.module('loom_addsync_directive', []);
 
   module.directive('loomAddsync',
-      function($translate, synchronizationService, geogitService, dialogService, $q) {
+      function($translate, synchronizationService, geogigService, dialogService, $q) {
         return {
           templateUrl: 'sync/partials/addsync.tpl.html',
           link: function(scope, element) {
-            scope.geogitService = geogitService;
+            scope.geogigService = geogigService;
             scope.name = $translate.instant('link');
 
             scope.$on('translation_change', function() {
@@ -48,10 +48,10 @@
                         // Fetch the remote
                         element.find('#loading').toggleClass('hidden');
                         var fetchResult = $q.defer();
-                        var fetchOptions = new GeoGitFetchOptions();
+                        var fetchOptions = new GeoGigFetchOptions();
                         fetchOptions.remote = scope.selectedRemote.name;
-                        geogitService.command(scope.selectedRepo.id, 'fetch', fetchOptions).then(function() {
-                          geogitService.loadRemotesAndBranches(scope.selectedRepo, fetchResult);
+                        geogigService.command(scope.selectedRepo.id, 'fetch', fetchOptions).then(function() {
+                          geogigService.loadRemotesAndBranches(scope.selectedRepo, fetchResult);
                           fetchResult.promise.then(function() {
                             element.find('#loading').toggleClass('hidden');
                           });

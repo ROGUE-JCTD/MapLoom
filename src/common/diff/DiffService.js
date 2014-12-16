@@ -6,7 +6,7 @@
   var service_ = null;
   var difflayer_ = null;
   var mapService_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var featureDiffService_ = null;
   var dialogService_ = null;
   var translate_ = null;
@@ -28,9 +28,9 @@
     this.newCommitId = null;
     this.repoId = null;
 
-    this.$get = function($rootScope, $q, $translate, mapService, geogitService, featureDiffService, dialogService) {
+    this.$get = function($rootScope, $q, $translate, mapService, geogigService, featureDiffService, dialogService) {
       rootScope = $rootScope;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       featureDiffService_ = featureDiffService;
       translate_ = $translate;
       dialogService_ = dialogService;
@@ -143,7 +143,7 @@
           mapService_.map.getLayers().forEach(function(layer) {
             var metadata = layer.get('metadata');
             if (goog.isDefAndNotNull(metadata)) {
-              if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === _repo) {
+              if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === _repo) {
                 if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
                   layerFound = true;
                   if (goog.isDefAndNotNull(metadata.projection)) {
@@ -212,7 +212,7 @@
 
     this.performDiff = function(repoId, options) {
       var deferredResponse = q_.defer();
-      geogitService_.command(repoId, 'diff', options).then(function(response) {
+      geogigService_.command(repoId, 'diff', options).then(function(response) {
         service_.clearDiff();
         if (goog.isDefAndNotNull(response.Feature)) {
           service_.mergeDiff = false;
@@ -221,10 +221,10 @@
           service_.clickCallback = featureClicked;
           service_.repoId = repoId;
           if (goog.isArray(response.Feature)) {
-            service_.populate(response.Feature, geogitService_.getRepoById(repoId).name,
+            service_.populate(response.Feature, geogigService_.getRepoById(repoId).name,
                 translate_.instant('from'), translate_.instant('to'));
           } else {
-            service_.populate([response.Feature], geogitService_.getRepoById(repoId).name,
+            service_.populate([response.Feature], geogigService_.getRepoById(repoId).name,
                 translate_.instant('from'), translate_.instant('to'));
           }
         }

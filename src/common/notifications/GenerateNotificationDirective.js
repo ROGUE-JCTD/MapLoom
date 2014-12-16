@@ -3,7 +3,7 @@
   var module = angular.module('loom_generate_notification_directive', []);
 
   module.directive('loomGenerateNotification',
-      function($rootScope, $translate, mapService, geogitService, refreshService, dialogService) {
+      function($rootScope, $translate, mapService, geogigService, refreshService, dialogService) {
         return {
           templateUrl: 'notifications/partial/generatenotification.tpl.html',
           link: function(scope, element, attrs) {
@@ -52,7 +52,7 @@
               for (var i = 0; i < layers.length; i++) {
                 layer = layers[i];
                 metadata = layer.get('metadata');
-                if (goog.isDefAndNotNull(metadata.isGeoGit) && metadata.isGeoGit === true &&
+                if (goog.isDefAndNotNull(metadata.isGeoGig) && metadata.isGeoGig === true &&
                     !goog.isDefAndNotNull(repos[metadata.repoId])) {
                   repos[metadata.repoId] = {};
                   repos[metadata.repoId].branchName = metadata.branchName;
@@ -88,7 +88,7 @@
                       }
                     }
                   }
-                  geogitService.getRepoById(repoArray[repoIndex]).commitId = lastCommitId;
+                  geogigService.getRepoById(repoArray[repoIndex]).commitId = lastCommitId;
                 }
                 repoIndex++;
                 if (repoIndex === repoArray.length) {
@@ -100,11 +100,11 @@
                 }
               };
               var processRepo = function() {
-                var logOptions = new GeoGitLogOptions();
+                var logOptions = new GeoGigLogOptions();
                 logOptions.sinceTime = new Date(scope.startDate[0]).getTime();
                 logOptions.returnRange = true;
                 logOptions.until = repos[repoArray[repoIndex]].branchName;
-                geogitService.command(repoArray[repoIndex], 'log', logOptions).then(updateRepoCommit);
+                geogigService.command(repoArray[repoIndex], 'log', logOptions).then(updateRepoCommit);
               };
               processRepo();
             };

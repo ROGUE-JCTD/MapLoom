@@ -45,7 +45,7 @@
                 type: 'loom-update-notification',
                 repos: [
                   {
-                    name: 'geogit_repo',
+                    name: 'geogig_repo',
                     features: [
                       {change: 'MODIFIED', geometry: 'blah', id: 'layer1/feature3'},
                       {change: 'REMOVED', geometry: 'blah', id: 'layer1/feature5'},

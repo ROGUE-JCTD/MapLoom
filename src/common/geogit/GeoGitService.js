@@ -1,5 +1,5 @@
 (function() {
-  var module = angular.module('loom_geogit_service', []);
+  var module = angular.module('loom_geogig_service', []);
 
   // Private Variables
   var nextRepoId = 0;
@@ -30,7 +30,7 @@
     });
   };
 
-  module.provider('geogitService', function() {
+  module.provider('geogigService', function() {
     // public variables
     this.repos = [];
     this.adminRepos = [];
@@ -60,7 +60,7 @@
 
       service_.command(repoId, 'beginTransaction').then(function(response) {
         if (response.success === true) {
-          var transaction = new GeoGitTransaction(service_.command, repoId, response.Transaction);
+          var transaction = new GeoGigTransaction(service_.command, repoId, response.Transaction);
           deferredResponse.resolve(transaction);
         } else {
           deferredResponse.reject(response.error);
@@ -177,7 +177,7 @@
             remoteId++;
           });
         }
-        var branchOptions = new GeoGitBranchOptions();
+        var branchOptions = new GeoGigBranchOptions();
         branchOptions.list = true;
         branchOptions.remotes = goog.isDefAndNotNull(response);
         service_.command(repo.id, 'branch', branchOptions).then(function(response) {
@@ -211,7 +211,7 @@
         });
       };
       if (repo.admin) {
-        var remoteOptions = new GeoGitRemoteOptions();
+        var remoteOptions = new GeoGigRemoteOptions();
         remoteOptions.list = true;
         remoteOptions.verbose = true;
         service_.command(repo.id, 'remote', remoteOptions).then(loadBranches, function(reject) {
@@ -261,7 +261,7 @@
     };
 
     this.removedLayer = function(event, removedLayer) {
-      if (removedLayer.get('metadata').isGeoGit) {
+      if (removedLayer.get('metadata').isGeoGig) {
         var repoId = removedLayer.get('metadata').repoId;
         var repo = service_.getRepoById(repoId);
         repo.refCount--;
@@ -375,7 +375,7 @@
       return deferredResponse.promise;
     };
 
-    this.isGeoGit = function(layer, server, fullConfig) {
+    this.isGeoGig = function(layer, server, fullConfig) {
       var deferredResponse = q.defer();
       // This should always be the last thing that gets done.
       var getFeatureType = function() {
@@ -392,23 +392,23 @@
       };
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
-        if (!goog.isDefAndNotNull(metadata.isGeoGit)) {
+        if (!goog.isDefAndNotNull(metadata.isGeoGig)) {
           if (goog.isDefAndNotNull(fullConfig.Identifier) && goog.isDefAndNotNull(fullConfig.Identifier[0])) {
-            var splitGeogit = fullConfig.Identifier[0].split(':');
-            if (goog.isArray(splitGeogit) && (splitGeogit.length === 3 || splitGeogit.length === 4)) {
-              var workspace = splitGeogit[0];
-              var repoName = splitGeogit[1];
-              var nativeName = splitGeogit[2];
+            var splitGeogig = fullConfig.Identifier[0].split(':');
+            if (goog.isArray(splitGeogig) && (splitGeogig.length === 3 || splitGeogig.length === 4)) {
+              var workspace = splitGeogig[0];
+              var repoName = splitGeogig[1];
+              var nativeName = splitGeogig[2];
               metadata.branchName = 'master';
               metadata.nativeName = nativeName;
-              if (splitGeogit.length === 4) {
-                metadata.branchName = splitGeogit[3];
+              if (splitGeogig.length === 4) {
+                metadata.branchName = splitGeogig[3];
               }
-              var geogitURL = metadata.url + '/geogit/' + workspace + ':' + repoName;
-              http.get(geogitURL + '/repo/manifest').then(function() {
+              var geogigURL = metadata.url + '/geogit/' + workspace + ':' + repoName;
+              http.get(geogigURL + '/repo/manifest').then(function() {
                 var addRepo = function(admin) {
                   var promise = service_.addRepo(
-                      new GeoGitRepo(geogitURL,
+                      new GeoGigRepo(geogigURL,
                           sha1(metadata.url + ':' + repoName), metadata.branchName, repoName), admin);
                   promise.then(function(repo) {
                     if (goog.isDef(repo.id)) {
@@ -423,28 +423,28 @@
                         translate_.instant('unable_to_add_remote') + reject);
                     getFeatureType();
                   });
-                  metadata.isGeoGit = true;
-                  metadata.geogitStore = repoName;
+                  metadata.isGeoGig = true;
+                  metadata.geogigStore = repoName;
                 };
                 // see if we have admin access
                 // HACK see if the merge endpoint is available.
-                http.get(geogitURL + '/merge').then(function() {
-                  metadata.isGeoGitAdmin = true;
+                http.get(geogigURL + '/merge').then(function() {
+                  metadata.isGeoGigAdmin = true;
                   addRepo(true);
                 }, function(reject) {
-                  metadata.isGeoGitAdmin = false;
+                  metadata.isGeoGigAdmin = false;
                   addRepo(false);
                 });
               }, function() {
-                metadata.isGeoGit = false;
+                metadata.isGeoGig = false;
                 getFeatureType();
               });
             } else {
-              metadata.isGeoGit = false;
+              metadata.isGeoGig = false;
               getFeatureType();
             }
           } else {
-            metadata.isGeoGit = false;
+            metadata.isGeoGig = false;
             getFeatureType();
           }
         } else {

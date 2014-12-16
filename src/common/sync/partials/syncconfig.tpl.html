@@ -6,7 +6,7 @@
         <label class="control-label"><span translate="repo"></span>: </label>
       </div>
       <div class="col-md-10">
-        <select class="form-control" ng-model="remoteService.selectedRepo" required ng-options="repo.name for repo in geogitService.adminRepos | filter:{unique:'true'}" ng-disabled="remoteService.editing">
+        <select class="form-control" ng-model="remoteService.selectedRepo" required ng-options="repo.name for repo in geogigService.adminRepos | filter:{unique:'true'}" ng-disabled="remoteService.editing">
         </select>
       </div>
     </div>
@@ -42,7 +42,7 @@
         <label class="control-label"><span translate="repo_url"></span>: </label>
       </div>
       <div class="col-md-10">
-        <input name="remoteurl" ng-model="remoteService.remoteURL" type="url" class="form-control" placeholder="http://url/geoserver/geogit/workspace:datastore" required ng-disabled="!remoteService.editing && remoteService.selectedRemote">
+        <input name="remoteurl" ng-model="remoteService.remoteURL" type="url" class="form-control" placeholder="http://url/geoserver/geogig/workspace:datastore" required ng-disabled="!remoteService.editing && remoteService.selectedRemote">
       </div>
     </div>
     <div class="form-group" ng-show="remoteService.selectedRepo">

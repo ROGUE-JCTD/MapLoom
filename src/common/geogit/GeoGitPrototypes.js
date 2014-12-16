@@ -1,4 +1,4 @@
-var GeoGitRepo = function(_url, _uniqueId, _branch, _name) {
+var GeoGigRepo = function(_url, _uniqueId, _branch, _name) {
   this.url = _url;
   this.uniqueId = _uniqueId;
   this.branch = _branch;
@@ -11,7 +11,7 @@ var GeoGitRepo = function(_url, _uniqueId, _branch, _name) {
   };
 };
 
-var GeoGitTransaction = function(_commandFunction, _repoId, _TransactionParams) {
+var GeoGigTransaction = function(_commandFunction, _repoId, _TransactionParams) {
   this.command = function(command, options) {
     if (!goog.isDefAndNotNull(options)) {
       options = {};
@@ -34,22 +34,22 @@ var GeoGitTransaction = function(_commandFunction, _repoId, _TransactionParams) 
 };
 
 ////////////////////////////////////////////
-// Geogit Command Options
+// Geogig Command Options
 //
 // Default values can be specified here.
-// Use null to use GeoGit default.
+// Use null to use GeoGig default.
 //
 // Variables that conflict with keywords
 // should be tailed with _something.
 ////////////////////////////////////////////
 
-var GeoGitPushOptions = function() {
+var GeoGigPushOptions = function() {
   this.all = null;
   this.ref = null;
   this.remoteName = null;
 };
 
-var GeoGitPullOptions = function() {
+var GeoGigPullOptions = function() {
   this.all = null;
   this.ref = null;
   this.remoteName = null;
@@ -57,71 +57,71 @@ var GeoGitPullOptions = function() {
   this.authorEmail = null;
 };
 
-var GeoGitFetchOptions = function() {
+var GeoGigFetchOptions = function() {
   this.all = null;
   this.prune = null;
   this.remote = null;
 };
 
-var GeoGitMergeOptions = function() {
+var GeoGigMergeOptions = function() {
   this.noCommit = null;
   this.commit = null;
   this.authorName = null;
   this.authorEmail = null;
 };
 
-var GeoGitCheckoutOptions = function() {
+var GeoGigCheckoutOptions = function() {
   this.branch = null;
   this.ours = null;
   this.theirs = null;
   this.path = null;
 };
 
-var GeoGitAddOptions = function() {
+var GeoGigAddOptions = function() {
   this.path = null;
 };
 
-var GeoGitCatOptions = function() {
+var GeoGigCatOptions = function() {
   this.objectid = null;
 };
 
-var GeoGitRemoveOptions = function() {
+var GeoGigRemoveOptions = function() {
   this.path = null;
   this.recursive = null;
 };
 
-var GeoGitResolveConflictOptions = function() {
+var GeoGigResolveConflictOptions = function() {
   this.path = null;
   this.objectid = null;
 };
 
-var GeoGitVersionOptions = function() {
+var GeoGigVersionOptions = function() {
 };
 
-var GeoGitTagOptions = function() {
+var GeoGigTagOptions = function() {
   this.list = null;
 };
 
-var GeoGitFeatureDiffOptions = function() {
+var GeoGigFeatureDiffOptions = function() {
   this.path = null;
   this.oldTreeish = null;
   this.newTreeish = null;
   this.all = null;
 };
 
-var GeoGitBlameOptions = function() {
+var GeoGigBlameOptions = function() {
   this.path = null;
   this.commit = null;
 };
 
-var GeoGitGetCommitGraphOptions = function() {
+var GeoGigGetCommitGraphOptions = function() {
   this.depth = null;
   this.commitId = null;
   this.page = null;
   this.show = null;
 };
 
-var GeoGitUpdateRefOptions = function() {
+var GeoGigUpdateRefOptions = function() {
   this.name = null;
   // delete conflicts with a keyword, add _ref to prevent this.
   // It will be resolved later.
@@ -129,11 +129,11 @@ var GeoGitUpdateRefOptions = function() {
   this.newValue = null;
 };
 
-var GeoGitRefParseOptions = function() {
+var GeoGigRefParseOptions = function() {
   this.name = null;
 };
 
-var GeoGitRemoteOptions = function() {
+var GeoGigRemoteOptions = function() {
   this.list = null;
   this.remove = null;
   this.remoteName = null;
@@ -146,12 +146,12 @@ var GeoGitRemoteOptions = function() {
   this.verbose = null;
 };
 
-var GeoGitBranchOptions = function() {
+var GeoGigBranchOptions = function() {
   this.list = null;
   this.remotes = null;
 };
 
-var GeoGitLsTreeOptions = function() {
+var GeoGigLsTreeOptions = function() {
   this.showTree = null;
   this.onlyTree = null;
   this.recursive = null;
@@ -159,14 +159,14 @@ var GeoGitLsTreeOptions = function() {
   this.paths = null;
 };
 
-var GeoGitCommitOptions = function() {
+var GeoGigCommitOptions = function() {
   this.all = null;
   this.message = null;
   this.authorName = null;
   this.authorEmail = null;
 };
 
-var GeoGitDiffOptions = function() {
+var GeoGigDiffOptions = function() {
   this.oldRefSpec = null;
   this.newRefSpec = null;
   this.pathFilter = null;
@@ -175,7 +175,7 @@ var GeoGitDiffOptions = function() {
   this.show = null;
 };
 
-var GeoGitLogOptions = function() {
+var GeoGigLogOptions = function() {
   this.limit = null;
   this.offset = null;
   this.path = null;
@@ -191,7 +191,7 @@ var GeoGitLogOptions = function() {
   this.returnRange = null;
 };
 
-var GeoGitRevertFeatureOptions = function() {
+var GeoGigRevertFeatureOptions = function() {
   this.authorName = null;
   this.authorEmail = null;
   this.commitMessage = null;

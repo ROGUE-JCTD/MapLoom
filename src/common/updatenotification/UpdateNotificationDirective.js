@@ -33,7 +33,7 @@
               mapService.map.getLayers().forEach(function(layer) {
                 var metadata = layer.get('metadata');
                 if (goog.isDefAndNotNull(metadata)) {
-                  if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repos[i].name) {
+                  if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repos[i].name) {
                     if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
                       if (goog.isDefAndNotNull(metadata.projection)) {
                         crs = metadata.projection;

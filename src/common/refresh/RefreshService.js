@@ -6,17 +6,17 @@
   var historyService_ = null;
   var translate_ = null;
   var notificationService_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var featureDiffService_ = null;
   var service_ = null;
   var timeout_ = null;
 
   module.provider('refreshService', function() {
-    this.$get = function(mapService, $translate, notificationService, geogitService, historyService,
+    this.$get = function(mapService, $translate, notificationService, geogigService, historyService,
         dialogService, featureDiffService) {
       mapService_ = mapService;
       notificationService_ = notificationService;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       historyService_ = historyService;
       dialogService_ = dialogService;
       translate_ = $translate;
@@ -65,13 +65,13 @@
         }
 
         var doDiff = function(repoChange, metadata) {
-          var options = new GeoGitDiffOptions();
+          var options = new GeoGigDiffOptions();
           options.oldRefSpec = repoChange.oldId;
           options.newRefSpec = repoChange.newId;
           options.showGeometryChanges = true;
           options.show = 50;
           options.pathFilter = metadata.nativeName;
-          geogitService_.command(repoChange.repoid, 'diff', options).then(function(diffResponse) {
+          geogigService_.command(repoChange.repoid, 'diff', options).then(function(diffResponse) {
             if (!goog.isDefAndNotNull(diffResponse.Feature)) {
               return;
             }
@@ -138,13 +138,13 @@
               emptyMessage: translate_.instant('too_many_changes_refresh', {value: 50}),
               repos: [
                 {
-                  name: metadata.geogitStore,
+                  name: metadata.geogigStore,
                   features: featureList
                 }
               ],
               callback: function(feature) {
                 // check to see if there is a newer version of this feature
-                var logOptions = new GeoGitLogOptions();
+                var logOptions = new GeoGigLogOptions();
                 logOptions.firstParentOnly = true;
                 logOptions.path = feature.original.id;
                 logOptions.show = 1;
@@ -160,7 +160,7 @@
                       null, repoChange.repoid);
                   $('#feature-diff-dialog').modal('show');
                 };
-                geogitService_.command(metadata.repoId, 'log', logOptions)
+                geogigService_.command(metadata.repoId, 'log', logOptions)
                     .then(function(response) {
                       if (goog.isDefAndNotNull(response.commit)) {
                         dialogService_.warn(translate_.instant('warning'), translate_.instant('newer_feature_version'),
@@ -199,12 +199,12 @@
             }
           };
           var metadata = layer.get('metadata');
-          if (goog.isDefAndNotNull(metadata.isGeoGit) && metadata.isGeoGit === true) {
+          if (goog.isDefAndNotNull(metadata.isGeoGig) && metadata.isGeoGig === true) {
             if (goog.isDefAndNotNull(refreshed[metadata.repoId])) {
               doDiff(refreshed[metadata.repoId], metadata);
               nextLayer(nextIndex);
             } else if (!goog.isDefAndNotNull(notRefreshed[metadata.repoId])) {
-              geogitService_.commitChanged(metadata.repoId).then(function(response) {
+              geogigService_.commitChanged(metadata.repoId).then(function(response) {
                 if (response.changed === true) {
                   refreshed[metadata.repoId] = response;
                   doDiff(response, metadata);

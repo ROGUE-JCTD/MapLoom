@@ -57,7 +57,7 @@
                 if (goog.isDefAndNotNull(layer)) {
                   var metadata = layer.get('metadata');
                   if (goog.isDefAndNotNull(metadata)) {
-                    if (goog.isDefAndNotNull(metadata.isGeoGit) && metadata.isGeoGit) {
+                    if (goog.isDefAndNotNull(metadata.isGeoGig) && metadata.isGeoGig) {
                       var nativeLayer = metadata.nativeName;
                       var featureId = featureManagerService.getSelectedItem().id;
                       var fid = nativeLayer + '/' + featureId;

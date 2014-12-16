@@ -3,11 +3,11 @@
   var module = angular.module('loom_syncconfig_directive', []);
 
   module.directive('loomSyncconfig',
-      function($q, $translate, remoteService, geogitService) {
+      function($q, $translate, remoteService, geogigService) {
         return {
           templateUrl: 'sync/partials/syncconfig.tpl.html',
           link: function(scope, element) {
-            scope.geogitService = geogitService;
+            scope.geogigService = geogigService;
             scope.remoteService = remoteService;
             scope.saving = false;
 
@@ -38,9 +38,9 @@
 
             scope.$watch('remoteService.selectedRepo', function() {
               if (goog.isDefAndNotNull(remoteService.selectedRepo)) {
-                var logOptions = new GeoGitLogOptions();
+                var logOptions = new GeoGigLogOptions();
                 logOptions.returnRange = true;
-                geogitService.command(remoteService.selectedRepo.id, 'log', logOptions).then(function(logInfo) {
+                geogigService.command(remoteService.selectedRepo.id, 'log', logOptions).then(function(logInfo) {
                   if (logInfo.success === true) {
                     remoteService.selectedRepoInitialCommit = logInfo.sinceCommit.id;
                   }

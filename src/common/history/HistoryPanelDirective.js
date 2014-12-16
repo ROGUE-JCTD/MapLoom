@@ -73,7 +73,7 @@
                   }
                 }
               }
-              var diffOptions = new GeoGitDiffOptions();
+              var diffOptions = new GeoGigDiffOptions();
               diffOptions.oldRefSpec = lastCommitId;
               diffOptions.newRefSpec = commit.id;
               diffOptions.showGeometryChanges = true;

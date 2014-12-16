@@ -94,7 +94,7 @@
     'unable_to_get_branches': 'Unable to get the repository\'s branches. Try re-adding the layer.',
     'unable_to_get_remotes': 'Unable to get the repository\'s remotes. Try re-adding the layer.',
     'unable_to_get_datastore': 'Unable to get the datastore.',
-    'unable_to_add_remote': 'Unable to add the GeoGit remote: ',
+    'unable_to_add_remote': 'Unable to add the GeoGig remote: ',
     'unable_to_get_feature_type': 'Unable to get feature type of data store.',
     'unable_to_get_datastore_name': 'Unable to determine the data store name.',
     'layer_was_layer_group': 'Unable to determine if the layer was a layer group.',
@@ -295,8 +295,8 @@
     'since_time': 'Running since {{time}}',
     'unread_notifications': 'Unread Notifications',
     'generate_notification': 'Generate Notification',
-    'no_layers_notification': 'Generating a notification requires a GeoGit layer to function.  ' +
-        'Please add a GeoGit layer to the map.',
+    'no_layers_notification': 'Generating a notification requires a GeoGig layer to function.  ' +
+        'Please add a GeoGig layer to the map.',
     'single_sync': 'Perform Synchronization',
     'continuous_sync': 'Toggle Auto-Synchronization',
     'statistics_view': 'View Statistics',

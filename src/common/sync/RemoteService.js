@@ -7,7 +7,7 @@
   var http_;
   var service_;
   var dialogService_;
-  var geogitService_;
+  var geogigService_;
   var synchronizationService_;
 
   var counter = 0;
@@ -26,14 +26,14 @@
     this.compatibleRepos = [];
     this.selectedRepoInitialCommit = null;
 
-    this.$get = function($rootScope, $http, $q, $translate, dialogService, geogitService, synchronizationService) {
+    this.$get = function($rootScope, $http, $q, $translate, dialogService, geogigService, synchronizationService) {
       q_ = $q;
       rootScope_ = $rootScope;
       translate_ = $translate;
       http_ = $http;
       service_ = this;
       dialogService_ = dialogService;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       synchronizationService_ = synchronizationService;
 
       service_.selectedText = '*' + $translate.instant('new_remote');
@@ -115,12 +115,12 @@
           [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
         switch (button) {
           case 0:
-            var options = new GeoGitRemoteOptions();
+            var options = new GeoGigRemoteOptions();
             options.remoteName = service_.selectedRemote.name;
             options.remove = true;
             var result = q_.defer();
-            geogitService_.command(service_.selectedRepo.id, 'remote', options).then(function() {
-              geogitService_.loadRemotesAndBranches(service_.selectedRepo, result);
+            geogigService_.command(service_.selectedRepo.id, 'remote', options).then(function() {
+              geogigService_.loadRemotesAndBranches(service_.selectedRepo, result);
               synchronizationService_.remoteRemoved(service_.selectedRepo, service_.selectedRemote);
               service_.selectRemote(null);
             });
@@ -141,8 +141,8 @@
         options.password = service_.remotePassword;
       }
       var remoteResult = q_.defer();
-      geogitService_.command(service_.selectedRepo.id, 'remote', options).then(function(response) {
-        var fetchOptions = new GeoGitFetchOptions();
+      geogigService_.command(service_.selectedRepo.id, 'remote', options).then(function(response) {
+        var fetchOptions = new GeoGigFetchOptions();
         fetchOptions.remote = service_.remoteName;
         var successMessage = translate_.instant('remote_add_success', {value: service_.remoteName});
         if (service_.editing) {
@@ -150,8 +150,8 @@
           service_.remoteURL = url;
           successMessage = translate_.instant('remote_edit_success', {value: service_.remoteName});
         }
-        geogitService_.command(service_.selectedRepo.id, 'fetch', fetchOptions).then(function() {
-          geogitService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
+        geogigService_.command(service_.selectedRepo.id, 'fetch', fetchOptions).then(function() {
+          geogigService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
           remoteResult.promise.then(function(repo) {
             for (var index = 0; index < repo.remotes.length; index++) {
               if (repo.remotes[index].name === service_.remoteName) {
@@ -172,7 +172,7 @@
             }
           });
         }, function(error) {
-          geogitService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
+          geogigService_.loadRemotesAndBranches(service_.selectedRepo, remoteResult);
           result.resolve();
           var message = translate_.instant('fetch_error');
           if (error.status == '408' || error.status == '504') {
@@ -204,7 +204,7 @@
 
     this.finishRemoteOperation = function(save, result) {
       if (save) {
-        var options = new GeoGitRemoteOptions();
+        var options = new GeoGigRemoteOptions();
         if (service_.editing) {
           options.update = true;
           options.newName = service_.remoteName;

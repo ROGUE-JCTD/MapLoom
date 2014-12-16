@@ -3,7 +3,7 @@
   var module = angular.module('loom_history_diff_directive', []);
 
   module.directive('loomHistoryDiff',
-      function($rootScope, historyService, $translate, geogitService, diffService,
+      function($rootScope, historyService, $translate, geogigService, diffService,
                pulldownService, dialogService, $window) {
         return {
           templateUrl: 'history/partial/historydiff.tpl.html',
@@ -42,14 +42,14 @@
               scope.isLoading = true;
               var startTime = new Date(scope.startDate[0]).getTime();
               var endTime = new Date(scope.endDate[0]).getTime();
-              var logOptions = new GeoGitLogOptions();
+              var logOptions = new GeoGigLogOptions();
               logOptions.untilTime = startTime < endTime ? endTime : startTime;
               logOptions.sinceTime = startTime < endTime ? startTime : endTime;
               logOptions.path = historyService.pathFilter;
               logOptions.returnRange = true;
               // TODO: Add the since option to specify branch name
               //logOptions.since = historyService.layer.get('metadata').branchName;
-              geogitService.command(historyService.repoId, 'log', logOptions).then(function(response) {
+              geogigService.command(historyService.repoId, 'log', logOptions).then(function(response) {
                 if (goog.isDefAndNotNull(response.untilCommit)) {
                   var firstCommitId = response.untilCommit.id;
                   var lastCommit = response.sinceCommit;
@@ -64,7 +64,7 @@
                       }
                     }
                   }
-                  var diffOptions = new GeoGitDiffOptions();
+                  var diffOptions = new GeoGigDiffOptions();
                   diffOptions.oldRefSpec = lastCommitId;
                   diffOptions.newRefSpec = firstCommitId;
                   diffOptions.showGeometryChanges = true;
@@ -109,7 +109,7 @@
             };
 
             scope.exportCSV = function() {
-              var repo = geogitService.getRepoById(historyService.layer.get('metadata').repoId);
+              var repo = geogigService.getRepoById(historyService.layer.get('metadata').repoId);
               var startTime = new Date(scope.startDate[0]).getTime();
               var endTime = new Date(scope.endDate[0]).getTime();
               var untilTime = startTime < endTime ? endTime : startTime;

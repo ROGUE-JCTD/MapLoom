@@ -9,7 +9,7 @@
   var service_ = null;
   var mapService_ = null;
   var dialogService_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var translate_ = null;
   var configService_ = null;
 
@@ -26,14 +26,14 @@
     this.mergeBranch = null;
 
     this.$get = function($rootScope, $location, $translate, diffService, pulldownService, configService, historyService,
-                         featureDiffService, mapService, dialogService, geogitService) {
+                         featureDiffService, mapService, dialogService, geogigService) {
       diffService_ = diffService;
       pulldownService_ = pulldownService;
       featureDiffService_ = featureDiffService;
       historyService_ = historyService;
       mapService_ = mapService;
       dialogService_ = dialogService;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       translate_ = $translate;
       configService_ = configService;
       service_ = this;
@@ -73,7 +73,7 @@
       diffService_.clickCallback = featureClicked;
       diffService_.mergeDiff = true;
       diffService_.populate(service_.features,
-          geogitService_.getRepoById(service_.repoId).name, service_.ourName, service_.theirName);
+          geogigService_.getRepoById(service_.repoId).name, service_.ourName, service_.theirName);
       pulldownService_.conflictsMode();
     };
 
@@ -150,7 +150,7 @@
     if (conflictList.length === 0) {
       if (conflictsInError === 0) {
         service_.transaction.command('status').then(function(response) {
-          var commitOptions = new GeoGitCommitOptions();
+          var commitOptions = new GeoGigCommitOptions();
           commitOptions.all = true;
           commitOptions.message = service_.buildMergeMessage(response, service_.mergeBranch, true);
           commitOptions.authorName = configService_.configuration.userprofilename;
@@ -191,7 +191,7 @@
       var conflict = conflictList.pop();
 
       if (goog.isDefAndNotNull(conflict.removed)) {
-        var checkoutOptions = new GeoGitCheckoutOptions();
+        var checkoutOptions = new GeoGigCheckoutOptions();
         checkoutOptions.path = conflict.id;
         if (conflict.removed.ours === true) {
           checkoutOptions.ours = true;
@@ -199,7 +199,7 @@
           checkoutOptions.theirs = true;
         }
         service_.transaction.command('checkout', checkoutOptions).then(function() {
-          var addOptions = new GeoGitAddOptions();
+          var addOptions = new GeoGigAddOptions();
           addOptions.path = conflict.id;
           service_.transaction.command('add', addOptions).then(function() {
             // add successful
@@ -216,11 +216,11 @@
       } else {
         var merges = $.extend(true, {}, conflict.merges);
         var schema = null;
-        var repoName = geogitService_.getRepoById(service_.repoId).name;
+        var repoName = geogigService_.getRepoById(service_.repoId).name;
         mapService_.map.getLayers().forEach(function(layer) {
           var metadata = layer.get('metadata');
           if (goog.isDefAndNotNull(metadata)) {
-            if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
+            if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repoName) {
               var splitFeature = conflict.id.split('/');
               if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
                 if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
@@ -245,8 +245,8 @@
           merges: merges
         };
 
-        geogitService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {
-          var resolveConflictOptions = new GeoGitResolveConflictOptions();
+        geogigService_.post(service_.repoId, 'repo/mergefeature', resolveConflict).then(function(response) {
+          var resolveConflictOptions = new GeoGigResolveConflictOptions();
           resolveConflictOptions.path = conflict.id;
           resolveConflictOptions.objectid = response.data;
           service_.transaction.command('resolveconflict', resolveConflictOptions).then(function() {

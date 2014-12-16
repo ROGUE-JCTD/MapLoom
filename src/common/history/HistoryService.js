@@ -4,7 +4,7 @@
   // Private Variables
   var rootScope_ = null;
   var service_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var pulldownService_ = null;
   var dialogService_ = null;
   var translate_ = null;
@@ -21,10 +21,10 @@
     this.fetchingHistory = false;
     this.historyTransaction = 0;
 
-    this.$get = function($q, $rootScope, $translate, geogitService, pulldownService, dialogService) {
+    this.$get = function($q, $rootScope, $translate, geogigService, pulldownService, dialogService) {
       rootScope_ = $rootScope;
       service_ = this;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       pulldownService_ = pulldownService;
       dialogService_ = dialogService;
       translate_ = $translate;
@@ -85,7 +85,7 @@
       refresh = false;
     }
     if (goog.isDefAndNotNull(service_.layer)) {
-      var logOptions = new GeoGitLogOptions();
+      var logOptions = new GeoGigLogOptions();
       if (refresh && service_.log.length > 0) {
         // for refresh we will limit the log by specifying since and until
         logOptions.show = 1000;
@@ -112,7 +112,7 @@
             service_.pathFilter = metadata.nativeName;
           }
           logOptions.path = service_.pathFilter;
-          geogitService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
+          geogigService_.command(metadata.repoId, 'log', logOptions).then(function(response) {
             if (service_.fetchingHistory === false || thisTransaction != service_.historyTransaction) {
               // History was cleared, we don't want this data anymore
               deferredResponse.reject();

@@ -7,7 +7,7 @@
   var service_ = null;
   var dialogService_ = null;
   var rootScope_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var historyService_ = null;
   var q_ = null;
   var translate_ = null;
@@ -54,10 +54,10 @@
   };
 
   var checkStatus = function(link) {
-    var remoteOptions = new GeoGitRemoteOptions();
+    var remoteOptions = new GeoGigRemoteOptions();
     remoteOptions.remoteName = link.getRemote().name;
     remoteOptions.ping = true;
-    geogitService_.command(link.getRepo().id, 'remote', remoteOptions).then(function(response) {
+    geogigService_.command(link.getRepo().id, 'remote', remoteOptions).then(function(response) {
       link.getRemote().active = response.ping.success;
     }, function() {
       link.getRemote().active = false;
@@ -74,11 +74,11 @@
 
   module.provider('synchronizationService', function() {
     this.$get = function($timeout, $rootScope, $q, $translate, dialogService, historyService,
-                         geogitService, conflictService, configService) {
+                         geogigService, conflictService, configService) {
       dialogService_ = dialogService;
       service_ = this;
       rootScope_ = $rootScope;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       historyService_ = historyService;
       conflictService_ = conflictService;
       translate_ = $translate;
@@ -181,15 +181,15 @@
     this.sync = function(link) {
       var result = q_.defer();
       syncing = true;
-      geogitService_.beginTransaction(link.getRepo().id).then(function(transaction) {
-        var pullOptions = new GeoGitPullOptions();
+      geogigService_.beginTransaction(link.getRepo().id).then(function(transaction) {
+        var pullOptions = new GeoGigPullOptions();
         pullOptions.ref = link.getRemoteBranch() + ':' + link.getLocalBranch();
         pullOptions.remoteName = link.getRemote().name;
         pullOptions.authorName = configService_.configuration.userprofilename;
         pullOptions.authorEmail = configService_.configuration.userprofileemail;
         transaction.command('pull', pullOptions).then(function(pullResult) {
           numPullFails = 0;
-          var pushOptions = new GeoGitPushOptions();
+          var pushOptions = new GeoGigPushOptions();
           pushOptions.ref = link.getLocalBranch() + ':' + link.getRemoteBranch();
           pushOptions.remoteName = link.getRemote().name;
           console.log(pushOptions);

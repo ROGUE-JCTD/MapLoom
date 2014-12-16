@@ -4,18 +4,18 @@
     <div class="form-group">
       <div class="col-md-4">
         <select class="form-control" ng-model="selectedRepoId">
-          <option ng-repeat="repo in geogitService.repos | filter:{unique:'true'}" value="{{repo.id}}" ng-selected="">{{repo.name}}</option>
+          <option ng-repeat="repo in geogigService.repos | filter:{unique:'true'}" value="{{repo.id}}" ng-selected="">{{repo.name}}</option>
         </select>
       </div>
       <div class="col-md-3" ng-hide="!selectedRepoId">
-        <select class="form-control" ng-model="sourceBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches">
+        <select class="form-control" ng-model="sourceBranch" ng-options="branch for branch in geogigService.getRepoById(selectedRepoId).branches">
         </select>
       </div>
       <div class="col-md-2" ng-hide="!selectedRepoId">
         <p class="form-control-static text-center" translate="into">into</p>
       </div>
       <div class="col-md-3" ng-hide="!selectedRepoId">
-        <select class="form-control" ng-model="destinationBranch" ng-options="branch for branch in geogitService.getRepoById(selectedRepoId).branches | filter:listFilter(sourceBranch)">
+        <select class="form-control" ng-model="destinationBranch" ng-options="branch for branch in geogigService.getRepoById(selectedRepoId).branches | filter:listFilter(sourceBranch)">
         </select>
       </div>
     </div>

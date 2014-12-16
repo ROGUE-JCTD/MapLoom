@@ -5,7 +5,7 @@
   var service_ = null;
   var rootScope_ = null;
   var mapService_ = null;
-  var geogitService_ = null;
+  var geogigService_ = null;
   var dialogService_ = null;
   var translate_ = null;
 
@@ -137,11 +137,11 @@
     this.layer = null;
     this.combinedExtent = [0, 0, 0, 0];
 
-    this.$get = function($rootScope, mapService, geogitService, dialogService, $translate) {
+    this.$get = function($rootScope, mapService, geogigService, dialogService, $translate) {
       service_ = this;
       rootScope_ = $rootScope;
       mapService_ = mapService;
-      geogitService_ = geogitService;
+      geogigService_ = geogigService;
       dialogService_ = dialogService;
       translate_ = $translate;
       ol.extent.empty(this.combinedExtent);
@@ -329,12 +329,12 @@
       service_.merged.replaceLayers(layers);
 
       crs_ = goog.isDefAndNotNull(feature.crs) ? feature.crs : null;
-      var repoName = geogitService_.getRepoById(repoId_).name;
+      var repoName = geogigService_.getRepoById(repoId_).name;
       var splitFeature = feature.id.split('/');
       mapService_.map.getLayers().forEach(function(layer) {
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
-          if (goog.isDefAndNotNull(metadata.geogitStore) && metadata.geogitStore === repoName) {
+          if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repoName) {
             if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
               service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
@@ -391,20 +391,20 @@
       };
 
       if (!goog.isDefAndNotNull(service_.layer)) {
-        // try to get the schema from geogit.
-        var lsTreeOptions = new GeoGitLsTreeOptions();
+        // try to get the schema from geogig.
+        var lsTreeOptions = new GeoGigLsTreeOptions();
         lsTreeOptions.onlyTree = true;
         lsTreeOptions.showTree = true;
         lsTreeOptions.verbose = true;
-        geogitService_.command(repoId_, 'ls-tree', lsTreeOptions).then(function(response) {
+        geogigService_.command(repoId_, 'ls-tree', lsTreeOptions).then(function(response) {
           // get featuretype
           var layerFound = false;
           forEachArrayish(response.node, function(node) {
             if (node.path === splitFeature[0]) {
               layerFound = true;
-              var catOptions = new GeoGitCatOptions();
+              var catOptions = new GeoGigCatOptions();
               catOptions.objectid = node.metadataId;
-              geogitService_.command(repoId_, 'cat', catOptions).then(function(response) {
+              geogigService_.command(repoId_, 'cat', catOptions).then(function(response) {
                 // create schema and get projection from crs
                 service_.schema = {};
                 if (goog.isDefAndNotNull(response.featuretype) &&
@@ -435,13 +435,13 @@
     };
 
     this.performFeatureDiff = function(feature, newCommit, oldCommit, panel) {
-      var diffOptions = new GeoGitFeatureDiffOptions();
+      var diffOptions = new GeoGigFeatureDiffOptions();
       diffOptions.all = true;
       diffOptions.newTreeish = newCommit;
       diffOptions.oldTreeish = oldCommit;
       diffOptions.path = feature.id;
       panel.active = true;
-      geogitService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
+      geogigService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
         forEachArrayish(response.diff, function(item) {
           if (item.geometry !== true) {
             if (!goog.isDefAndNotNull(item.newvalue)) {

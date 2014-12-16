@@ -14,7 +14,7 @@
     'loom_addlayers',
     'loom_arrangeable',
     'loom_layers',
-    'loom_geogit',
+    'loom_geogig',
     'loom_pulldown',
     'loom_pulldown_controller',
     'loom_feature_manager',

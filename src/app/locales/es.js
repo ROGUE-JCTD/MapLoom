@@ -95,7 +95,7 @@
     'unable_to_get_branches': 'No se pudo identificar ramas del deposito. Intentar re añadir la capa.',
     'unable_to_get_remotes': 'No se pudo identificar los remotos del deposito. Intentar re añadir la capa.',
     'unable_to_get_datastore': 'No se pudo lograr el deposito de datos.',
-    'unable_to_add_remote': 'No se pudo añadir el remoto de GeoGit: ',
+    'unable_to_add_remote': 'No se pudo añadir el remoto de GeoGig: ',
     'unable_to_get_feature_type': 'No se pudo retirar el tipo de elemento del almacenaje de datos.',
     'unable_to_get_datastore_name': 'No se pudo determinar el nombre del almacenador de datos.',
     'layer_was_layer_group': 'No se pudo determinar si la capa era una capa grupal.',
@@ -299,8 +299,8 @@
     'since_time': 'En funcionamiento desde {{time}}',
     'unread_notifications': 'Notificaciones Sin Leer',
     'generate_notification': 'Generar una Notificación',
-    'no_layers_notification': 'La generación de una notificación requiere una capa GeoGit funcionar. ' +
-        'Por favor, añada una capa GeoGit al mapa.',
+    'no_layers_notification': 'La generación de una notificación requiere una capa GeoGig funcionar. ' +
+        'Por favor, añada una capa GeoGig al mapa.',
     'single_sync': 'Realizar la Sincronización',
     'continuous_sync': 'Sincronización Automática de Palanca',
     'statistics_view': 'Ver las estadísticas',

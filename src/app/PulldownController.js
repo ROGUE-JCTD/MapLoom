@@ -2,7 +2,7 @@
   var module = angular.module('loom_pulldown_controller', []);
 
   module.controller('LoomPulldownController',
-      function($scope, pulldownService, geogitService, diffService, historyService, mapService, configService) {
+      function($scope, pulldownService, geogigService, diffService, historyService, mapService, configService) {
 
         $('#pulldown-content').on('show.bs.collapse', function(e) {
           $('#pulldown-content .in').not($(e.target).parents()).collapse('hide');
@@ -40,7 +40,7 @@
         $scope.$watch('mapService', updateScopeVariables);
 
         var syncPanelEnabled = function() {
-          pulldownService.syncPanel.enabled = geogitService.adminRepos.length > 0;
+          pulldownService.syncPanel.enabled = geogigService.adminRepos.length > 0;
           updateScopeVariables();
         };
 

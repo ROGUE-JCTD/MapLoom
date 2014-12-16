@@ -46,9 +46,9 @@
               if (goog.isDefAndNotNull(metadata.keywords)) {
                 scope.keywords = metadata.keywords.toString();
               }
-              if (metadata.isGeoGit) {
+              if (metadata.isGeoGig) {
                 scope.branchName = metadata.branchName;
-                scope.repoName = metadata.geogitStore;
+                scope.repoName = metadata.geogigStore;
               }
               var server = serverService.getServerById(scope.layer.get('metadata').serverId);
               scope.serverName = server.name;
