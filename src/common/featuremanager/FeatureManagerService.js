@@ -455,7 +455,7 @@
                 selectedItem_.geometry.type = feature.getGeometry().getType();
                 selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
                 newGeom = transformGeometry(selectedItem_.geometry,
-                    mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+                    mapService_.map.getView().getProjection(), selectedLayer_.get('metadata').projection);
                 selectedItem_.geometry.coordinates = newGeom.getCoordinates();
               } else {
                 selectedItem_.geometry.type = 'GeometryCollection';
@@ -469,7 +469,7 @@
                 };
                 setupGeometryArray(feature.getGeometry());
                 newGeom = transformGeometry(selectedItem_.geometry,
-                    mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+                    mapService_.map.getView().getProjection(), selectedLayer_.get('metadata').projection);
                 setupGeometryArray(newGeom);
               }
               service_.startAttributeEditing(true);
@@ -508,19 +508,19 @@
               (coords[1] !== selectedItem_.geometry.coordinates[1])) {
             // Transform the geometry so we can get the new place on the map to show the info-box
             var newGeom = transformGeometry({type: 'point', coordinates: coords},
-                selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
+                selectedLayer_.get('metadata').projection, mapService_.map.getView().getProjection());
             // We also need to update the vector feature so that it is in the new position
             feature.setGeometry(newGeom);
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request
             featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-                mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+                mapService_.map.getView().getProjection().getCode() + '">' +
                 '<gml:coordinates decimal="." cs="," ts=" ">' +
                 newPos[0] + ',' + newPos[1] +
                 '</gml:coordinates></gml:Point>';
-            var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+            var pan = ol.animation.pan({source: mapService_.map.getView().getCenter()});
             mapService_.map.beforeRender(pan);
-            mapService_.map.getView().getView2D().setCenter(newPos);
+            mapService_.map.getView().setCenter(newPos);
           } else {
             featureGML = getGeometryGMLFromFeature(feature);
             newPos = feature.getGeometry().getCoordinates();
@@ -662,7 +662,7 @@
         if (feature.getGeometry().getType().toLowerCase() == 'geometrycollection') {
           coords = feature.getGeometry().getGeometries();
           transformedGeom = transformGeometry({type: 'multigeometry', coordinates: coords},
-              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+              mapService_.map.getView().getProjection(), selectedLayer_.get('metadata').projection);
           coords = [];
           for (index = 0; index < transformedGeom.getGeometries().length; index++) {
             coords.push({coordinates: transformedGeom.getGeometries()[index].getCoordinates(),
@@ -671,7 +671,7 @@
         } else {
           coords = feature.getGeometry().getCoordinates();
           transformedGeom = transformGeometry({type: feature.getGeometry().getType(), coordinates: coords},
-              mapService_.map.getView().getView2D().getProjection(), selectedLayer_.get('metadata').projection);
+              mapService_.map.getView().getProjection(), selectedLayer_.get('metadata').projection);
           coords = transformedGeom.getCoordinates();
         }
         newPos = getNewPositionFromGeometry(feature.getGeometry());
@@ -745,22 +745,22 @@
               (coords[1] !== selectedItem_.geometry.coordinates[1])) {
             // Transform the geometry so we can get the new place on the map to show the info-box
             var newGeom = transformGeometry({type: 'point', coordinates: coords},
-                selectedLayer_.get('metadata').projection, mapService_.map.getView().getView2D().getProjection());
+                selectedLayer_.get('metadata').projection, mapService_.map.getView().getProjection());
             // We also need to update the vector feature so that it is in the new position
             var feature = mapService_.editLayer.getSource().getFeatures()[0];
             feature.setGeometry(newGeom);
             newPos = newGeom.getCoordinates();
             // Construct the property change to put in the partial to send in the post request
             var featureGML = '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-                mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+                mapService_.map.getView().getProjection().getCode() + '">' +
                 '<gml:coordinates decimal="." cs="," ts=" ">' +
                 newPos[0] + ',' + newPos[1] +
                 '</gml:coordinates></gml:Point>';
             propertyXmlPartial += '<wfs:Property><wfs:Name>' + selectedItem_.geometry_name +
                 '</wfs:Name><wfs:Value>' + featureGML + '</wfs:Value></wfs:Property>';
-            var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
+            var pan = ol.animation.pan({source: mapService_.map.getView().getCenter()});
             mapService_.map.beforeRender(pan);
-            mapService_.map.getView().getView2D().setCenter(newPos);
+            mapService_.map.getView().setCenter(newPos);
           }
         }
 
@@ -811,7 +811,7 @@
 
         service_.hide();
 
-        var view = mapService_.map.getView().getView2D();
+        var view = mapService_.map.getView();
         var layers = mapService_.getLayers();
         var completed = 0;
 
@@ -1009,7 +1009,7 @@
     /*var writer = new ol.parser.ogc.GML_v3({featureNS: selectedLayer_.get('metadata').workspace,
      featureType: selectedLayer_.get('metadata').nativeName});
      var featureGML = writer.write({features: [feature]},
-     {srsName: mapService_.map.getView().getView2D().getProjection().getCode()});
+     {srsName: mapService_.map.getView().getProjection().getCode()});
      // Parse out only the geometry
      var startIndex = featureGML.indexOf('<feature:geometry>');
      var endIndex = featureGML.indexOf('</feature:geometry');
@@ -1040,7 +1040,7 @@
       geometries = feature.getGeometry().getGeometries();
       length = geometries.length;
       featureGML += '<gml:MultiGeometry xmlns:gml="http://www.opengis.net/gml" srsName="' +
-          mapService_.map.getView().getView2D().getProjection().getCode() + '">';
+          mapService_.map.getView().getProjection().getCode() + '">';
       isGeometryCollection = true;
     }
     for (var geometryIndex = 0; geometryIndex < length; geometryIndex++) {
@@ -1051,18 +1051,18 @@
       }
       if (geometryType == 'point') {
         featureGML += '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+            mapService_.map.getView().getProjection().getCode() + '">' +
             '<gml:coordinates decimal="." cs="," ts=" ">' +
             geometry.getCoordinates().toString() +
             '</gml:coordinates></gml:Point>';
       } else if (geometryType == 'linestring') {
         featureGML += '<gml:LineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+            mapService_.map.getView().getProjection().getCode() + '">' +
             '<gml:coordinates decimal="." cs="," ts=" ">' + buildCoordString(geometry.getCoordinates().toString()) +
             '</gml:coordinates></gml:LineString>';
       } else if (geometryType == 'polygon') {
         featureGML += '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">' +
+            mapService_.map.getView().getProjection().getCode() + '">' +
             '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
             buildCoordString(geometry.getCoordinates()[0].toString()) + '</gml:coordinates>' +
             '</gml:LinearRing></gml:outerBoundaryIs>';
@@ -1074,7 +1074,7 @@
         featureGML += '</gml:Polygon>';
       } else if (geometryType == 'multipoint') {
         featureGML += '<gml:MultiPoint xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">';
+            mapService_.map.getView().getProjection().getCode() + '">';
         for (index = 0; index < geometry.getCoordinates().length; index++) {
           featureGML += '<gml:pointMember><gml:Point><gml:coordinates decimal="." cs="," ts=" ">' +
               geometry.getCoordinates()[index].toString() +
@@ -1083,7 +1083,7 @@
         featureGML += '</gml:MultiPoint>';
       } else if (geometryType == 'multilinestring') {
         featureGML += '<gml:MultiLineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">';
+            mapService_.map.getView().getProjection().getCode() + '">';
         for (index = 0; index < geometry.getCoordinates().length; index++) {
           featureGML += '<gml:lineMember><gml:LineString><gml:coordinates decimal="." cs="," ts=" ">' +
               buildCoordString(geometry.getCoordinates()[index].toString()) +
@@ -1092,7 +1092,7 @@
         featureGML += '</gml:MultiLineString>';
       } else if (geometryType == 'multipolygon') {
         featureGML += '<gml:MultiPolygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
-            mapService_.map.getView().getView2D().getProjection().getCode() + '">';
+            mapService_.map.getView().getProjection().getCode() + '">';
         for (index = 0; index < geometry.getCoordinates().length; index++) {
           featureGML += '<gml:polygonMember><gml:Polygon>' +
               '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +

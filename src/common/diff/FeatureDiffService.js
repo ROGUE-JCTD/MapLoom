@@ -147,9 +147,9 @@
       ol.extent.empty(this.combinedExtent);
       var createMap = function(panel) {
         panel.map = new ol.Map({
-          renderer: ol.RendererHint.CANVAS,
+          //renderer: ol.RendererHint.CANVAS,
           ol3Logo: false,
-          view: new ol.View2D({
+          view: new ol.View({
             center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
             zoom: 14,
             maxZoom: 20
@@ -351,7 +351,7 @@
       var continueWork = function() {
         var geom = WKT.read(feature.geometry);
         if (goog.isDefAndNotNull(crs_)) {
-          geom.transform(crs_, mapService_.map.getView().getView2D().getProjection());
+          geom.transform(crs_, mapService_.map.getView().getProjection());
         }
 
         diffsInError_ = 0;
@@ -466,7 +466,7 @@
           localCrs = panel.geometry.crs;
         }
         if (goog.isDefAndNotNull(localCrs)) {
-          geom.transform(localCrs, panel.map.getView().getView2D().getProjection());
+          geom.transform(localCrs, panel.map.getView().getProjection());
         }
         var olFeature = new ol.Feature();
         olFeature.set('MapLoomChange', DiffColorMap[panel.geometry.changetype]);

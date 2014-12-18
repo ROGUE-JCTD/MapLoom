@@ -156,7 +156,7 @@
 
           var geom = WKT.read(change.geometry);
           if (goog.isDefAndNotNull(crs)) {
-            geom.transform(crs, mapService_.map.getView().getView2D().getProjection());
+            geom.transform(crs, mapService_.map.getView().getProjection());
           }
           var olFeature = new ol.Feature();
           olFeature.set('change', DiffColorMap[change.change]);

@@ -224,7 +224,7 @@
         scale = 0;
       }
 
-      var view = map.getView().getView2D();
+      var view = map.getView();
 
       if (!goog.isDefAndNotNull(extent)) {
         extent = view.getProjection().getExtent();
@@ -351,7 +351,7 @@
           newExtent[2] -= xDelta;
           newExtent[3] -= yDelta;
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
-              service_.map.getView().getView2D().getProjection());
+              service_.map.getView().getProjection());
           newExtent = ol.extent.applyTransform(newExtent, transform);
         }
         return newExtent;
@@ -414,6 +414,46 @@
       return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
 
+    this.downloadProjection = function(epsgCode) {
+      var deferredResponse = q_.defer();
+      if (goog.isDefAndNotNull(epsgCode)) {
+        // if code is string instead of number and starts with epsg: remove it
+        if (epsgCode.toLowerCase().indexOf('epsg:') === 0) {
+          epsgCode = epsgCode.substring('epsg:'.length);
+        }
+
+        var epsgCodeAsNumber = parseInt(epsgCode, 10);
+        if (isNaN(epsgCodeAsNumber)) {
+          //TODO: translate
+          deferredResponse.reject('epsgCode could not be converted to valid number');
+        } else {
+          var url = 'http://epsg.io/' + epsgCodeAsNumber + '.js';
+          httpService_.get(url).then(function(response) {
+            if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.data) && response.data.indexOf('proj4.defs(') === 0) {
+              try {
+                // strip the proj4.defs( and then ');' from the tail
+                var data = response.data.substring('proj4.defs('.length, response.data.length - ');'.length);
+                var params = data.split('"');
+                // add the projction
+                proj4.defs(params[1], params[3]);
+                deferredResponse.resolve();
+              } catch (e) {
+                deferredResponse.reject('Error adding layer projection code: ' + epsgCode + ' from: ' + url);
+              }
+            } else {
+              deferredResponse.reject('Error downloading layer projection code: ' + epsgCode + ' from: ' + url);
+            }
+          }, function(reject) {
+            deferredResponse.reject(reject);
+          }, function(update) {
+            deferredResponse.update(update);
+          });
+        }
+      }
+
+      return deferredResponse.promise;
+    };
+
     /**
      *  {Object} minimalConfig
      *  {Number} opt_layerOrder is optional and indicates the spot in the layers array it should try to go to.
@@ -426,6 +466,7 @@
       if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
       }
+
       var fullConfig = null;
       if (goog.isDefAndNotNull(server)) {
         fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
@@ -433,6 +474,44 @@
 
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
           server, ', opt_layerOrder: ', opt_layerOrder);
+
+      // download missing projection projection if we don't have it
+      if (goog.isDefAndNotNull(fullConfig)) {
+        var projcode = service_.getCRSCode(fullConfig.CRS);
+        if (goog.isDefAndNotNull(projcode)) {
+          console.log('----[ addLayer, looking up projection: ', projcode);
+          // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
+          // it we we have internet connectivity. When working in disconnected mode, you can only use projections
+          // that have been defined by maploom in Proj4jDefs
+          var prj = null;
+          try {
+            prj = ol.proj.get(projcode);
+          } catch (e) {
+            console.log('----[ projection not found: ', projcode);
+          }
+
+          if (!goog.isDefAndNotNull(prj)) {
+            service_.downloadProjection(projcode).then(function() {
+              // this should work if we get the projection
+              ol.proj.getTransform(projcode, 'EPSG:4326');
+            }, function(reject) {
+              console.log('----[ Error downloading projection: ', reject);
+            });
+
+            // TODO: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure
+            // it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user
+            // the promise properly
+            try {
+              prj = ol.proj.get(projcode);
+            } catch (e) {
+              dialogService_.error(translate_.instant('add_layers'), translate_.instant('projection_not_supported', projcode));
+              console.log('====[ NOTE: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure ' +
+                  'it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user ' +
+                  'the promise properly ', projcode);
+            }
+          }
+        }
+      }
 
       var layer = null;
       var nameSplit = null;
@@ -536,6 +615,8 @@
             }
           }
 
+          console.log('config crs', fullConfig.CRS);
+          console.log('getCode', service_.getCRSCode(fullConfig.CRS));
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -673,6 +754,8 @@
 
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
+          var layerPrjObject = ol.proj.get(meta.projection);
+          console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
 
@@ -1026,10 +1109,10 @@
         interactions: ol.interaction.defaults().extend([
           new ol.interaction.DragRotate()
         ]),
-        renderer: ol.RendererHint.CANVAS,
+        //renderer: ol.RendererHint.CANVAS,
         ol3Logo: false,
         target: 'map',
-        view: new ol.View2D({
+        view: new ol.View({
           center: this.configuration.map.center,
           zoom: this.configuration.map.zoom,
           maxZoom: 17,
@@ -1063,7 +1146,7 @@
     this.addToEditLayer = function(geom, crs) {
       this.clearEditLayer();
       var newFeature = new ol.Feature();
-      var newGeom = transformGeometry(geom, crs, this.map.getView().getView2D().getProjection());
+      var newGeom = transformGeometry(geom, crs, this.map.getView().getProjection());
       newFeature.setGeometry(newGeom);
       this.editLayer.getSource().addFeature(newFeature);
       this.map.addLayer(this.editLayer);

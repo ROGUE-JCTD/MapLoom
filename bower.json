@@ -9,7 +9,6 @@
     "angular-bootstrap": "0.6.0",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
-    "proj4js": "./bower-local/proj4js",
     "ol3": "./bower-local/ol3",
     "angular-translate": "2.2.0",
     "angular-cookies": "1.2.21",
@@ -20,6 +19,7 @@
     "bootstrap-sortable": "*",
     "x2js": "*",
     "angular-xeditable": "0.1.8",
-    "d3": "3.4.11"
+    "d3": "3.4.11",
+    "proj4": "2.3.3"
   }
 }

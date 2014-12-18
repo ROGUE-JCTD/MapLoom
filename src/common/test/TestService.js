@@ -157,7 +157,7 @@
       mapService_ = mapService;
       http_ = $http;
 
-      config.layerProjection = mapService_.map.getView().getView2D().getProjection().getCode();
+      config.layerProjection = mapService_.map.getView().getProjection().getCode();
 
       timeout = null;
       projection4326 = 'EPSG:4326';
@@ -240,11 +240,11 @@
     dateLastRun = new Date();
 
     var view = getRandomView();
-    var pan = ol.animation.pan({source: mapService_.map.getView().getView2D().getCenter()});
-    var zoom = ol.animation.zoom({resolution: mapService_.map.getView().getView2D().getResolution()});
+    var pan = ol.animation.pan({source: mapService_.map.getView().getCenter()});
+    var zoom = ol.animation.zoom({resolution: mapService_.map.getView().getResolution()});
     mapService_.map.beforeRender(pan, zoom);
-    mapService_.map.getView().getView2D().setCenter(view.center);
-    mapService_.map.getView().getView2D().setZoom(view.zoom);
+    mapService_.map.getView().setCenter(view.center);
+    mapService_.map.getView().setZoom(view.zoom);
 
     if (config.createFeature) {
       var concurrentCompletedCount = 0;

@@ -208,7 +208,7 @@
             scope.goToMap = function() {
               var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
                   tableViewService.selectedLayer.get('metadata').projection,
-                  mapService.map.getView().getView2D().getProjection());
+                  mapService.map.getView().getProjection());
 
               mapService.zoomToExtent(projectedgeom.getExtent());
 
