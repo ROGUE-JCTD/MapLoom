@@ -230,9 +230,9 @@
         url = 'http://' + url;
         var extraPath = '';
         if (splitinfo[0] === 'geoserver') {
-          extraPath = '/geogit';
-        } else if (splitinfo[0] !== 'geogit') {
-          extraPath = '/geoserver/geogit';
+          extraPath = '/geogig';
+        } else if (splitinfo[0] !== 'geogig') {
+          extraPath = '/geoserver/geogig';
         }
         service_.verificationResult = q_.defer();
         var config = {headers: {'Accept': 'text/json'}};

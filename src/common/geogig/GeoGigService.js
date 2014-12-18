@@ -404,7 +404,7 @@
               if (splitGeogig.length === 4) {
                 metadata.branchName = splitGeogig[3];
               }
-              var geogigURL = metadata.url + '/geogit/' + workspace + ':' + repoName;
+              var geogigURL = metadata.url + '/geogig/' + workspace + ':' + repoName;
               http.get(geogigURL + '/repo/manifest').then(function() {
                 var addRepo = function(admin) {
                   var promise = service_.addRepo(
