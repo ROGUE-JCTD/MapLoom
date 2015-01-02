@@ -396,15 +396,15 @@
           if (goog.isDefAndNotNull(fullConfig.Identifier) && goog.isDefAndNotNull(fullConfig.Identifier[0])) {
             var splitGeogig = fullConfig.Identifier[0].split(':');
             if (goog.isArray(splitGeogig) && (splitGeogig.length === 3 || splitGeogig.length === 4)) {
-              var workspace = splitGeogig[0];
-              var repoName = splitGeogig[1];
-              var nativeName = splitGeogig[2];
-              metadata.branchName = 'master';
+              var repoName = splitGeogig[0];
+              var nativeName = splitGeogig[1];
+              var branchName = splitGeogig[2];
+              metadata.branchName = branchName;
               metadata.nativeName = nativeName;
               if (splitGeogig.length === 4) {
                 metadata.branchName = splitGeogig[3];
               }
-              var geogigURL = metadata.url + '/geogig/' + workspace + ':' + repoName;
+              var geogigURL = metadata.url + '/geogig/' + repoName;
               http.get(geogigURL + '/repo/manifest').then(function() {
                 var addRepo = function(admin) {
                   var promise = service_.addRepo(
