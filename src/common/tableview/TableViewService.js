@@ -64,11 +64,12 @@
       switch (filter.searchType) {
         case 'strContains':
           if (filter.text !== '') {
-            xml +=
-                '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
-                    '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
-                    '<ogc:Literal>*' + filter.text + '*</ogc:Literal>' +
-                    '</ogc:PropertyIsLike>';
+            if (resType === 'xsd:string' || resType === 'xsd:dateTime' || resType === 'xsd:date' || resType === 'xsd:time') {
+              xml += '<ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="#" escapeChar="!">' +
+                  '<ogc:PropertyName>' + attrName + '</ogc:PropertyName>' +
+                  '<ogc:Literal>*' + filter.text + '*</ogc:Literal>' +
+                  '</ogc:PropertyIsLike>';
+            }
           }
           break;
         case 'exactMatch':
@@ -183,11 +184,59 @@
 
       var bboxStr = '';
       if (goog.isDefAndNotNull(bbox)) {
-        //TODO will this need the projection?
-        bboxStr = ' bbox="' + bbox.join(',') + '"';
+        bboxStr = '<ogc:BBOX>' +
+            '<ogc:Envelope srsName="EPSG:900913">' +
+            '<ogc:PropertyName>BoundingBox</ogc:PropertyName>' +
+            '<ogc:lowerCorner>' + bbox[0] + ' ' + bbox[1] + '</ogc:lowerCorner>' +
+            '<ogc:upperCorner>' + bbox[2] + ' ' + bbox[3] + '</ogc:upperCorner>' +
+            '</ogc:Envelope>' +
+            '</ogc:BBOX>';
       }
 
       var metadata = layer.get('metadata');
+
+      var validDateSearch = (new Date(searchText) !== 'Invalid Date' && !isNaN(new Date(searchText))) ? true : false;
+      var xmlFilterBody = '';
+
+      for (var attrName in filters) {
+        var resType = layer.get('metadata').schema[attrName]._type;
+
+        if (!searching) {
+          xmlFilterBody += getFilterXML(attrName, resType, filters[attrName]);
+        } else {
+          // assume filter will be for text
+          var filter = {text: searchText, searchType: 'strContains', start: '', end: ''};
+
+          // if attribute type is date, only if the search string is a valid date, search the attribute
+          if (resType === 'xsd:string') {
+            xmlFilterBody += getFilterXML(attrName, resType, filter);
+          } else if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
+            if (validDateSearch) {
+              filter.searchType = 'exactMatch';
+              filter.text = date.toISOString();
+              xmlFilterBody += getFilterXML(attrName, resType, filter);
+            }
+          } else if (resType === 'xsd:long' || resType === 'xsd:int' || resType === 'xsd:integer' || resType === 'xsd:short') {
+            if (isNaN(filter.text) === false && parseInt(filter.text, 10).toString() === filter.text) {
+              filter.searchType = 'exactMatch';
+              filter.text = filter.text;
+              xmlFilterBody += getFilterXML(attrName, resType, filter);
+            }
+          } else if (resType === 'xsd:double' || resType === 'xsd:decimal') {
+            if (isNaN(filter.text) === false && parseFloat(filter.text).toString() === filter.text) {
+              filter.searchType = 'exactMatch';
+              filter.text = filter.text;
+              xmlFilterBody += getFilterXML(attrName, resType, filter);
+            }
+          } else if (resType === 'xsd:boolean') {
+            if (filter.text === 'false' || filter.text === 'true') {
+              filter.searchType = 'exactMatch';
+              xmlFilterBody += getFilterXML(attrName, resType, filter);
+            }
+          }
+        }
+      }
+
       var xml = '';
       if (!goog.isDefAndNotNull(exclude_header) || exclude_header === false) {
         xml += '<?xml version="1.0" encoding="UTF-8"?>';
@@ -195,7 +244,6 @@
 
       xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
           ' outputFormat="JSON"' +
-          bboxStr +
           paginationParamsStr +
           ' xmlns:wfs="http://www.opengis.net/wfs"' +
           ' xmlns:ogc="http://www.opengis.net/ogc"' +
@@ -207,41 +255,18 @@
           '>' +
           '<ogc:Filter>';
 
-      if (!searching) {
-        xml += '<And>';
-      } else {
-        xml += '<Or>';
-      }
-
-      var timeSearch = false;
-
-      for (var attrName in filters) {
-        var resType = layer.get('metadata').schema[attrName]._type;
-
+      if (xmlFilterBody) {
         if (!searching) {
-          xml += getFilterXML(attrName, resType, filters[attrName]);
+          xml += '<And>' + bboxStr + xmlFilterBody + '</And>';
         } else {
-          var filter = {text: searchText, searchType: 'strContains', start: '', end: ''};
-          //parse search text to determine filter type
-          var date = moment(searchText);
-          console.log(date);
-          if (date.isValid()) {
-            timeSearch = true;
-            filter.searchType = 'exactMatch';
-            filter.text = date.toISOString();
-          }
-
-          if (timeSearch === false || (timeSearch === true && (resType === 'xsd:dateTime' || resType === 'xsd:date'))) {
-            xml += getFilterXML(attrName, resType, filter);
+          if (bboxStr) {
+            xml += '<And>' + bboxStr + '<Or>' + xmlFilterBody + '</Or></And>';
+          } else {
+            xml += '<Or>' + xmlFilterBody + '</Or>';
           }
         }
       }
 
-      if (!searching) {
-        xml += '</And>';
-      } else {
-        xml += '</Or>';
-      }
       xml += '</ogc:Filter>' +
           '</wfs:Query>' +
           '</wfs:GetFeature>';
