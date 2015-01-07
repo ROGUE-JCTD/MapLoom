@@ -2,7 +2,7 @@
   <div id="table-loading" class="loom-loading" spinner-width="6" spinner-radius="40" spinner-hidden="!isSaving"></div>
   <span ng-if="!advFilters" class="table-search-group">
     <div class="table-search-box input-group input-group-sm">
-      <input type="text" class="form-control" ng-model="search.text" placeholder="{{'search_table' | translate}}">
+      <input type="text" class="form-control" ng-change="search.isSearching = false" ng-model="search.text" placeholder="{{'search_table' | translate}}">
       <span class="input-group-btn">
         <a class="btn btn-default" ng-click="searchTable()" type="button">
           <i ng-if="!search.isSearching" class="glyphicon glyphicon-search"></i>

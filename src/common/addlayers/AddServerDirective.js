@@ -48,11 +48,12 @@
             };
 
             scope.getPattern = function() {
-              if (scope.type === 'WMS') {
-                return new RegExp('/wms');
-              } else {
-                return new RegExp('');
-              }
+              //if (scope.type === 'WMS') {
+              //  return new RegExp('/wms');
+              //} else {
+              //  return new RegExp('');
+              //}
+              return new RegExp('');
             };
 
             scope.getPlaceholder = function() {
@@ -101,11 +102,12 @@
                         scope.server.authentication =
                             $.base64.encode(credentials.username + ':' + credentials.password);
 
-                        var subURL = scope.server.url.replace('/wms', '/rest/settings.json');
-                        subURL = subURL.replace('http://', 'http://null:null@');
+                        var serverBaseUrl = removeUrlLastRoute(server.url);
+                        var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
+                        serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
                         ignoreNextScriptError = true;
                         $.ajax({
-                          url: subURL,
+                          url: serverAuthenticationUrl,
                           type: 'GET',
                           dataType: 'jsonp',
                           jsonp: 'callback',
