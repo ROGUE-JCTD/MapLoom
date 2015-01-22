@@ -22,6 +22,13 @@
               });
             });
 
+            scope.isUrl = function(str) {
+              if (!/^(f|ht)tps?:\/\//i.test(str)) {
+                return false;
+              }
+              return true;
+            };
+
             scope.isShowingAttributes = function() {
               var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
 
