@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 [Unreleased][unreleased]
 ------------------------
+- FeatureInfoBox will show an attribute values as hyperlink when it start with http, ftp, https
 
 [1.1] - 2015-01-20
 ------------------
