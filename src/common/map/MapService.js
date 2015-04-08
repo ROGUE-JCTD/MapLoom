@@ -706,9 +706,9 @@
                 if (coordinate == null) {
                   return '';
                 }
-                var z = coordinate.z;
-                var x = coordinate.x;
-                var y = (1 << z) - coordinate.y - 1;
+                var z = coordinate[0];
+                var x = coordinate[1];
+                var y = (1 << z) - coordinate[2] - 1;
                 return '/proxy/?url=' + url + minimalConfig.name + '/' + z + '/' + x + '/' + y + '.png';
               }
             })
