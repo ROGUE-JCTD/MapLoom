@@ -45,7 +45,7 @@
 
             scope.reorderLayer = function(startIndex, endIndex) {
               var length = mapService.map.getLayers().getArray().length - 1;
-              var layer = mapService.map.removeLayer(mapService.map.getLayers().getAt(length - startIndex));
+              var layer = mapService.map.removeLayer(mapService.map.getLayers().item(length - startIndex));
               mapService.map.getLayers().insertAt(length - endIndex, layer);
             };
 
