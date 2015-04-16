@@ -100,8 +100,8 @@
 
     this.removeFromFeature = function() {
       if (mapService_.getSelectedFeatures().getLength() > 0) {
-        mapService_.editLayer.getSource().removeFeature(mapService_.getSelectedFeatures().getAt(0));
-        mapService_.getSelectedFeatures().remove(mapService_.getSelectedFeatures().getAt(0));
+        mapService_.editLayer.getSource().removeFeature(mapService_.getSelectedFeatures().item(0));
+        mapService_.getSelectedFeatures().remove(mapService_.getSelectedFeatures().item(0));
       }
     };
 
@@ -207,7 +207,7 @@
 
     this.orthogonalize = function() {
       if (mapService_.hasSelectedFeature()) {
-        var feature = mapService_.getSelectedFeatures().getAt(0);
+        var feature = mapService_.getSelectedFeatures().item(0);
         // check for multipolygon or polygon
         var coordinates;
         if (feature.getGeometry().getType().search(/Multi/g) > -1) {
