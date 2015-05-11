@@ -2,9 +2,12 @@ Change Log
 ==========
 All notable changes to this project will be documented in this file.
 
-[Unreleased][unreleased]
+[1.2]- 2015-05-11
 ------------------------
+- Re-ordering of layers fix
+- Fixes adding TMS layer
 - FeatureInfoBox will show an attribute values as hyperlink when it start with http, ftp, https
+
 
 [1.1] - 2015-01-20
 ------------------
