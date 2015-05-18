@@ -532,7 +532,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= app_files.js %>'
         ],
-        tasks: [ 'newer:jshint:src', 'karma:unit:run', 'newer:gjslint', 'copy:build_appjs' ]
+        tasks: [ 'newer:jshint:src', 'newer:gjslint', 'copy:build_appjs' ]
       },
 
       /**
@@ -543,7 +543,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= app_files.coffee %>'
         ],
-        tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs' ]
+        tasks: [ 'coffeelint:src', 'coffee:source', 'copy:build_appjs' ]
       },
 
       /**
@@ -624,7 +624,7 @@ module.exports = function ( grunt ) {
    * before watching for changes.
    */
   grunt.renameTask( 'watch', 'delta' );
-  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'delta' ] );
+  grunt.registerTask( 'watch', [ 'build', 'delta' ] );
 
   /**
    * The default task is to build and compile.
@@ -637,7 +637,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'build', [
     'clean', 'html2js', 'gjslint', 'jshint', 'coffeelint', 'coffee', 'recess:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets', 'copy:build_vendor_fonts',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'indexlite:build', 'karmaconfig', 'karma:continuous'
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'indexlite:build'
   ]);
 
   /**
