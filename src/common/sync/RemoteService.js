@@ -210,7 +210,8 @@
           options.newName = service_.remoteName;
           options.remoteName = service_.selectedRemote.name;
         }
-        var url = service_.remoteURL.substr('http://'.length);
+        var protocol = service_.remoteURL.substr(0, service_.remoteURL.indexOf('://') + '://'.length);
+        var url = service_.remoteURL.substr(protocol.length);
         var index = url.lastIndexOf('/') + 1;
         if (index === url.length) {
           url = url.slice(0, url.length - 1);
@@ -227,7 +228,7 @@
             url = url.replace(info, temp);
           }
         }
-        url = 'http://' + url;
+        url = protocol + url;
         var extraPath = '';
         if (splitinfo[0] === 'geoserver') {
           extraPath = '/geogig';
