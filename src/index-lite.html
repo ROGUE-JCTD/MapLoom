@@ -52,7 +52,7 @@
     ,
       userprofilename: {%
         if user.is_authenticated %}
-        "{{ user.profile.name }}"
+        "{{ user.get_full_name }}"
         {% else %
         }
         undefined
@@ -62,7 +62,7 @@
       ,
         userprofileemail: {%
           if user.is_authenticated %}
-          "{{ user.profile.email }}"
+          "{{ user.email }}"
           {% else %
           }
           undefined
