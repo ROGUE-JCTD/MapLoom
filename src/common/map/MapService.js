@@ -1073,10 +1073,10 @@
     };
 
     this.toggleFullscreen = function() {
-      if (googx.dom.fullscreen.isFullScreen()) {
-        googx.dom.fullscreen.exitFullScreen();
+      if (goog.dom.fullscreen.isFullScreen()) {
+        goog.dom.fullscreen.exitFullScreen();
       } else {
-        googx.dom.fullscreen.requestFullScreenWithKeys(goog.dom.getElementByClass('maploom-body'));
+        goog.dom.fullscreen.requestFullScreenWithKeys(goog.dom.getElementByClass('maploom-body'));
       }
     };
 
