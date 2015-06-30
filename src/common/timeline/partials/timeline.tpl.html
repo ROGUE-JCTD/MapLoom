@@ -1,20 +1,22 @@
-<div class="timeline-background">
-  <div class="btn-group">
+<div class="timeline-background" ng-show="timelineService.hasLayerWithTime">
     <a type="button" ng-click="onPlay()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Play"
        class="btn btn-sm btn-default" ng-if="!isPlaying">
-      <i class="glyphicon glyphicon-play"></i>
+        <i class="glyphicon glyphicon-play"></i>
     </a>
     <a type="button" ng-click="onPause()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Pause"
        class="btn btn-sm btn-default" ng-if="isPlaying">
-      <i class="glyphicon glyphicon-pause"></i>
+        <i class="glyphicon glyphicon-pause"></i>
     </a>
-    <a type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Backward"
-       class="btn btn-sm btn-default">
-      <i class="glyphicon glyphicon-fast-backward"></i>
-    </a>
-    <a type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Forward"
-       class="btn btn-sm btn-default">
-      <i class="glyphicon glyphicon-fast-forward"></i>
-    </a>
-  </div>
+    <!-- not supported in 1.2.X ng-model-options="{ getterSetter: true }" -->
+    <input class="timeline-slider" type="range" min="0" max="100" step="1" ng-model="timeCurrentPercent">
+    <div class="btn-group">
+        <a type="button" ng-click="onPrevTick()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Backward"
+           class="btn btn-sm btn-default">
+            <i class="glyphicon glyphicon-fast-backward"></i>
+        </a>
+        <a type="button" ng-click="onNextTick()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Forward"
+           class="btn btn-sm btn-default">
+            <i class="glyphicon glyphicon-fast-forward"></i>
+        </a>
+    </div>
 </div>

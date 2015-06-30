@@ -15,7 +15,6 @@
   var dragZoomActive = false;
   var rootScope_ = null;
   var q_ = null;
-  var timelineService_ = null;
 
   var select = null;
   var draw = null;
@@ -122,8 +121,7 @@
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q,
-                         timelineService) {
+                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -138,7 +136,6 @@
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
       q_ = $q;
-      timelineService_ = timelineService;
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
@@ -681,9 +678,6 @@
               testReadOnly();
             });
           }
-          //TODO: Does any other layertype support the time dimension?
-          timelineService_.isTimeDimensionEnabled(layer);
-
         } else if (server.ptype === 'gxp_tmssource') {
           nameSplit = fullConfig.Name.split(':');
           url = server.url;

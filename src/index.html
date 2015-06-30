@@ -19,6 +19,8 @@
 
 <% }); %>
 
+    <link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/>
+
 <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
         <script type="text/javascript" src="{{STATIC_URL}}maploom/<%= file %>"></script>
@@ -200,6 +202,7 @@
       <i class="glyphicon glyphicon-fullscreen"></i>
     </div>
   </div>
+  <div class="loom-timeline"></div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">
