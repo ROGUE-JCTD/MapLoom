@@ -69,7 +69,8 @@
               if (goog.isDefAndNotNull(scope.server.config)) {
                 scope.server.config.name = scope.name;
               }
-              if (scope.server.url !== scope.url) {
+              if (scope.server.url !== scope.url || (scope.server.isVirtualService === true &&
+                  scope.url !== scope.server.virtualServiceUrl)) {
                 var layers = mapService.getLayers(true, true);
                 for (var index = 0; index < layers.length; index++) {
                   if (layers[index].get('metadata').serverId == scope.server.id) {
@@ -85,6 +86,7 @@
                   switch (button) {
                     case 0:
                       scope.server.url = scope.url;
+                      serverService.replaceVirtualServiceUrl(scope.server);
                       scope.loading = true;
                       var doWork = function() {
                         serverService.populateLayersConfig(scope.server, true).then(function() {
@@ -154,6 +156,11 @@
               scope.editing = true;
               scope.name = server.name;
               scope.url = server.url;
+
+              if (server.isVirtualService === true) {
+                scope.url = server.virtualServiceUrl;
+              }
+
               scope.server = server;
             });
           }

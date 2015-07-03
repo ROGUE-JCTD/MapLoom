@@ -48,6 +48,12 @@
         </span>
       </div>
     </div>
+    <button type="button" style="margin-left:-15px;" ng-if="currentServer.lazy && currentServer.layersConfig.length===0 && !currentServer.populatingLayersConfig"
+            tooltip="This server is configured to lazily load layers." tooltip-placement="right"
+            class="btn btn-default" ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)">
+      <i class="glyphicon glyphicon-save"></i>
+      <span>{{'fetch_layers_from_server' | translate}}</span>
+    </button>
     <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
     <div class="form-group layer-container">
       <ul id="layer-list" class="list-group">

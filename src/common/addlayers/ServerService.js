@@ -136,12 +136,49 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.getServerLocalGeoserver = function() {
       var server = null;
       for (var index = 0; index < servers.length; index += 1) {
-        if (servers[index].isLocal === true) {
+        if (servers[index].isLocal === true && servers[index].isVirtualService !== true) {
           server = servers[index];
           break;
         }
       }
       return server;
+    };
+
+    this.isUrlAVirtualService = function(url) {
+
+      if (!goog.isDefAndNotNull(url)) {
+        return false;
+      }
+
+      var urlSections = url.split('/');
+
+      var counter = 0;
+      var lastNotEmptyToken = null;
+      for (var i = 0; i < urlSections.length; i++) {
+        if (urlSections[i].length > 0) {
+          counter++;
+          lastNotEmptyToken = urlSections[i];
+        }
+      }
+
+      return counter > 4 && lastNotEmptyToken.toLowerCase() === 'wms';
+    };
+
+    this.replaceVirtualServiceUrl = function(serverInfo) {
+      if (!goog.isDefAndNotNull(serverInfo.url)) {
+        return;
+      }
+
+      if (service_.isUrlAVirtualService(serverInfo.url) === true) {
+        var urlSections = serverInfo.url.split('/');
+        var newUrl = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] + '/' + urlSections[6];
+        console.log('---- changing layer-specific server to generic. old: ', serverInfo.url, ', new: ', newUrl);
+        serverInfo.isVirtualService = true;
+        serverInfo.virtualServiceUrl = serverInfo.url;
+        serverInfo.url = newUrl;
+      } else {
+        serverInfo.isVirtualService = false;
+      }
     };
 
     this.changeCredentials = function(server) {
@@ -202,7 +239,19 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
-      var server = {id: null, ptype: 'gxp_olsource', config: serverInfo, populatingLayersConfig: false};
+      var server = {
+        id: null,
+        ptype: 'gxp_olsource',
+        config: serverInfo,
+        populatingLayersConfig: false,
+        isVirtualService: false, //Used to filter getCapabilities requests to specific resources
+
+        // Servers that have too many layers will cause an issue when a getCapabilities request is made when the map
+        // is initially created.  This attribute will prevent MapLoom from running logic (ie a getCapabilties request)
+        // until the user specifically tells MapLoom to make the request.  The user tells MapLoom to run the logic
+        // from the 'Add Layers' dialog.
+        lazy: false
+      };
 
       goog.object.extend(server, serverInfo, {});
 
@@ -220,7 +269,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.populateLayersConfig(server)
             .then(function(response) {
               // set the id. it should always resolve to the length
-              if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded) {
+              if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded &&
+                  server.lazy !== true) {
                 dialogService_.warn(translate_.instant('add_server'), translate_.instant('server_connect_failed'),
                     [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
                   switch (button) {
@@ -288,7 +338,13 @@ var SERVER_SERVICE_USE_PROXY = true;
         } else {
           server.username = configService_.username;
           server.isLocal = true;
-          server.name = translate_.instant('local_geoserver');
+
+          if (server.isVirtualService === true) {
+            server.name = 'Virtual Service';
+          } else {
+            server.name = translate_.instant('local_geoserver');
+          }
+
           doWork();
         }
       } else {
@@ -360,7 +416,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       var layerConfig = null;
 
       for (var index = 0; index < layersConfig.length; index += 1) {
-        if (layersConfig[index].Name === layerName) {
+        if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
+            layersConfig[index].Name === layerName.split(':')[1])) {
           layerConfig = layersConfig[index];
 
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
@@ -471,38 +528,52 @@ var SERVER_SERVICE_USE_PROXY = true;
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
-            var parser = new ol.format.WMSCapabilities();
-            var url = server.url + '?SERVICE=WMS&REQUEST=GetCapabilities';
-            server.populatingLayersConfig = true;
-            var config = {};
-            config.headers = {};
-            if (goog.isDefAndNotNull(server.authentication)) {
-              config.headers['Authorization'] = 'Basic ' + server.authentication;
-            } else {
-              config.headers['Authorization'] = '';
-            }
-            // server hasn't been added yet, so specify the auth headers here
-            http_.get(url, config).then(function(xhr) {
-              if (xhr.status === 200) {
-                var response = parser.read(xhr.data);
-                if (goog.isDefAndNotNull(response.Capability) &&
-                    goog.isDefAndNotNull(response.Capability.Layer)) {
-                  server.layersConfig = response.Capability.Layer.Layer;
-                  console.log('---- populateLayersConfig.populateLayersConfig server', server);
-                  rootScope_.$broadcast('layers-loaded', server.id);
-                  deferredResponse.resolve(server);
+            // prevent getCapabilities request until ran by the user.
+            if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
+              var parser = new ol.format.WMSCapabilities();
+              var url = server.url;
+
+              // If this is a virtual service, use the virtual service url for getCapabilties
+              if (server.isVirtualService === true) {
+                url = server.virtualServiceUrl;
+              }
+
+              url += '?SERVICE=WMS&REQUEST=GetCapabilities';
+
+              server.populatingLayersConfig = true;
+              var config = {};
+              config.headers = {};
+              if (goog.isDefAndNotNull(server.authentication)) {
+                config.headers['Authorization'] = 'Basic ' + server.authentication;
+              } else {
+                config.headers['Authorization'] = '';
+              }
+              // server hasn't been added yet, so specify the auth headers here
+              http_.get(url, config).then(function(xhr) {
+                if (xhr.status === 200) {
+                  var response = parser.read(xhr.data);
+                  if (goog.isDefAndNotNull(response.Capability) &&
+                      goog.isDefAndNotNull(response.Capability.Layer)) {
+                    server.layersConfig = response.Capability.Layer.Layer;
+                    console.log('---- populateLayersConfig.populateLayersConfig server', server);
+                    rootScope_.$broadcast('layers-loaded', server.id);
+                    deferredResponse.resolve(server);
+                  } else {
+                    deferredResponse.resolve(server);
+                  }
+                  server.populatingLayersConfig = false;
                 } else {
                   deferredResponse.resolve(server);
+                  server.populatingLayersConfig = false;
                 }
-                server.populatingLayersConfig = false;
-              } else {
+              }, function(xhr) {
                 deferredResponse.resolve(server);
                 server.populatingLayersConfig = false;
-              }
-            }, function(xhr) {
+              });
+            } else {
               deferredResponse.resolve(server);
               server.populatingLayersConfig = false;
-            });
+            }
           }
         } else {
           deferredResponse.reject();

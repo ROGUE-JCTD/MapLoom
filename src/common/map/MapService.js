@@ -835,12 +835,26 @@
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
         console.log('saving server: ', server);
+
+        // Remove the MapLoom-specific virtual service flag and attribute.  These are re-created when the
+        // layer is added.
+        if (server.config.isVirtualService === true && goog.isDefAndNotNull(server.config.virtualServiceUrl)) {
+          var config = angular.copy(server.config, {});
+          config.url = config.virtualServiceUrl;
+
+          delete config.isVirtualService;
+          delete config.virtualServiceUrl;
+
+          cfg.sources.push(config);
+          return;
+        }
         cfg.sources.push(server.config);
       });
 
       // -- save layers
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         var config = layer.get('metadata').config;
+
         if (!goog.isDefAndNotNull(config)) {
           console.log('Not saving layer: ', layer.get('metadata').name,
               'because the layer does not have a configuration object.');
@@ -902,22 +916,7 @@
         // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
         goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
-            var urlSections = serverInfo.url.split('/');
-
-            var counter = 0;
-            var lastNotEmptyToken = null;
-            for (var i = 0; i < urlSections.length; i++) {
-              if (urlSections[i].length > 0) {
-                counter++;
-                lastNotEmptyToken = urlSections[i];
-              }
-            }
-
-            if (counter > 4 && lastNotEmptyToken.toLowerCase() === 'wms') {
-              var newUrl = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] + '/' + urlSections[6];
-              console.log('---- changing layer-specific server to generic. old: ', serverInfo.url, ', new: ', newUrl);
-              service_.configuration.sources[key].url = newUrl;
-            }
+            serverService_.replaceVirtualServiceUrl(serverInfo);
           }
         });
 
@@ -941,9 +940,24 @@
               var server = orderedUnique[index];
               if (goog.isDefAndNotNull(server)) {
                 if (goog.isDefAndNotNull(server.url)) {
-                  if (server.url === serverInfo.url) {
-                    foundServerIndex = index;
-                    break;
+
+
+                  // When virtual services are on the same server as a non-virtual service
+                  // they should be treated as separate servers and not trigger the duplicate server
+                  // logic.  This means that getCapabilties requests will go out for each of the servers
+                  // and different responses need to come back.
+                  if (server.isVirtualService === serverInfo.isVirtualService) {
+                    if (server.isVirtualService === true) {
+                      if (server.virtualServiceUrl === serverInfo.virtualServiceUrl) {
+                        foundServerIndex = index;
+                        break;
+                      }
+                    } else {
+                      if (server.url === serverInfo.url) {
+                        foundServerIndex = index;
+                        break;
+                      }
+                    }
                   }
                 }
               }
@@ -966,6 +980,19 @@
             } else {
               orderedUnique[key] = serverInfo;
               orderedUniqueLength++;
+            }
+
+            // Ignore lazy loading if a map layer depends on the server.
+            if (serverInfo.lazy === true) {
+              for (var layerIndex = 0; layerIndex < service_.configuration.map.layers.length; layerIndex++) {
+                var mapLayer = service_.configuration.map.layers[layerIndex];
+                if (mapLayer.source === key.toString() && goog.isDefAndNotNull(mapLayer.name)) {
+                  console.log('====[ Note: Server is marked as lazy, but a map layer depends on the server.  ' +
+                      'Will ignore lazy flag.', serverInfo, mapLayer);
+                  serverInfo.mapLayerRequiresServer = true;
+                  break;
+                }
+              }
             }
           } else {
             // basemaps will have servers without a url
