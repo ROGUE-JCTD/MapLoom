@@ -13,7 +13,11 @@
             scope.timeMin = null;
             scope.timeMax = null;
             scope.timeCurrentPercent = 0;
+            scope.timeCurrentPercentToolTip = '';
             scope.timelineService = timelineService;
+
+            // activate current time popover
+            $('.timeline-slider').popover('hide');
 
             // Essentially bind the timelineService.currentTime_ to scope.timeCurrentPercent but we have to do a
             // conversion to get the date change to a percent
@@ -23,6 +27,11 @@
                 percent = timelineService.timeToPercent(newTime);
               }
               scope.timeCurrentPercent = percent;
+              scope.timeCurrentPercentToolTip = new Date(newTime).toDateString();
+              $('.timeline-slider').data('bs.popover').options.content = scope.timeCurrentPercentToolTip;
+              if ($('.timeline-slider').parent().is(':visible')) {
+                $('.timeline-slider').popover('show');
+              }
             });
 
             // Essentially bind scope.timeCurrentPercent to timelineService.currentTime_ but convert percent to time
@@ -40,11 +49,13 @@
 
             scope.onPlay = function() {
               scope.isPlaying = true;
+              $('.timeline-slider').popover('show');
               timelineService.start();
             };
 
             scope.onPause = function() {
               scope.isPlaying = false;
+              $('.timeline-slider').popover('hide');
               timelineService.stop();
             };
 

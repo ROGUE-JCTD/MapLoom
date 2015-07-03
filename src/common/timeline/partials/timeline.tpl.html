@@ -1,4 +1,4 @@
-<div class="timeline-background" ng-show="timelineService.hasLayerWithTime">
+<div class="timeline-background2" ng-show="timelineService.hasLayerWithTime">
     <a type="button" ng-click="onPlay()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Play"
        class="btn btn-sm btn-default" ng-if="!isPlaying">
         <i class="glyphicon glyphicon-play"></i>
@@ -7,8 +7,7 @@
        class="btn btn-sm btn-default" ng-if="isPlaying">
         <i class="glyphicon glyphicon-pause"></i>
     </a>
-    <!-- not supported in 1.2.X ng-model-options="{ getterSetter: true }" -->
-    <input class="timeline-slider" type="range" min="0" max="100" step="1" ng-model="timeCurrentPercent">
+    <input class="timeline-slider" type="range" min="0" max="100" step="1" ng-model="timeCurrentPercent" data-trigger="manual hover" data-toggle="popover" data-placement="top" data-animation="false">
     <div class="btn-group">
         <a type="button" ng-click="onPrevTick()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Skip Backward"
            class="btn btn-sm btn-default">

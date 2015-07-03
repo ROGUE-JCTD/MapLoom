@@ -36,7 +36,6 @@
     };
 
     this.initialize = function() {
-
       // TODO: get the list of layers from the mapservice, get the timeslices from each layer that has time enabled,
       // derive the timeline's min, max, and timestep.
 
@@ -121,7 +120,6 @@
 
 
     this.setTimeCurrent = function(time) {
-      console.log('---- timelineService.setTimeCurrent: ', time);
       if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0) {
         return;
       }
@@ -129,7 +127,10 @@
       service_.setTimeTickIndex(index, time);
     };
 
-    this.getTimeCurrent = function() {
+    this.getTimeCurrent = function(asDateObject) {
+      if (goog.isDefAndNotNull(asDateObject) && asDateObject) {
+        return new Date(asDateObject);
+      }
       return currentTime_;
     };
 
@@ -192,6 +193,7 @@
         currentTickIndex_ = null;
       }
 
+      console.log('---- timelineService.time updated: ', (new Date(currentTime_)).toISOString());
       rootScope_.$broadcast('timeline-timeupdated', currentTime_);
     };
 
