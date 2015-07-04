@@ -9,12 +9,14 @@
           replace: true,
           templateUrl: 'timeline/partials/timeline.tpl.html',
           link: function(scope) {
-            scope.isPlaying = false;
+            scope.isPlaying = timelineService.isPlaying;
             scope.timeMin = null;
             scope.timeMax = null;
             scope.timeCurrentPercent = 0;
             scope.timeCurrentPercentToolTip = '';
             scope.timelineService = timelineService;
+            scope.getRepeat = timelineService.getRepeat;
+            scope.setRepeat = timelineService.setRepeat;
 
             // activate current time popover
             $('.timeline-slider').popover('hide');
@@ -48,13 +50,11 @@
             });
 
             scope.onPlay = function() {
-              scope.isPlaying = true;
               $('.timeline-slider').popover('show');
               timelineService.start();
             };
 
             scope.onPause = function() {
-              scope.isPlaying = false;
               $('.timeline-slider').popover('hide');
               timelineService.stop();
             };

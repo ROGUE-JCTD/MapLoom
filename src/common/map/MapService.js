@@ -15,6 +15,8 @@
   var dragZoomActive = false;
   var rootScope_ = null;
   var q_ = null;
+  var mousePositionControl_ = null;
+  var showTimeline_ = false;
 
   var select = null;
   var draw = null;
@@ -1054,6 +1056,32 @@
       }
     };
 
+    this.showMousePositionControl = function(state) {
+      if (state) {
+        this.map.removeControl(mousePositionControl_);
+        this.map.addControl(mousePositionControl_);
+      } else {
+        this.map.removeControl(mousePositionControl_);
+      }
+    };
+
+    this.showTimeline = function(state) {
+      if (state !== showTimeline_) {
+        showTimeline_ = state;
+        if (state) {
+          $('.metric-scale-line').css('bottom', '+=40px');
+          $('.imperial-scale-line').css('bottom', '+=40px');
+          $('.ol-mouse-position').css('bottom', '+=40px');
+          $('#switch-coords').css('bottom', '+=40px');
+        } else {
+          $('.metric-scale-line').css('bottom', '-=40px');
+          $('.imperial-scale-line').css('bottom', '-=40px');
+          $('.ol-mouse-position').css('bottom', '-=40px');
+          $('#switch-coords').css('bottom', '-=40px');
+        }
+      }
+    };
+
     this.switchMousePosCoordFormat = function() {
       var index;
       for (index = 0; index < this.map.getControls().getLength(); ++index) {
@@ -1082,12 +1110,15 @@
 
     this.createMap = function() {
       var coordDisplay;
-
       if (settings.coordinateDisplay === coordinateDisplays.DMS) {
         coordDisplay = ol.coordinate.toStringHDMS;
       } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
         coordDisplay = ol.coordinate.createStringXY(settings.DDPrecision);
       }
+      mousePositionControl_ = new ol.control.MousePosition({
+        projection: 'EPSG:4326',
+        coordinateFormat: coordDisplay
+      });
 
       console.log('====[[ loading config: ', service_.configuration);
 
@@ -1097,10 +1128,7 @@
         controls: ol.control.defaults().extend([
           //new ol.control.FullScreen(),
           new ol.control.ZoomSlider(),
-          new ol.control.MousePosition({
-            projection: 'EPSG:4326',
-            coordinateFormat: coordDisplay
-          }),
+          mousePositionControl_,
           new ol.control.ScaleLine({className: 'metric-scale-line ol-scale-line',
             units: ol.control.ScaleLineUnits.METRIC}),
           new ol.control.ScaleLine({className: 'imperial-scale-line ol-scale-line',

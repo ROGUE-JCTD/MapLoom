@@ -9,6 +9,7 @@
   var interval_ = null;
   var intervalPromise_ = null;
   var rootScope_ = null;
+  var repeat_ = true;
 
   module.provider('timelineService', function() {
     // public variable can be placed on scope
@@ -66,9 +67,11 @@
       }
 
       if (layersWithTime > 0) {
-        service_.hasLayerWithTime = true;
+        rootScope_.timelineServiceEnabled = true;
+        mapService_.showTimeline(true);
       } else {
-        service_.hasLayerWithTime = false;
+        rootScope_.timelineServiceEnabled = false;
+        mapService_.showTimeline(false);
       }
 
       timelineTicks_ = Object.keys(uniqueTicks);
@@ -80,9 +83,35 @@
       rootScope_.$broadcast('timeline-initialized');
     };
 
+    this.getRepeat = function() {
+      return repeat_;
+    };
+
+    this.isPlaying = function() {
+      if (goog.isDefAndNotNull(intervalPromise_)) {
+        return true;
+      }
+      return false;
+    };
+
+    this.setRepeat = function(repeat) {
+      if (goog.isDefAndNotNull(repeat) && repeat === true) {
+        repeat_ = true;
+      } else {
+        repeat_ = false;
+      }
+    };
+
     this.start = function() {
       service_.stop();
-      intervalPromise_ = interval_(service_.setTimeNextTick, 1500);
+      intervalPromise_ = interval_(function() {
+        var success = service_.setTimeNextTick();
+        // cancel interval if reached end of ticks
+        if (success === false) {
+          interval_.cancel(intervalPromise_);
+          intervalPromise_ = null;
+        }
+      }, 1000);
     };
 
     this.stop = function() {
@@ -201,14 +230,19 @@
       if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0) {
         return;
       }
-
+      var success = true;
       if (goog.isDefAndNotNull(currentTickIndex_)) {
         if (currentTickIndex_ + 1 < timelineTicks_.length) {
           service_.setTimeTickIndex(currentTickIndex_ + 1);
         } else {
-          service_.setTimeTickIndex(0);
+          if (repeat_) {
+            service_.setTimeTickIndex(0);
+          } else {
+            success = false;
+          }
         }
       }
+      return success;
     };
 
     this.setTimePrevTick = function() {
@@ -220,7 +254,9 @@
         if (currentTickIndex_ - 1 >= 0) {
           service_.setTimeTickIndex(currentTickIndex_ - 1);
         } else {
-          service_.setTimeTickIndex(timelineTicks_.length - 1);
+          if (repeat_) {
+            service_.setTimeTickIndex(timelineTicks_.length - 1);
+          }
         }
       }
     };
