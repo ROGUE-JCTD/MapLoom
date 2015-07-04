@@ -151,7 +151,6 @@
           var time = element.find('.timepicker').data('DateTimePicker');
           if (goog.isDefAndNotNull(time) && goog.isDefAndNotNull(time.getDate())) {
             time = time.getDate();
-            newDate.setFullYear(1970, 0, 1);
             newDate.setHours(time.hour(), time.minute(), time.second(), time.millisecond());
           }
 
@@ -162,7 +161,7 @@
               scope.dateObject = newDate.toISOString();
               scope.disabledText = momentDate.format('L') + ' ' + momentDate.format('LT');
             } else if (scope.time === 'true') {
-              scope.dateObject = newDate.toISOString();//.split('T')[1];
+              scope.dateObject = newDate.toISOString().split('T')[1];
               scope.disabledText = momentDate.format('LT');
             } else if (scope.date === 'true') {
               scope.dateObject = newDate.toISOString().split('T')[0];
