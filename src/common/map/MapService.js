@@ -1069,15 +1069,15 @@
       if (state !== showTimeline_) {
         showTimeline_ = state;
         if (state) {
-          $('.metric-scale-line').css('bottom', '+=40px');
-          $('.imperial-scale-line').css('bottom', '+=40px');
-          $('.ol-mouse-position').css('bottom', '+=40px');
-          $('#switch-coords').css('bottom', '+=40px');
+          $('#map .metric-scale-line').css('bottom', '+=40px');
+          $('#map .imperial-scale-line').css('bottom', '+=40px');
+          $('#map .ol-mouse-position').css('bottom', '+=40px');
+          $('#switch-coords-border').css('bottom', '+=40px');
         } else {
-          $('.metric-scale-line').css('bottom', '-=40px');
-          $('.imperial-scale-line').css('bottom', '-=40px');
-          $('.ol-mouse-position').css('bottom', '-=40px');
-          $('#switch-coords').css('bottom', '-=40px');
+          $('#map .metric-scale-line').css('bottom', '-=40px');
+          $('#map .imperial-scale-line').css('bottom', '-=40px');
+          $('#map .ol-mouse-position').css('bottom', '-=40px');
+          $('#switch-coords-border').css('bottom', '-=40px');
         }
       }
     };
