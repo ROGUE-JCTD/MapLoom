@@ -23,23 +23,23 @@
   .ol-zoomslider-thumb {
     position: absolute;
     border-radius: 2px;
-    left: auto;
+    left: -2px !important;
     width: 24px;
     height: 12px;
   }
   .ol-mouse-position {
     position: absolute;
-    left: 40px;
+    left: 36px;
     right: auto;
     top: auto;
-    bottom: 5px;
+    bottom: 7px;
     .z-index(@mapLevel);;
   }
   .metric-scale-line {
-    bottom: 34px !important;
+    bottom: 32px;
   }
   .imperial-scale-line {
-    bottom: 58px !important;
+    bottom: 56px;
   }
 }
 
@@ -117,7 +117,7 @@
 
 #switch-coords-border {
   left: 7px !important;
-  bottom: 0 !important;
+  bottom: 2px;
   right: auto !important;
 }
 
@@ -130,3 +130,4 @@
   .z-index(@mapLevel);
   border-radius: 4px;
 }
+
