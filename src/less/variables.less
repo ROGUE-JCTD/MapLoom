@@ -3,25 +3,26 @@
  * overwrites that are not specific to components should be maintained.
  */
 
+@import 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800';
 @import '../../vendor/bootstrap/less/variables.less';
-
+@brownish: rgb(70, 68, 59);
 
 /**
  * Typography-related.
  */
 
 @sansFontFamily: 'Roboto', sans-serif;
-@mainFont: normal 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
-@mainFontColor: #333333;
+@mainFont: normal 16px 'Open Sans', Helvetica, Arial, sans-serif;
+@mainFontColor: @brownish;
 @featureInfoBoxLabelFont: bold 11px "Helvetica Neue","Helvetica",Arial;
 @featureInfoBoxLabelFontColor: dimgray;
 @featureInfoBoxValueFont: normal 12px "Helvetica",Arial;
 @featureInfoBoxValueFontColor: @mainFontColor;
 @addLayerListFontColor: white;
 @legendFontColor: white;
-@mainHeaderFontColor: white;
+@mainHeaderFontColor: @brownish;
 @badgeFontColor: white;
-@modalHeaderFontColor: white;
+@modalHeaderFontColor: @brownish;
 @layerHeaderFontColor: white;
 @removeLayerFontColor: white;
 @syncListFontColor: white;
@@ -45,9 +46,9 @@
 /**
  * Colors
  */
-@mainHeaderColor: #155481;
-@mainPanelColor: #97B3CD;
-@layerHeaderColor: #4977A3;
+@mainHeaderColor: white;
+@mainPanelColor: white;
+@layerHeaderColor: chocolate;
 @badgeColor: #aa5a12;
 @legendColor: rgba(100,150,200,0.75);
 @legendHeaderColor: rgba(140,190,240,0.75);
@@ -75,7 +76,7 @@
 @syncListButtonColor: @layerHeaderColor;
 @mainListItemColor: @mainPanelColor;
 @notificationHeaderColor: @layerHeaderColor;
-@layerVisibleColor: @mainHeaderColor;
+@layerVisibleColor: @layerHeaderColor;
 @syncOnColor: @mainHeaderColor;
 @defaultModalHeaderColor: @mainHeaderColor;
 @defaultModalPanelColor: @mainPanelColor;
@@ -101,3 +102,4 @@
 @addedAttributeColor: mix(@featurePanelColor, @addColor, 80%);
 @selectedTableRowColor: #F7D386;
 @placeholderLayerColor: #678BAD;
+
