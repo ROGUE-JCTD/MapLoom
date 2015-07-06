@@ -7,7 +7,10 @@
        class="btn btn-sm btn-default" ng-if="isPlaying()">
         <i class="glyphicon glyphicon-pause"></i>
     </a>
-    <input class="timeline-slider" type="range" min="0" max="100" step="1" ng-model="timeCurrentPercent" data-trigger="manual hover" data-toggle="popover" data-placement="top" data-animation="false">
+    <input class="timeline-slider" type="range" min="0" max="100" step="1" list="timesliderTickDataList" ng-model="timeCurrentPercent" data-trigger="manual hover" data-toggle="popover" data-placement="top" data-animation="false">
+    <!-- Will populate dynamically -->
+    <datalist id="timesliderTickDataList">
+    </datalist>
     <div class="btn-group">
         <a type="button" ng-class="{'active': getRepeat()}" ng-click="setRepeat(!getRepeat())" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Repeat"
            class="btn btn-sm btn-default">

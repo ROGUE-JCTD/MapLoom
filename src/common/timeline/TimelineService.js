@@ -37,10 +37,7 @@
     };
 
     this.initialize = function() {
-      // TODO: get the list of layers from the mapservice, get the timeslices from each layer that has time enabled,
-      // derive the timeline's min, max, and timestep.
-
-      // TODO: only re-init if list of layers change.
+      // TODO: only re-init if list of layers time enabled layers change.
       var uniqueTicks = {};
       var layersWithTime = 0;
 
@@ -121,6 +118,10 @@
       }
     };
 
+    this.getTimelineTicks = function() {
+      return timelineTicks_;
+    };
+
     this.timeToTick = function(time) {
       if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0 || !goog.isDefAndNotNull(time)) {
         return null;
@@ -147,6 +148,38 @@
       return index;
     };
 
+    this.getClosestTick = function(time, maxPercentAway) {
+      if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0 || !goog.isDefAndNotNull(time)) {
+        return null;
+      }
+
+      // get the logical tick that corresponds to time. Then see if time is closer to its next tick or the tick itself
+      // once we know which tick is closest, make sure it is less than maxPercentAway
+      var index = service_.timeToTick(time);
+      if (goog.isDefAndNotNull(index)) {
+        var tickDist = time - Date.parse(timelineTicks_[index]);
+        // assume index is closest one until we prove otherwise
+        var closestIndex = index;
+        var closestDist = tickDist;
+        if (index + 1 < timelineTicks_.length) {
+          var tickAfterDist = Date.parse(timelineTicks_[index + 1]) - time;
+          if (tickAfterDist < tickDist) {
+            closestIndex = index + 1;
+            closestDist = tickAfterDist;
+          }
+        }
+        var min = Date.parse(timelineTicks_[0]);
+        var max = Date.parse(timelineTicks_[timelineTicks_.length - 1]);
+        var maxTimeAway = (maxPercentAway * 0.01) * (max - min);
+        if (closestDist < maxTimeAway) {
+          index = closestIndex;
+        } else {
+          index = null;
+        }
+      }
+
+      return index;
+    };
 
     this.setTimeCurrent = function(time) {
       if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0) {

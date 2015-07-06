@@ -2,13 +2,15 @@
 
   var module = angular.module('loom_timeline_directive', []);
 
+  var elementSlider_ = null;
+
   module.directive('loomTimeline',
       function($rootScope, timelineService) {
         return {
           restrict: 'C',
           replace: true,
           templateUrl: 'timeline/partials/timeline.tpl.html',
-          link: function(scope) {
+          link: function(scope, element) {
             scope.isPlaying = timelineService.isPlaying;
             scope.timeMin = null;
             scope.timeMax = null;
@@ -18,8 +20,11 @@
             scope.getRepeat = timelineService.getRepeat;
             scope.setRepeat = timelineService.setRepeat;
 
+            var sliders = element.find('.timeline-slider');
+            elementSlider_ = sliders[0];
+
             // activate current time popover
-            $('.timeline-slider').popover('hide');
+            sliders.popover('hide');
 
             // Essentially bind the timelineService.currentTime_ to scope.timeCurrentPercent but we have to do a
             // conversion to get the date change to a percent
@@ -29,10 +34,23 @@
                 percent = timelineService.timeToPercent(newTime);
               }
               scope.timeCurrentPercent = percent;
-              scope.timeCurrentPercentToolTip = new Date(newTime).toDateString();
-              $('.timeline-slider').data('bs.popover').options.content = scope.timeCurrentPercentToolTip;
-              if ($('.timeline-slider').parent().is(':visible')) {
-                $('.timeline-slider').popover('show');
+              scope.timeCurrentPercentToolTip = (new Date(newTime)).toUTCString();
+              sliders.data('bs.popover').options.content = scope.timeCurrentPercentToolTip;
+              if (sliders.parent().is(':visible')) {
+                sliders.popover('show');
+              }
+            });
+
+            scope.$on('timeline-initialized', function() {
+              // create the tick marks for the slider
+              if (elementSlider_.hasAttribute('min') && elementSlider_.hasAttribute('max') && elementSlider_.hasAttribute('step')) {
+                var list = $('#timesliderTickDataList')[0];
+                var timelineTicks = timelineService.getTimelineTicks();
+                list.innerHTML = '';
+                for (var i = 0; i < timelineTicks.length; i++) {
+                  list.innerHTML += '<option value=' + Math.round(timelineService.timeToPercent(Date.parse(timelineTicks[i]))) + '></option>';
+                }
+                elementSlider_.parentNode.insertBefore(list, elementSlider_.nextSibling);
               }
             });
 
@@ -45,8 +63,16 @@
               //       we update scope.timeCurrentPercent but when that triggers a change, we don't set timelineService.currentTime_
               //       again
               if (goog.isDefAndNotNull(currentTime) && time !== currentTime) {
-                timelineService.setTimeCurrent(time);
+                // 'improve' the current percent (meant for when user drags the slider) by snapping to any ticks that are
+                // less than one slider step (1%) away
+                var closestTick = timelineService.getClosestTick(time, 1);
+                if (goog.isDefAndNotNull(closestTick)) {
+                  timelineService.setTimeTickIndex(closestTick);
+                } else {
+                  timelineService.setTimeCurrent(time);
+                }
               }
+
             });
 
             scope.onPlay = function() {
