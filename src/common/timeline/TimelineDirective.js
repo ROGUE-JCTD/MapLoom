@@ -5,7 +5,7 @@
   var elementSlider_ = null;
 
   module.directive('loomTimeline',
-      function($rootScope, timelineService) {
+      function($rootScope, timelineService, $timeout) {
         return {
           restrict: 'C',
           replace: true,
@@ -52,6 +52,12 @@
                 }
                 elementSlider_.parentNode.insertBefore(list, elementSlider_.nextSibling);
               }
+              $timeout(function() {
+                sliders.popover('show');
+                $('.timeline-background2 .popover-content').click(function() {
+                  sliders.popover('hide');
+                });
+              });
             });
 
             // Essentially bind scope.timeCurrentPercent to timelineService.currentTime_ but convert percent to time
@@ -76,13 +82,13 @@
             });
 
             scope.onPlay = function() {
-              $('.timeline-slider').popover('show');
               timelineService.start();
+              sliders.popover('show');
             };
 
             scope.onPause = function() {
-              $('.timeline-slider').popover('hide');
               timelineService.stop();
+              sliders.popover('show');
             };
 
             scope.onNextTick = function() {
