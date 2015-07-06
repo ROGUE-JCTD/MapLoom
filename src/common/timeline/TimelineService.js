@@ -10,16 +10,18 @@
   var intervalPromise_ = null;
   var rootScope_ = null;
   var repeat_ = true;
+  var featureManagerService_ = null;
 
   module.provider('timelineService', function() {
     // public variable can be placed on scope
     this.hasLayerWithTime = false;
 
-    this.$get = function(mapService, $interval, $rootScope) {
+    this.$get = function(mapService, $interval, $rootScope, featureManagerService) {
       service_ = this;
       mapService_ = mapService;
       interval_ = $interval;
       rootScope_ = $rootScope;
+      featureManagerService_ = featureManagerService;
 
       // when a layer is added, reinitialize the service.
       $rootScope.$on('layer-added', function(event, layer) {
@@ -254,6 +256,8 @@
         currentTime_ = null;
         currentTickIndex_ = null;
       }
+
+      featureManagerService_.hide();
 
       console.log('---- timelineService.time updated: ', (new Date(currentTime_)).toISOString());
       rootScope_.$broadcast('timeline-timeupdated', currentTime_);
