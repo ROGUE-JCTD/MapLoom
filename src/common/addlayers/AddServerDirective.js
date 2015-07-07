@@ -102,7 +102,7 @@
                         scope.server.authentication =
                             $.base64.encode(credentials.username + ':' + credentials.password);
 
-                        var serverBaseUrl = removeUrlLastRoute(server.url);
+                        var serverBaseUrl = removeUrlLastRoute(scope.server.url);
                         var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
                         serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
                         ignoreNextScriptError = true;
