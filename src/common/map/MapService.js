@@ -610,10 +610,18 @@
         } else if (server.ptype === 'gxp_wmscsource') {
           nameSplit = fullConfig.Name.split(':');
 
-          if (goog.isDefAndNotNull(server.url)) {
-            var urlIndex = server.url.lastIndexOf('/');
+          // favor virtual service url when available
+          var mostSpecificUrl = server.url;
+          var mostSpecificUrlWms = server.url;
+          if (goog.isDefAndNotNull(server.isVirtualService) && server.isVirtualService === true) {
+            mostSpecificUrlWms = server.virtualServiceUrl;
+          }
+
+          // favor virtual service url when available
+          if (goog.isDefAndNotNull(mostSpecificUrlWms)) {
+            var urlIndex = mostSpecificUrlWms.lastIndexOf('/');
             if (urlIndex !== -1) {
-              url = server.url.slice(0, urlIndex);
+              mostSpecificUrl = mostSpecificUrlWms.slice(0, urlIndex);
             }
           }
 
@@ -623,7 +631,7 @@
             metadata: {
               serverId: server.id,
               name: minimalConfig.name,
-              url: goog.isDefAndNotNull(url) ? url : undefined,
+              url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
               title: fullConfig.Title,
               abstract: fullConfig.Abstract,
               keywords: fullConfig.KeywordList,
@@ -637,7 +645,7 @@
             },
             visible: minimalConfig.visibility,
             source: new ol.source.TileWMS({
-              url: server.url,
+              url: mostSpecificUrlWms,
               params: {
                 'LAYERS': minimalConfig.name,
                 'tiled': 'true'
@@ -646,7 +654,7 @@
           });
 
           // Test if layer is read-only
-          if (goog.isDefAndNotNull(url)) {
+          if (goog.isDefAndNotNull(mostSpecificUrl)) {
             layer.get('metadata').readOnly = true;
             var testReadOnly = function() {
               var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
@@ -661,7 +669,7 @@
                   '</ogc:Filter></wfs:Update>' +
                   '</wfs:Transaction>';
 
-              var wfsurl = url + '/wfs/WfsDispatcher';
+              var wfsurl = mostSpecificUrl + '/wfs/WfsDispatcher';
               httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
                 var x2js = new X2JS();
                 var json = x2js.xml_str2json(data);
