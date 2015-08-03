@@ -410,6 +410,9 @@
                 metadata.branchName = splitGeogig[3];
               }
               var geogigURL = metadata.url + '/geogig/' + repoName;
+              if (server.isVirtualService === true) {
+                geogigURL = server.url.replace('wms', 'geogig') + '/' + repoName;
+              }
               http.get(geogigURL + '/repo/manifest').then(function() {
                 var addRepo = function(admin) {
                   var promise = service_.addRepo(
