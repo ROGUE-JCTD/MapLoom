@@ -19,6 +19,8 @@
             scope.timelineService = timelineService;
             scope.getRepeat = timelineService.getRepeat;
             scope.setRepeat = timelineService.setRepeat;
+            scope.setFilterByTime = timelineService.setFilterByTime;
+            scope.getFilterByTime = timelineService.getFilterByTime;
 
             var sliders = element.find('.timeline-slider');
             elementSlider_ = sliders[0];

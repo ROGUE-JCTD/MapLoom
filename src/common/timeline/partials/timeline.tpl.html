@@ -26,5 +26,9 @@
                 <i class="glyphicon glyphicon-step-forward"></i>
             </a>
         </div>
+        <a type="button" ng-class="{'active': getFilterByTime()}" ng-click="setFilterByTime(!getFilterByTime())" tooltip-append-to-body="true" tooltip-placement="top" tooltip="Filter Features By Timeline"
+           class="btn btn-sm btn-default">
+            <i class="glyphicon glyphicon-filter"></i>
+        </a>
     </div>
 </div>
