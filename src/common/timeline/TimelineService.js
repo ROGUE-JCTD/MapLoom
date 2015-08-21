@@ -10,6 +10,7 @@
   var intervalPromise_ = null;
   var rootScope_ = null;
   var repeat_ = true;
+  var filterByTime_ = true;
   var featureManagerService_ = null;
 
   module.provider('timelineService', function() {
@@ -80,6 +81,20 @@
       }
 
       rootScope_.$broadcast('timeline-initialized');
+    };
+
+    this.getFilterByTime = function() {
+      return filterByTime_;
+    };
+
+    this.setFilterByTime = function(filterByTime) {
+      if (goog.isDefAndNotNull(filterByTime) && filterByTime === true) {
+        filterByTime_ = true;
+        service_.updateLayersTimes(currentTickIndex_);
+      } else {
+        filterByTime_ = false;
+        service_.updateLayersTimes();
+      }
     };
 
     this.getRepeat = function() {
@@ -301,10 +316,6 @@
     // only set layer time based on ticks to avoid generating a lot of requests for times that
     // do not have data associated with them
     this.updateLayersTimes = function(tickIndex) {
-      if (!goog.isDefAndNotNull(timelineTicks_) || tickIndex >= timelineTicks_.length || tickIndex < 0) {
-        return;
-      }
-
       // TODO: skipping hidden layers. listen for when a layer is made visible, to force a refresh
       var layers = mapService_.getLayers(false, true);
       for (var i = 0; i < layers.length; i++) {
@@ -314,9 +325,17 @@
           var source = layer.getSource();
           if (goog.isDefAndNotNull(source)) {
             if (goog.isDefAndNotNull(source.updateParams)) {
-              source.updateParams({
-                TIME: timelineTicks_[tickIndex]
-              });
+              if (filterByTime_) {
+                if (goog.isDefAndNotNull(timelineTicks_) && tickIndex < timelineTicks_.length && tickIndex >= 0) {
+                  source.updateParams({
+                    TIME: timelineTicks_[tickIndex]
+                  });
+                }
+              } else {
+                source.updateParams({
+                  TIME: '-99999999999-01-01T00:00:00.0Z/99999999999-01-01T00:00:00.0Z'
+                });
+              }
             }
           }
         }
