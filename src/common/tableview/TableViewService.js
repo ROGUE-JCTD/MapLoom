@@ -252,10 +252,10 @@
           ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
           '<wfs:Query typeName="' + metadata.name + '"' +
           ' srsName="' + metadata.projection + '"' +
-          '>' +
-          '<ogc:Filter>';
+          '>';
 
       if (xmlFilterBody) {
+        xml += '<ogc:Filter>';
         if (!searching) {
           xml += '<And>' + bboxStr + xmlFilterBody + '</And>';
         } else {
@@ -265,11 +265,10 @@
             xml += '<Or>' + xmlFilterBody + '</Or>';
           }
         }
+        xml += '</ogc:Filter>';
       }
 
-      xml += '</ogc:Filter>' +
-          '</wfs:Query>' +
-          '</wfs:GetFeature>';
+      xml += '</wfs:Query>' + '</wfs:GetFeature>';
 
       return xml;
     };
