@@ -538,8 +538,8 @@ var SERVER_SERVICE_USE_PROXY = true;
                 url = server.virtualServiceUrl;
               }
 
-              var iqm = url.indexOf('?')
-              var url_getcaps = url + (iqm >= 0 ? (iqm-1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
+              var iqm = url.indexOf('?');
+              var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
 
               server.populatingLayersConfig = true;
               var config = {};
