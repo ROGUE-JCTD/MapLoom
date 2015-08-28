@@ -400,6 +400,10 @@
       var props = [];
       var geometryType = '';
       var geometryName = '';
+
+      // Disable DoubleClickZoom
+      mapService_.map.interactions_ = ol.interaction.defaults({doubleClickZoom: false}).extend([new ol.interaction.DragRotate()]);
+
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
         if (k !== 'fotos' && k !== 'photos') {
           if (v._type.search('gml:') == -1) {
@@ -497,6 +501,10 @@
 
     this.endFeatureInsert = function(save, properties, coords) {
       var deferredResponse = q_.defer();
+
+      // Enable DoubleClickZoom
+      mapService_.map.interactions_ = ol.interaction.defaults({doubleClickZoom: true}).extend([new ol.interaction.DragRotate()]);
+
       if (save) {
         var propertyXmlPartial = '';
         var featureGML = '';
@@ -697,6 +705,9 @@
       }, function(reject) {
         returnResponse.reject(reject);
       });
+
+      // Enable DoubleClickZoom
+
       return returnResponse.promise;
     };
 
