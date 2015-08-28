@@ -201,7 +201,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                 server.config.alwaysAnonymous = false;
 
                 // remove the 'wms endpoint'
-                var serverBaseUrl = removeUrlLastRoute(server.url);
+                var serverBaseUrl = urlRemoveLastRoute(server.url);
                 var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
                 serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
                 ignoreNextScriptError = true;
@@ -314,7 +314,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                   server.config.alwaysAnonymous = false;
 
                   // remove the 'wms endpoint'
-                  var serverBaseUrl = removeUrlLastRoute(server.url);
+                  var serverBaseUrl = urlRemoveLastRoute(server.url);
                   var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
                   serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
                   ignoreNextScriptError = true;
