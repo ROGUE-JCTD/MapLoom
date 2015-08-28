@@ -402,7 +402,8 @@
       var geometryName = '';
 
       // Disable DoubleClickZoom
-      mapService_.map.interactions_ = ol.interaction.defaults({doubleClickZoom: false}).extend([new ol.interaction.DragRotate()]);
+      //array[1] of interactions is doubleClickZoom
+      mapService_.map.interactions_.array_[1].values_.active = false;
 
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
         if (k !== 'fotos' && k !== 'photos') {
@@ -503,7 +504,8 @@
       var deferredResponse = q_.defer();
 
       // Enable DoubleClickZoom
-      mapService_.map.interactions_ = ol.interaction.defaults({doubleClickZoom: true}).extend([new ol.interaction.DragRotate()]);
+      //array[1] of interactions is doubleClickZoom
+      mapService_.map.interactions_.array_[1].values_.active = true;
 
       if (save) {
         var propertyXmlPartial = '';
