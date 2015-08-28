@@ -538,7 +538,8 @@ var SERVER_SERVICE_USE_PROXY = true;
                 url = server.virtualServiceUrl;
               }
 
-              url += '?SERVICE=WMS&REQUEST=GetCapabilities';
+              var iqm = url.indexOf('?')
+              var url_getcaps = url + (iqm >= 0 ? (iqm-1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
 
               server.populatingLayersConfig = true;
               var config = {};
@@ -549,7 +550,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                 config.headers['Authorization'] = '';
               }
               // server hasn't been added yet, so specify the auth headers here
-              http_.get(url, config).then(function(xhr) {
+              http_.get(url_getcaps, config).then(function(xhr) {
                 if (xhr.status === 200) {
                   var response = parser.read(xhr.data);
                   if (goog.isDefAndNotNull(response.Capability) &&
