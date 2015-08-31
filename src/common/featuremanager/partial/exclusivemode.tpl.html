@@ -1,17 +1,18 @@
 <div id="exclusive-mode-container" class="panel-group collapse flat-top">
   <div id="exclusive-mode-panel" class="panel in">
-    <div align="center"><h5>{{exclusiveModeService.getTitle()}}</h5></div>
+    <div align="center"><h4>{{exclusiveModeService.getTitle()}}</h4></div>
+      <div align="center"><h6>{{exclusiveModeService.getSubtitle()}}</h6></div>
     <div class="btn-group-wrap">
 
     <button ng-click="exclusiveModeService.getButtonTwo().callback()" class="btn btn-sm btn-danger" tooltip-append-to-body="true"
             tooltip-placement="bottom" tooltip="{{exclusiveModeService.getButtonTwo().title}}"><i class="glyphicon glyphicon-remove"></i></button>
     <div ng-show="exclusiveModeService.isMultiType()" class="btn-group">
       <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-click="exclusiveModeService.addToFeature()"
-              tooltip-placement="bottom" tooltip="{{'add_to_feature' | translate}}"><i class="glyphicon glyphicon-plus"></i></button>
+              tooltip-placement="bottom" tooltip="{{'add_to_feature' | translate}} {{exclusiveModeService.getBaseType()}} {{'geometry_to' | translate}} {{exclusiveModeService.getType()}}"><i class="glyphicon glyphicon-plus"></i></button>
       <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-click="exclusiveModeService.orthogonalize()" ng-show="exclusiveModeService.isPolygon()"
               tooltip-placement="bottom" tooltip="{{'right_angles' | translate}}"><i class="glyphicon glyphicon-fullscreen"></i></button>
       <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-click="exclusiveModeService.removeFromFeature()"
-              tooltip-placement="bottom" tooltip="{{'remove_from_feature' | translate}}"><i class="glyphicon glyphicon-minus"></i></button>
+              tooltip-placement="bottom" tooltip="{{'remove_from_feature' | translate}} {{exclusiveModeService.getBaseType()}} {{'from' | translate}} {{exclusiveModeService.getType()}}"><i class="glyphicon glyphicon-minus"></i></button>
     </div>
     <button class="btn btn-sm btn-default" tooltip-append-to-body="true" ng-show="!exclusiveModeService.isMultiType() && exclusiveModeService.isPolygon()"
             tooltip-placement="bottom" tooltip="{{'right_angles' | translate}}" ng-click="exclusiveModeService.orthogonalize()"><i class="glyphicon glyphicon-fullscreen"></i></button>

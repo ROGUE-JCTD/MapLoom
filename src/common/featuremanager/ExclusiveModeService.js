@@ -2,6 +2,7 @@
   var module = angular.module('loom_exclusive_mode_service', []);
 
   var title_ = '';
+  var subtitle_ = '';
   var buttons_ = [];
   var pulldownService_ = null;
   var enabled_ = false;
@@ -32,8 +33,20 @@
       return title_;
     };
 
+    this.getSubtitle = function() {
+      return subtitle_;
+    };
+
     this.getType = function() {
       return geometryType_;
+    };
+
+    this.getBaseType = function() {
+      if (this.isMultiType()) {
+        return this.getType().split('Multi')[1];
+      } else {
+        return this.getType();
+      }
     };
 
     this.getButtonOne = function() {
@@ -62,8 +75,9 @@
       return false;
     };
 
-    this.startExclusiveMode = function(title, buttonOne, buttonTwo, geometryType) {
+    this.startExclusiveMode = function(title, subtitle, buttonOne, buttonTwo, geometryType) {
       title_ = title;
+      subtitle_ = subtitle;
       buttons_ = [buttonOne, buttonTwo];
       enabled_ = true;
       angular.element('#pulldown-menu').collapse('hide');
