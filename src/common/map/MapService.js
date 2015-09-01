@@ -343,6 +343,8 @@
 
       var shrinkExtent = function(extent, shrink) {
         var newExtent = extent;
+
+        // If the extent is null, make a new one while shrinking based on factor
         if (!goog.isDefAndNotNull(extent) && goog.isDefAndNotNull(metadata) &&
             goog.isDefAndNotNull(metadata.bbox.crs)) {
           newExtent = goog.array.clone(metadata.bbox.extent);
@@ -352,19 +354,31 @@
           newExtent[1] += yDelta;
           newExtent[2] -= xDelta;
           newExtent[3] -= yDelta;
-          var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
-              service_.map.getView().getProjection());
-          newExtent = ol.extent.applyTransform(newExtent, transform);
         }
+
+        // Create transform and project to current map
+        var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
+            service_.map.getView().getProjection());
+        newExtent = ol.extent.applyTransform(newExtent, transform);
+
         return newExtent;
       };
 
-      var extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+      var extent900913;
+      if (goog.isDefAndNotNull(layer.getSource().getExtent)) {
+        extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+      } else {
+        extent900913 = shrinkExtent(metadata.bbox.extent, 0);
+      }
 
       if (goog.isDefAndNotNull(extent900913)) {
         for (var index = 0; index < extent900913.length; index++) {
           if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
-            extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
+            if (goog.isDefAndNotNull(layer.getSource().getExtent)) {
+              extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
+            } else {
+              extent900913 = shrinkExtent(metadata.bbox.extent, 0.001);
+            }
             break;
           }
         }
