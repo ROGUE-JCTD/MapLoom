@@ -206,7 +206,7 @@
             var compatibilityResult = q_.defer();
             checkCompatiblity(url, compatibilityResult);
             compatibilityResult.promise.then(function(url) {
-              service_.verificationResult.resolve(url);
+              service_.verificationResult.resolve(url, response.data.repository);
             }, function() {
               service_.verificationResult.reject(translate_.instant('no_compatible_repos'));
             });
@@ -220,7 +220,7 @@
           }
         });
 
-        service_.verificationResult.promise.then(function(url) {
+        service_.verificationResult.promise.then(function(url, repoInfo) {
           service_.addRemote(url, options, result);
           service_.verificationResult = null;
         }, function(error) {

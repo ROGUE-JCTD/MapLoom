@@ -19,8 +19,6 @@
 
 <% }); %>
 
-    <link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/>
-
 <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
         <script type="text/javascript" src="{{STATIC_URL}}maploom/<%= file %>"></script>

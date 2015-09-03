@@ -89,7 +89,7 @@
         var linksToRemove = [];
         if (repo.unique === true) {
           goog.array.forEach(synchronizationLinks_, function(link) {
-            if (link.getRepo().uniqueId === repo.uniqueId) {
+            if (link.getRepo().uuid === repo.uuid) {
               linksToRemove.push(link.id);
             }
           });

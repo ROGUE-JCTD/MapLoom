@@ -2,7 +2,7 @@
   var module = angular.module('loom_layer_info_directive', []);
 
   module.directive('loomLayerInfo',
-      function($translate, serverService) {
+      function($translate, serverService, geogigService) {
         return {
           templateUrl: 'layers/partials/layerinfo.tpl.html',
           link: function(scope, element) {
@@ -17,6 +17,7 @@
               scope.serverName = null;
               scope.keywords = null;
               scope.repoName = null;
+              scope.repoUUID = null;
               scope.branchName = null;
             };
             resetVariables();
@@ -47,8 +48,10 @@
                 scope.keywords = metadata.keywords.toString();
               }
               if (metadata.isGeoGig) {
+                var repo = geogigService.getRepoById(metadata.repoId);
                 scope.branchName = metadata.branchName;
-                scope.repoName = metadata.geogigStore;
+                scope.repoName = repo.name;
+                scope.repoUUID = repo.uuid;
               }
               var server = serverService.getServerById(scope.layer.get('metadata').serverId);
               scope.serverName = server.name;

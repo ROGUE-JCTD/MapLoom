@@ -35,6 +35,7 @@
     'new_remote': 'New Remote',
     'add_remote': 'Add Remote',
     'repo_name': 'Repo Name',
+    'repo_uuid': 'Repo UUID',
     'remote_name': 'Remote Name',
     'edit_btn': 'Edit',
     'repo_url': 'URL',
