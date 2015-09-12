@@ -230,7 +230,6 @@
     'switch_coords': 'Switch Coordinate Display',
     'accept_feature': 'Accept Feature',
     'cancel_feature': 'Cancel Feature',
-    'geometry_type': 'Geometry Type: ',
     'add_to_feature': 'Add New',
     'remove_from_feature': 'Remove Selected',
     'geometry_to': 'Geometry to',

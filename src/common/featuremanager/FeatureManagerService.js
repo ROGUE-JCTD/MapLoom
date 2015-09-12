@@ -426,7 +426,7 @@
       geometryType = geometryType.replace('Surface', 'Polygon');
 
       exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
-          translate_.instant('geometry_type') + geometryType,
+          geometryType,
           exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
               dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
@@ -604,6 +604,7 @@
         }
       }
       exclusiveModeService_.startExclusiveMode(translate_.instant('editing_geometry'),
+          geometryType,
           exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
               dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
