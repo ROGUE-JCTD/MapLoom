@@ -368,7 +368,9 @@
       if (goog.isDefAndNotNull(layer.getSource().getExtent)) {
         extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
       } else {
-        extent900913 = shrinkExtent(metadata.bbox.extent, 0);
+        if (goog.isDefAndNotNull(metadata.bbox)) {
+          extent900913 = shrinkExtent(metadata.bbox.extent, 0);
+        }
       }
 
       if (goog.isDefAndNotNull(extent900913)) {
@@ -384,7 +386,11 @@
         }
       }
 
-      service_.zoomToExtent(extent900913);
+      if (goog.isDefAndNotNull(extent900913)) {
+        service_.zoomToExtent(extent900913);
+      } else {
+        service_.zoomToExtent();
+      }
     };
 
     this.getLayers = function(includeHidden, includeEditable) {
