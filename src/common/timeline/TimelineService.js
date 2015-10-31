@@ -350,7 +350,16 @@
           for (var index = 0; index < metadata.dimensions.length; index++) {
             var dimension = metadata.dimensions[index];
             if (dimension.name === 'time') {
-              timeDimension = dimension.values.split(',');
+              if (dimension.values.length === 0) {
+                //  layer with list of times but no entries in it. can happen when creating a new empty layer
+                timeDimension = [];
+              } else if (dimension.values.indexOf(',') !== -1) {
+                timeDimension = dimension.values.split(',');
+              } else if (dimension.values.indexOf('/') !== -1) {
+                //TODO: generate an entry using start..stop interval etc
+                timeDimension = [];
+                console.log('====[[ time interval not supported yet');
+              }
               break;
             }
           }
