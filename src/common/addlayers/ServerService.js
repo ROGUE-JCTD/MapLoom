@@ -421,7 +421,7 @@ var SERVER_SERVICE_USE_PROXY = true;
           layerConfig = layersConfig[index];
 
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
-            for (var code in layerConfig.CRS) {
+            for (var code in layerConfig.CRS && $.isArray(layerConfig.CRS)) {
               if (layerConfig.CRS[code] !== 'CRS:84') {
                 layerConfig.CRS = layerConfig.CRS[code];
                 break;
