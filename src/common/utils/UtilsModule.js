@@ -254,6 +254,7 @@
             element.find('.timepicker').on('error.dp', handleInvalidDate);
           }
           if (goog.isDefAndNotNull(dateOptions.defaultDate) || goog.isDefAndNotNull(timeOptions.defaultDate)) {
+            hasValidDate = true;
             updateDateTime();
             var date;
             if (scope.date === 'true' && scope.time === 'true') {
@@ -270,6 +271,7 @@
               scope.disabledText = date.format('L');
             }
           } else {
+            hasValidDate = false;
             scope.disabledText = '';
           }
         };
