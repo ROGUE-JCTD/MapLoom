@@ -5,14 +5,19 @@
   var service_ = null;
   var q_ = null;
 
+  var FileSaver_;
+  var Blob_;
+
   var searching = false;
   var searchText = '';
 
   module.provider('tableViewService', function() {
-    this.$get = function($q, $http) {
+    this.$get = function($q, $http, FileSaver, Blob) {
       http_ = $http;
       service_ = this;
       q_ = $q;
+      FileSaver_ = FileSaver;
+      Blob_ = Blob;
       return this;
     };
 
@@ -175,7 +180,8 @@
       return xml;
     };
 
-    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
+    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header, format) {
+      var outputFormat = format || 'JSON';
       var paginationParamsStr = '';
       if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
         paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
@@ -243,7 +249,7 @@
       }
 
       xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
-          ' outputFormat="JSON"' +
+          ' outputFormat="' + outputFormat + '"' +
           paginationParamsStr +
           ' xmlns:wfs="http://www.opengis.net/wfs"' +
           ' xmlns:ogc="http://www.opengis.net/ogc"' +
@@ -398,6 +404,21 @@
       searching = false;
       searchText = '';
       this.currentPage = 0;
+    };
+
+    this.getCSV = function() {
+      var metadata = this.selectedLayer.get('metadata');
+      var postURL = metadata.url + '/wfs/WfsDispatcher';
+      var layerName = metadata.name.replace(/:/g, '_');
+      var xmlData = service_.getFeaturesPostPayloadXML(this.selectedLayer, metadata.filters, null, null, null, false, 'CSV');
+      return http_.post(postURL, xmlData, {
+        headers: {
+          'Content-Type': 'text/xml;charset=utf-8'
+        }
+      }).then(function(data) {
+        var blob = new Blob_([data.data], { type: data.headers('Content-type') });
+        FileSaver_.saveAs(blob, layerName + '.csv');
+      });
     };
   });
 }());

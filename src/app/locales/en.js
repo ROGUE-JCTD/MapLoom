@@ -315,7 +315,8 @@
     'count': 'Count',
     'populated_count': 'Populated Count',
     'unique_values': 'Unique Values',
-    'fetch_layers_from_server': 'Fetch Layers from Server'
+    'fetch_layers_from_server': 'Fetch Layers from Server',
+    'download_csv': 'Download CSV'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

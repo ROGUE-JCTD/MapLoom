@@ -83,6 +83,7 @@ module.exports = {
       'vendor/ol3/ol-debug.js',
       'vendor/d3/d3.min.js',
       'vendor/proj4/dist/proj4-src.js',
+      'vendor/angular-file-saver/dist/angular-file-saver.bundle.min.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',

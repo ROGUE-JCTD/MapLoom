@@ -491,6 +491,24 @@
                 });
               }
             };
+
+            scope.downloadCSV = function() {
+              tableViewService.selectedLayer.get('metadata').isLoadingCSV = true;
+              tableViewService.getCSV().then(function(data) {
+                tableViewService.selectedLayer.get('metadata').isLoadingCSV = false;
+              }, function(reject) {
+                tableViewService.selectedLayer.get('metadata').isLoadingCSV = false;
+              });
+            };
+
+            scope.isLoadingCSV = function() {
+              if (!goog.isDefAndNotNull(tableViewService.selectedLayer)) {
+                return false;
+              }
+
+              var loading = tableViewService.selectedLayer.get('metadata').isLoadingCSV;
+              return goog.isDefAndNotNull(loading) && loading === true;
+            };
           }
         };
       });
