@@ -83,6 +83,15 @@ module.exports = {
       'vendor/ol3/ol-debug.js',
       'vendor/d3/d3.min.js',
       'vendor/proj4/dist/proj4-src.js',
+      'vendor/vis/dist/vis.min.js',
+      'vendor/nouislider/distribute/jquery.nouislider.min.js',
+      'vendor/story-tools/dist/story-tools-core.js',
+      'vendor/story-tools/dist/story-tools-core-tpls.js',
+      'vendor/story-tools/dist/story-tools-core-ng.js',
+      'vendor/story-tools/dist/story-tools-edit.js',
+      'vendor/story-tools/dist/story-tools-edit-ng.js',
+      'vendor/story-tools/dist/story-tools-edit-tpls.js',
+      'vendor/story-tools/dist/ows.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -104,7 +113,11 @@ module.exports = {
 
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
-      'vendor/angular-xeditable/dist/css/xeditable.css'
+      'vendor/angular-xeditable/dist/css/xeditable.css',
+      'vendor/story-tools/dist/story-tools-edit.css',
+
+      'vendor/vis/dist/vis.min.css',
+      'vendor/nouislider/distribute/jquery.nouislider.min.css',
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

@@ -72,6 +72,11 @@
               return goog.isDefAndNotNull(loadingTable) && loadingTable === true;
             };
 
+            scope.isLoadingStyle = function(layer) {
+              var loadingStyle = layer.get('metadata').loadingStyle;
+              return goog.isDefAndNotNull(loadingStyle) && loadingStyle === true;
+            };
+
             scope.showTable = function(layer) {
               layer.get('metadata').loadingTable = true;
               tableViewService.showTable(layer).then(function() {
@@ -86,6 +91,21 @@
             scope.isLoadingHeatmap = function(layer) {
               var loading = layer.get('metadata').loadingHeatmap;
               return goog.isDefAndNotNull(loading) && loading === true;
+            };
+
+            scope.getLayerStyle = function(layer) {
+              var loading = layer.get('metadata').loadingStyle || true;
+              if (goog.isDefAndNotNull(loading) && loading) {
+                layer.get('metadata').loadingStyle = true;
+                $rootScope.$broadcast('getLayerStyle', layer);
+              }
+            };
+
+            scope.styleChanged = function(layer) {
+              layer.on('change:type', function(evt) {
+                mapService.updateStyle(evt.target);
+              });
+              mapService.updateStyle(layer);
             };
 
             scope.showHeatmap = function(layer) {

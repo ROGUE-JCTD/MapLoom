@@ -40,6 +40,23 @@
   }
 }
 
+#style-label {
+  padding-top: 10px;
+}
+#styleRow {
+  margin-left: 0px;
+  margin-right: 0px;
+
+  overflow: auto;
+  max-height: 186px;
+  .list-group-item {
+    border: 1px solid lighten(@attributeListColor, 10%);
+    color: @attributeListFontColor;
+    background-color:@attributeListColor;
+  }
+}
+
+
 #attribute-label {
   padding-top: 10px;
 }
@@ -90,4 +107,10 @@
   .modal-footer {
     border-top: none;
   }
+}
+
+.style-editor-item .title {
+    font-size: 14px;
+    line-height: 1.4em;
+    margin-top: 10px;
 }

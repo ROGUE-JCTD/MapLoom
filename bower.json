@@ -2,6 +2,9 @@
   "name": "MapLoom",
   "version": "1.2.0",
   "devDependencies": {},
+    "ignore": [
+    "node_modules"
+  ],
   "dependencies": {
     "bootstrap": "3.0.0",
     "angular": "1.2.21",
@@ -20,6 +23,12 @@
     "x2js": "*",
     "angular-xeditable": "0.1.8",
     "d3": "3.4.11",
-    "proj4": "2.3.3"
+    "proj4": "2.3.3",
+    "nouislider": "7.0.9",
+    "jsonix": "highsource/jsonix#e285e82fb15fa3d62665a35eb728022936df1f4b",
+    "ogc-schemas": "highsource/ogc-schemas#master",
+    "w3c-schemas": "highsource/w3c-schemas#master",
+    "story-tools": "https://github.com/MapStory/story-tools.git#master",
+    "vis": "4.9.0"
   }
 }

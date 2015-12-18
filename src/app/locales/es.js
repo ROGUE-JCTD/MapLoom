@@ -316,7 +316,20 @@
     'standard_deviation': 'Desviacion Estandar',
     'count': 'Cuentas',
     'populated_count': 'Llenado Cuentas',
-    'unique_values': 'Valor Único'
+    'unique_values': 'Valor Único',
+    'map_storybox': 'StoryBoxes',
+    'add_storybox_btn': 'Add StoryBox',
+    'add_storybox': 'Add StoryBox',
+    'edit_box': 'Edit StoryBox',
+    'remove_storybox': 'Remove StoryBox',
+    'show_storybox_info': 'Show StoryBox Info',
+    'zoom_to_storybox': 'Zoom to StoryBox',
+    'remove_box': 'Remove Box',
+    'box_info': 'Box Information',
+    'sure_remove_box': 'Are you sure you want to remove this box?',
+    'style_layer': 'Style Layer',
+    'show_attributes': 'Show Attributes'
+
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

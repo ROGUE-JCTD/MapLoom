@@ -21,6 +21,8 @@
           $scope.addLayers = pulldownService.addLayers;
           $scope.serversLoading = pulldownService.serversLoading;
           $scope.pulldownService = pulldownService;
+          $scope.storyboxPanel = pulldownService.storyboxPanel.getVisible();
+          $scope.addStorybox = pulldownService.addStorybox;
         }
 
         function updateScopeVariables() {

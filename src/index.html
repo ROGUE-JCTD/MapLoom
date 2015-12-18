@@ -18,8 +18,8 @@
     <% } %>
 
 <% }); %>
-
-    <link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/>
+<link rel="stylesheet" type="text/css" href="http://visjs.org/dist/vis.css"/>
+    <!--link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/-->
 
 <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
@@ -120,6 +120,19 @@
               <div notification-empty-text="'no_notifications' | translate"
                    class="loom-notifications">
               </div>
+            </div>
+          </div>
+            <div class="panel" ng-show="storyboxPanel">
+            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#storybox-manager-panel">
+              <span translate="map_storybox">Map StoryBoxes</span>
+              <div ng-show="addStorybox" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-storybox-dialog')"
+                   tooltip-placement="top" tooltip="{{'add_storybox_btn' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+              <div id="server-loadingn" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
+            </div>
+            <div id="storybox-manager-panel" class="panel-collapse collapse pulldown-panel">
+              <div class="loom-storyboxes"></div>
             </div>
           </div>
           <div class="panel" ng-show="layersPanel">
@@ -261,12 +274,20 @@
   <div loom-layer-info id="layer-info">
   </div>
 </div>
+<div loom-modal id="storyBoxInfoDialog" modal-title="{{'box_info' | translate}}">
+  <div loom-box-info id="box-info">
+  </div>
+</div>
 <div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
      class="feature-info-box-popup">
 </div>
 <div loom-modal id="saveMap" modal-title="{{ 'save_this_map' | translate}}">
     <div loom-save-map id="save-map">
     </div>
+</div>
+<div loom-modal id="add-storybox-dialog" modal-title="add_storybox">
+  <div loom-storybox id="storybox">
+  </div>
 </div>
 
 <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->

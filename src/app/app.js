@@ -2,6 +2,7 @@
   var module = angular.module('MapLoom', [
     'templates-app',
     'templates-common',
+    'storytools.edit.style',
     'loom',
     'ui.bootstrap',
     'ui.router',

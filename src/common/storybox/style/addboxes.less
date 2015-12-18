@@ -1,0 +1,82 @@
+#layer-list {
+  .list-group-item {
+    background-color: @addLayerListColor;
+    color: @addLayerListFontColor;
+  }
+}
+
+[loom-addstorybox] .modal-body {
+  overflow: hidden;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.add-storybox-loading.loom-loading {
+  position: absolute;
+  width: 320px;
+  left: 0;
+  height: 50px;
+
+  .loading-container {
+    background-color: @mainPanelColor;
+  }
+}
+
+.box-title {
+  color: @layerHeaderFontColor !important;
+  text-decoration: none !important;
+  width: 64%;
+  float: left;
+  padding-left: 15px;
+  padding-top: 2px;
+}
+
+
+#server-list {
+  max-height: 200px;
+}
+
+.custom-width-100 {
+  width: 100%;
+}
+
+.custom-width-88 {
+  width: 88%;
+}
+
+.right-and-center {
+  position: relative;
+  top: 8px;
+  float: right;
+}
+
+.server-edit-icon {
+  padding-right: 8px;
+}
+
+#server-add-loading {
+  .loading-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    .z-index(@dialogLevel, 5);
+    background-color: rgba(0,0,0,0.5);
+  }
+  .loading-spinner {
+    border-color: white !important;
+  }
+}
+
+.logged-in-as-input {
+  background-color: darken(@featurePanelColor, 4%) !important;
+  border: 1px solid darken(@featurePanelColor, 10%) !important;
+  color: @mainFontColor !important;
+  cursor: default !important;
+}
+
+.switch-user-btn {
+  border: 1px solid darken(@featurePanelColor, 10%) !important;
+  color: @mainFontColor !important;
+}

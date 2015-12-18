@@ -19,11 +19,13 @@
     this.diffPanel = new PulldownPanel(true, false);
     this.notificationsPanel = new PulldownPanel(true, true);
     this.layersPanel = new PulldownPanel(true, true);
+    this.storyboxPanel = new PulldownPanel(true, true);
     this.syncPanel = new PulldownPanel(true, false);
     this.historyPanel = new PulldownPanel(true, false);
     this.toggleEnabled = true;
     this.addLayers = true;
     this.serversLoading = false;
+    this.addStorybox = true;
 
     this.$get = function($rootScope, $timeout) {
       rootScope_ = $rootScope;
@@ -42,6 +44,8 @@
       this.syncPanel.visible = false;
       this.historyPanel.visible = false;
       this.addLayers = false;
+      this.storyboxPanel.visible = false;
+      this.addStorybox = false;
       rootScope_.$broadcast('conflict_mode');
       this.apply();
       this.showDiffPanel();
@@ -54,9 +58,12 @@
       this.syncPanel.visible = true;
       this.historyPanel.visible = true;
       this.addLayers = true;
+      this.storyboxPanel.visible = true;
+      this.addStorybox = true;
       rootScope_.$broadcast('default_mode');
       this.apply();
       this.showLayerPanel();
+      this.showStoryboxPanel();
     };
 
     this.showHistoryPanel = function() {
@@ -76,6 +83,14 @@
         $('#layer-manager-panel').collapse('show');
       }, 1);
     };
+
+    this.showStoryboxPanel = function() {
+      timeout_(function() {
+        $('#storybox-manager-panel').collapse('show');
+      }, 1);
+    };
+
+
   });
 
 }());

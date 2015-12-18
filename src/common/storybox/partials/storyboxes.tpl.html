@@ -1,0 +1,63 @@
+<div id="storyboxpanel-group" class="panel-group loom-arrangeable storybox-container">
+  <div class="panel"
+       ng-repeat="storyBox in layers = boxService.getBoxes()">
+    <div class="panel-heading storybox-heading" data-toggle="collapse" ng-class="{'placeholder-layer': storyBox.title}"
+         data-parent="#storyboxpanel-group" data-target="#{{storyBox.id}}">
+      <div class="row">
+        <div class="layer-title ellipsis" ng-class="{'placeholder-storybox-title': storyBox.title}">
+          {{storyBox.title }}
+        </div>
+        <div class="layer-buttons">
+          <span ng-click="showEditForm(storyBox)" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'edit_box' | translate}}"
+                ng-show="storyBox" stop-event="click mousedown" class="btn btn-xs btn-default"
+                ng-disabled="(!storyBox)">
+            <i class="glyphicon glyphicon-pencil"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="{{storyBox.id}}" class="panel-collapse collapse">
+      <div class="panel-body layer-inner-panel">
+        <div class="btn-group-wrap">
+          <div class="btn-group">
+            <a type="button" ng-show="storyBox" ng-click="zoomToBox(storyBox)" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'zoom_to_storybox' | translate}}"
+               class="btn btn-sm btn-default">
+              <div class="loom-loading" spinner-radius="16" spinner-hidden="!zooming"></div>
+              <i class="glyphicon glyphicon-resize-small"></i>
+            </a>
+            <a type="button" ng-show="storyBox"
+               tooltip-append-to-body="true" ng-click="getBoxInfo(storyBox)"
+               tooltip-placement="top" tooltip="{{'show_storybox_info' | translate}}"
+               class="btn btn-sm btn-default">
+              <i class="glyphicon glyphicon-info-sign"></i>
+            </a>
+            <a type="button" ng-click="removeBox(storyBox)" id="remove-button"
+               class="btn btn-sm btn-default" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'remove_storybox' | translate}}">
+              <i class="glyphicon glyphicon-trash"></i>
+            </a>
+          </div>
+        </div>
+        <!--label id="attribute-label" for="attributeRow" ng-show="storyBox">{{'attributes' |
+          translate}}</label-->
+
+        <!--div id="attributeRow" class="row" ng-show="storyBox">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="attribute in getAttrListd(storyBox)">
+              <div class="attribute-value ellipsis">{{attribute}}</div>
+              <div class="layer-buttons">
+              <span ng-click="toggleAttributeVisibility(attribute)"
+                    class="btn btn-xs btn-default layer-visible-button"
+                    ng-class="{'layer-visible': attribute.visible}">
+                <i class="glyphicon" ng-class="{'glyphicon-eye-close': !attribute.visible, 'glyphicon-eye-open': attribute.visible}"></i>
+              </span>
+              </div>
+            </li>
+          </ul>
+        </div-->
+      </div>
+    </div>
+  </div>
+</div>

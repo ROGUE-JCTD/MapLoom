@@ -313,7 +313,19 @@
     'count': 'Count',
     'populated_count': 'Populated Count',
     'unique_values': 'Unique Values',
-    'fetch_layers_from_server': 'Fetch Layers from Server'
+    'fetch_layers_from_server': 'Fetch Layers from Server',
+    'map_storybox': 'StoryBoxes',
+    'add_storybox_btn': 'Add StoryBox',
+    'add_storybox': 'Add StoryBox',
+    'edit_box': 'Edit StoryBox',
+    'remove_storybox': 'Remove StoryBox',
+    'show_storybox_info': 'Show StoryBox Info',
+    'zoom_to_storybox': 'Zoom to StoryBox',
+    'remove_box': 'Remove Box',
+    'box_info': 'Box Information',
+    'sure_remove_box': 'Are you sure you want to remove this box?',
+    'style_layer': 'Style Layer',
+    'show_attributes': 'Show Attributes'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

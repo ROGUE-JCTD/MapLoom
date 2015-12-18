@@ -31,6 +31,11 @@
       <div class="panel-body layer-inner-panel">
         <div class="btn-group-wrap">
           <div class="btn-group">
+            <a type="button" ng-init="layer.get('metadata').active_btn = 'show_attributes'" ng-click="layer.get('metadata').active_btn = 'show_attributes'" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'show_attributes' | translate}}"
+               class="btn btn-sm btn-default">
+              <i class="glyphicon glyphicon-home"></i>
+            </a>
             <a type="button" ng-show="!layer.get('metadata').placeholder" ng-click="zoomToData(layer)" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'zoom_to_data' | translate}}"
                class="btn btn-sm btn-default">
@@ -42,6 +47,11 @@
                tooltip-placement="top" tooltip="{{'show_table' | translate}}">
               <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(layer)"></div>
               <i class="glyphicon glyphicon-list"></i>
+            </a>
+              <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="layer.get('metadata').editable"
+               class="btn btn-sm btn-default" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'style_layer' | translate}}">
+              <i class="glyphicon glyphicon-tint"></i>
             </a>
             <a type="button" ng-click="showHeatmap(layer)" ng-show="layer.get('metadata').editable == true"
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
@@ -68,10 +78,10 @@
             </a>
           </div>
         </div>
-        <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' |
+        <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'show_attributes'">{{'attributes' |
           translate}}</label>
 
-        <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
+        <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'show_attributes'">
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="attribute in getAttrList(layer)">
               <div class="attribute-value ellipsis">{{attribute._name}}</div>
@@ -84,6 +94,12 @@
               </div>
             </li>
           </ul>
+        </div>
+
+        <label id="style-label" for="styleRow" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">&nbsp;</label>
+
+          <div id="styleRow" class="row" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
+        <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="layer.get('metadata').editable" on-change="styleChanged"></style-editor>
         </div>
       </div>
     </div>
