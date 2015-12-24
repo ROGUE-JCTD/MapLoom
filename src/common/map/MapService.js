@@ -550,6 +550,17 @@
         });
       } else {
         if (server.ptype === 'gxp_osmsource') {
+          var osmLocal = {
+            attributions: [
+              new ol.Attribution({
+                html: settings.OsmLocalAttribution
+              }),
+              ol.source.OSM.ATTRIBUTION
+            ],
+            crossOrigin: null,
+            url: settings.OsmLocalUrl
+          };
+          var osmSource = (settings.OsmLocalUrl !== 'default') ? osmLocal : '';
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -557,7 +568,7 @@
               title: fullConfig.Title
             },
             visible: minimalConfig.visibility,
-            source: new ol.source.OSM()
+            source: new ol.source.OSM(osmSource)
           });
         } else if (server.ptype === 'gxp_bingsource') {
 
