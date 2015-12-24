@@ -76,6 +76,7 @@
             //these need to be kept in an object to avoid conflicts between the directive scope and ng-if scope
             scope.search = {isSearching: false, text: ''};
             scope.advFilters = false;
+            scope.spatialFilter = tableViewService.getSpatialFilter();
 
             function resizeModal() {
               var containerHeight = angular.element('#table-view-window .modal-content')[0].clientHeight;
@@ -151,7 +152,14 @@
               }
             };
             scope.clearFilters = function() {
+              $('#spatial-filter-button').removeClass('active');
+              tableViewService.toggleSpatialFilterIsActive(false);
               wipeFilterFields();
+              scope.applyFilters();
+            };
+
+            scope.toggleSpatialFilters = function() {
+              tableViewService.toggleSpatialFilterIsActive();
               scope.applyFilters();
             };
 

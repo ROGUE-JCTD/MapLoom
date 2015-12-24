@@ -315,7 +315,9 @@
     'count': 'Count',
     'populated_count': 'Populated Count',
     'unique_values': 'Unique Values',
-    'fetch_layers_from_server': 'Fetch Layers from Server'
+    'fetch_layers_from_server': 'Fetch Layers from Server',
+    'set_spatial_filter': 'Use this feature in a spatial filter',
+    'spatial_filter': 'Spatial Filter'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

@@ -25,6 +25,7 @@
     this.currentPage = 0;
     this.totalPages = 0;
     this.totalFeatures = 0;
+    this.spatialFilter = {};
 
     this.nextPage = function() {
       this.currentPage++;
@@ -175,6 +176,33 @@
       return xml;
     };
 
+    var getSpatialFilterXML = function(geometryGML, geometryColumn) {
+      return '<ogc:Intersects>' +
+          '<ogc:PropertyName>' + geometryColumn + '</ogc:PropertyName>' +
+          geometryGML +
+          '</ogc:Intersects>';
+    };
+
+    /**
+     * Loop through the schema properties and find the first one that looks like a geometry type.
+     * @param  {Object} schema Metadata about the properties
+     * @return {String}        property name
+     */
+    var getGeometryColumn = function(schema) {
+      function contains(string, search) {
+        return string.toLowerCase().indexOf(search) > -1;
+      }
+
+      for (var key in schema) {
+        var property = schema[key];
+        if (contains(property._type, 'point') || contains(property._type, 'line') ||
+            contains(property._type, 'polygon') || contains(property._type, 'curve') ||
+            contains(property._type, 'surface')) {
+          return property._name;
+        }
+      }
+    };
+
     this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
       var paginationParamsStr = '';
       if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
@@ -254,17 +282,28 @@
           ' srsName="' + metadata.projection + '"' +
           '>';
 
+      var spatialFilter = '';
+      if (this.spatialFilter.active) {
+        var geometryColumn = getGeometryColumn(metadata.schema);
+        var geometry = this.spatialFilter.geometryGML;
+        spatialFilter = getSpatialFilterXML(geometry, geometryColumn);
+      }
+
       if (xmlFilterBody) {
         xml += '<ogc:Filter>';
         if (!searching) {
-          xml += '<And>' + bboxStr + xmlFilterBody + '</And>';
+          xml += '<And>' + bboxStr + spatialFilter + xmlFilterBody + '</And>';
         } else {
-          if (bboxStr) {
-            xml += '<And>' + bboxStr + '<Or>' + xmlFilterBody + '</Or></And>';
+          if (bboxStr || spatialFilter) {
+            xml += '<And>' + bboxStr + spatialFilter + '<Or>' + xmlFilterBody + '</Or></And>';
           } else {
             xml += '<Or>' + xmlFilterBody + '</Or>';
           }
         }
+        xml += '</ogc:Filter>';
+      } else if (this.spatialFilter.active) {
+        xml += '<ogc:Filter>';
+        xml += spatialFilter;
         xml += '</ogc:Filter>';
       }
 
@@ -388,6 +427,23 @@
       });*/
 
       return deferredResponse.promise;
+    };
+
+    this.setSpatialFilter = function(geometryGML, layerName) {
+      this.spatialFilter.geometryGML = geometryGML;
+      this.spatialFilter.layerName = layerName;
+    };
+
+    this.getSpatialFilter = function() {
+      return this.spatialFilter;
+    };
+
+    this.toggleSpatialFilterIsActive = function(active) {
+      if (active === true || active === false) {
+        this.spatialFilter.active = active;
+      } else {
+        this.spatialFilter.active = !this.spatialFilter.active;
+      }
     };
 
     this.search = function(text) {
