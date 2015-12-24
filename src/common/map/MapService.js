@@ -1144,6 +1144,13 @@
         var precision = settings.DDPrecision;
         this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.createStringXY(precision));
       } else if (settings.coordinateDisplay === coordinateDisplays.DD) {
+        var mgrs_precision = settings.MGRSPrecision;
+        settings.coordinateDisplay = coordinateDisplays.MGRS;
+        var mgrsFormat = function(coordinate) {
+          return mgrs.forward(coordinate, mgrs_precision);
+        };
+        this.map.getControls().getArray()[index].setCoordinateFormat(mgrsFormat);
+      } else if (settings.coordinateDisplay === coordinateDisplays.MGRS) {
         settings.coordinateDisplay = coordinateDisplays.DMS;
         this.map.getControls().getArray()[index].setCoordinateFormat(ol.coordinate.toStringHDMS);
       }
