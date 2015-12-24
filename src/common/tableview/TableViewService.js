@@ -356,7 +356,8 @@
           metadata.filters = {};
         }
         for (var propName in metadata.schema) {
-          if (metadata.schema[propName]._type.search('gml:') === -1 && propName !== 'fotos' && propName !== 'photos') {
+          // allow fotos:   && propName !== 'fotos' && propName !== 'photos'
+          if (metadata.schema[propName]._type.search('gml:') === -1) {
             if (!goog.isDefAndNotNull(metadata.filters[propName])) {
               metadata.filters[propName] = {text: '', searchType: 'exactMatch'};
             }

@@ -338,9 +338,10 @@
                 var feature = scope.rows[row].feature;
                 scope.rows[row].modified = false;
                 for (var prop in feature.properties) {
-                  if (prop === 'photos' || prop === 'fotos') {
-                    continue;
-                  }
+                  // allow editing of photos
+                  //if (prop === 'photos' || prop === 'fotos') {
+                  //  continue;
+                  //}
                   if (feature.properties[prop] !== tableViewService.rows[row].feature.properties[prop]) {
                     scope.rows[row].modified = true;
                   }
