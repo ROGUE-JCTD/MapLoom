@@ -86,7 +86,8 @@
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url=',
-        nominatimUrl: 'http://nominatim.openstreetmap.org'
+        nominatimUrl: 'http://nominatim.openstreetmap.org',
+        fileserviceUrlTemplate: '/api/fileservice/{}/view'
       };
 
       if (goog.isDefAndNotNull($window.config)) {
