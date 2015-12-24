@@ -85,12 +85,15 @@ module.exports = {
       'vendor/proj4/dist/proj4-src.js',
 
       //-- files for image gallery
-      'vendor/blueimp-gallery/js/blueimp-gallery.js',
-      'vendor/blueimp-gallery/js/blueimp-gallery-fullscreen.js',
-      'vendor/blueimp-gallery/js/blueimp-gallery-indicator.js',
-      'vendor/blueimp-gallery/js/blueimp-helper.js',
-      'vendor/blueimp-gallery/js/jquery-blueimp-gallery.js',
-      'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js',
+      //'vendor/blueimp-gallery/js/blueimp-gallery.js',
+      //'vendor/blueimp-gallery/js/blueimp-gallery-fullscreen.js',
+      //'vendor/blueimp-gallery/js/blueimp-gallery-indicator.js',
+      //'vendor/blueimp-gallery/js/blueimp-helper.js',
+      //'vendor/blueimp-gallery/js/jquery-blueimp-gallery.js',
+      //'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js',
+      'vendor/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
+      'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js',
+
       'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js',
       'vendor/angular-xeditable/dist/js/xeditable.min.js'
     ],
@@ -98,15 +101,19 @@ module.exports = {
       'vendor/ol3/ol.css',
 
       //-- files for image gallery
-      'vendor/blueimp-gallery/css/blueimp-gallery.css',
-      'vendor/blueimp-gallery/css/blueimp-gallery-indicator.css',
-      'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
+      //'vendor/blueimp-gallery/css/blueimp-gallery.css',
+      //'vendor/blueimp-gallery/css/blueimp-gallery-indicator.css',
+      //'vendor/blueimp-gallery/css/blueimp-gallery-video.css',
+      //'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
+      'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css',
+      'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
 
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
       'vendor/angular-xeditable/dist/css/xeditable.css'
     ],
     assets: [
+      'src/assets/*',
       'vendor/blueimp-gallery/img/*',
       'vendor/blueimp-bootstrap-image-gallery/img/*'
     ],

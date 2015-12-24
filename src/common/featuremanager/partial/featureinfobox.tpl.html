@@ -29,7 +29,7 @@
   <div ng-if="featureManagerService.getState() == 'feature'">
     <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics() && isAttributeVisible(featureManagerService.getSelectedItemPics().name)">
       <carousel id="feature-info-box-carousel" interval="2000">
-        <slide ng-repeat="pic in featureManagerService.getSelectedItemPics() track by $index">
+        <slide ng-repeat="pic in featureManagerService.getSelectedItemPicsThumbnails() track by $index">
           <img ng-src="{{pic}}" style="margin: auto" ng-click="featureManagerService.showPics($index)">
         </slide>
       </carousel>

@@ -10,6 +10,7 @@
   var httpService_ = null;
   var exclusiveModeService_ = null;
   var dialogService_ = null;
+  var configService_ = null;
   var q_ = null;
   var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
   var selectedItem_ = null;
@@ -23,11 +24,12 @@
   var clickPosition_ = null;
   var enabled_ = true;
   var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
+  var supportedVideoFormats_ = ['mp4', 'ogg', 'webm', 'ogg'];
 
   module.provider('featureManagerService', function() {
 
     this.$get = function($rootScope, $translate, $q, mapService, $compile, $http, exclusiveModeService, dialogService,
-                         historyService) {
+                         historyService, configService) {
       //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
@@ -37,6 +39,7 @@
       httpService_ = $http;
       exclusiveModeService_ = exclusiveModeService;
       dialogService_ = dialogService;
+      configService_ = configService;
       q_ = $q;
       registerOnMapClick($rootScope, $compile);
 
@@ -79,6 +82,10 @@
       return selectedItem_;
     };
 
+    this.getMediaUrl = function(mediaItem) {
+      return configService_.configuration.fileserviceUrlTemplate.replace('{}', mediaItem);
+    };
+
     this.getSelectedItemPics = function() {
       var picStrings = null;
       if (goog.isDefAndNotNull(selectedItemPics_)) {
@@ -90,6 +97,29 @@
             picStrings[index] = item;
           }
         });
+      }
+      return picStrings;
+    };
+
+    this.getSelectedItemPicsThumbnails = function() {
+      var picStrings = null;
+      if (goog.isDefAndNotNull(selectedItemPics_)) {
+        picStrings = [];
+        goog.array.forEach(selectedItemPics_.pics, function(item, index) {
+          if (goog.isObject(item)) {
+            picStrings[index] = item.modified;
+          } else {
+            picStrings[index] = item;
+          }
+        });
+
+        for (var i = 0; i < picStrings.length; i++) {
+          var fileTokens = picStrings[i].split('.');
+          var ext = fileTokens.pop();
+          if (supportedVideoFormats_.indexOf(ext) >= 0) {
+            picStrings[i] = '/static/maploom/assets/media-default.png';
+          }
+        }
       }
       return picStrings;
     };
@@ -233,7 +263,7 @@
             // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
             // otherwise list it as is so that a feature can point to an full url
             if (goog.isString(item) && item.indexOf('http') === -1) {
-              selectedItemPics_.pics[index] = '/file-service/' + item;
+              selectedItemPics_.pics[index] = service_.getMediaUrl(item);
             } else {
               selectedItemPics_.pics[index] = item;
             }
@@ -277,7 +307,7 @@
                   // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
                   // otherwise list it as is so that a feature can point to an full url
                   if (goog.isString(item) && item.indexOf('http') === -1) {
-                    picsAttr[index] = {original: item, modified: '/file-service/' + item};
+                    picsAttr[index] = {original: item, modified: service_.getMediaUrl(item)};
                   } else if (goog.isString(item)) {
                     picsAttr[index] = {original: item, modified: item};
                   }
@@ -389,7 +419,24 @@
           options.index = activeIndex;
         }
 
-        blueimp.Gallery(this.getSelectedItemPics(), options);
+        var media = this.getSelectedItemPics();
+
+        // if the media item is a video, we need to construct the item differently
+        for (var i = 0; i < media.length; i++) {
+          var fileTokens = media[i].split('.');
+          var ext = fileTokens.pop();
+          var filename = fileTokens.pop();
+          if (supportedVideoFormats_.indexOf(ext) >= 0) {
+            media[i] = {
+              title: filename,
+              href: media[i],
+              type: 'video/' + ext,
+              poster: '/static/maploom/assets/media-default.png'
+            };
+          }
+        }
+
+        blueimp.Gallery(media, options);
       }
     };
 
