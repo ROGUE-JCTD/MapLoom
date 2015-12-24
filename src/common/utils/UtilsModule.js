@@ -322,9 +322,9 @@
       },
       link: function(scope) {
         if (scope.geom.projection === 'EPSG:4326') {
-          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD];
+          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD, coordinateDisplays.MGRS];
         } else {
-          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD, scope.geom.projection];
+          scope.coordinateDisplays = [coordinateDisplays.DMS, coordinateDisplays.DD, coordinateDisplays.MGRS, scope.geom.projection];
         }
 
         var transformCoords = function(coords, srcPrjName, dstPrjName) {
