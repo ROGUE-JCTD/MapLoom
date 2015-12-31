@@ -12,6 +12,7 @@ var SERVER_SERVICE_USE_PROXY = true;
   var pulldownService_ = null;
   var configService_ = null;
   var q_ = null;
+  var httpService_ = null;
   //var serverCount = 0;
 
   module.provider('boxService', function() {
@@ -20,12 +21,28 @@ var SERVER_SERVICE_USE_PROXY = true;
       rootScope_ = $rootScope;
       dialogService_ = dialogService;
       translate_ = $translate;
-      http_ = $http;
+      httpService_ = $http;
       location_ = $location;
       pulldownService_ = pulldownService;
       configService_ = configService;
       configService_.serverList = servers;
       q_ = $q;
+      //$rootScope.$on('map-created', function(event, config) {
+      console.log('----[ boxService, map created. initializing', config);
+      httpService_({
+        url: '/maps/' + config.id + '/boxes',
+        method: 'GET'
+      }).then(function(result) {
+        console.log(result);
+        var geojson = result.data;
+        geojson.features.map(function(f) {
+          var props = f.properties;
+          props.start_time *= 1000;
+          props.end_time *= 1000;
+          service_.addBox(props);
+        });
+      });
+      //});
 
       return this;
     };
@@ -33,7 +50,6 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.getBoxes = function() {
       return servers;
     };
-
 
     this.addBox = function(boxInfo, loaded) {
       var deferredResponse = q_.defer();

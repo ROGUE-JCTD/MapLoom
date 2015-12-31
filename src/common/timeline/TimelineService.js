@@ -129,7 +129,6 @@
         service_.initialize();
       });
 
-
       return service_;
     };
 
@@ -161,7 +160,11 @@
               } else {
                 uniqueTicks[timeDimension[j]] = 1;
                 var id_ = i + ':' + j;
-                tBoxes_.push({id: id_, group: metadata.uniqueID, content: timeDimension[j], start: timeDimension[j], type: 'box' });
+                tBoxes_.push({id: id_,
+                  group: metadata.uniqueID,
+                  content: "<img src='" + metadata.styles[0].legendUrl + "&TRANSPARENT=true' />",
+                  start: timeDimension[j],
+                  type: 'box' });
               }
             }
           }
@@ -202,26 +205,24 @@
       if (boxes_.length > 0) {
         for (var c = 0; c < boxes_.length; c++) {
           var box_range = stutils.createRange(boxes_[c].startTime, boxes_[c].endTime);
-          console.log(box_range.toString());
+          console.log('----[ Info: Box Range ', box_range.toString());
           range_.extend(box_range);
-          console.log(range_.toString());
+          console.log('----[ Info: Total Range ', range_.toString());
           tBoxes_.push({
             id: 'sb' + c,
-            content: '*',
-            start: boxes_[c].startTime.split(',')[0],
-            end: boxes_[c].endTime.split(',')[0],
+            content: boxes_[c].title,
+            start: (new Date(boxes_[c].start_time)).toISOString(),
+            end: (new Date(boxes_[c].end_time)).toISOString(),
             type: 'background'
           });
           var m = moment.duration(boxes_[c].timeStep, boxes_[c].timeStepUnit).asMilliseconds();
           var steps = Math.floor(box_range.width() / m) + 1;
-          console.log('Steps');
-          console.log(steps);
           steps_ = steps;
-          boxes_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [boxes_[c].startTime, boxes_[c].endTime]}]}});
+          boxes_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
+                              (new Date(boxes_[c].start_time)).toISOString(),
+                              (new Date(boxes_[c].end_time)).toISOString()
+                            ]}]}});
         }
-        console.log(boxes_as_layers);
-        var nticks = computeTicks(boxes_as_layers);
-        console.log(nticks);
       }
 
       if (layersWithTime > 0 || boxes_.length > 0) {
@@ -305,10 +306,10 @@
 
     this.getTimeLineConfig = function() {
       var config = {
-        min: range_.start,
-        max: range_.end,
-        start: range_.start,
-        end: range_.end,
+        min: range_.start || 0,
+        max: range_.end || 0,
+        start: range_.start || 0,
+        end: range_.end || 0,
         height: 138,
         maxHeight: 138
       };
@@ -508,7 +509,7 @@
               if (filterByTime_) {
                 if (goog.isDefAndNotNull(timelineTicks_) && tickIndex < timelineTicks_.length && tickIndex >= 0) {
                   source.updateParams({
-                    TIME: timelineTicks_[tickIndex]
+                    TIME: new Date(timelineTicks_[tickIndex]).toISOString()
                   });
                 }
               } else {

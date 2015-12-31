@@ -262,7 +262,7 @@
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
         var layerSource = layer.getSource();
-        if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams)) {
+        if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams) && goog.isDefAndNotNull(layer.get('styleName'))) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
@@ -335,17 +335,18 @@
             deferredResponse.resolve();
             return;
           }
-          var lower = json.BoundingBox.LowerCorner.toString().split(' ');
-          var upper = json.BoundingBox.UpperCorner.toString().split(' ');
-          var bounds = [JSON.parse(lower[0], 10),
-                        JSON.parse(lower[1], 10),
-                        JSON.parse(upper[0], 10),
-                        JSON.parse(upper[1], 10)];
-          //console.log('------- [[ bounds: ', bounds);
-          var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
-              ol.proj.get('EPSG:900913'));
-          var extent900913 = ol.extent.applyTransform(bounds, transform);
-          service_.zoomToExtent(extent900913, null, null, 0.1);
+          if (goog.isDefAndNotNull(json.BoundingBox)) {
+            var lower = json.BoundingBox.LowerCorner.toString().split(' ');
+            var upper = json.BoundingBox.UpperCorner.toString().split(' ');
+            var bounds = [JSON.parse(lower[0], 10), JSON.parse(lower[1], 10), JSON.parse(upper[0], 10), JSON.parse(upper[1], 10)];
+            //console.log('------- [[ bounds: ', bounds);
+            var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection), ol.proj.get('EPSG:900913'));
+            var extent900913 = ol.extent.applyTransform(bounds, transform);
+            service_.zoomToExtent(extent900913, null, null, 0.1);
+          }else {
+            console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
+            service_.zoomToLayerExtent(layer);
+          }
           deferredResponse.resolve();
         }).error(function(data, status, headers, config) {
           console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
@@ -502,7 +503,7 @@
      */
     this.addLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
-      if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
+      if (goog.isDefAndNotNull(server) && server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
       }
 
@@ -662,6 +663,20 @@
             }
           }
 
+          var styles = [];
+          if (goog.isDefAndNotNull(fullConfig.Style)) {
+            console.log('config style', fullConfig.Style);
+            for (var index = 0; index < fullConfig.Style.length; index++) {
+              var style = fullConfig.Style[index];
+              styles.push({
+                name: style.Name,
+                title: style.Title,
+                abstract: style.Abstract,
+                legendUrl: style.LegendURL[0].OnlineResource
+              });
+            }
+          }
+
           console.log('config crs', fullConfig.CRS);
           console.log('getCode', service_.getCRSCode(fullConfig.CRS));
           layer = new ol.layer.Tile({
@@ -675,6 +690,7 @@
               workspace: nameSplit.length > 1 ? nameSplit[0] : '',
               readOnly: false,
               editable: false,
+              styles: styles,
               bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
               projection: service_.getCRSCode(fullConfig.CRS),
               savedSchema: minimalConfig.schema,
@@ -784,11 +800,11 @@
 
         var insertIndex = -1;
 
-        for (var index = 0; index < mapLayers.length; index++) {
-          var lyr = mapLayers[index];
+        for (var idx = 0; idx < mapLayers.length; idx++) {
+          var lyr = mapLayers[idx];
           var lyrLayerOrder = lyr.get('metadata').layerOrder;
           if (meta.layerOrder < lyrLayerOrder) {
-            insertIndex = index;
+            insertIndex = idx;
             break;
           }
         }
@@ -1087,7 +1103,9 @@
             serverService_.addServer(serverInfo, true)
                 .then(function(serverNew) {
                   orderedUniqueLength--;
-                  addLayersForServer(serverIndex, serverNew);
+                  if (goog.isDefAndNotNull(serverNew)) {
+                    addLayersForServer(serverIndex, serverNew);
+                  }
                   if (orderedUniqueLength === 0) {
                     pulldownService_.serversLoading = false;
                     pulldownService_.addLayers = true;
@@ -1239,7 +1257,8 @@
         this.getInteractions().getArray()[index].condition_ = ol.events.condition.shiftKeyOnly;
         dragZoomActive = false;
       });
-
+      // Let everyone know the map has loaded.
+      rootScope_.$broadcast('map-created', service_.configuration);
       return map;
     };
 

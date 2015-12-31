@@ -341,6 +341,8 @@
           layer.set('attributes', layerInfo.attributes);
           layer.set('featureNS', layerInfo.featureNS);
           layer.set('typeName', layer.get('metadata').name);
+          layer.get('metadata').nativeName = layer.get('metadata').name;
+          layer.set('styleName', 'geonode_' + layer.get('metadata').name);
           layer.set('path', '/geoserver/');
         }
         deferredResponse.resolve();
