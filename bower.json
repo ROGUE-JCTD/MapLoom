@@ -17,7 +17,7 @@
     "moment": "2.3.1",
     "bootstrap3-datetimepicker": "~2.1.11",
     "bootstrap-sortable": "*",
-    "x2js": "*",
+    "x2js": "1.1.7",
     "angular-xeditable": "0.1.8",
     "d3": "3.4.11",
     "proj4": "2.3.3",
