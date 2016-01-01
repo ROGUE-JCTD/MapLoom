@@ -115,7 +115,7 @@
 
         for (var i = 0; i < picStrings.length; i++) {
           var fileTokens = picStrings[i].split('.');
-          var ext = fileTokens.pop();
+          var ext = fileTokens.pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
           if (supportedVideoFormats_.indexOf(ext) >= 0) {
             picStrings[i] = '/static/maploom/assets/media-default.png';
           }
