@@ -61,7 +61,6 @@
             };
 
             var reset = function() {
-              scope.featureManagerService = null;
               scope.properties = null;
               scope.coordinates = null;
               scope.inserting = false;
