@@ -12,10 +12,103 @@
   var dialogService_ = null;
   var configService_ = null;
   var q_ = null;
-  var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
+
+  // valid values: 'layers', 'layer', 'feature', or ''
+  var state_ = '';
   var selectedItem_ = null;
+
+  /*
+    ["sintel-2048-surround_512kb.mp4", "https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg", "082d7eb2a553671d363143f0e140b392f44a6f70.jpg"]
+
+    // example value of this array
+    var selectedItemPics_ = {
+      name: 'fotos', // or photos
+      pics: [
+        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
+        '/api/fileservice/view/mypic.jpg',
+
+        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
+        // loom will leave it alone
+        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
+      ]
+    };
+  */
   var selectedItemPics_ = null;
+
+  /*
+  // example value of this array
+  var selectedItemMedia_ = {
+    'photos_exterior': {
+      type: 'photos',
+      name: 'photos_exterior',
+      items: [
+        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
+        '/api/fileservice/view/mypic.jpg',
+
+        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
+        // loom will leave it alone
+        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
+      ]
+    },
+    'photos_interior': {
+      type: 'photos',
+      name: 'photos_interior',
+      items: [
+        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
+        '/api/fileservice/view/mypic.jpg',
+
+        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
+        // loom will leave it alone
+        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
+      ]
+    },
+    'vidoes_interior': {
+      type: 'videos',
+      name: 'videos_interior',
+      items: [
+        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
+        '/api/fileservice/view/my.mov',
+
+        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
+        // loom will leave it alone
+        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.mov'
+      ]
+    },
+    'audios_memo': {
+      type: 'audios',
+      name: 'audios_memo',
+      items: [
+        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
+        '/api/fileservice/view/memo1.mp3',
+
+        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
+        // loom will leave it alone
+        'https://pbs.twimg.com/media/memo2.mp3'
+      ]
+    }
+  };
+  */
+
+  /*
+    // sample structure for a layer that has 2 attributes. one called 'evento', one 'fotos'
+    // value at first index of each is the attribute name, and the second is the attribute value
+    // note that photos/fotos is handled differently
+    var selectedItemProperties_ = [
+      [
+        "evento",
+        "otro"
+      ],
+      [
+        "fotos",
+        [
+          "7ff194b54ab57a829094dc0afc624c78815ec02c.jpg",
+          "https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg"
+        ]
+      ]
+    ];
+  */
   var selectedItemProperties_ = null;
+
   var selectedLayer_ = null;
   var featureInfoPerLayer_ = [];
   var containerInstance_ = null;
@@ -83,45 +176,32 @@
     };
 
     this.getMediaUrl = function(mediaItem) {
-      return configService_.configuration.fileserviceUrlTemplate.replace('{}', mediaItem);
+      var url = mediaItem;
+      // if the item doesn't start with 'http' then assume the item can be found in the fileservice and so convert it to
+      // a url. This means if the item is, say, at https://mysite.com/mypic.jpg, leave it as is
+      if (goog.isString(mediaItem) && mediaItem.indexOf('http') === -1) {
+        url = configService_.configuration.fileserviceUrlTemplate.replace('{}', mediaItem);
+      }
+      return url;
     };
 
     this.getSelectedItemPics = function() {
-      var picStrings = null;
-      if (goog.isDefAndNotNull(selectedItemPics_)) {
-        picStrings = [];
-        goog.array.forEach(selectedItemPics_.pics, function(item, index) {
-          if (goog.isObject(item)) {
-            picStrings[index] = item.modified;
-          } else {
-            picStrings[index] = item;
-          }
-        });
-      }
-      return picStrings;
+      return selectedItemPics_.pics;
     };
 
-    this.getSelectedItemPicsThumbnails = function() {
-      var picStrings = null;
-      if (goog.isDefAndNotNull(selectedItemPics_)) {
-        picStrings = [];
-        goog.array.forEach(selectedItemPics_.pics, function(item, index) {
-          if (goog.isObject(item)) {
-            picStrings[index] = item.modified;
-          } else {
-            picStrings[index] = item;
-          }
-        });
-
-        for (var i = 0; i < picStrings.length; i++) {
-          var fileTokens = picStrings[i].split('.');
-          var ext = fileTokens.pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
+    this.getMediaUrlThumbnail = function(mediaItem) {
+      var url = mediaItem;
+      if (goog.isDefAndNotNull(mediaItem) && (typeof mediaItem === 'string')) {
+        if (mediaItem) {
+          var ext = mediaItem.split('.').pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
           if (supportedVideoFormats_.indexOf(ext) >= 0) {
-            picStrings[i] = '/static/maploom/assets/media-default.png';
+            url = '/static/maploom/assets/media-default.png';
+          } else {
+            url = service_.getMediaUrl(mediaItem);
           }
         }
       }
-      return picStrings;
+      return url;
     };
 
     this.getSelectedItemProperties = function() {
@@ -258,18 +338,6 @@
 
         selectedItemPics_ = pics;
 
-        if (selectedItemPics_ !== null) {
-          goog.array.forEach(selectedItemPics_.pics, function(item, index) {
-            // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
-            // otherwise list it as is so that a feature can point to an full url
-            if (goog.isString(item) && item.indexOf('http') === -1) {
-              selectedItemPics_.pics[index] = service_.getMediaUrl(item);
-            } else {
-              selectedItemPics_.pics[index] = item;
-            }
-          });
-        }
-
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
@@ -299,20 +367,11 @@
                 } else {
                   jsonValue = JSON.parse(v);
                 }
-                var picsAttr = jsonValue;
-                if (!goog.isArray(picsAttr)) {
-                  picsAttr = [picsAttr];
+                var propPicsAttrib = jsonValue;
+                if (!goog.isArray(propPicsAttrib)) {
+                  propPicsAttrib = [propPicsAttrib];
                 }
-                goog.array.forEach(picsAttr, function(item, index) {
-                  // if the pic doesn't start with 'http' then assume the pic is hosted by the local file service.
-                  // otherwise list it as is so that a feature can point to an full url
-                  if (goog.isString(item) && item.indexOf('http') === -1) {
-                    picsAttr[index] = {original: item, modified: service_.getMediaUrl(item)};
-                  } else if (goog.isString(item)) {
-                    picsAttr[index] = {original: item, modified: item};
-                  }
-                });
-                tempProps[k] = [k, picsAttr];
+                tempProps[k] = [k, propPicsAttrib];
               }
             } else {
               tempProps[k] = [k, v];
@@ -419,7 +478,8 @@
           options.index = activeIndex;
         }
 
-        var media = this.getSelectedItemPics();
+        //clone pics array and modify to prepare for media player's preferred format
+        var media = goog.array.clone(this.getSelectedItemPics());
 
         // if the media item is a video, we need to construct the item differently
         for (var i = 0; i < media.length; i++) {
@@ -429,10 +489,12 @@
           if (supportedVideoFormats_.indexOf(ext) >= 0) {
             media[i] = {
               title: filename,
-              href: media[i],
+              href: media[i] = service_.getMediaUrl(media[i]),
               type: 'video/' + ext,
-              poster: '/static/maploom/assets/media-default.png'
+              poster: media[i] = service_.getMediaUrlThumbnail(media[i])
             };
+          } else {
+            media[i] = service_.getMediaUrl(media[i]);
           }
         }
 
@@ -784,7 +846,7 @@
           if ((property[0] === 'fotos' || property[0] === 'photos') && goog.isObject(property[1])) {
             var newArray = [];
             forEachArrayish(property[1], function(photo) {
-              newArray.push(photo.original);
+              newArray.push(photo);
             });
             var stringy = JSON.stringify(newArray);
             if (stringy !== selectedItemProperties_[index][1]) {
@@ -907,8 +969,6 @@
                 'FEATURE_COUNT': 5
               });
 
-          //console.log('___ url: ', url);
-
           httpService_.get(url).then(function(response) {
             var layerInfo = {};
             layerInfo.features = response.data.features;
@@ -959,7 +1019,7 @@
         if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
           var newArray = [];
           forEachArrayish(obj[1], function(photo) {
-            newArray.push(photo.original);
+            newArray.push(photo);
           });
           selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
         } else {
@@ -989,7 +1049,7 @@
             if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
               var newArray = [];
               forEachArrayish(obj[1], function(photo) {
-                newArray.push(photo.original);
+                newArray.push(photo);
               });
               selectedItem_.properties[obj[0]] = JSON.stringify(newArray);
             } else {

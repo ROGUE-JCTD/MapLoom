@@ -3,6 +3,7 @@
 build/
 bin/
 node_modules/
+bower_components/
 vendor/
 .idea
 ZZZIGNORE_*.js
