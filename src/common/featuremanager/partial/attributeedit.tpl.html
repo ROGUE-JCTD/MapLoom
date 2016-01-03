@@ -8,10 +8,19 @@
     <div class="form-group" ng-repeat="prop in properties">
       <div ng-if="featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
+        <ul id="navlist" style="" ng-repeat="photo in prop[1]">
+            <li style="max-width: 140px; display: inline; list-style-type: none; padding-right: 20px;">
+                <img class="thumbnail" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
+                     onerror="this.src='/static/maploom/assets/media-error.png'"
+                />
+            </li>
+        </ul>
+        <!--
         <div class="photo-group" ng-repeat="photo in prop[1]">
           <i ng-click="removePhoto(prop, photo)" class="close glyphicon glyphicon-remove"></i>
           <img width="100%" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}">
         </div>
+        -->
       </div>
       <div ng-if="!featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>

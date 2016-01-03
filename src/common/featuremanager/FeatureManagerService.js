@@ -197,13 +197,21 @@
       if (goog.isDefAndNotNull(mediaItem) && (typeof mediaItem === 'string')) {
         var ext = mediaItem.split('.').pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
         if (supportedVideoFormats_.indexOf(ext) >= 0) {
-          url = '/static/maploom/assets/media-default.png';
+          url = service_.getMediaUrlDefault();
         } else {
           url = service_.getMediaUrl(mediaItem);
         }
       }
       //console.log('----[ getMediaUrlThumbnail: ', url);
       return url;
+    };
+
+    this.getMediaUrlDefault = function() {
+      return '/static/maploom/assets/media-default.png';
+    };
+
+    this.getMediaUrlError = function() {
+      return '/static/maploom/assets/media-error.png';
     };
 
     this.getSelectedItemProperties = function() {
@@ -339,7 +347,14 @@
                 if (goog.isArray(v)) {
                   jsonValue = v;
                 } else {
-                  jsonValue = JSON.parse(v);
+                  try {
+                    jsonValue = JSON.parse(v);
+                  } catch (e) {
+                    // was not able to parse it. field might unintentionally have a name that fits the media
+                    // property name in maploom. tread it as a string.
+                    console.log('----[ Warning: media property field ' + k + ' has invalid value of: ' + v);
+                    jsonValue = '\"' + v + '\"';
+                  }
                 }
                 var arrayValue = jsonValue;
                 if (!goog.isArray(arrayValue)) {
