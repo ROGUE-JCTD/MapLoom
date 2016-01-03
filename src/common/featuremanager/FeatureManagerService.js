@@ -24,16 +24,13 @@
     var selectedItemPics_ = {
       name: 'fotos', // or photos
       pics: [
-        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
-        '/api/fileservice/view/mypic.jpg',
-
-        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
-        // loom will leave it alone
+        'mypic.jpg',
+        // this pic is not resoved through the fileservice as it is already a to a pic on the web so map loom will leave it alone
         'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
       ]
     };
   */
-  var selectedItemPics_ = null;
+  var selectedItemMedia_ = null;
 
   /*
   // example value of this array
@@ -42,11 +39,7 @@
       type: 'photos',
       name: 'photos_exterior',
       items: [
-        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
-        '/api/fileservice/view/mypic.jpg',
-
-        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
-        // loom will leave it alone
+        'mypic.jpg',
         'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
       ]
     },
@@ -54,23 +47,15 @@
       type: 'photos',
       name: 'photos_interior',
       items: [
-        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
-        '/api/fileservice/view/mypic.jpg',
-
-        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
-        // loom will leave it alone
-        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
+        'mypic4.jpg',
+        'https://pbs.twimg.com/media/C10.jpg'
       ]
     },
     'vidoes_interior': {
       type: 'videos',
       name: 'videos_interior',
       items: [
-        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
-        '/api/fileservice/view/my.mov',
-
-        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
-        // loom will leave it alone
+        'my.mov',
         'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.mov'
       ]
     },
@@ -78,11 +63,7 @@
       type: 'audios',
       name: 'audios_memo',
       items: [
-        // the entry in teh feature is 'mypic.jpg' but was resolved to a fileservice route as such:
-        '/api/fileservice/view/memo1.mp3',
-
-        // this pic is not resoved thorugh the fileservice. instead, it is already a functioning url to a pic so map
-        // loom will leave it alone
+        'memo1.mp3',
         'https://pbs.twimg.com/media/memo2.mp3'
       ]
     }
@@ -92,7 +73,6 @@
   /*
     // sample structure for a layer that has 2 attributes. one called 'evento', one 'fotos'
     // value at first index of each is the attribute name, and the second is the attribute value
-    // note that photos/fotos is handled differently
     var selectedItemProperties_ = [
       [
         "evento",
@@ -185,22 +165,44 @@
       return url;
     };
 
-    this.getSelectedItemPics = function() {
-      return selectedItemPics_.pics;
+    this.getSelectedItemMedia = function() {
+      var media = null;
+      if (goog.isDefAndNotNull(selectedItemMedia_)) {
+        media = selectedItemMedia_.pics;
+      }
+      return media;
+    };
+
+    this.isMediaPropertyName = function(name) {
+      var lower = name.toLowerCase();
+      return lower.indexOf('fotos') === 0 || lower.indexOf('photos') === 0 ||
+          lower.indexOf('audios') === 0 || lower.indexOf('videos') === 0;
+    };
+
+    this.getMediaTypeFromPropertyName = function(name) {
+      var lower = name.toLowerCase();
+      var type = null;
+      if (lower.indexOf('fotos') === 0 || lower.indexOf('photos') === 0) {
+        type = 'photos';
+      } else if (lower.indexOf('audios') === 0) {
+        type = 'audios';
+      } else if (lower.indexOf('videos') === 0) {
+        type = 'videos';
+      }
+      return type;
     };
 
     this.getMediaUrlThumbnail = function(mediaItem) {
       var url = mediaItem;
       if (goog.isDefAndNotNull(mediaItem) && (typeof mediaItem === 'string')) {
-        if (mediaItem) {
-          var ext = mediaItem.split('.').pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
-          if (supportedVideoFormats_.indexOf(ext) >= 0) {
-            url = '/static/maploom/assets/media-default.png';
-          } else {
-            url = service_.getMediaUrl(mediaItem);
-          }
+        var ext = mediaItem.split('.').pop().split('/')[0]; // handle cases; /file.ext or /file.ext/endpoint
+        if (supportedVideoFormats_.indexOf(ext) >= 0) {
+          url = '/static/maploom/assets/media-default.png';
+        } else {
+          url = service_.getMediaUrl(mediaItem);
         }
       }
+      //console.log('----[ getMediaUrlThumbnail: ', url);
       return url;
     };
 
@@ -222,7 +224,7 @@
 
     this.hide = function() {
       selectedItem_ = null;
-      selectedItemPics_ = null;
+      selectedItemMedia_ = null;
       selectedItemProperties_ = null;
       state_ = null;
       featureInfoPerLayer_ = [];
@@ -309,35 +311,6 @@
       //---- if selected item changed
       if (selectedItem_ !== selectedItemOld || forceUpdate) {
 
-        // -- update the selectedItemPics_
-        var pics = null;
-
-        if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
-            goog.isDefAndNotNull(selectedItem_.properties)) {
-          var jsonValue = null;
-          if (goog.isDefAndNotNull(selectedItem_.properties.fotos) && selectedItem_.properties.fotos !== '') {
-            if (goog.isArray(selectedItem_.properties.fotos)) {
-              jsonValue = selectedItem_.properties.fotos;
-            } else {
-              jsonValue = JSON.parse(selectedItem_.properties.fotos);
-            }
-            pics = {name: 'fotos', pics: jsonValue};
-          } else if (goog.isDefAndNotNull(selectedItem_.properties.photos) && selectedItem_.properties.photos !== '') {
-            if (goog.isArray(selectedItem_.properties.photos)) {
-              jsonValue = selectedItem_.properties.photos;
-            } else {
-              jsonValue = JSON.parse(selectedItem_.properties.photos);
-            }
-            pics = {name: 'photos', pics: jsonValue};
-          }
-          if (goog.isDefAndNotNull(pics) &&
-              pics.length === 0) {
-            pics = null;
-          }
-        }
-
-        selectedItemPics_ = pics;
-
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
         if (getItemType(selectedItem_) === 'feature') {
@@ -353,13 +326,14 @@
           mapService_.clearEditLayer();
         }
 
+
         // -- update the selectedItemProperties_
         var tempProps = {};
         var props = [];
 
         if (getItemType(selectedItem_) === 'feature') {
           goog.object.forEach(selectedItem_.properties, function(v, k) {
-            if (k === 'fotos' || k === 'photos') {
+            if (service_.isMediaPropertyName(k)) {
               if (goog.isDefAndNotNull(v)) {
                 var jsonValue = null;
                 if (goog.isArray(v)) {
@@ -367,17 +341,18 @@
                 } else {
                   jsonValue = JSON.parse(v);
                 }
-                var propPicsAttrib = jsonValue;
-                if (!goog.isArray(propPicsAttrib)) {
-                  propPicsAttrib = [propPicsAttrib];
+                var arrayValue = jsonValue;
+                if (!goog.isArray(arrayValue)) {
+                  arrayValue = [arrayValue];
                 }
-                tempProps[k] = [k, propPicsAttrib];
+                tempProps[k] = [k, arrayValue];
               }
             } else {
               tempProps[k] = [k, v];
             }
           });
         }
+
         var propName = null;
         if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
           for (propName in selectedLayer_.get('metadata').schema) {
@@ -394,7 +369,33 @@
         }
 
         selectedItemProperties_ = props;
-        //console.log('---- selectedItemProperties_: ', selectedItemProperties_);
+        console.log('---- selectedItemProperties_: ', selectedItemProperties_);
+
+
+        // -- update the selectedItemMedia_
+        var media = null;
+        if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
+            goog.isDefAndNotNull(selectedItemProperties_)) {
+
+          goog.object.forEach(selectedItemProperties_, function(prop, index) {
+            if (service_.isMediaPropertyName(prop[0])) {
+              if (!goog.isDefAndNotNull(media)) {
+                media = {
+                  name: prop[0],
+                  pics: []
+                };
+              }
+
+              goog.object.forEach(prop[1], function(mediaItem) {
+                media.pics.push(mediaItem);
+              });
+            }
+          });
+        }
+
+        selectedItemMedia_ = media;
+        console.log('---- selectedItemMedia_: ', selectedItemMedia_);
+
       }
 
       if (goog.isDefAndNotNull(position)) {
@@ -465,8 +466,8 @@
       return '';
     };
 
-    this.showPics = function(activeIndex) {
-      if (goog.isDefAndNotNull(selectedItemPics_)) {
+    this.showMedia = function(activeIndex) {
+      if (goog.isDefAndNotNull(selectedItemMedia_)) {
         // use the gallery controls
         $('#blueimp-gallery').toggleClass('blueimp-gallery-controls', true);
 
@@ -478,8 +479,8 @@
           options.index = activeIndex;
         }
 
-        //clone pics array and modify to prepare for media player's preferred format
-        var media = goog.array.clone(this.getSelectedItemPics());
+        //clone media array and modify to prepare for media player's preferred format
+        var media = goog.array.clone(this.getSelectedItemMedia());
 
         // if the media item is a video, we need to construct the item differently
         for (var i = 0; i < media.length; i++) {
@@ -515,7 +516,7 @@
       mapService_.map.interactions_.array_[1].values_.active = false;
 
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
-        if (k !== 'fotos' && k !== 'photos') {
+        if (!service_.isMediaPropertyName(k)) {
           if (v._type.search('gml:') == -1) {
             props.push([k, null]);
           } else {
@@ -843,7 +844,7 @@
       } else if (save) {
         var propertyXmlPartial = '';
         goog.array.forEach(properties, function(property, index) {
-          if ((property[0] === 'fotos' || property[0] === 'photos') && goog.isObject(property[1])) {
+          if (service_.isMediaPropertyName(property[0]) && goog.isObject(property[1])) {
             var newArray = [];
             forEachArrayish(property[1], function(photo) {
               newArray.push(photo);
@@ -1016,7 +1017,7 @@
           '"><feature:' + featureType + ' xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '">' +
           partial + '</feature:' + featureType + '></wfs:Insert>';
       goog.array.forEach(properties, function(obj) {
-        if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
+        if (service_.isMediaPropertyName(obj[0]) && goog.isArray(obj[1])) {
           var newArray = [];
           forEachArrayish(obj[1], function(photo) {
             newArray.push(photo);
@@ -1046,7 +1047,7 @@
         //properties will be null in the case of a geometry edit, so this needs to be handled
         if (goog.isDefAndNotNull(properties)) {
           goog.array.forEach(properties, function(obj) {
-            if (obj[0] === 'fotos' && obj[0] === 'photos' && goog.isArray(obj[1])) {
+            if (service_.isMediaPropertyName(obj[0]) && goog.isArray(obj[1])) {
               var newArray = [];
               forEachArrayish(obj[1], function(photo) {
                 newArray.push(photo);

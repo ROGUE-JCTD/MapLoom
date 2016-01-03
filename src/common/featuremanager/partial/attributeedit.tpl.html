@@ -6,14 +6,14 @@
       <latloneditor id="latLonEdit" coord-display="coordDisplay" geom="coordinates"></latloneditor>
     </div>
     <div class="form-group" ng-repeat="prop in properties">
-      <div ng-if="prop[0] === 'fotos' || prop[0] === 'photos'">
+      <div ng-if="featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
         <div class="photo-group" ng-repeat="photo in prop[1]">
           <i ng-click="removePhoto(prop, photo)" class="close glyphicon glyphicon-remove"></i>
-          <img width="100%" ng-src="{{featureManagerService.getMediaUrl(photo)}}">
+          <img width="100%" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}">
         </div>
       </div>
-      <div ng-if="prop[0] !== 'fotos' && prop[0] !== 'photos'">
+      <div ng-if="!featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
         <div ng-switch on="prop.type">
           <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop[1]" default-date="inserting"></datetimepicker>

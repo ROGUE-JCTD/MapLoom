@@ -27,10 +27,10 @@
   </div>
 
   <div ng-if="featureManagerService.getState() == 'feature'">
-    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics()">
-      <carousel id="feature-info-box-carousel" interval="2000">
-        <slide ng-repeat="pic in featureManagerService.getSelectedItemPics() track by $index">
-          <img ng-src="{{featureManagerService.getMediaUrlThumbnail(pic)}}" style="margin: auto" ng-click="featureManagerService.showPics($index)">
+    <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemMedia()">
+      <carousel id="feature-info-box-carousel" interval="20000">
+        <slide ng-repeat="mediaItem in featureManagerService.getSelectedItemMedia() track by $index">
+          <img ng-src="{{featureManagerService.getMediaUrlThumbnail(mediaItem)}}" style="margin: auto" ng-click="featureManagerService.showMedia($index)">
         </slide>
       </carousel>
     </div>
@@ -38,7 +38,7 @@
     <div class="feature-info-box">
       <span class="info-box-attribute" ng-show="!isShowingAttributes()" translate="no_attributes"></span>
       <span ng-repeat="prop in featureManagerService.getSelectedItemProperties()">
-        <div ng-if="prop[0] !== 'fotos' && prop[0] !== 'photos'" ng-show="isAttributeVisible(prop[0])">
+        <div ng-if="!featureManagerService.isMediaPropertyName(prop[0])" ng-show="isAttributeVisible(prop[0])">
           <span class="info-box-attribute">{{prop[0]}}</span>
             <span ng-switch on="isUrl(prop[1])">
               <a ng-switch-when="true" class="info-box-attribute-value" target="_blank" href="{{prop[1]}}">{{prop[1]}}</a>
@@ -63,7 +63,7 @@
                 class="btn btn-sm btn-default glyphicon glyphicon-time">
           <div class="loom-loading" spinner-radius="10" spinner-width="2" spinner-hidden="!loadingHistory"></div>
                 </button>
-        <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_pics' | translate}}"
+        <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_media' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>-->
         <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
         !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="featureManagerService.startAttributeEditing()"
