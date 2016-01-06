@@ -303,7 +303,7 @@
         var wps = new storytools.edit.WFSDescribeFeatureType.WFSDescribeFeatureType();
         var layerInfo = wps.parseResult(response.data);
         var schema = [];
-        var geometryType;
+        var geometryType = null;
         if (goog.isDefAndNotNull(json.schema)) {
           var savedSchema = layer.get('metadata').savedSchema;
           forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
@@ -312,7 +312,7 @@
 
             if (obj._type.indexOf('gml:') != -1) {
               var lp = obj._type.substring(4);
-              if (lp.indexOf('Polygon') !== -1) {
+              if (lp.indexOf('Polygon') !== -1 || lp.indexOf('MultiSurfacePropertyType') !== -1) {
                 geometryType = 'polygon';
               } else if (lp.indexOf('LineString') !== -1) {
                 geometryType = 'line';
@@ -337,6 +337,7 @@
           layer.get('metadata').editable = true;
           layer.get('metadata').workspaceURL = json.schema._targetNamespace;
           layer.get('metadata').geomType = geometryType;
+          layer.get('metadata').has_style = goog.isDefAndNotNull(geometryType);
           layer.get('metadata').attributes = layerInfo.attributes;
           layer.set('attributes', layerInfo.attributes);
           layer.set('featureNS', layerInfo.featureNS);

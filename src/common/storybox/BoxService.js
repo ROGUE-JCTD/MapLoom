@@ -29,19 +29,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       q_ = $q;
       //$rootScope.$on('map-created', function(event, config) {
       console.log('----[ boxService, map created. initializing', config);
-      httpService_({
-        url: '/maps/' + config.id + '/boxes',
-        method: 'GET'
-      }).then(function(result) {
-        console.log(result);
-        var geojson = result.data;
-        geojson.features.map(function(f) {
-          var props = f.properties;
-          props.start_time *= 1000;
-          props.end_time *= 1000;
-          service_.addBox(props);
+      if (goog.isDefAndNotNull(config.id)) {
+        httpService_({
+          url: '/maps/' + config.id + '/boxes',
+          method: 'GET'
+        }).then(function(result) {
+          console.log(result);
+          var geojson = result.data;
+          geojson.features.map(function(f) {
+            var props = f.properties;
+            props.start_time *= 1000;
+            props.end_time *= 1000;
+            service_.addBox(props);
+          });
         });
-      });
+      }
       //});
 
       return this;

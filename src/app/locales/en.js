@@ -1,17 +1,17 @@
 (function() {
   var translations = {
-    'new_map': 'New Map',
+    'new_map': 'New MapStory',
     'layer_type_not_supported': 'Layer type not supported',
     'projection_not_supported': 'Projection not supported',
     'notifications_tab': 'Notifications',
     'no_notifications': 'No notifications',
-    'map_layers': 'Layers',
-    'add_layer_btn': 'Add Layer',
-    'add_layers': 'Add Layers',
-    'remove_layer': 'Remove Layer',
+    'map_layers': 'StoryLayers',
+    'add_layer_btn': 'Add StoryLayer',
+    'add_layers': 'Add StoryLayers',
+    'remove_layer': 'Remove StoryLayer',
     'attributes': 'Attributes',
     'local_geoserver': 'Local Geoserver',
-    'filter_layers': 'Filter Layers',
+    'filter_layers': 'Filter StoryLayers',
     'add_new_server': 'Add New Server',
     'add_server': 'Add Server',
     'server_type': 'Type',
@@ -321,10 +321,10 @@
     'remove_storybox': 'Remove StoryBox',
     'show_storybox_info': 'Show StoryBox Info',
     'zoom_to_storybox': 'Zoom to StoryBox',
-    'remove_box': 'Remove Box',
-    'box_info': 'Box Information',
-    'sure_remove_box': 'Are you sure you want to remove this box?',
-    'style_layer': 'Style Layer',
+    'remove_box': 'Remove StoryBox',
+    'box_info': 'StoryBox Information',
+    'sure_remove_box': 'Are you sure you want to remove this StoryBox?',
+    'style_layer': 'Style StoryLayer',
     'show_attributes': 'Show Attributes'
   };
 

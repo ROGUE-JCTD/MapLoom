@@ -48,7 +48,7 @@
               <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(layer)"></div>
               <i class="glyphicon glyphicon-list"></i>
             </a>
-              <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="layer.get('metadata').editable"
+              <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="layer.get('metadata').has_style && layer.get('metadata').editable "
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'style_layer' | translate}}">
               <i class="glyphicon glyphicon-tint"></i>
@@ -96,7 +96,7 @@
           </ul>
         </div>
 
-        <label id="style-label" for="styleRow" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">&nbsp;</label>
+        <label id="style-label" for="styleRow" ng-show="layer.get('metadata').editable && layer.get('metadata').has_style && layer.get('metadata').active_btn == 'style_layer'">&nbsp;</label>
 
           <div id="styleRow" class="row" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
         <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="layer.get('metadata').editable" on-change="styleChanged"></style-editor>
