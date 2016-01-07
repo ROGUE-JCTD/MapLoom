@@ -14,7 +14,7 @@
           <div class="" style="max-width: 34px; margin-right: 10px;">
 
 
-            <input type="file" file-model="$parent.$parent.myFile"  tooltip-append-to-body="true" tooltip-placement="left" tooltip="Upload"/>
+            <input type="file" custom-on-change="$parent.$parent.uploadMedia"  media-prop-name="{{prop[0]}}"  tooltip-append-to-body="true" tooltip-placement="left" tooltip="Upload"/>
 
             <a type="button" ng-click="removePhoto()" class="btn btn-sm btn-default" style="border-radius: 0px 0px 4px 4px; margin-top: 1px;" tooltip-append-to-body="true" tooltip-placement="left" tooltip="Remove Media">
               <i class="glyphicon glyphicon-trash"></i>

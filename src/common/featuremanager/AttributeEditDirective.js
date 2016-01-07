@@ -2,39 +2,13 @@
 
   var module = angular.module('loom_attribute_edit_directive', []);
 
-  module.directive('fileModel', ['$parse', 'fileUpload', 'configService', function($parse, fileUpload, configService) {
+  module.directive('customOnChange', ['$parse', 'fileUpload', 'configService', function($parse, fileUpload, configService) {
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
-        var model = $parse(attrs.fileModel);
-        var modelSetter = model.assign;
         console.log('====[ fileModel scope: ', scope);
-
-        element.bind('change', function() {
-          scope.$apply(function() {
-            var files = element[0].files;
-            modelSetter(scope, element[0].files[0]);
-            scope.hasUploadFile = true;
-
-            var onSuccess = function(response) {
-              console.log(response);
-            };
-
-            var onReject = function(reject) {
-              console.log(reject);
-              window.alert(reject);
-            };
-
-            for (var i = 0; i < files.length; i++) {
-              var file = files[i];
-              if (goog.isDefAndNotNull(file)) {
-                console.log('====[ upload scope.myFile: ', file);
-                fileUpload.uploadFileToUrl(file, configService.configuration.fileserviceUploadUrl,
-                    configService.csrfToken).then(onSuccess, onReject);
-              }
-            }
-          });
-        });
+        var onChangeHandler = scope.$eval(attrs.customOnChange);
+        element.bind('change', onChangeHandler);
       }
     };
   }]);
@@ -119,6 +93,40 @@
               goog.array.remove(property[1], photo);
               if (property[1].length === 0) {
                 property[1] = null;
+              }
+            };
+
+            scope.uploadMedia = function(event) {
+              var files = event.target.files;
+              var propName = event.target.attributes['media-prop-name'].value;
+              console.log('====[ uploadMedia, files: ', files, ', propName: ', propName);
+
+              if (goog.isDefAndNotNull(files)) {
+                //modelSetter(scope, element[0].files[0]);
+                //scope.hasUploadFile = true;
+
+                var onSuccess = function(response) {
+                  console.log(response);
+                  for (var i = 0; i < scope.properties.length; i++) {
+                    if (scope.properties[i][0] === propName) {
+                      scope.properties[i][1].push(response.name);
+                    }
+                  }
+                };
+
+                var onReject = function(reject) {
+                  console.log(reject);
+                  window.alert(reject);
+                };
+
+                for (var i = 0; i < files.length; i++) {
+                  var file = files[i];
+                  if (goog.isDefAndNotNull(file)) {
+                    console.log('====[ upload scope.myFile: ', file);
+                    fileUpload.uploadFileToUrl(file, configService.configuration.fileserviceUploadUrl,
+                        configService.csrfToken).then(onSuccess, onReject);
+                  }
+                }
               }
             };
 
