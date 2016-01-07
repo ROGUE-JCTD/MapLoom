@@ -3,20 +3,20 @@
   right: 50px;
   left: auto;
   top: 0;
-  .z-index(@mapLevel);
-  background-color: @legendColor !important;
-  color: @legendFontColor;
+  z-index: 600;
+  background: none;
+  color: white;
   width: auto;
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 5px;
   max-height: 100%;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
   visibility: hidden;
 }
 
 .legend-panel-body {
-  background-color: transparent !important;
+  background-color: rgba(11, 11, 11, 0.6) !important;
 }
 
 .legend-item {
@@ -24,13 +24,22 @@
   padding-right: 5px;
 }
 .legend-item-header {
-  background-color: @legendHeaderColor !important;
-  border-bottom-color: @legendColor;
+  background-color: transparent !important;
+  border-bottom-color: transparent;
   padding-bottom: 0;
   padding-top: 0;
   margin-bottom: 5px;
   margin-top: 5px;
   width: auto;
+}
+
+.stLegend{
+  display: inline-block;
+  top: 118px;
+  position: relative;
+  z-index: 999;
+  float: right;
+  right: 64px;
 }
 
 #legend-btn-border {
@@ -39,15 +48,15 @@
 #legend-btn {
   height: 22px;
   width: 22px;
-  color: @legendButtonImageColor;
-  background: @legendButtonColor;
+  color: white;
+  background: rgba(11, 11, 11, 0.6) !important;
   border-radius: 4px;
-  .glyphicon {
+  .fa {
     padding-left: 3px;
     padding-top: 2px;
   }
   &:hover {
-    background-color: @mainHeaderColor;
+    background-color: green;
   }
 }
 
@@ -57,7 +66,7 @@
 
 #legend-title-heading {
   padding-bottom: 20px;
-  background-color: @legendHeaderColor;
+  background-color: grey;
 }
 
 #legend-title-text {

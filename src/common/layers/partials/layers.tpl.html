@@ -50,7 +50,7 @@
             </a>
               <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="layer.get('metadata').has_style && layer.get('metadata').editable "
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
-               tooltip-placement="top" tooltip="{{'style_layer' | translate}}">
+               tooltip-placement="top" tooltip="{{'style_layer' | translate}}" ng-disabled="(!layer.get('visible') || !layer.get('metadata').schema || layer.get('metadata').readOnly)">
               <i class="glyphicon glyphicon-tint"></i>
             </a>
             <a type="button" ng-click="showHeatmap(layer)" ng-show="layer.get('metadata').editable == true"

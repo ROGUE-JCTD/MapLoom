@@ -89,10 +89,10 @@
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
           <em id="map-name">
-            <div class="map-title-text ellipsis">{{ mapService.getTitle() }}</div>
+            <div class="map-title-text ellipsis" ng-class="{'hide': !saveButton}">{{ mapService.getTitle() }}</div>
             <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
                tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
-               ng-class="{'hide': !configService.username}" data-toggle="modal"></i>
+               ng-class="{'hide': !configService.username || !saveButton}" data-toggle="modal"></i>
             <i id="refreshButton" class="glyphicon pull-right" ng-click="refreshService.refreshLayers()"
                tooltip-placement="bottom" tooltip="{{'refresh_layers' | translate}}" tooltip-append-to-body="true"></i>
           </em>
@@ -131,7 +131,7 @@
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
               <div id="server-loadingn" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
-            <div id="storybox-manager-panel" class="panel-collapse collapse pulldown-panel">
+            <div id="storybox-manager-panel" ng-hide="view_mode=='compose'" class="panel-collapse collapse pulldown-panel">
               <div class="loom-storyboxes"></div>
             </div>
           </div>

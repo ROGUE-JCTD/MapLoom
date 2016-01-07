@@ -12,6 +12,10 @@
     'xeditable'
   ]);
 
+  module.config(['$locationProvider', function($locationProvider) {
+    $locationProvider.html5Mode(true);
+  }]);
+
   module.run(function run(editableOptions) {
     editableOptions.theme = 'bs3';
   });
