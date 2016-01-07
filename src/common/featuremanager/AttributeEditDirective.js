@@ -2,8 +2,47 @@
 
   var module = angular.module('loom_attribute_edit_directive', []);
 
+  module.directive('fileModel', ['$parse', 'fileUpload', 'configService', function($parse, fileUpload, configService) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var model = $parse(attrs.fileModel);
+        var modelSetter = model.assign;
+        console.log('====[ fileModel scope: ', scope);
+
+        element.bind('change', function() {
+          scope.$apply(function() {
+            var files = element[0].files;
+            modelSetter(scope, element[0].files[0]);
+            scope.hasUploadFile = true;
+
+            var onSuccess = function(response) {
+              console.log(response);
+            };
+
+            var onReject = function(reject) {
+              console.log(reject);
+              window.alert(reject);
+            };
+
+            for (var i = 0; i < files.length; i++) {
+              var file = files[i];
+              if (goog.isDefAndNotNull(file)) {
+                console.log('====[ upload scope.myFile: ', file);
+                fileUpload.uploadFileToUrl(file, configService.configuration.fileserviceUploadUrl,
+                    configService.csrfToken).then(onSuccess, onReject);
+              }
+            }
+          });
+        });
+      }
+    };
+  }]);
+
+
+
   module.directive('loomAttributeEdit',
-      function($translate, featureManagerService, dialogService) {
+      function($translate, featureManagerService, dialogService, configService, fileUpload) {
         return {
           restrict: 'C',
           templateUrl: 'featuremanager/partial/attributeedit.tpl.html',
@@ -53,7 +92,17 @@
                   projection: projection};
               }
               scope.inserting = inserting;
-              $('#attribute-edit-dialog').modal('toggle');
+
+              var modal = $('#attribute-edit-dialog').modal('toggle');
+              modal.on('shown.bs.modal', function() {
+                $(':file').filestyle({
+                  input: false,
+                  iconName: 'glyphicon glyphicon-upload',
+                  buttonText: '',
+                  size: 'sm',
+                  badge: false
+                });
+              });
             });
 
             scope.translate = function(value) {

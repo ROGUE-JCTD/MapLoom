@@ -21,6 +21,7 @@
     "angular-xeditable": "0.1.8",
     "d3": "3.4.11",
     "proj4": "2.3.3",
-    "mgrs": "git://github.com/proj4js/mgrs.git#0.0.3"
+    "mgrs": "git://github.com/proj4js/mgrs.git#0.0.3",
+    "bootstrap-filestyl": "git://github.com/markusslima/bootstrap-filestyle.git#1.2.1"
   }
 }

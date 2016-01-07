@@ -28,7 +28,7 @@
 
   <div ng-if="featureManagerService.getState() == 'feature'">
     <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemMedia()">
-      <carousel id="feature-info-box-carousel" interval="20000">
+      <carousel id="feature-info-box-carousel" interval="2000">
         <slide ng-repeat="mediaItem in featureManagerService.getSelectedItemMedia() track by $index">
           <img ng-src="{{featureManagerService.getMediaUrlThumbnail(mediaItem)}}"
                onerror="this.src='/static/maploom/assets/media-error.png'"

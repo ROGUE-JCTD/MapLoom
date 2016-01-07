@@ -70,6 +70,7 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/bootstrap-filestyl/src/bootstrap-filestyle.js',
       'vendor/moment/min/moment.min.js',
       'vendor/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
       'vendor/bootstrap3-datetimepicker/src/js/locales/bootstrap-datetimepicker.es.js',

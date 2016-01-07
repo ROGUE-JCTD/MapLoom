@@ -3,6 +3,30 @@
     'loom_loading_directive'
   ]);
 
+  module.service('fileUpload', ['$http', '$q', function($http, $q) {
+    this.uploadFileToUrl = function(file, uploadUrl, csrfToken) {
+      var deferredResponse = $q.defer();
+      var formData = new FormData();
+      formData.append('file', file);
+      $http.post(uploadUrl, formData, {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined,
+          'X-CSRFToken': csrfToken
+        }
+      }).success(function(response) {
+        if (goog.isDefAndNotNull(response.name)) {
+          deferredResponse.resolve(response);
+        } else {
+          deferredResponse.reject(response);
+        }
+      }).error(function() {
+        deferredResponse.reject('There was problem uploading the file. Please check your network connectivity and try again.');
+      });
+      return deferredResponse.promise;
+    };
+  }]);
+
   module.directive('stopEvent', function() {
     return {
       link: function(scope, element, attr) {

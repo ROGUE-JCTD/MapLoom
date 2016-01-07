@@ -87,7 +87,8 @@
         id: 0,
         proxy: '/proxy/?url=',
         nominatimUrl: 'http://nominatim.openstreetmap.org',
-        fileserviceUrlTemplate: '/api/fileservice/view/{}'
+        fileserviceUrlTemplate: '/api/fileservice/view/{}',
+        fileserviceUploadUrl: '/api/fileservice/'
       };
 
       if (goog.isDefAndNotNull($window.config)) {
