@@ -10,34 +10,25 @@
       <div ng-if="featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
 
-        <div id="navlist" style="max-height:70px; display: -webkit-box; overflow-y: hidden;">
-          <div class="" style="max-width: 34px; margin-right: 10px;">
-
-
-            <input type="file" custom-on-change="$parent.$parent.uploadMedia"  media-prop-name="{{prop[0]}}"  tooltip-append-to-body="true" tooltip-placement="left" tooltip="Upload"/>
-
-            <a type="button" ng-click="removePhoto()" class="btn btn-sm btn-default" style="border-radius: 0px 0px 4px 4px; margin-top: 1px;" tooltip-append-to-body="true" tooltip-placement="left" tooltip="Remove Media">
-              <i class="glyphicon glyphicon-trash"></i>
-            </a>
-            <!--
-            <button type="button" class="btn btn-default" style="border-radius: 4px 4px 0px 0px; margin-top: 1px;">
-              <span class="caret"></span>
-            </button>
-            <button type="button" class="btn btn-default" style="border-radius: 4px 4px 0px 0px;">
-              <span class="caret"></span>
-            </button>
-            -->
-          </div>
-
+        <div class="media-list" ng-if="prop[1].length > 0">
           <div ng-repeat="photo in prop[1] track by $index" style="padding-right: 10px;">
-            <div style="max-width: 100px; max-height: 70px; list-style-type: none;">
-              <img class="" style="max-width: 100%; height: auto; display: block;" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
+            <div class="media-item">
+              <img class="media-item-thumbnail" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
                    onerror="this.src='/static/maploom/assets/media-error.png'"
-                   ng-click="featureManagerService.showMedia($index)"/>
+                   ng-click="featureManagerService.showMedia(prop[0], $index)"/>
             </div>
           </div>
         </div>
 
+        <div class="row" style="margin-left: 0px;">
+          <input type="file" multiple="multiple" custom-on-change="$parent.$parent.fileInputChanged"  media-prop-name="{{prop[0]}}"  tooltip-append-to-body="true" tooltip-placement="left" tooltip="Upload">
+          </input>
+
+          <a ng-if="prop[1].length > 0" type="button" ng-click="removePhoto()" class="btn btn-sm btn-default"tooltip-append-to-body="true" tooltip-placement="left" tooltip="Remove Media">
+            <i ng-if="!isLoading" class="glyphicon glyphicon-trash"></i>
+            <i ng-if="isLoading" class="glyphicon glyphicon-upload"></i>
+          </a>
+        </div>
 
         <!--
         <ul id="navlist" style="max-height:70px; display: flex; overflow-y: hidden;">

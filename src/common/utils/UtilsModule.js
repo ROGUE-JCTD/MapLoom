@@ -3,6 +3,16 @@
     'loom_loading_directive'
   ]);
 
+  module.directive('customOnChange', [function() {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var onChangeHandler = scope.$eval(attrs.customOnChange);
+        element.bind('change', onChangeHandler);
+      }
+    };
+  }]);
+
   module.service('fileUpload', ['$http', '$q', function($http, $q) {
     this.uploadFileToUrl = function(file, uploadUrl, csrfToken) {
       var deferredResponse = $q.defer();

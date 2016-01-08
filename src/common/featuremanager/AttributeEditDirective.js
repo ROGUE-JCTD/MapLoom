@@ -2,19 +2,6 @@
 
   var module = angular.module('loom_attribute_edit_directive', []);
 
-  module.directive('customOnChange', ['$parse', 'fileUpload', 'configService', function($parse, fileUpload, configService) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        console.log('====[ fileModel scope: ', scope);
-        var onChangeHandler = scope.$eval(attrs.customOnChange);
-        element.bind('change', onChangeHandler);
-      }
-    };
-  }]);
-
-
-
   module.directive('loomAttributeEdit',
       function($translate, featureManagerService, dialogService, configService, fileUpload) {
         return {
@@ -25,6 +12,7 @@
             scope.$on('startAttributeEdit', function(event, geometry, projection, properties, inserting) {
               scope.properties = [];
               scope.isSaving = false;
+              scope.isLoading = false;
               var tempProperties = {};
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               if (goog.isDefAndNotNull(attributeTypes)) {
@@ -96,14 +84,24 @@
               }
             };
 
-            scope.uploadMedia = function(event) {
+            scope.fileInputChanged = function(event) {
               var files = event.target.files;
               var propName = event.target.attributes['media-prop-name'].value;
-              console.log('====[ uploadMedia, files: ', files, ', propName: ', propName);
+              scope.uploadMedia(propName, files);
+            };
 
+            scope.uploadMedia = function(propName, files) {
+              console.log('====[ uploadMedia, files: ', files, ', propName: ', propName);
               if (goog.isDefAndNotNull(files)) {
-                //modelSetter(scope, element[0].files[0]);
-                //scope.hasUploadFile = true;
+                scope.isLoading = true;
+
+                var completed = 0;
+                var checkCompleted = function() {
+                  completed++;
+                  if (completed === files.length) {
+                    scope.isLoading = false;
+                  }
+                };
 
                 var onSuccess = function(response) {
                   console.log(response);
@@ -112,17 +110,19 @@
                       scope.properties[i][1].push(response.name);
                     }
                   }
+                  checkCompleted();
                 };
 
                 var onReject = function(reject) {
+                  completed++;
                   console.log(reject);
                   window.alert(reject);
+                  checkCompleted();
                 };
 
                 for (var i = 0; i < files.length; i++) {
                   var file = files[i];
                   if (goog.isDefAndNotNull(file)) {
-                    console.log('====[ upload scope.myFile: ', file);
                     fileUpload.uploadFileToUrl(file, configService.configuration.fileserviceUploadUrl,
                         configService.csrfToken).then(onSuccess, onReject);
                   }

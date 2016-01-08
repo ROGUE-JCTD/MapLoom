@@ -21,55 +21,13 @@
     ["sintel-2048-surround_512kb.mp4", "https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg", "082d7eb2a553671d363143f0e140b392f44a6f70.jpg"]
 
     // example value of this array
-    var selectedItemPics_ = {
-      name: 'fotos', // or photos
-      pics: [
+    var selectedItemPics_ = [
         'mypic.jpg',
         // this pic is not resoved through the fileservice as it is already a to a pic on the web so map loom will leave it alone
         'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
-      ]
-    };
+      ];
   */
   var selectedItemMedia_ = null;
-
-  /*
-  // example value of this array
-  var selectedItemMedia_ = {
-    'photos_exterior': {
-      type: 'photos',
-      name: 'photos_exterior',
-      items: [
-        'mypic.jpg',
-        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.jpg'
-      ]
-    },
-    'photos_interior': {
-      type: 'photos',
-      name: 'photos_interior',
-      items: [
-        'mypic4.jpg',
-        'https://pbs.twimg.com/media/C10.jpg'
-      ]
-    },
-    'vidoes_interior': {
-      type: 'videos',
-      name: 'videos_interior',
-      items: [
-        'my.mov',
-        'https://pbs.twimg.com/media/CNRXT7XWsAAyxBp.mov'
-      ]
-    },
-    'audios_memo': {
-      type: 'audios',
-      name: 'audios_memo',
-      items: [
-        'memo1.mp3',
-        'https://pbs.twimg.com/media/memo2.mp3'
-      ]
-    }
-  };
-  */
-
   /*
     // sample structure for a layer that has 2 attributes. one called 'evento', one 'fotos'
     // value at first index of each is the attribute name, and the second is the attribute value
@@ -166,10 +124,32 @@
     };
 
     this.getSelectedItemMedia = function() {
+      return selectedItemMedia_;
+    };
+
+    // Warning, returns new array objects, not to be 'watched' / bound. use getSelectedItemMedia instead.
+    this.getSelectedItemMediaByProp = function(propName) {
       var media = null;
-      if (goog.isDefAndNotNull(selectedItemMedia_)) {
-        media = selectedItemMedia_.pics;
+
+      if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
+          goog.isDefAndNotNull(selectedItemProperties_)) {
+
+        goog.object.forEach(selectedItemProperties_, function(prop, index) {
+          if (service_.isMediaPropertyName(prop[0])) {
+            if (!goog.isDefAndNotNull(propName) || propName === prop[0]) {
+              if (!goog.isDefAndNotNull(media)) {
+                //TODO: media should no longer be objects
+                media = [];
+              }
+
+              goog.object.forEach(prop[1], function(mediaItem) {
+                media.push(mediaItem);
+              });
+            }
+          }
+        });
       }
+
       return media;
     };
 
@@ -361,6 +341,8 @@
                   arrayValue = [arrayValue];
                 }
                 tempProps[k] = [k, arrayValue];
+              } else {
+                tempProps[k] = [k, []];
               }
             } else {
               tempProps[k] = [k, v];
@@ -386,29 +368,8 @@
         selectedItemProperties_ = props;
         console.log('---- selectedItemProperties_: ', selectedItemProperties_);
 
-
         // -- update the selectedItemMedia_
-        var media = null;
-        if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
-            goog.isDefAndNotNull(selectedItemProperties_)) {
-
-          goog.object.forEach(selectedItemProperties_, function(prop, index) {
-            if (service_.isMediaPropertyName(prop[0])) {
-              if (!goog.isDefAndNotNull(media)) {
-                media = {
-                  name: prop[0],
-                  pics: []
-                };
-              }
-
-              goog.object.forEach(prop[1], function(mediaItem) {
-                media.pics.push(mediaItem);
-              });
-            }
-          });
-        }
-
-        selectedItemMedia_ = media;
+        selectedItemMedia_ = service_.getSelectedItemMediaByProp(null);
         console.log('---- selectedItemMedia_: ', selectedItemMedia_);
 
       }
@@ -481,8 +442,10 @@
       return '';
     };
 
-    this.showMedia = function(activeIndex) {
-      if (goog.isDefAndNotNull(selectedItemMedia_)) {
+    this.showMedia = function(prop, activeIndex) {
+      var media = service_.getSelectedItemMediaByProp(prop);
+
+      if (goog.isDefAndNotNull(media)) {
         // use the gallery controls
         $('#blueimp-gallery').toggleClass('blueimp-gallery-controls', true);
 
@@ -495,7 +458,7 @@
         }
 
         //clone media array and modify to prepare for media player's preferred format
-        var media = goog.array.clone(this.getSelectedItemMedia());
+        //var media = goog.array.clone(media);
 
         // if the media item is a video, we need to construct the item differently
         for (var i = 0; i < media.length; i++) {
