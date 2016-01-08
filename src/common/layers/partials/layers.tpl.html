@@ -10,11 +10,11 @@
           {{layer.get('metadata').title}}
         </div>
         <div class="layer-buttons">
-          <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
+            <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
                 tooltip-placement="top" tooltip="{{'add_feature' | translate}}"
                 ng-show="layer.get('metadata').editable" stop-event="click mousedown" class="btn btn-xs btn-default"
                 ng-disabled="(!layer.get('visible') || !layer.get('metadata').schema || layer.get('metadata').readOnly)">
-            <i class="glyphicon glyphicon-pencil"></i>
+            <i class="glyphicon glyphicon-pencil"></i>&nbsp;{{'edit_feature' | translate}}
           </span>
           <span ng-click="toggleVisibility(layer)" stop-event="click mousedown" tooltip-append-to-body="true"
                 ng-show="!layer.get('metadata').placeholder" tooltip-placement="top" tooltip="{{'toggle_visibility' | translate}}"

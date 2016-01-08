@@ -6,6 +6,7 @@
     'notifications_tab': 'Notificaciones',
     'no_notifications': 'Ninguna notificación',
     'map_layers': 'Capas',
+    'edit_feature': 'Edit',
     'add_layer_btn': 'Añadir Capa',
     'add_layers': 'Añadir Capas',
     'remove_layer': 'Retirar la Capa',
