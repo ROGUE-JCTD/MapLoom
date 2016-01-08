@@ -88,7 +88,9 @@
             scope.switchCoords = function() {
               if (settings.coordinateDisplay === coordinateDisplays.DD) {
                 settings.coordinateDisplay = coordinateDisplays.DMS;
-              } else {
+              } else if (settings.coordinateDisplay === coordinateDisplays.DMS) {
+                settings.coordinateDisplay = coordinateDisplays.MGRS;
+              } else if (settings.coordinateDisplay === coordinateDisplays.MGRS) {
                 settings.coordinateDisplay = coordinateDisplays.DD;
               }
               mapService.switchMousePosCoordFormat();
