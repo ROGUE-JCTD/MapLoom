@@ -3,7 +3,7 @@
      arrangeable-placeholder='<div class="placeholder"></div>'>
   <div class="panel"
        ng-repeat="layer in layers = mapService.map.getLayers().getArray() | reverse | filter:filterInternalLayers">
-    <div class="panel-heading layer-heading" data-toggle="collapse" ng-class="{'placeholder-layer': layer.get('metadata').placeholder}"
+    <div class="panel-heading layer-heading {{ layer.get('metadata').config.group }}" data-toggle="collapse" ng-class="{'placeholder-layer': layer.get('metadata').placeholder}"
          data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').uniqueID}}">
       <div class="row">
         <div class="layer-title ellipsis" ng-class="{'placeholder-layer-title': layer.get('metadata').placeholder}">

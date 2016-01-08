@@ -89,6 +89,7 @@
       <div class="panel flat" id="map-title">
         <div class="panel-heading">
           <em id="map-name">
+              <span ng-class="{'hide': saveButton}">StoryLayer Editing</span>
             <div class="map-title-text ellipsis" ng-class="{'hide': !saveButton}">{{ mapService.getTitle() }}</div>
             <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
                tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
@@ -99,7 +100,7 @@
           <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
         </div>
       </div>
-      <div class="loom-search"></div>
+      <div class="loom-search" ng-class="{'hide': !saveButton}"></div>
       <div id="pulldown-menu" class="panel-group in">
         <div id="pulldown-content">
           <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
@@ -131,7 +132,7 @@
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
               <div id="server-loadingn" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
-            <div id="storybox-manager-panel" ng-hide="view_mode=='compose'" class="panel-collapse collapse pulldown-panel">
+            <div id="storybox-manager-panel" class="panel-collapse collapse pulldown-panel">
               <div class="loom-storyboxes"></div>
             </div>
           </div>
