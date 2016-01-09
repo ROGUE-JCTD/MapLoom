@@ -12,42 +12,21 @@
 
         <div class="media-list" ng-if="prop[1].length > 0">
           <div ng-repeat="photo in prop[1] track by $index" style="padding-right: 10px;">
-            <div class="media-item">
+            <div class="media-item" style="position: relative">
               <img class="media-item-thumbnail" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
                    onerror="this.src='/static/maploom/assets/media-error.png'"
                    ng-click="featureManagerService.showMedia(prop[0], $index)"/>
+              <i ng-click="removePhoto(prop, photo)" class="media-item-remove btn-xs glyphicon glyphicon-remove"></i>
             </div>
           </div>
         </div>
 
         <div class="row" style="margin-left: 0px;">
-          <input type="file" multiple="multiple" custom-on-change="$parent.$parent.fileInputChanged"  media-prop-name="{{prop[0]}}"  tooltip-append-to-body="true" tooltip-placement="left" tooltip="Upload">
-          </input>
-
-          <a ng-if="prop[1].length > 0" type="button" ng-click="removePhoto()" class="btn btn-sm btn-default"tooltip-append-to-body="true" tooltip-placement="left" tooltip="Remove Media">
-            <i ng-if="!isLoading" class="glyphicon glyphicon-trash"></i>
-            <i ng-if="isLoading" class="glyphicon glyphicon-upload"></i>
-          </a>
+          <input type="file" multiple="multiple" custom-on-change="$parent.$parent.fileInputChanged" media-prop-name="{{prop[0]}}"
+                 data-toggle="tooltip" tooltip-append-to-body="true" tooltip-placement="left" title="dfvdfdf" tooltip="Upload"/>
         </div>
-
-        <!--
-        <ul id="navlist" style="max-height:70px; display: flex; overflow-y: hidden;">
-          <li ng-repeat="photo in prop[1]" style="max-width: 100px; max-height: 70px; list-style-type: none;">
-            <img class="" style="max-width: 100%; height: auto; display: block;" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
-                 onerror="this.src='/static/maploom/assets/media-error.png'"/>
-          </li>
-        </ul>
-        -->
-
-        <!--
-        <div class="photo-group" ng-repeat="photo in prop[1]">
-          <i ng-click="removePhoto(prop, photo)" class="close glyphicon glyphicon-remove"></i>
-          <img width="100%" ng-src="{{featureManagerService.getMediaUrlThumbnail(photo)}}"
-               onerror="this.src='/static/maploom/assets/media-error.png'"/>
-        </div>
-        -->
-
       </div>
+
       <div ng-if="!featureManagerService.isMediaPropertyName(prop[0])">
         <label class="control-label custom-control-label">{{prop[0]}}</label>
         <div ng-switch on="prop.type">

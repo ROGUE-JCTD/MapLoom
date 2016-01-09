@@ -13,6 +13,7 @@
               scope.properties = [];
               scope.isSaving = false;
               scope.isLoading = false;
+              scope.isRemoving = false;
               var tempProperties = {};
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
               if (goog.isDefAndNotNull(attributeTypes)) {
@@ -64,6 +65,12 @@
                   size: 'sm',
                   badge: false
                 });
+
+                $('.bootstrap-filestyle').tooltip({
+                  title: 'Upload Media',
+                  placement: 'left',
+                  trigger: 'focus'
+                });
               });
             });
 
@@ -87,19 +94,24 @@
             scope.fileInputChanged = function(event) {
               var files = event.target.files;
               var propName = event.target.attributes['media-prop-name'].value;
-              scope.uploadMedia(propName, files);
+              scope.uploadMedia(propName, files, event.target);
             };
 
-            scope.uploadMedia = function(propName, files) {
+            scope.uploadMedia = function(propName, files, element) {
               console.log('====[ uploadMedia, files: ', files, ', propName: ', propName);
               if (goog.isDefAndNotNull(files)) {
                 scope.isLoading = true;
+                var icon = $(element).parent().find('.bootstrap-filestyle .icon-span-filestyle');
+                icon.removeClass('glyphicon-upload');
+                icon.addClass('glyphicon-transfer');
 
                 var completed = 0;
                 var checkCompleted = function() {
                   completed++;
                   if (completed === files.length) {
                     scope.isLoading = false;
+                    icon.removeClass('glyphicon-transfer');
+                    icon.addClass('glyphicon-upload');
                   }
                 };
 
