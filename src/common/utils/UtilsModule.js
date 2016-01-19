@@ -471,14 +471,7 @@
             }
           } else if (scope.coordDisplay.value === coordinateDisplays.MGRS) {
             var mgrs = scope.coordinates.replace(/\s+/g, '').toUpperCase();
-            if (mgrs.length % 2 !== 0 && /^([0-5][0-9]|60)[A-Z]{3}[0-9]+$/.test(mgrs)) {
-              valid = true;
-            }
-            if (valid === true && validateMGRS(mgrs)) {
-              valid = true;
-            } else {
-              valid = false;
-            }
+            valid = /^([0-5]?[0-9]|60)[A-Z]{3}[0-9]+$/.test(mgrs) && validateMGRS(mgrs);
           } else {
             split = scope.coordinates.replace(/[^\d-\.]/g, ' ').split(' ');
             clean(split, '');
