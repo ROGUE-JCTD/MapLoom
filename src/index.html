@@ -77,141 +77,319 @@
   };
 </script>
 
+<!-- Now including all the sidebar stuff -->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700&subset=latin,cyrillic-ext,latin-ext,cyrillic' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="../jquery.multilevelpushmenu.css">
+<link rel="stylesheet" href="../covermode.css">
+<link rel="stylesheet" href="../custom.css">
+<script type="text/javascript" src="http://oss.maxcdn.com/libs/modernizr/2.6.2/modernizr.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="../jquery.multilevelpushmenu.min.js"></script>
+<script type="text/javascript" src="../covermode.js"></script>
+
 </head>
 <body class="maploom-body">
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
 <% } %>
+  <div class="row">
+        <div id="menu" class="col-lg-6">
+            <nav>
+                <h2>
+                  <i class="fa fa-reorder"></i>
+                  {{ mapService.getTitle() }}
+                  <br><br>
+                  <button type="button" class="btn btn-default btn-md">Properties</button>
+                  <button id="saveButton" tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true" data-target="#saveMap" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
+              <button type="button" class="btn btn-default btn-md">Preview</button>
+
+          </h2>
+                <ul>
+                  <li>
+                        <a href="#">
+                          <strong>Chapter 1</strong>
+                          <br/>
+                          <small><small>
+                            History of the United States
+                          </small></small>
+                        </a>
+                        <h2><i class="fa fa-bookmark"></i>Chapter One</h2>
+                        <h2>History of the United States</h2>
+                        <ul>
+                          <li>
+                                <a href="#"><i class="fa  fa-info-circle"></i>Chapter Info</a>
+                                <h2><i class="fa  fa-info-circle"></i>Chapter Info</h2>
+                                <ul>
+                                  <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <form class="sidebar-content">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Chapter Title</label>
+                            <input type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title">
+                          </div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Summary</label>
+                            <textarea type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title" rows="5"></textarea>
+                          </div>
+                          <button type="submit" class="btn btn-default">Save chapter info</button>
+                      </form>
+                    </div>
+                  </div>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-clone"></i>StoryLayers</a>
+                                <h2><i class="fa fa-clone"></i>StoryLayers</h2>
+                                <ul>
+                                  <li>
+                                        <a href="#">Add a New StoryLayer (modal)</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Point StoryLayer 1</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Line StoryLayer 2</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Polygon StoryLayer 3</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-object-group"></i>StoryBoxes</a>
+                                <h2><i class="fa fa-object-group"></i>StoryBoxes</h2>
+                                <ul>
+                                  <li>
+                                    <h2>Add a StoryBox</h2>
+                                    <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <form class="sidebar-content">
+                          <h5 class="text-center">Adjust the map by panning and zooming</h5>
+                          <button href="#" class="btn btn-default btn-lg btn-block">Set map</button>
+                          <hr/>
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Timeframe</label>
+                            <input type="email" class="form-control" id="chapterTitle" placeholder="1790/01/01 - 1800/01/01">
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-neuter"></i>StoryPins</a>
+                                <h2><i class="fa fa-neuter"></i>StoryPins</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Smart Shot</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Power Shooter</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Easy Photo Maker</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Super Pixel</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-trash-o"></i>Delete Chapter (dialog prompt)</a>
+                             </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                          <strong>Chapter 2</strong>
+                          <br/>
+                          <small><small>
+                            History of Canada
+                          </small></small>
+                        </a>
+                        <h2><i class="fa fa-laptop"></i>Chapter Two</h2>
+                        <h2>History of Canada</h2>
+                        <ul>
+                          <li>
+                                <a href="#"><i class="fa fa-phone"></i>Chapter Info</a>
+                                <h2><i class="fa fa-phone"></i>Chapter Info</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Title</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Summary</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Thumbnail</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-phone"></i>StoryLayers</a>
+                                <h2><i class="fa fa-phone"></i>StoryLayers</h2>
+                                <ul>
+                                  <li>
+                                        <a href="#">Add a New StoryLayer</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Point StoryLayer 1</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Line StoryLayer 2</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Polygon StoryLayer 3</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-desktop"></i>StoryBoxes</a>
+                                <h2><i class="fa fa-desktop"></i>StoryBoxes</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Flat Super Screen</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Gigantic LED</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Power Eater</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">3D Experience</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Classic Comfort</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-camera-retro"></i>StoryPins</a>
+                                <h2><i class="fa fa-camera-retro"></i>StoryPins</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Smart Shot</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Power Shooter</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Easy Photo Maker</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Super Pixel</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
+                             </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                          <strong>Chapter 3</strong>
+                          <br/>
+                          <small><small>
+                            History of Mexico
+                          </small></small>
+                        </a>
+                        <h2><i class="fa fa-laptop"></i>Chapter Three</h2>
+                        <h2>History of Mexico</h2>
+                        <ul>
+                          <li>
+                                <a href="#"><i class="fa fa-phone"></i>Chapter Info</a>
+                                <h2><i class="fa fa-phone"></i>Chapter Info</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Title</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Summary</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Thumbnail</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-phone"></i>StoryLayers</a>
+                                <h2><i class="fa fa-phone"></i>StoryLayers</h2>
+                                <ul>
+                                  <li>
+                                        <a href="#">Add a New StoryLayer</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Point StoryLayer 1</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Line StoryLayer 2</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Polygon StoryLayer 3</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-desktop"></i>StoryBoxes</a>
+                                <h2><i class="fa fa-desktop"></i>StoryBoxes</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Flat Super Screen</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Gigantic LED</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Power Eater</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">3D Experience</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Classic Comfort</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-camera-retro"></i>StoryPins</a>
+                                <h2><i class="fa fa-camera-retro"></i>StoryPins</h2>
+                                <ul>
+                                    <li>
+                                        <a href="#">Smart Shot</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Power Shooter</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Easy Photo Maker</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Super Pixel</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
+                             </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-support"></i> Help</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+<!-- collapsed width is 94% -->
+<div class="col-lg-6" style="height: 1000px; width: 74%;">
 <div id="map" class="map">
   <div class="map-shadow"></div>
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Editing MapStory: The American Civil War (Chapter 1 of 6)</a>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar">
-      <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="#">Preview</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Save <span style="color:lightgray">(autosaved 3m ago)</span><span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Save as draft</a></li>
-            <li><a href="#">Publish...</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div id="pulldown" ng-controller="LoomPulldownController">
-    <div id="pulldown-shadow">
-      <div class="panel flat" id="map-title">
-        <div class="panel-heading">
-          <em id="map-name">
-              <span ng-class="{'hide': saveButton}">StoryLayer Editing (Test)</span>
-            <div class="map-title-text ellipsis" ng-class="{'hide': !saveButton}">{{ mapService.getTitle() }}</div>
-            <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
-               tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
-               ng-class="{'hide': !configService.username || !saveButton}" data-toggle="modal"></i>
-            <i id="refreshButton" class="glyphicon pull-right" ng-click="refreshService.refreshLayers()"
-               tooltip-placement="bottom" tooltip="{{'refresh_layers' | translate}}" tooltip-append-to-body="true"></i>
-          </em>
-          <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
-        </div>
-      </div>
-      <div class="loom-search" ng-class="{'hide': !saveButton}"></div>
-      <div id="pulldown-menu" class="panel-group in">
-        <div id="pulldown-content">
-          <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
-            <div class="tooltip-mask" tooltip="{{notificationStartTime}}"
-                 tooltip-append-to-body="true" tooltip-placement="right" data-toggle="collapse"
-                 data-parent="#pulldown-content" data-target="#notification-panel"></div>
-            <div class="panel-heading">
-              <span translate="notifications_tab" >Notifications</span>
-              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle"
-                   ng-click="toggleModal('#generate-notification-dialog')"
-                   tooltip-placement="top" tooltip="{{'generate_notification' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-time panel-header-button pull-right"></div>
-              <span class="loom-notification-badge pull-right" tooltip="{{'unread_notifications' | translate}}"
-                    tooltip-append-to-body="true"
-                    tooltip-placement="top"></span>
-            </div>
-            <div id="notification-panel" class="panel-collapse collapse pulldown-panel">
-              <div notification-empty-text="'no_notifications' | translate"
-                   class="loom-notifications">
-              </div>
-            </div>
-          </div>
-            <div class="panel" ng-show="storyboxPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#storybox-manager-panel">
-              <span translate="map_storybox">Map StoryBoxes</span>
-              <div ng-show="addStorybox" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-storybox-dialog')"
-                   tooltip-placement="top" tooltip="{{'add_storybox_btn' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
-              <div id="server-loadingn" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
-            </div>
-            <div id="storybox-manager-panel" class="panel-collapse collapse pulldown-panel">
-              <div class="loom-storyboxes"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="layersPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#layer-manager-panel">
-              <span translate="map_layers">Map Layers</span>
-              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-layer-dialog')"
-                   tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
-              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
-            </div>
-            <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
-              <div class="loom-layers"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="syncPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#syncronization-panel">
-              <span translate="synchronization">Synchronization</span>
-
-              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
-                   tooltip-placement="top" tooltip="{{'remote_options' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
-            </div>
-            <div id="syncronization-panel" class="panel-collapse collapse">
-              <div class="loom-synclinks"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
-            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#history-panel">
-              <span class="ellipsis pulldown-menu-title">{{title}}</span>
-
-              <div stop-event='click' ng-click="clearHistory()"
-                   class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
-              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
-                   tooltip-placement="top" tooltip="{{'history_summary' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
-            </div>
-            <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes
-              here.
-            </div>
-          </div>
-          <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
-            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#diff-panel">
-              <span class="ellipsis pulldown-menu-title">{{title}}</span>
-
-              <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
-                   class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
-              <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
-            </div>
-            <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button ng-disabled="!toggleEnabled" type="button" data-toggle="collapse" data-target="#pulldown-menu" translate="toggle_menu"
-            class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
-    </button>
-  </div>
   <div class="loom-notification-poster"></div>
   <div class="loom-legend"></div>
   <div class="loom-exclusive-mode"></div>
@@ -234,6 +412,8 @@
     </div>
   </div>
   <div class="loom-timeline"></div>
+</div>
+</div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">
