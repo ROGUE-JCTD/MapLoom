@@ -222,6 +222,7 @@
     'latlon_confirm': '{{value}} es el valor interpretado de sus coordenadas. ¿Esto es correcto?',
     'degree_minute_second': 'Grados Minutos Segundos',
     'decimal_degrees': 'Grados Decimales',
+    'mgrs': 'MGRS',
     'other': 'Otro',
     'search': 'Búsqueda',
     'search_locations': 'Ubicaciones de Búsqueda',

@@ -172,6 +172,11 @@
               }
             };
 
+            var shortXYValue = function(coords) {
+              shortXY = '(' + String(parseFloat(coords[0].toFixed(3))) + ', ' + String(parseFloat(coords[1].toFixed(3))) + ')';
+              return shortXY;
+            };
+
             scope.save = function() {
               if (scope.isSaving) {
                 return;
@@ -193,7 +198,32 @@
                   scope.coordDisplay.value === coordinateDisplays.DMS &&
                   ol.coordinate.toStringHDMS(scope.coordinates.coords4326) !== scope.coordinates.originalText) {
                 dialogService.open($translate.instant('location_lon_lat'), $translate.instant('latlon_confirm',
-                    {value: ol.coordinate.toStringHDMS(scope.coordinates.coords4326)}), [$translate.instant('yes_btn'),
+                    {value: shortXYValue(scope.coordinates.coords)}), [$translate.instant('yes_btn'),
+                      $translate.instant('no_btn')], false).then(function(button) {
+                  switch (button) {
+                    case 0: {
+                      scope.isSaving = true;
+                      featureManagerService.endAttributeEditing(true, scope.inserting, scope.properties,
+                          scope.coordinates.coords).then(function(resolve) {
+                                     reset();
+                                     $('#attribute-edit-dialog').modal('toggle');
+                                     scope.isSaving = false;
+                                   }, function(reject) {
+                                     scope.isSaving = false;
+                                     var message = scope.inserting ?
+                                'unable_to_save_feature' : 'unable_to_save_attributes';
+                                     dialogService.error($translate.instant('error'), $translate.instant(message,
+                                         {'value': reject}), [$translate.instant('btn_ok')], false);
+                                   });
+                    }
+                  }
+                });
+                return;
+              } else if (goog.isDefAndNotNull(scope.coordinates) && scope.coordinates.changed &&
+                  scope.coordDisplay.value === coordinateDisplays.MGRS &&
+                  xyToMGRSFormat(scope.coordinates.coords4326) !== scope.coordinates.originalText) {
+                dialogService.open($translate.instant('location_lon_lat'), $translate.instant('latlon_confirm',
+                    {value: shortXYValue(scope.coordinates.coords)}), [$translate.instant('yes_btn'),
                       $translate.instant('no_btn')], false).then(function(button) {
                   switch (button) {
                     case 0: {

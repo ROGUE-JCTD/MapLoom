@@ -292,3 +292,11 @@ var urlRemoveTrailingSlash = function(url) {
   return url;
 };
 
+// mgrs additions
+var xyToMGRSFormat = function(coordinate) {
+  return mgrs.forward(coordinate, settings.MGRSPrecision);
+};
+
+var mgrsToXYFormat = function(string) {
+  return mgrs.toPoint(string, settings.DDPrecision);
+};

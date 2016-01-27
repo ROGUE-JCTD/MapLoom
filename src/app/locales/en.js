@@ -219,6 +219,7 @@
     'latlon_confirm': '{{value}} is the interpreted value of your coordinates. Is this correct?',
     'degree_minute_second': 'Degrees Minutes Seconds',
     'decimal_degrees': 'Decimal Degrees',
+    'mgrs': 'MGRS',
     'other': 'Other',
     'search': 'Search',
     'search_locations': 'Search Locations',
