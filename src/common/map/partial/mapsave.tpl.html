@@ -1,0 +1,11 @@
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate }}</button>
+    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+          ng-click="mapService.save()">{{'save_btn' | translate}}</button>
+    <!-- If they pick publish, set the published model to true? -->
+  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+          ng-click="mapService.is_published = true; mapService.save();">Publish</button>
+</div>
+
+

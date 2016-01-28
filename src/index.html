@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html ng-app="MapLoom" ng-controller="AppCtrl">
 <head>
+
 <title ng-bind="pageTitle"></title>
 
   <meta charset="UTF-8">
@@ -93,16 +94,17 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
 <% } %>
+
   <div class="row">
-        <div id="menu" class="col-lg-6">
+        <div id="menu" class="col-lg-2">
             <nav>
                 <h2>
                   <i class="fa fa-reorder"></i>
                   {{ mapService.getTitle() }}
                   <br><br>
-                  <button type="button" class="btn btn-default btn-md">Properties</button>
-                  <button id="saveButton" tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true" data-target="#saveMap" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
-              <button type="button" class="btn btn-default btn-md">Preview</button>
+                  <button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Properties</button>
+                  <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
+              <button type="button" class="btn btn-default btn-md"><a href="{% url 'map-view' %}" style="font-size: 14px;">Preview</a></button>
 
           </h2>
                 <ul>
@@ -381,13 +383,12 @@
                         <a href="#"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-support"></i> Help</a>
+                        <a href="{% url 'getpage' 'skills' %}"><i class="fa fa-support"></i> Help</a>
                     </li>
                 </ul>
             </nav>
         </div>
-<!-- collapsed width is 94% -->
-<div class="col-lg-6" style="height: 1000px; width: 74%;">
+<div id="map-container" class="col-lg-8" style="width: 74%">
 <div id="map" class="map">
   <div class="map-shadow"></div>
   <div class="loom-notification-poster"></div>
@@ -485,6 +486,15 @@
 </div>
 <div loom-modal id="add-storybox-dialog" modal-title="add_storybox">
   <div loom-storybox id="storybox">
+  </div>
+</div>
+<!-- New Modals -->
+<div loom-modal id="mapProperties" modal-title="MapStory Properties">
+  <div loom-map-properties id="map-properties">
+  </div>
+</div>
+<div loom-modal id="mapSave" modal-title="Save MapStory?">
+  <div loom-map-save id="map-save">
   </div>
 </div>
 
