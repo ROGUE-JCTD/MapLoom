@@ -3,11 +3,7 @@
         <div class="form-group">
 
             <div class="form-group">
-                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="mapService.title" type="text" class="form-control" value="{{mapService.title}}" placeholder="{{mapService.title || ('title' | translate)}}">
-            </div>
-
-            <div class="form-group">
-                <label for="mapAbstract">{{ 'abstract' | translate }}</label><textarea id="mapAbstract" ng-model="mapService.abstract" class="form-control" rows="4" value="{{mapService.abstract}}" placeholder="{{mapService.abstract || ('abstract' | translate)}}"></textarea>
+                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="mapService.abstract" class="form-control" rows="4" value="{{mapService.abstract}}" placeholder="Summary"></textarea>
             </div>
 
         </div>

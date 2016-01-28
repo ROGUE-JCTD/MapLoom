@@ -29,6 +29,7 @@
     "ogc-schemas": "highsource/ogc-schemas#master",
     "w3c-schemas": "highsource/w3c-schemas#master",
     "story-tools": "https://github.com/MapStory/story-tools.git#wip/mapstory",
-    "vis": "4.9.0"
+    "vis": "4.9.0",
+    "multilevel-menu": "./bower-local/multilevel-menu"
   }
 }
