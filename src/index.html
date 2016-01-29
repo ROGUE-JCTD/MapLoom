@@ -93,12 +93,11 @@
 <% } %>
 
   <div class="row">
-        <div id="menu" class="col-lg-2">
+        <div id="menu" class="col-lg-3" style="padding-right: 0px;">
             <nav>
                 <h2>
                   <i class="fa fa-reorder"></i>
-                  <!-- have a function here that turns editable on click, then saves when click out -->
-                  <span id="map-title">{{ mapService.getTitle() }}</span>
+                  <input type="text" value="{{ mapService.getTitle() }}"></input>
                   <br><br>
                   <button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button>
                   <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
@@ -386,32 +385,32 @@
                 </ul>
             </nav>
         </div>
-<div id="map-container" class="col-lg-8" style="width: 74%">
-<div id="map" class="map">
-  <div class="map-shadow"></div>
-  <div class="loom-notification-poster"></div>
-  <div class="loom-legend"></div>
-  <div class="loom-exclusive-mode"></div>
-  <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
-             tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
-    <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
-      <i class="glyphicon glyphicon-globe"></i>
+<div id="map-container" class="col-lg-9" style="padding-right: 0px; padding-left: 0px; height: 100%;">
+  <div id="map" class="map">
+    <div class="map-shadow"></div>
+    <div class="loom-notification-poster"></div>
+    <div class="loom-legend"></div>
+    <div class="loom-exclusive-mode"></div>
+    <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
+               tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
+      <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
+        <i class="glyphicon glyphicon-globe"></i>
+      </div>
     </div>
-  </div>
-  <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
-       tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
-    <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
-      <i class="glyphicon glyphicon-map-marker"></i>
+    <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
+         tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
+      <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
+        <i class="glyphicon glyphicon-map-marker"></i>
+      </div>
     </div>
-  </div>
-  <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
-       tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
-    <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
-      <i class="glyphicon glyphicon-fullscreen"></i>
+    <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
+         tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
+      <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
+        <i class="glyphicon glyphicon-fullscreen"></i>
+      </div>
     </div>
+    <div class="loom-timeline"></div>
   </div>
-  <div class="loom-timeline"></div>
-</div>
 </div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
