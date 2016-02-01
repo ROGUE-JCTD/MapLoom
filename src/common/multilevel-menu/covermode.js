@@ -6,13 +6,11 @@ $(document).ready(function(){
 	});
 
 	$( '#addchapter' ).click(function(){
-		// Grab title from angular?
-        //var $addTo = $( '#menu' ).multilevelpushmenu( 'findmenusbytitle' , 'New MapStory' ).first();
-        var $addTo = $('#menu').multilevelpushmenu('activemenu');
+        var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
         console.log($addTo);
         console.log($addTo.length);
         // Use $addTo's length for position?
-        $( '#menu' ).multilevelpushmenu( 'additems' , addChapter , $addTo , $addTo.length );
+        $( '#menu' ).multilevelpushmenu( 'additems' , addChapter , $addTo , 0 );
     });
 
     // Adding a new default chapter
