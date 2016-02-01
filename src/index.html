@@ -195,7 +195,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-trash-o"></i>Delete Chapter (dialog prompt)</a>
+                                <a href="#" class="chapterDelete"><i class="fa fa-trash-o"></i>Delete Chapter (dialog prompt)</a>
                              </li>
                         </ul>
                     </li>
@@ -283,7 +283,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
+                                <a href="#" class="chapterDelete"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
                              </li>
                         </ul>
                     </li>
@@ -371,12 +371,12 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
+                                <a href="#" class="chapterDelete"><i class="fa fa-camera-retro"></i>Delete Chapter</a>
                              </li>
                         </ul>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
+                        <a href="#" id="addchapter"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
                     </li>
                     <li>
                         <a href="{% url 'getpage' 'skills' %}"><i class="fa fa-support"></i> Help</a>
@@ -491,6 +491,10 @@
 </div>
 <div loom-modal id="mapSave" modal-title="Save MapStory?">
   <div loom-map-save id="map-save">
+  </div>
+</div>
+<div loom-modal id="chapterDelete" modal-title="Are you sure you want to delete this chapter?">
+  <div loom-chapter-delete id="chapter-delete">
   </div>
 </div>
 
