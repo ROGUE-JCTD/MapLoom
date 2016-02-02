@@ -99,7 +99,8 @@
                   <br><br>
                   <button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button>
                   <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
-              <button type="button" class="btn btn-default btn-md"><a href="{% url 'map-view' mapService.id %}" style="font-size: 14px;">Preview</a></button>
+                <!-- TOOD: update with correct preview link -->
+              <button type="button" class="btn btn-default btn-md"><a href="/maps/{{ mapService.getId() }}/viewer" style="font-size: 14px;">Preview</a></button>
 
           </h2>
                 <ul>
@@ -378,7 +379,7 @@
                         <a href="#" id="addchapter"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
                     </li>
                     <li>
-                        <a href="{% url 'getpage' 'skills' %}"><i class="fa fa-support"></i> Help</a>
+                        <a href="/getskills"><i class="fa fa-support"></i> Help</a>
                     </li>
                 </ul>
             </nav>
