@@ -10,6 +10,12 @@ $(document).ready(function() {
       if (idOfClicked === 'deleteChapter') {
         $('#chapterDelete').modal('show');
       }
+    },
+    onCollapseMenuEnd: function() {
+      $('#pushobj').css('width', '94%');
+    },
+    onExpandMenuStart: function() {
+      $('#pushobj').css('width', '74%');
     }
   });
 
