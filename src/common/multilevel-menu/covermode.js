@@ -4,7 +4,12 @@ $(document).ready(function() {
     containersToPush: [$('pushobj')],
     mode: 'cover',
     onItemClick: function() {
-      // TODO: Check if "delete" was clicked, maybe add as well?
+      $item = arguments[2];
+      var idOfClicked = $item[0].id;
+      // If the item has the id 'deleteChapter', then spawn the modal
+      if (idOfClicked === 'deleteChapter') {
+        $('#chapterDelete').modal('show');
+      }
     }
   });
 
@@ -41,6 +46,7 @@ $(document).ready(function() {
             },
             {
               name: 'Delete Chapter',
+              id: 'deleteChapter',
               icon: 'fa fa-trash-o',
               link: '#'
             }
