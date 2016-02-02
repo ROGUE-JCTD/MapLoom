@@ -62,8 +62,10 @@ $(document).ready(function() {
     $('#menu').multilevelpushmenu('additems', addChapter, $addTo, 0);
   });
 
-  // Spawn chapter delete modal
-  $('#deleteChapter').click(function() {
-    $('#chapterDelete').modal('show');
+  // Fully delete the chapter - wip
+  $('#removeChapter').click(function() {
+    console.log('Removing chapter');
+    var item = $('#menu').multilevelpushmenu('finditemsbyname', 'Chapter #');
+    $('#menu').multilevelpushmenu('removeitems', item);
   });
 });
