@@ -12,7 +12,12 @@ $(document).ready(function() {
       }
     },
     onCollapseMenuEnd: function() {
-      $('#pushobj').css('width', '94%');
+      // Only if the entire menu is deactivated, expand map
+      var active = $('#menu').multilevelpushmenu('activemenu');
+      console.log(active);
+      if (active.prevObject.length === 0) {
+        $('#pushobj').css('width', '94%');
+      }
     },
     onExpandMenuStart: function() {
       $('#pushobj').css('width', '74%');
