@@ -12,7 +12,7 @@
                     Category
                 </label>
                 <div class="">
-                    <select class=" form-control" id="id_category" name="category">
+                    <select class="form-control" id="id_category" name="category" ng-model="mapService.category">
                         <option value="" selected="selected">---------</option>
                         <option value="1">Biography</option>
                         <option value="13">Crisis</option>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <input class=" form-control" id="id_keywords" name="keywords" type="text">
+                <label for="mapKeywords">Keywords</label><textarea id="mapKeywords" ng-model="mapService.map.keywords" class="form-control" value="{{mapService.map.keywords}}"></textarea>
                 <p class="help-block">commonly used word(s) or formalised word(s) or phrase(s) used to describe the subject (space or comma-separated).</p>
             </div>
         </div>

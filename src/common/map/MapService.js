@@ -892,7 +892,7 @@
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
           layers: [],
-          keywords: service_.keywords
+          keywords: service_.map.keywords
         },
         sources: [],
         category: service_.category,
