@@ -145,6 +145,8 @@
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
       this.save_method = 'POST';
+      this.category = null;
+      this.is_published = false;
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
         this.save_url = '/maps/' + this.id + '/data';
@@ -889,9 +891,12 @@
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
-          layers: []
+          layers: [],
+          keywords: service_.keywords
         },
-        sources: []
+        sources: [],
+        category: service_.category,
+        is_published: service_.is_published
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
