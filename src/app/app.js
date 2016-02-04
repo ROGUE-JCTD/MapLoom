@@ -21,7 +21,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService) {
+                                                refreshService, dialogService, storyService) {
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;
@@ -69,6 +69,7 @@
         }
 
         $scope.mapService = mapService;
+        $scope.storyService = storyService;
         $scope.refreshService = refreshService;
       });
 
