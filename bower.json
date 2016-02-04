@@ -2,7 +2,7 @@
   "name": "MapLoom",
   "version": "1.2.0",
   "devDependencies": {},
-    "ignore": [
+  "ignore": [
     "node_modules"
   ],
   "dependencies": {
@@ -30,6 +30,7 @@
     "w3c-schemas": "highsource/w3c-schemas#master",
     "story-tools": "https://github.com/MapStory/story-tools.git#wip/mapstory",
     "vis": "4.9.0",
-    "multilevel-menu": "./bower-local/multilevel-menu"
+    "multilevel-menu": "./bower-local/multilevel-menu",
+    "font-awesome": "fontawesome#^4.5.0"
   }
 }

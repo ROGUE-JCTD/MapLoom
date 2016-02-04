@@ -121,7 +121,9 @@ module.exports = {
       'vendor/vis/dist/vis.min.css',
       'vendor/nouislider/distribute/jquery.nouislider.min.css',
 
-      'vendor/multilevel-menu/jquery.multilevelpushmenu.css'
+      'vendor/multilevel-menu/jquery.multilevelpushmenu.css',
+
+      'vendor/font-awesome/css/font-awesome.min.css'
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',
