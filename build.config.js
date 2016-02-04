@@ -130,7 +130,8 @@ module.exports = {
       'vendor/blueimp-bootstrap-image-gallery/img/*'
     ],
     fonts: [
-      'vendor/bootstrap/fonts/*'
+      'vendor/bootstrap/fonts/*',
+      'vendor/font-awesome/fonts/*'
     ]
   }
 };
