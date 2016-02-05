@@ -51,6 +51,7 @@
       }
 
       //After saving all maps we need to save the possible changed data from storyService
+      console.log('saving new Mapstory');
       httpService_({
         url: service_.getSaveURL(),
         method: service_.getSaveHTTPMethod(),
@@ -72,9 +73,9 @@
 
     this.getSaveURL = function() {
       if (goog.isDefAndNotNull(this.id) && this.id) {
-        return '/story/' + this.id + '/data';
+        return '/maps/' + this.id + '/save';
       } else {
-        return '/story/new/data';
+        return '/maps/new/story';
       }
     };
 
