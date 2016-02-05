@@ -12,7 +12,7 @@
     this.$get = function($window, $http, $cookies, $location, $translate, mapService, configService, dialogService) {
       service_ = this;
       mapservice_ = mapService;
-      configservice_ = configService;
+      configService_ = configService;
       httpService_ = $http;
       dialogService_ = dialogService;
 
