@@ -3,13 +3,18 @@
   var service_ = null;
   var mapservice_ = null;
   var configservice_ = null;
+  var httpService_ = null;
+  var dialogService_ = null;
+
 
   module.provider('storyService', function() {
 
-    this.$get = function($window, $http, $cookies, $location, $translate, mapService, configService) {
+    this.$get = function($window, $http, $cookies, $location, $translate, mapService, configService, dialogService) {
       service_ = this;
       mapservice_ = mapService;
       configservice_ = configService;
+      httpService_ = $http;
+      dialogService_ = dialogService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -28,15 +33,57 @@
     };
 
     this.save = function() {
-      //TODO: When saving the mapstory we must go through each configuration and perform a save on the mapService
+      var cfg = {
+        id: this.id || 0,
+        title: this.title,
+        abstract: this.abstract,
+        is_published: this.is_published,
+        category: this.category
+      };
+
+      //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations; iConfig += 1) {
         var configToSave = this.configurations[iConfig];
         configToSave['chapter_index'] = iConfig;
         mapservice_.configuration = configToSave;
+        mapservice_.updateActiveMap(iConfig);
         mapservice_.save();
       }
 
-      //TODO: After saving all maps we need to save the possible changed data from storyService
+      //After saving all maps we need to save the possible changed data from storyService
+      httpService_({
+        url: service_.getSaveURL(),
+        method: service_.getSaveHTTPMethod(),
+        data: JSON.stringify(cfg),
+        headers: {
+          'X-CSRFToken': configService_.csrfToken
+        }
+      }).success(function(data, status, headers, config) {
+        console.log('----[ mapstory.save success. ', data, status, headers, config);
+      }).error(function(data, status, headers, config) {
+        if (status == 403 || status == 401) {
+          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
+        } else {
+          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed',
+              {value: status}));
+        }
+      });
+    };
+
+    this.getSaveURL = function() {
+      if (goog.isDefAndNotNull(this.id) && this.id) {
+        return '/story/' + this.id + '/data';
+      } else {
+        return '/story/new/data';
+      }
+    };
+
+    this.getSaveHTTPMethod = function() {
+      if (goog.isDefAndNotNull(this.id) && this.id) {
+        return 'PUT';
+      } else {
+        return 'POST';
+      }
     };
 
     this.get_chapter_config = function(index) {
