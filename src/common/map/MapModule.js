@@ -4,6 +4,7 @@
     'loom_savemap_directive',
     'loom_map_properties',
     'loom_map_save',
-    'loom_chapter_delete'
+    'loom_chapter_delete',
+    'loom_chapter_title'
   ]);
 }());

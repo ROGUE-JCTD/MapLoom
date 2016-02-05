@@ -21,7 +21,9 @@
       this.active_index = 0;
       this.active_chapter = this.configurations[this.active_index];
       this.id = this.active_chapter.story_id;
-
+      this.category = null;
+      this.is_published = false;
+      this.keywords = [];
       return this;
     };
 
@@ -78,7 +80,6 @@
     this.add_chapter = function() {
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
-      console.log('Adding chapter');
       var new_chapter = mapservice_.createNewChapter();
       new_chapter['story_id'] = service_.id;
       this.configurations.push(new_chapter);
@@ -86,13 +87,17 @@
 
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
+      var index = (this.configurations.length - 1);
+      console.log(this.configurations[index].title);
       var addChapter = [
         {
-          name: 'Chapter ' + (this.configurations.length - 1),
+          name: 'Chapter ' + (index + 1),
+          directive: 'loom-chapter-title',
+          attr: index,
           link: '#',
           items: [
             {
-              title: 'Chapter ' + (this.configurations.length - 1),
+              title: 'Chapter ' + (index + 1),
               icon: 'fa fa-bookmark',
               items: [
                 {
@@ -126,7 +131,7 @@
           ]
         }
       ];
-      $('#menu').multilevelpushmenu('additems', addChapter, $addTo, 0);
+      $('#menu').multilevelpushmenu('additems', addChapter, $addTo, index);
     };
 
     this.remove_chapter = function() {
