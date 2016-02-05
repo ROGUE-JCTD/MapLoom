@@ -14,15 +14,27 @@
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
       this.abstract = 'This is the default summary';
+      this.category = null;
+      this.is_published = false;
       this.configurations = [];
       this.configurations.push(mapservice_.configuration);
       this.active_index = 0;
       this.active_chapter = this.configurations[this.active_index];
+      this.id = this.active_chapter.story_id;
+
       return this;
     };
 
     this.save = function() {
       //TODO: When saving the mapstory we must go through each configuration and perform a save on the mapService
+      for (var iConfig = 0; iConfig < this.configurations; iConfig += 1) {
+        var configToSave = this.configurations[iConfig];
+        configToSave['chapter_index'] = iConfig;
+        mapservice_.configuration = configToSave;
+        mapservice_.save();
+      }
+
+      //TODO: After saving all maps we need to save the possible changed data from storyService
     };
 
     this.update_active_config = function(config) {
@@ -64,10 +76,8 @@
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
       console.log('Adding chapter');
-      var new_chapter = {
-        title: 'Untitled Chapter',
-        summary: ''
-      };
+      var new_chapter = mapservice_.createNewChapter();
+      new_chapter['story_id'] = service_.id;
       this.configurations.push(new_chapter);
       this.active_index = this.configurations.length - 1;
       service_.update_active_config(this.configurations[this.active_index]);
