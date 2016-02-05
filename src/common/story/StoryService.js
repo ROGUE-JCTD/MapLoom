@@ -136,12 +136,12 @@
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
       var index = (this.configurations.length - 1);
-      console.log(this.configurations[index].title);
+      console.log(this.configurations[index].about.title);
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
           directive: 'loom-chapter-title',
-          attr: index,
+          attr: 'storyService.configurations[' + index + '].about.title',
           link: '#',
           items: [
             {

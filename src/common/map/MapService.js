@@ -887,7 +887,7 @@
       var cfg = {
         about: {
           abstract: '',
-          title: ''
+          title: 'Untitled Chapter'
         },
         map: {
           id: null,
