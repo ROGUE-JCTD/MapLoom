@@ -2,7 +2,7 @@
   var module = angular.module('loom_story_service', ['ngCookies']);
   var service_ = null;
   var mapservice_ = null;
-  var configservice_ = null;
+  var configService_ = null;
   var httpService_ = null;
   var dialogService_ = null;
 
@@ -97,7 +97,7 @@
       this.active_chapter = this.configurations[index];
       this.active_index = index;
       //All services (except mapservice) use configServices configuration
-      configservice_.configuration = this.active_chapter;
+      configService_.configuration = this.active_chapter;
 
       //TODO: This should be handled through updating the configService configuration
       mapservice_.configuration = this.active_chapter;
