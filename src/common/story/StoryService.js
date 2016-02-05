@@ -37,39 +37,42 @@
       //TODO: After saving all maps we need to save the possible changed data from storyService
     };
 
-    this.update_active_config = function(config) {
+    this.get_chapter_config = function(index) {
+      return this.configurations[index];
+    };
+
+    this.update_active_config = function(index) {
       //This function updates the active_chapter and propagates the new
       //active configuration to the other services.
-      this.active_chapter = config;
+      this.active_chapter = this.configurations[index];
+      this.active_index = index;
       //All services (except mapservice) use configServices configuration
       configservice_.configuration = this.active_chapter;
 
       //TODO: This should be handled through updating the configService configuration
       mapservice_.configuration = this.active_chapter;
+      mapservice_.updateActiveMap(this.active_index);
 
     };
 
     this.change_chapter = function(chapter_index) {
-      this.active_index = chapter_index;
-      service_.update_active_config(this.configurations[chapter_index]);
+      service_.update_active_config(chapter_index);
     };
 
     this.next_chapter = function() {
-      this.active_index += 1;
-      if (this.active_index > this.configurations.length - 1) {
-        this.active_index = 0;
+      var nextChapter = this.active_index + 1;
+      if (nextChapter > this.configurations.length - 1) {
+        nextChapter = 0;
       }
-      service_.update_active_config(this.configurations[this.active_index]);
-
+      service_.update_active_config(nextChapter);
     };
 
     this.prev_chapter = function() {
-      this.active_index -= 1;
-      if (this.active_index < 0) {
-        this.active_index = this.configurations.length - 1;
+      var prevChapter = this.active_index - 1;
+      if (prevChapter < 0) {
+        prevChapter = 0;
       }
-      service_.update_active_config(this.configurations[this.active_index]);
-
+      service_.update_active_config(prevChapter);
     };
 
     this.add_chapter = function() {
@@ -79,8 +82,7 @@
       var new_chapter = mapservice_.createNewChapter();
       new_chapter['story_id'] = service_.id;
       this.configurations.push(new_chapter);
-      this.active_index = this.configurations.length - 1;
-      service_.update_active_config(this.configurations[this.active_index]);
+      service_.update_active_config(this.configurations.length - 1);
 
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
@@ -131,8 +133,7 @@
       //TODO: After removing a chapter we will need to switch focus to the base level of menu
       this.configurations.splice(this.active_index, 1);
       if (this.configurations.length > 0) {
-        this.active_index = 0;
-        this.active_chapter = this.configurations[active_index];
+        this.update_active_config(0);
       }
     };
 

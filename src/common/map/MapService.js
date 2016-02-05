@@ -153,7 +153,9 @@
         this.save_url = '/maps/new/data';
       }
 
-      this.map = this.createMap();
+      this.maps = [];
+      this.maps.push(this.createMap());
+      this.map = this.maps[0];
 
       // now taht we have a map, lets try to add layers and servers
       service_.loadLayers();
@@ -839,6 +841,10 @@
       return translate_.instant('new_map');
     };
 
+    this.getMap = function(chapter_index) {
+      return this.maps[chapter_index];
+    };
+
     this.getCenter = function() {
       return this.map.getView().getCenter();
     };
@@ -872,6 +878,9 @@
       service_.configuration.id = data.id;
     };
 
+    this.updateActiveMap = function(chapter_index) {
+      this.map = this.maps[chapter_index];
+    };
     //Create a new configuration object, with default map
     //Function could be used to encourage using similar projections for maps.
     this.createNewChapter = function() {
@@ -890,6 +899,8 @@
         },
         sources: []
       };
+
+      this.maps.push(this.createMap());
 
       return cfg;
     };
