@@ -174,12 +174,38 @@
                 {
                   name: 'StoryBoxes',
                   icon: 'fa fa-object-group',
-                  link: '#'
+                  link: '#',
+                  items: [
+                    {
+                      title: 'Chapter ' + (this.configurations.length - 1),
+                      icon: 'fa fa-bookmark',
+                      items: [
+                        {
+                          name: 'Add a New StoryBox...',
+                          id: 'addNewBox',
+                          link: '#'
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   name: 'StoryPins',
                   icon: 'fa fa-neuter',
-                  link: '#'
+                  link: '#',
+                  items: [
+                    {
+                      title: 'Chapter ' + (this.configurations.length - 1),
+                      icon: 'fa fa-bookmark',
+                      items: [
+                        {
+                          name: 'Add a New StoryPin...',
+                          id: 'addNewPin',
+                          link: '#'
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   name: 'Delete Chapter',
