@@ -2,17 +2,17 @@
     <form class="form-horizontal col-md-12">
         <div class="form-group">
             <div class="form-group">
-                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="mapService.title" type="text" class="form-control" value="{{mapService.title}}" placeholder="{{mapService.title || ('title' | translate)}}">
+                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="storyService.title" type="text" class="form-control" value="{{storyService.title}}" placeholder="{{storyService.title || ('title' | translate)}}">
             </div>
             <div class="form-group">
-                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="mapService.abstract" class="form-control" rows="4" value="{{mapService.abstract}}" placeholder="Summary"></textarea>
+                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="storyService.abstract" class="form-control" rows="4" value="{{storyService.abstract}}" placeholder="Summary"></textarea>
             </div>
             <div class="form-group">
                 <label for="id_category" class="control-label  ">
                     Category
                 </label>
                 <div class="">
-                    <select class="form-control" id="id_category" name="category" ng-model="mapService.category">
+                    <select class="form-control" id="id_category" name="category" ng-model="storyService.category">
                         <option value="" selected="selected">---------</option>
                         <option value="1">Biography</option>
                         <option value="13">Crisis</option>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="mapKeywords">Keywords</label><textarea id="mapKeywords" ng-model="mapService.map.keywords" class="form-control" value="{{mapService.map.keywords}}"></textarea>
+                <label for="mapKeywords">Keywords</label><textarea id="mapKeywords" ng-model="storyService.map.keywords" class="form-control" value="{{storyService.map.keywords}}"></textarea>
                 <p class="help-block">commonly used word(s) or formalised word(s) or phrase(s) used to describe the subject (space or comma-separated).</p>
             </div>
         </div>

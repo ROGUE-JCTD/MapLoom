@@ -11,8 +11,6 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-COMPATIBLE" content="IE-Edge">
 
-
-
 <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
         <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}maploom/<%= file %>"/>
@@ -92,12 +90,12 @@
             <nav>
                 <h2>
                   <i class="fa fa-reorder"></i>
-                  {{ mapService.getTitle() }}
+                  {{ storyService.title }}
                   <br><br>
                   <button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button>
                   <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
                 <!-- TOOD: update with correct preview link -->
-              <button type="button" class="btn btn-default btn-md"><a href="/maps/{{ mapService.getId() }}/viewer" style="font-size: 14px;">Preview</a></button>
+              <button type="button" class="btn btn-default btn-md"><a href="#" style="font-size: 14px;">Preview</a></button>
 
           </h2>
                 <ul>
@@ -373,7 +371,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#" id="addchapter"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
+                        <a href="#" id="addchapter" ng-click="storyService.add_chapter();"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
                     </li>
                     <li>
                         <a href="/getskills" target="_blank"><i class="fa fa-support"></i> Help</a>

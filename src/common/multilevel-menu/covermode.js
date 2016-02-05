@@ -26,6 +26,7 @@ $(document).ready(function() {
 
   // Create chapter to add
   // TODO: Use actual number
+  /*
   var addChapter = [
     {
       name: 'Chapter #',
@@ -78,5 +79,5 @@ $(document).ready(function() {
     console.log('Removing chapter');
     var item = $('#menu').multilevelpushmenu('finditemsbyname', 'Chapter #');
     $('#menu').multilevelpushmenu('removeitems', item);
-  });
+  });*/
 });
