@@ -10,6 +10,10 @@ $(document).ready(function() {
       if (idOfClicked === 'deleteChapter') {
         $('#chapterDelete').modal('show');
       }
+      // If the item has the id 'addNewLayer', then spawn the modal
+      if (idOfClicked === 'addNewLayer') {
+        $('#add-layer-dialog').modal('show');
+      }
     },
     onCollapseMenuEnd: function() {
       // Only if the entire menu is deactivated, expand map

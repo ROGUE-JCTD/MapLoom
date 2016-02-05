@@ -156,7 +156,20 @@
                 {
                   name: 'StoryLayers',
                   icon: 'fa fa-clone',
-                  link: '#'
+                  link: '#',
+                  items: [
+                    {
+                      title: 'Chapter ' + (this.configurations.length - 1),
+                      icon: 'fa fa-bookmark',
+                      items: [
+                        {
+                          name: 'Add a New StoryLayer...',
+                          id: 'addNewLayer',
+                          link: '#'
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   name: 'StoryBoxes',
