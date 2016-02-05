@@ -145,8 +145,6 @@
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
       this.save_method = 'POST';
-      this.category = null;
-      this.is_published = false;
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
         this.save_url = '/maps/' + this.id + '/data';
@@ -854,15 +852,15 @@
     };
 
     this.getSaveURL = function() {
-      if (goog.isDefAndNotNull(service_.id) && service_.id) {
-        return '/maps/' + service_.id + '/data';
+      if (goog.isDefAndNotNull(service_.configuration.id) && service_.configuration.id) {
+        return '/maps/' + service_.configuration.id + '/data';
       } else {
         return '/maps/new/data';
       }
     };
 
     this.getSaveHTTPMethod = function() {
-      if (goog.isDefAndNotNull(service_.id) && service_.id) {
+      if (goog.isDefAndNotNull(service_.configuration.id) && service_.configuration.id) {
         return 'PUT';
       } else {
         return 'POST';
@@ -871,23 +869,45 @@
 
     // Update the map after save.
     this.updateMap = function(data) {
-      service_.id = data.id;
+      service_.configuration.id = data.id;
+    };
+
+    //Create a new configuration object, with default map
+    //Function could be used to encourage using similar projections for maps.
+    this.createNewChapter = function() {
+      var cfg = {
+        about: {
+          abstract: '',
+          title: ''
+        },
+        map: {
+          id: null,
+          center: service_.getCenter(),
+          zoom: service_.getZoom(),
+          projection: service_.getProjection(),
+          layers: [],
+          keywords: service_.map.keywords
+        },
+        sources: []
+      };
+
+      return cfg;
     };
 
     this.save = function(copy) {
 
       if (goog.isDefAndNotNull(copy) && copy) {
         // remove current map id so that it is saved as a new map.
-        service_.id = null;
+        service_.configuration.id = null;
       }
 
       var cfg = {
         about: {
-          abstract: service_.abstract,
-          title: service_.title
+          abstract: service_.configuration.about.abstract,
+          title: service_.configuration.about.title
         },
         map: {
-          id: service_.id || 0,
+          id: service_.configuration.id || 0,
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
@@ -895,8 +915,9 @@
           keywords: service_.map.keywords
         },
         sources: [],
-        category: service_.category,
-        is_published: service_.is_published
+        category: service_.configuration.category,
+        is_published: service_.configuration.is_published,
+        chapter_index: service.configuration.chapter_index
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
