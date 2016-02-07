@@ -14,6 +14,13 @@ $(document).ready(function() {
       if (idOfClicked === 'addNewLayer') {
         $('#add-layer-dialog').modal('show');
       }
+      // If the item has the id 'addNewBox', then spawn the modal
+      if (idOfClicked === 'addNewBox') {
+        $('#add-box-dialog').modal('show');
+      }
+      if (idOfClicked === 'addNewPin') {
+        $('#add-pin-dialog').modal('show');
+      }
     },
     onCollapseMenuEnd: function() {
       // Only if the entire menu is deactivated, expand map
