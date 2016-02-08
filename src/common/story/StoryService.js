@@ -42,8 +42,9 @@
       };
 
       //Go through each chapter configuration and save accordingly through mapService
-      for (var iConfig = 0; iConfig < this.configurations; iConfig += 1) {
+      for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         var configToSave = this.configurations[iConfig];
+        console.log(configToSave);
         configToSave['chapter_index'] = iConfig;
         mapservice_.configuration = configToSave;
         mapservice_.updateActiveMap(iConfig);
@@ -60,7 +61,7 @@
           'X-CSRFToken': configService_.csrfToken
         }
       }).success(function(data, status, headers, config) {
-        console.log('----[ mapstory.save success. ', data, status, headers, config);
+        console.log('----[ mapstory.save success. ', status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));

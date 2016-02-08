@@ -145,6 +145,7 @@
       this.title = this.configuration.about.title;
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
+      this.configuration.map['id'] = this.id;
       this.save_method = 'POST';
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
