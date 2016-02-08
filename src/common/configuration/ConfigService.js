@@ -50,6 +50,11 @@
           abstract: ''
         },
         map: {
+          id: 0,
+          about: {
+            title: $translate.instant('new_map'),
+            abstract: ''
+          },
           center: [-9707182.048613328, 1585691.7893914054],
           zoom: 14,
           layers: [

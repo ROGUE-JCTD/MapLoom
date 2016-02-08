@@ -25,6 +25,7 @@
       this.configurations.push(mapservice_.configuration);
       this.active_index = 0;
       this.active_chapter = this.configurations[this.active_index];
+      console.log(this.active_chapter.story_id);
       this.id = this.active_chapter.story_id;
       this.category = null;
       this.is_published = false;
@@ -44,7 +45,6 @@
       //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         var configToSave = this.configurations[iConfig];
-        console.log(configToSave);
         configToSave['chapter_index'] = iConfig;
         mapservice_.configuration = configToSave;
         mapservice_.updateActiveMap(iConfig);

@@ -142,9 +142,9 @@
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
-      this.title = this.configuration.about.title;
-      this.abstract = this.configuration.about.abstract;
-      this.id = this.configuration.id;
+      this.title = this.configuration.map.about.title;
+      this.abstract = this.configuration.map.about.abstract;
+      this.id = this.configuration.map.id;
       this.configuration.map['id'] = this.id;
       this.save_method = 'POST';
 
@@ -861,7 +861,7 @@
 
     this.getSaveURL = function() {
       if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
-        return '/maps/' + service_.configuration.id + '/data';
+        return '/maps/' + service_.configuration.map.id + '/data';
       } else {
         return '/maps/new/data';
       }
@@ -887,7 +887,6 @@
     //Function could be used to encourage using similar projections for maps.
     this.createNewChapter = function() {
       var cfg = configService_.initial_config;
-      cfg.map['id'] = 0;
 
       this.maps.push(this.createMap());
 
@@ -903,8 +902,8 @@
 
       var cfg = {
         about: {
-          abstract: service_.configuration.about.abstract,
-          title: service_.configuration.about.title
+          abstract: service_.configuration.map.about.abstract,
+          title: service_.configuration.map.about.title
         },
         map: {
           id: service_.configuration.map.id || 0,
@@ -917,7 +916,8 @@
         sources: [],
         category: service_.configuration.category,
         is_published: service_.configuration.is_published,
-        chapter_index: service_.configuration.chapter_index
+        chapter_index: service_.configuration.chapter_index,
+        story_id: service_.configuration.id
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
