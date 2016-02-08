@@ -42,15 +42,6 @@
         category: this.category
       };
 
-      //Go through each chapter configuration and save accordingly through mapService
-      for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
-        var configToSave = this.configurations[iConfig];
-        configToSave['chapter_index'] = iConfig;
-        mapservice_.configuration = configToSave;
-        mapservice_.updateActiveMap(iConfig);
-        mapservice_.save();
-      }
-
       //After saving all maps we need to save the possible changed data from storyService
       console.log('saving new Mapstory');
       httpService_({
@@ -61,7 +52,16 @@
           'X-CSRFToken': configService_.csrfToken
         }
       }).success(function(data, status, headers, config) {
-        console.log('----[ mapstory.save success. ', status, headers, config);
+        service_.updateStoryID(data.id);
+        //Go through each chapter configuration and save accordingly through mapService
+        for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
+          var configToSave = this.configurations[iConfig];
+          configToSave['chapter_index'] = iConfig;
+          mapservice_.configuration = configToSave;
+          mapservice_.updateActiveMap(iConfig);
+          mapservice_.save();
+        }
+        console.log('----[ mapstory.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
@@ -70,6 +70,13 @@
               {value: status}));
         }
       });
+
+    };
+
+    this.updateStoryID = function(id) {
+      for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
+        this.configurations[iConfig].id = id;
+      }
     };
 
     this.getSaveURL = function() {
