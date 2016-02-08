@@ -33,6 +33,17 @@
       return this;
     };
 
+    this.saveMaps = function() {
+      //Go through each chapter configuration and save accordingly through mapService
+      for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
+        var configToSave = this.configurations[iConfig];
+        configToSave['chapter_index'] = iConfig;
+        mapservice_.configuration = configToSave;
+        mapservice_.updateActiveMap(iConfig);
+        mapservice_.save();
+      }
+    };
+
     this.save = function() {
       var cfg = {
         id: this.id || 0,
@@ -53,14 +64,7 @@
         }
       }).success(function(data, status, headers, config) {
         service_.updateStoryID(data.id);
-        //Go through each chapter configuration and save accordingly through mapService
-        for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
-          var configToSave = this.configurations[iConfig];
-          configToSave['chapter_index'] = iConfig;
-          mapservice_.configuration = configToSave;
-          mapservice_.updateActiveMap(iConfig);
-          mapservice_.save();
-        }
+        service_.saveMaps();
         console.log('----[ mapstory.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
