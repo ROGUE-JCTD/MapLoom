@@ -11,6 +11,7 @@
   var dialogService_ = null;
   var pulldownService_ = null;
   var tableViewService_ = null;
+  //var location_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -858,7 +859,7 @@
     };
 
     this.getSaveURL = function() {
-      if (goog.isDefAndNotNull(service_.configuration.id) && service_.configuration.id) {
+      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
         return '/maps/' + service_.configuration.id + '/data';
       } else {
         return '/maps/new/data';
@@ -866,7 +867,7 @@
     };
 
     this.getSaveHTTPMethod = function() {
-      if (goog.isDefAndNotNull(service_.configuration.id) && service_.configuration.id) {
+      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
         return 'PUT';
       } else {
         return 'POST';
@@ -875,7 +876,7 @@
 
     // Update the map after save.
     this.updateMap = function(data) {
-      service_.configuration.id = data.id;
+      service_.configuration.map.id = data.id;
     };
 
     this.updateActiveMap = function(chapter_index) {
@@ -884,21 +885,8 @@
     //Create a new configuration object, with default map
     //Function could be used to encourage using similar projections for maps.
     this.createNewChapter = function() {
-      var cfg = {
-        about: {
-          abstract: '',
-          title: 'Untitled Chapter'
-        },
-        map: {
-          id: null,
-          center: service_.getCenter(),
-          zoom: service_.getZoom(),
-          projection: service_.getProjection(),
-          layers: [],
-          keywords: service_.map.keywords
-        },
-        sources: []
-      };
+      var cfg = configService_.initial_config;
+      cfg.map['id'] = 0;
 
       this.maps.push(this.createMap());
 
@@ -909,7 +897,7 @@
 
       if (goog.isDefAndNotNull(copy) && copy) {
         // remove current map id so that it is saved as a new map.
-        service_.configuration.id = null;
+        service_.configuration.map.id = null;
       }
 
       var cfg = {
@@ -918,7 +906,7 @@
           title: service_.configuration.about.title
         },
         map: {
-          id: service_.configuration.id || 0,
+          id: service_.configuration.map.id || 0,
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),

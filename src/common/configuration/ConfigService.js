@@ -92,6 +92,7 @@
       if (goog.isDefAndNotNull($window.config)) {
         goog.object.extend(this.configuration, $window.config, {});
       }
+      this.initial_config = this.configuration;
       this.username = this.configuration.username;
       this.currentLanguage = this.configuration.currentLanguage;
       this.user_profile_name = this.configuration.userprofilename;
