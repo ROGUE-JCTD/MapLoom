@@ -16,7 +16,7 @@ $(document).ready(function() {
       }
       // If the item has the id 'addNewBox', then spawn the modal
       if (idOfClicked === 'addNewBox') {
-        $('#add-box-dialog').modal('show');
+        $('#add-storybox-dialog').modal('show');
       }
       if (idOfClicked === 'addNewPin') {
         $('#add-pin-dialog').modal('show');
