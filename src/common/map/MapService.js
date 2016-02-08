@@ -142,9 +142,9 @@
 
       // create map on init so that other components can use map on their init
       this.configuration = configService_.configuration;
-      this.title = this.configuration.map.about.title;
-      this.abstract = this.configuration.map.about.abstract;
-      this.id = this.configuration.map.id;
+      this.title = this.configuration.about.title;
+      this.abstract = this.configuration.about.abstract;
+      this.id = this.configuration.id;
       this.configuration.map['id'] = this.id;
       this.save_method = 'POST';
 
@@ -902,8 +902,8 @@
 
       var cfg = {
         about: {
-          abstract: service_.configuration.map.about.abstract,
-          title: service_.configuration.map.about.title
+          abstract: service_.configuration.about.abstract,
+          title: service_.configuration.about.title
         },
         map: {
           id: service_.configuration.map.id || 0,
