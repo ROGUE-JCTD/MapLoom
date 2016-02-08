@@ -136,7 +136,6 @@
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
       var index = (this.configurations.length - 1);
-      console.log(this.configurations[index].about.title);
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
@@ -151,7 +150,20 @@
                 {
                   name: 'Chapter Info',
                   icon: 'fa fa-info-circle',
-                  link: '#'
+                  link: '#',
+                  items: [
+                    {
+                      title: 'Chapter Info',
+                      id: ('chapter-info-' + (index + 1)),
+                      icon: 'fa fa-info-cicle',
+                      items: [
+                        {
+                          name: 'Chapter form goes here',
+                          link: '#'
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   name: 'StoryLayers',
@@ -159,7 +171,7 @@
                   link: '#',
                   items: [
                     {
-                      title: 'Chapter ' + (this.configurations.length - 1),
+                      title: 'Chapter ' + (index + 1),
                       icon: 'fa fa-bookmark',
                       items: [
                         {
@@ -177,7 +189,7 @@
                   link: '#',
                   items: [
                     {
-                      title: 'Chapter ' + (this.configurations.length - 1),
+                      title: 'Chapter ' + (index + 1),
                       icon: 'fa fa-bookmark',
                       items: [
                         {
@@ -195,7 +207,7 @@
                   link: '#',
                   items: [
                     {
-                      title: 'Chapter ' + (this.configurations.length - 1),
+                      title: 'Chapter ' + (index + 1),
                       icon: 'fa fa-bookmark',
                       items: [
                         {
@@ -219,6 +231,8 @@
         }
       ];
       $('#menu').multilevelpushmenu('additems', addChapter, $addTo, index);
+      var $expandTo = $(('#chapter-info-' + (index + 1)));
+      $('#menu').multilevelpushmenu('expand', $expandTo);
     };
 
     this.remove_chapter = function() {
