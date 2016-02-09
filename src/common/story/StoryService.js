@@ -254,8 +254,7 @@ $(document).ready(function() {
                       items: [
                         {
                           name: 'Add a New StoryBox...',
-                          id: 'addNewBox',
-                          link: '#'
+                          link: '#',
                           items: [
                             {
                               title: 'Add Storybox',
