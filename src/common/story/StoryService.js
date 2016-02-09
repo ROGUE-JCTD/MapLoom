@@ -150,6 +150,13 @@
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
       var index = (this.configurations.length - 1);
+      var chapterTemplate = '<form class="sidebar-content"><div class="form-group">';
+      chapterTemplate += '<label for="exampleInputEmail1">Chapter Title</label>';
+      chapterTemplate += '<input type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title"></div>';
+      chapterTemplate += '<div class="form-group"><label for="exampleInputEmail1">Summary</label>';
+      chapterTemplate += '<textarea type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title" rows="5"></textarea>';
+      chapterTemplate += '</div><button type="submit" class="btn btn-default">Save chapter info</button></form>';
+      var chapterForm = $compile(angular.element(chapterTemplate))($scope);
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
@@ -172,6 +179,7 @@
                       items: [
                         {
                           name: 'Chapter form goes here',
+                          form: chapterForm,
                           link: '#'
                         }
                       ]
@@ -245,7 +253,7 @@
       ];
       $('#menu').multilevelpushmenu('additems', addChapter, $addTo, index);
       // Bind the chapter title to the created menu object
-      var template = '<textarea ng-model="storyService.configurations[' + index + '].about.title"></textarea>';
+      var template = '<p> {{ storyService.configurations[' + index + '].about.title }} </p>';
       var chapterTitle = $compile(angular.element(template))($scope);
       $(chapterTitle).appendTo($(('#chapter' + (index + 1))));
       // Expand to the chapter info form
