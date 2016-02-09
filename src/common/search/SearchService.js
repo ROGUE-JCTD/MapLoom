@@ -44,7 +44,7 @@
       return this;
     };
 
-    this.performSearch = function(address) {
+    this.performSearch = function(address, type) {
       var currentView = mapService_.map.getView().calculateExtent([$(window).height(), $(window).width()]);
       var minBox = ol.proj.transform([currentView[0], currentView[1]],
           mapService_.map.getView().getProjection(), 'EPSG:4326');
@@ -59,29 +59,56 @@
       if (nominatimUrl.substr(nominatimUrl.length - 1) === '/') {
         nominatimUrl = nominatimUrl.substr(0, nominatimUrl.length - 1);
       }
-      var url = nominatimUrl + '/search?q=' + encodeURIComponent(address) +
-          '&format=json&limit=30&viewboxlbrt=' + encodeURIComponent(currentView.toString());
-      httpService_.get(url).then(function(response) {
-        if (goog.isDefAndNotNull(response.data) && goog.isArray(response.data)) {
-          var results = [];
-          forEachArrayish(response.data, function(result) {
-            var bbox = result.boundingbox;
-            for (var i = 0; i < bbox.length; i++) {
-              bbox[i] = parseFloat(bbox[i]);
-            }
-            results.push({
-              location: [parseFloat(result.lon), parseFloat(result.lat)],
-              boundingbox: bbox,
-              name: result.display_name
+
+      if (goog.isDefAndNotNull(type) && type == 'layer') {
+        var elastic_url = '/api/base/search/?q=' + encodeURIComponent(address) + '&limit=100&offset=0&is_published';
+
+        httpService_.get(elastic_url).then(function(response) {
+          if (goog.isDefAndNotNull(response.data) && goog.isArray(response.data.objects)) {
+            console.log('----- Search results.', response.data);
+            var results = [];
+            forEachArrayish(response.data.objects, function(result) {
+              results.push({
+                thumbnail_url: result.thumbnail_url,
+                name: result.title,
+                abstract: result.abstract,
+                id: result.id,
+                url: result.detail_url,
+                typename: result.typename
+              });
             });
-          });
-          promise.resolve(results);
-        } else {
-          promise.reject(response.status);
-        }
-      }, function(reject) {
-        promise.reject(reject.status);
-      });
+            promise.resolve(results);
+          } else {
+            promise.reject(response.status);
+          }
+        }, function(reject) {
+          promise.reject(reject.status);
+        });
+      }
+      else {
+        var url = nominatimUrl + '/search?q=' + encodeURIComponent(address) + '&format=json&limit=30&viewboxlbrt=' + encodeURIComponent(currentView.toString());
+        httpService_.get(url).then(function(response) {
+          if (goog.isDefAndNotNull(response.data) && goog.isArray(response.data)) {
+            var results = [];
+            forEachArrayish(response.data, function(result) {
+              var bbox = result.boundingbox;
+              for (var i = 0; i < bbox.length; i++) {
+                bbox[i] = parseFloat(bbox[i]);
+              }
+              results.push({
+                location: [parseFloat(result.lon), parseFloat(result.lat)],
+                boundingbox: bbox,
+                name: result.display_name
+              });
+            });
+            promise.resolve(results);
+          } else {
+            promise.reject(response.status);
+          }
+        }, function(reject) {
+          promise.reject(reject.status);
+        });
+      }
 
       return promise.promise;
     };
