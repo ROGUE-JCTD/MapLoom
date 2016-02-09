@@ -917,7 +917,7 @@
         category: service_.configuration.category,
         is_published: service_.configuration.is_published,
         chapter_index: service_.configuration.chapter_index,
-        story_id: service_.configuration.id
+        story_id: service_.configuration.story_id
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {

@@ -38,6 +38,7 @@
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         var configToSave = this.configurations[iConfig];
         configToSave['chapter_index'] = iConfig;
+        configToSave['story_id'] = this.id;
         mapservice_.configuration = configToSave;
         mapservice_.updateActiveMap(iConfig);
         mapservice_.save();
@@ -78,6 +79,7 @@
     };
 
     this.updateStoryID = function(id) {
+      this.id = id;
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         this.configurations[iConfig].id = id;
       }
