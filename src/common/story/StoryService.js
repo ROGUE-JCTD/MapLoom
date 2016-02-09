@@ -137,7 +137,7 @@
       service_.update_active_config(prevChapter);
     };
 
-    this.add_chapter = function() {
+    this.add_chapter = function($scope, $compile) {
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
       var new_chapter = mapservice_.createNewChapter();
@@ -151,8 +151,7 @@
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
-          directive: 'loom-chapter-title',
-          attr: 'storyService.configurations[' + index + '].about.title',
+          id: 'chapter' + (index + 1),
           link: '#',
           items: [
             {
@@ -243,6 +242,11 @@
         }
       ];
       $('#menu').multilevelpushmenu('additems', addChapter, $addTo, index);
+      // Bind the chapter title to the created menu object
+      var template = '<textarea ng-model="storyService.configurations[' + index + '].about.title"></textarea>';
+      var chapterTitle = $compile(angular.element(template))($scope);
+      $(chapterTitle).appendTo($(('#chapter' + (index + 1))));
+      // Expand to the chapter info form
       var $expandTo = $(('#chapter-info-' + (index + 1)));
       $('#menu').multilevelpushmenu('expand', $expandTo);
     };
