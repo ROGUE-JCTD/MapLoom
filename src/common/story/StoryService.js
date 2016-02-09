@@ -262,7 +262,7 @@ $(document).ready(function() {
                               link: '#',
                               items: [
                                 {
-                                  name: 'Story # Map Extents'
+                                  name: 'Story # Map Extents',
                                   link: '#'
                                 },
                                 {
@@ -270,7 +270,7 @@ $(document).ready(function() {
                                   link: '#'
                                 },
                                 {
-                                  name: 'Time Frame'
+                                  name: 'Time Frame',
                                   link: '#'
                                 },
                                 {
@@ -285,7 +285,6 @@ $(document).ready(function() {
                                   name: '<button class = "btn btn-default btn-lg center-block">Save Storybox</button>',
                                   link: '#'
                                 }
-
                               ]
                             }
                           ]
