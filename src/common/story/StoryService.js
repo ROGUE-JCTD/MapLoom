@@ -171,16 +171,6 @@ $(document).ready(function() {
       var chapterTemplate = '<div><label>Chapter Title</label><input class="form-control" placeholder="Chapter Title">';
       chapterTemplate += '<label>Summary</label><textarea class="form-control" placeholder="Chapter Summary" rows="5"></textarea>';
       chapterTemplate += '<button type="submit" class="btn btn-default">Save chapter info</button></div>';
-      /*
-      var chapterTemplate = '<form class="sidebar-content"><div class="form-group">';
-      chapterTemplate += '<label for="exampleInputEmail1">Chapter Title</label>';
-      chapterTemplate += '<input type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title"></div>';
-      chapterTemplate += '<div class="form-group"><label for="exampleInputEmail1">Summary</label>';
-      chapterTemplate += '<textarea type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title" rows="5"></textarea>';
-      chapterTemplate += '</div><button type="submit" class="btn btn-default">Save chapter info</button></form>';
-      */
-      //var subtitleTemplate = '{{ storyService.configurations[' + index + '].about.title }}';
-      var chapterSubtitle = 'Untitled Chapter';
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
@@ -189,7 +179,7 @@ $(document).ready(function() {
           items: [
             {
               title: 'Chapter ' + (index + 1),
-              subtitle: chapterSubtitle,
+              id: 'sub-chapter' + (index + 1),
               icon: 'fa fa-bookmark',
               items: [
                 {
@@ -327,6 +317,10 @@ $(document).ready(function() {
       var template = '<p> {{ storyService.configurations[' + index + '].about.title }} </p>';
       var chapterTitle = $compile(angular.element(template))($scope);
       $(chapterTitle).appendTo($(('#chapter' + (index + 1))));
+      // Bind the subtitle to the created chapter menu
+      template = '<h2> {{ storyService.configurations[' + index + '].about.title }} </h2>';
+      var subtitle = $compile(angular.element(template))($scope);
+      $(('#sub-chapter' + (index + 1) + ' > h2')).after(subtitle);
       // Expand to the chapter info form
       var $expandTo = $(('#chapter-info-' + (index + 1)));
       $('#menu').multilevelpushmenu('expand', $expandTo);

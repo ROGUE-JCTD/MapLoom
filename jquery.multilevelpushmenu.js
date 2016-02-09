@@ -194,12 +194,6 @@
 					    $titleIcon = $( "<i />" )
 					    .prop( { "class" : ( ( instance.settings.direction == 'rtl' ) ? "floatLeft" : "floatRight" ) + " cursorPointer " + this.icon } )
 					    .prependTo( $title );
-					    if (this.subtitle) {
-					    	var $subtitle = $( "<h2 />")
-					    	.attr( { "style" : "text-align: " + ( ( instance.settings.direction == 'rtl' ) ? "right" : "left" ) } )
-					    	.text( this.subtitle )
-					    	.appendTo( $levelHolder );
-					    }
 					$titleIcon.bind( clickEventType ,  function(e){
 						titleIconClick(e, $levelHolder, menus);
 					});
