@@ -219,7 +219,7 @@ $(document).ready(function() {
                           link: '#'
                         },
                         {
-                          name: '<button class = "btn btn-default btn-lg">Save Chapter Info</button>'
+                          name: '<button class = "btn btn-default btn-lg center-block">Save Chapter Info</button>'
                         }
                       ]
                     }
@@ -256,6 +256,40 @@ $(document).ready(function() {
                           name: 'Add a New StoryBox...',
                           id: 'addNewBox',
                           link: '#'
+                          items: [
+                            {
+                              title: 'Add Storybox',
+                              icon: 'fa fa-bookmark',
+                              link: '#',
+                              items: [
+                                {
+                                  name: 'Story # Map Extents'
+                                  link: '#'
+                                },
+                                {
+                                  name: '<p>Pan and zoom on the map to set the map bounds.</p><button class = "btn btn-default btn-lg center-block">Set Map Bounds</button>',
+                                  link: '#'
+                                },
+                                {
+                                  name: 'Time Frame'
+                                  link: '#'
+                                },
+                                {
+                                  name: '<p>Start Time</p><input type = "time" name = "start_time">',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<p>End Time<p><input type = "time" name = "end_time">',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<button class = "btn btn-default btn-lg center-block">Save Storybox</button>',
+                                  link: '#'
+                                }
+
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
