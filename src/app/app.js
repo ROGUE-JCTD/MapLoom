@@ -21,7 +21,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService) {
+                                                refreshService, dialogService, storyService, $compile) {
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;
@@ -69,7 +69,14 @@
         }
 
         $scope.mapService = mapService;
+        $scope.storyService = storyService;
         $scope.refreshService = refreshService;
+
+        $scope.addChapter = function() {
+          //console.log('Add chapter. Scope: ');
+          //console.log($scope);
+          storyService.add_chapter($scope, $compile);
+        };
       });
 
   module.provider('debugService', function() {

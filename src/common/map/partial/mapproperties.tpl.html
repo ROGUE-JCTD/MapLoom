@@ -1,0 +1,40 @@
+<div class="modal-body">
+    <form class="form-horizontal col-md-12">
+        <div class="form-group">
+            <div class="form-group">
+                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="storyService.title" type="text" class="form-control" value="{{storyService.title}}" placeholder="{{storyService.title || ('title' | translate)}}">
+            </div>
+            <div class="form-group">
+                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="storyService.abstract" class="form-control" rows="4" value="{{storyService.abstract}}" placeholder="Summary"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="id_category" class="control-label  ">
+                    Category
+                </label>
+                <div class="">
+                    <select class="form-control" id="id_category" name="category" ng-model="storyService.category">
+                        <option value="" selected="selected">---------</option>
+                        <option value="1">Biography</option>
+                        <option value="13">Crisis</option>
+                        <option value="3">Culture & Ideas</option>
+                        <option value="6">Geopolitics</option>
+                        <option value="2">Health</option>
+                        <option value="11">Human Settlement</option>
+                        <option value="9">Nature & Environment</option>
+                        <option value="19">Science & Industry</option>
+                    </select>
+                    <p class="help-block">high-level geographic data thematic classification to assist in the grouping and search of available geographic data sets.</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mapKeywords">Keywords</label><textarea id="mapKeywords" ng-model="storyService.keywords" class="form-control" value="{{storyService.keywords}}"></textarea>
+                <p class="help-block">commonly used word(s) or formalised word(s) or phrase(s) used to describe the subject (space or comma-separated).</p>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" data-dismiss="modal">{{'save_btn' | translate}}</button>
+</div>
+
+

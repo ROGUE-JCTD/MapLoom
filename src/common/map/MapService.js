@@ -11,6 +11,7 @@
   var dialogService_ = null;
   var pulldownService_ = null;
   var tableViewService_ = null;
+  //var location_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -144,6 +145,7 @@
       this.title = this.configuration.about.title;
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
+      this.configuration.map['id'] = this.id;
       this.save_method = 'POST';
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
@@ -153,7 +155,9 @@
         this.save_url = '/maps/new/data';
       }
 
-      this.map = this.createMap();
+      this.maps = [];
+      this.maps.push(this.createMap());
+      this.map = this.maps[0];
 
       // now taht we have a map, lets try to add layers and servers
       service_.loadLayers();
@@ -839,6 +843,10 @@
       return translate_.instant('new_map');
     };
 
+    this.getMap = function(chapter_index) {
+      return this.maps[chapter_index];
+    };
+
     this.getCenter = function() {
       return this.map.getView().getCenter();
     };
@@ -852,15 +860,15 @@
     };
 
     this.getSaveURL = function() {
-      if (goog.isDefAndNotNull(service_.id) && service_.id) {
-        return '/maps/' + service_.id + '/data';
+      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
+        return '/maps/' + service_.configuration.map.id + '/data';
       } else {
         return '/maps/new/data';
       }
     };
 
     this.getSaveHTTPMethod = function() {
-      if (goog.isDefAndNotNull(service_.id) && service_.id) {
+      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
         return 'PUT';
       } else {
         return 'POST';
@@ -869,29 +877,47 @@
 
     // Update the map after save.
     this.updateMap = function(data) {
-      service_.id = data.id;
+      service_.configuration.map.id = data.id;
+    };
+
+    this.updateActiveMap = function(chapter_index) {
+      this.map = this.maps[chapter_index];
+    };
+    //Create a new configuration object, with default map
+    //Function could be used to encourage using similar projections for maps.
+    this.createNewChapter = function() {
+      var cfg = configService_.initial_config;
+
+      this.maps.push(this.createMap());
+
+      return cfg;
     };
 
     this.save = function(copy) {
 
       if (goog.isDefAndNotNull(copy) && copy) {
         // remove current map id so that it is saved as a new map.
-        service_.id = null;
+        service_.configuration.map.id = null;
       }
 
       var cfg = {
         about: {
-          abstract: service_.abstract,
-          title: service_.title
+          abstract: service_.configuration.about.abstract,
+          title: service_.configuration.about.title
         },
         map: {
-          id: service_.id || 0,
+          id: service_.configuration.map.id || 0,
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
-          layers: []
+          layers: [],
+          keywords: service_.map.keywords
         },
-        sources: []
+        sources: [],
+        category: service_.configuration.category,
+        is_published: service_.configuration.is_published,
+        chapter_index: service_.configuration.chapter_index,
+        story_id: service_.configuration.id
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {

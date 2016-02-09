@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html ng-app="MapLoom" ng-controller="AppCtrl">
 <head>
+
 <title ng-bind="pageTitle"></title>
 
   <meta charset="UTF-8">
@@ -18,6 +19,7 @@
     <% } %>
 
 <% }); %>
+
 <link rel="stylesheet" type="text/css" href="http://visjs.org/dist/vis.css"/>
     <!--link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/-->
 
@@ -77,163 +79,63 @@
   };
 </script>
 
+
+
 </head>
 <body class="maploom-body">
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
 <% } %>
-<div id="map" class="map">
-  <div class="map-shadow"></div>
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Editing MapStory: The American Civil War (Chapter 1 of 6)</a>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar">
-      <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="#">Preview</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Save <span style="color:lightgray">(autosaved 3m ago)</span><span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Save as draft</a></li>
-            <li><a href="#">Publish...</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div id="pulldown" ng-controller="LoomPulldownController">
-    <div id="pulldown-shadow">
-      <div class="panel flat" id="map-title">
-        <div class="panel-heading">
-          <em id="map-name">
-              <span ng-class="{'hide': saveButton}">StoryLayer Editing (Test)</span>
-            <div class="map-title-text ellipsis" ng-class="{'hide': !saveButton}">{{ mapService.getTitle() }}</div>
-            <i id="saveButton" class="glyphicon pull-right" data-target="#saveMap"
-               tooltip-placement="bottom" tooltip="{{'save_this_map' | translate}}" tooltip-append-to-body="true"
-               ng-class="{'hide': !configService.username || !saveButton}" data-toggle="modal"></i>
-            <i id="refreshButton" class="glyphicon pull-right" ng-click="refreshService.refreshLayers()"
-               tooltip-placement="bottom" tooltip="{{'refresh_layers' | translate}}" tooltip-append-to-body="true"></i>
-          </em>
-          <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
+        <div id="menu" style="float: left;">
+            <nav>
+                <h2>
+                  <i class="fa fa-reorder"></i>
+                  {{ storyService.title }}
+                  <br><br>
+                  <button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button>
+                  <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button>
+                  <!-- TOOD: update with correct preview link -->
+                  <button type="button" class="btn btn-default btn-md">Preview</button>
+              </h2>
+                <ul>
+                </ul>
+                <ul>
+                    <li>
+                        <a href="#" id="addchapter" ng-click="addChapter();"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>
+                    </li>
+                    <li>
+                        <a href="/getskills" target="_blank"><i class="fa fa-support"></i> Help</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-      </div>
-      <div class="loom-search" ng-class="{'hide': !saveButton}"></div>
-      <div id="pulldown-menu" class="panel-group in">
-        <div id="pulldown-content">
-          <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
-            <div class="tooltip-mask" tooltip="{{notificationStartTime}}"
-                 tooltip-append-to-body="true" tooltip-placement="right" data-toggle="collapse"
-                 data-parent="#pulldown-content" data-target="#notification-panel"></div>
-            <div class="panel-heading">
-              <span translate="notifications_tab" >Notifications</span>
-              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle"
-                   ng-click="toggleModal('#generate-notification-dialog')"
-                   tooltip-placement="top" tooltip="{{'generate_notification' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-time panel-header-button pull-right"></div>
-              <span class="loom-notification-badge pull-right" tooltip="{{'unread_notifications' | translate}}"
-                    tooltip-append-to-body="true"
-                    tooltip-placement="top"></span>
-            </div>
-            <div id="notification-panel" class="panel-collapse collapse pulldown-panel">
-              <div notification-empty-text="'no_notifications' | translate"
-                   class="loom-notifications">
-              </div>
-            </div>
-          </div>
-            <div class="panel" ng-show="storyboxPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#storybox-manager-panel">
-              <span translate="map_storybox">Map StoryBoxes</span>
-              <div ng-show="addStorybox" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-storybox-dialog')"
-                   tooltip-placement="top" tooltip="{{'add_storybox_btn' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
-              <div id="server-loadingn" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
-            </div>
-            <div id="storybox-manager-panel" class="panel-collapse collapse pulldown-panel">
-              <div class="loom-storyboxes"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="layersPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#layer-manager-panel">
-              <span translate="map_layers">Map Layers</span>
-              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-layer-dialog')"
-                   tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
-              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
-            </div>
-            <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
-              <div class="loom-layers"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="syncPanel">
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#syncronization-panel">
-              <span translate="synchronization">Synchronization</span>
-
-              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#configWindow')"
-                   tooltip-placement="top" tooltip="{{'remote_options' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-cog panel-header-button pull-right"></div>
-            </div>
-            <div id="syncronization-panel" class="panel-collapse collapse">
-              <div class="loom-synclinks"></div>
-            </div>
-          </div>
-          <div class="panel" ng-show="historyPanel" ng-controller="LoomHistoryController">
-            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#history-panel">
-              <span class="ellipsis pulldown-menu-title">{{title}}</span>
-
-              <div stop-event='click' ng-click="clearHistory()"
-                   class="glyphicon glyphicon-remove pull-right panel-header-button"></div>
-              <div stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#historyDiffWindow')"
-                   tooltip-placement="top" tooltip="{{'history_summary' | translate}}" tooltip-append-to-body="true"
-                   class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
-            </div>
-            <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes
-              here.
-            </div>
-          </div>
-          <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
-            <div class="panel-heading fixed-height-header" data-toggle="collapse" data-parent="#pulldown-content"
-                 data-target="#diff-panel">
-              <span class="ellipsis pulldown-menu-title">{{title}}</span>
-
-              <div ng-if="!isMerge" stop-event='click' ng-click="clearDiff()"
-                   class="glyphicon glyphicon-remove panel-header-button pull-right"></div>
-              <span ng-class="{'hidden': !(numConflicts > 0)}" class="badge pull-right">{{numConflicts}}</span>
-            </div>
-            <div id="diff-panel" class="loom-diff-panel panel-collapse collapse pulldown-panel">Diffs go here.</div>
-          </div>
-        </div>
+<div id="pushobj" style="width: 74%; height: 100%; float: left;">
+  <div id="map" class="map">
+    <div class="map-shadow"></div>
+    <div class="loom-notification-poster"></div>
+    <div class="loom-legend"></div>
+    <div class="loom-exclusive-mode"></div>
+    <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
+               tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
+      <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
+        <i class="glyphicon glyphicon-globe"></i>
       </div>
     </div>
-    <button ng-disabled="!toggleEnabled" type="button" data-toggle="collapse" data-target="#pulldown-menu" translate="toggle_menu"
-            class="toggle-menu toggle btn btn-default flat-top">Toggle Menu
-    </button>
-  </div>
-  <div class="loom-notification-poster"></div>
-  <div class="loom-legend"></div>
-  <div class="loom-exclusive-mode"></div>
-  <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
-             tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
-    <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
-      <i class="glyphicon glyphicon-globe"></i>
+    <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
+         tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
+      <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
+        <i class="glyphicon glyphicon-map-marker"></i>
+      </div>
     </div>
-  </div>
-  <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
-       tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
-    <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
-      <i class="glyphicon glyphicon-map-marker"></i>
+    <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
+         tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
+      <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
+        <i class="glyphicon glyphicon-fullscreen"></i>
+      </div>
     </div>
+    <div class="loom-timeline"></div>
   </div>
-  <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
-       tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
-    <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
-      <i class="glyphicon glyphicon-fullscreen"></i>
-    </div>
-  </div>
-  <div class="loom-timeline"></div>
+</div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">
@@ -305,6 +207,19 @@
 </div>
 <div loom-modal id="add-storybox-dialog" modal-title="add_storybox">
   <div loom-storybox id="storybox">
+  </div>
+</div>
+<!-- New Modals -->
+<div loom-modal id="mapProperties" modal-title="MapStory Properties">
+  <div loom-map-properties id="map-properties">
+  </div>
+</div>
+<div loom-modal id="mapSave" modal-title="Save MapStory?">
+  <div loom-map-save id="map-save">
+  </div>
+</div>
+<div loom-modal id="chapterDelete" modal-title="Are you sure you want to delete this chapter?">
+  <div loom-chapter-delete id="chapter-delete">
   </div>
 </div>
 
