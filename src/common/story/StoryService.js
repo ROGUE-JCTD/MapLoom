@@ -217,6 +217,9 @@ $(document).ready(function() {
                         {
                           name: '<textarea rows ="6" cols="40"></textarea>',
                           link: '#'
+                        },
+                        {
+                          name: '<button class = "btn btn-default btn-lg">Save Chapter Info</button>'
                         }
                       ]
                     }
