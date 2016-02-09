@@ -197,7 +197,7 @@ $(document).ready(function() {
                           link: '#'
                         },
                         {
-                          name: '<input type="text" name="test" id="test" value="" />',
+                          name: '<input type="text" name="chapterTitle" />',
                           link: '#'
                         },
                         {
@@ -295,7 +295,52 @@ $(document).ready(function() {
                         {
                           name: 'Add a New StoryPin...',
                           id: 'addNewPin',
-                          link: '#'
+                          link: '#',
+                          items: [
+                            {
+                              title: 'Add StoryPin',
+                              link: '#'
+                            },
+                            {
+                              name: 'StoryPin Title',
+                              link: '#'
+                            },
+                            {
+                              name: '<input type="text" name="storyPinTitle" />',
+                              link: '#'
+                            },
+                            {
+                              name: 'StoryPin Content',
+                              link: '#'
+                            },
+                            {
+                              name: '<input type="text" name="storyPinContent" />',
+                              link: '#'
+                            },
+                            {
+                              name: '<button class = "btn btn-default btn-lg center-block">Link Media...</button>',
+                              link: '#'
+                            },
+                            {
+                              name: 'Pin Location',
+                              link: '#'
+                            },
+                            {
+                              name: '<p>Drop pin on the map to set pin location</p><button class = "btn btn-default btn-lg center-block">Save Pin Location</button>',
+                              link: '#'
+                            },
+                            {
+                              name: 'Time',
+                              link: '#'
+                            },
+                            {
+                              name: '<input type = "time" name = "end_time">',
+                              link: '#'
+                            },
+                            {
+                              name: '<button class = "btn btn-default btn-lg center-block">Save StoryPin</button>'
+                            }
+                          ]
                         }
                       ]
                     }
