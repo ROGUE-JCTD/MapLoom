@@ -354,7 +354,7 @@
 				    if( item.id != undefined ) $item.attr( { "id" : item.id } );
 					var $itemAnchor = $( "<a />" )
 				    .prop( { "href" : item.link } )
-				    .text( item.name )
+				    .html( item.name )
 				    .appendTo( $item ),
 				    $itemIcon = $( "<i />" )
 					.prop( { "class" : ( ( instance.settings.direction == 'rtl' ) ? "floatLeft " : "floatRight " ) + item.icon } )

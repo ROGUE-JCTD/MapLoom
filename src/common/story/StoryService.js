@@ -165,7 +165,6 @@
       */
       //var subtitleTemplate = '{{ storyService.configurations[' + index + '].about.title }}';
       var chapterSubtitle = 'Untitled Chapter';
-      var chapterForm = $compile(angular.element(chapterTemplate))($scope);
       var addChapter = [
         {
           name: 'Chapter ' + (index + 1),
@@ -188,7 +187,11 @@
                       icon: 'fa fa-info-cicle',
                       items: [
                         {
-                          form: chapterForm,
+                          name: 'Chapter Title',
+                          link: '#'
+                        },
+                        {
+                          name: '<input type="text" name="test" id="test" value="" />',
                           link: '#'
                         }
                       ]
