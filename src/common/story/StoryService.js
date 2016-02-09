@@ -1,3 +1,19 @@
+$(document).ready(function() {
+  $('#menu').multilevelpushmenu({
+    menu: arrMenu,
+    onItemClick: function() {
+      var e = arguments[0];
+      if ($(e.target).prop('tagName').toLowerCase() == 'input') {
+        $(e.target).focus();
+        $(e.target).val('focused');
+        $(e.target).blur(function() {
+          $(e.target).val('blured');
+        });
+      }
+    }
+  });
+});
+
 (function() {
   var module = angular.module('loom_story_service', ['ngCookies']);
   var service_ = null;
@@ -192,6 +208,14 @@
                         },
                         {
                           name: '<input type="text" name="test" id="test" value="" />',
+                          link: '#'
+                        },
+                        {
+                          name: 'Chapter Summary',
+                          link: '#'
+                        },
+                        {
+                          name: '<textarea rows ="6" cols="50"></textarea>',
                           link: '#'
                         }
                       ]
