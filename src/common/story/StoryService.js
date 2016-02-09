@@ -215,7 +215,7 @@ $(document).ready(function() {
                           link: '#'
                         },
                         {
-                          name: '<textarea rows ="6" cols="50"></textarea>',
+                          name: '<textarea rows ="6" cols="40"></textarea>',
                           link: '#'
                         }
                       ]
