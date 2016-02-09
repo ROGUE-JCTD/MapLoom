@@ -143,6 +143,8 @@
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
       var new_chapter = mapservice_.createNewChapter();
+      new_chapter.about.title = 'Untitled Chapter';
+      new_chapter.about.summary = '';
       new_chapter['story_id'] = service_.id;
       this.configurations.push(new_chapter);
       service_.update_active_config(this.configurations.length - 1);
@@ -150,12 +152,19 @@
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
       var index = (this.configurations.length - 1);
+      var chapterTemplate = '<div><label>Chapter Title</label><input class="form-control" placeholder="Chapter Title">';
+      chapterTemplate += '<label>Summary</label><textarea class="form-control" placeholder="Chapter Summary" rows="5"></textarea>';
+      chapterTemplate += '<button type="submit" class="btn btn-default">Save chapter info</button></div>';
+      /*
       var chapterTemplate = '<form class="sidebar-content"><div class="form-group">';
       chapterTemplate += '<label for="exampleInputEmail1">Chapter Title</label>';
       chapterTemplate += '<input type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title"></div>';
       chapterTemplate += '<div class="form-group"><label for="exampleInputEmail1">Summary</label>';
       chapterTemplate += '<textarea type="email" class="form-control" id="chapterTitle" placeholder="Lorem Title" rows="5"></textarea>';
       chapterTemplate += '</div><button type="submit" class="btn btn-default">Save chapter info</button></form>';
+      */
+      //var subtitleTemplate = '{{ storyService.configurations[' + index + '].about.title }}';
+      var chapterSubtitle = 'Untitled Chapter';
       var chapterForm = $compile(angular.element(chapterTemplate))($scope);
       var addChapter = [
         {
@@ -165,6 +174,7 @@
           items: [
             {
               title: 'Chapter ' + (index + 1),
+              subtitle: chapterSubtitle,
               icon: 'fa fa-bookmark',
               items: [
                 {
@@ -178,7 +188,6 @@
                       icon: 'fa fa-info-cicle',
                       items: [
                         {
-                          name: 'Chapter form goes here',
                           form: chapterForm,
                           link: '#'
                         }
