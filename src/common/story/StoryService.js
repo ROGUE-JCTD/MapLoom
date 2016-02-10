@@ -1,19 +1,3 @@
-$(document).ready(function() {
-  $('#menu').multilevelpushmenu({
-    menu: arrMenu,
-    onItemClick: function() {
-      var e = arguments[0];
-      if ($(e.target).prop('tagName').toLowerCase() == 'input') {
-        $(e.target).focus();
-        $(e.target).val('focused');
-        $(e.target).blur(function() {
-          $(e.target).val('blured');
-        });
-      }
-    }
-  });
-});
-
 (function() {
   var module = angular.module('loom_story_service', ['ngCookies']);
   var service_ = null;
@@ -197,7 +181,7 @@ $(document).ready(function() {
                           link: '#'
                         },
                         {
-                          name: '<input type="text" name="chapterTitle" />',
+                          name: '<input type="text" name="test" id="test" value="" />',
                           link: '#'
                         },
                         {
@@ -295,52 +279,7 @@ $(document).ready(function() {
                         {
                           name: 'Add a New StoryPin...',
                           id: 'addNewPin',
-                          link: '#',
-                          items: [
-                            {
-                              title: 'Add StoryPin',
-                              link: '#'
-                            },
-                            {
-                              name: 'StoryPin Title',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type="text" name="storyPinTitle" />',
-                              link: '#'
-                            },
-                            {
-                              name: 'StoryPin Content',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type="text" name="storyPinContent" />',
-                              link: '#'
-                            },
-                            {
-                              name: '<button class = "btn btn-default btn-lg center-block">Link Media...</button>',
-                              link: '#'
-                            },
-                            {
-                              name: 'Pin Location',
-                              link: '#'
-                            },
-                            {
-                              name: '<p>Drop pin on the map to set pin location</p><button class = "btn btn-default btn-lg center-block">Save Pin Location</button>',
-                              link: '#'
-                            },
-                            {
-                              name: 'Time',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type = "time" name = "end_time">',
-                              link: '#'
-                            },
-                            {
-                              name: '<button class = "btn btn-default btn-lg center-block">Save StoryPin</button>'
-                            }
-                          ]
+                          link: '#'
                         }
                       ]
                     }
