@@ -4,15 +4,17 @@ var arrayMenu = [
     icon: 'fa fa-reorder',
     items: [
       {
-        name: '<button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button><button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button> <button type="button" class="btn btn-default btn-md">Preview</button>',
+        name: '<button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button> <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button> <button type="button" class="btn btn-default btn-md">Preview</button>',
         link: '#'
       },
       {
-        name: '<a href="#" id="addchapter" ng-click="addChapter();"><i class="fa fa-plus-square-o"></i> Add a new chapter</a>',
+        name: '<a id="addchapter" ng-click="addChapter();">Add a new chapter</a>',
+        icon: 'fa fa-plus-square-o',
         link: '#'
       },
       {
-        name: '<a href="/getskills" target="_blank"><i class="fa fa-support"></i> Help</a>',
+        name: '<a href="/getskills" target="_blank">Help</a>',
+        icon: 'fa fa-support',
         link: '#'
       }
     ]
