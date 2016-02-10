@@ -73,10 +73,68 @@
         $scope.refreshService = refreshService;
 
         $scope.addChapter = function() {
-          //console.log('Add chapter. Scope: ');
-          //console.log($scope);
           storyService.add_chapter($scope, $compile);
         };
+
+        $scope.initMenu = function() {
+          var titleTemplate = '<p>{{ storyService.title }}</p>';
+          var addChapterTemplate = '<a id="addchapter" ng-click="addChapter();">Add a new chapter</a>';
+          var title = $compile(angular.element(titleTemplate))($scope);
+          var addChapter = $compile(angular.element(addChapterTemplate))($scope);
+          var arrayMenu = [
+            {
+              title: title,
+              icon: 'fa fa-reorder',
+              items: [
+                {
+                  name: '<button type="button" class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary</button> <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-md">Save MapStory...</button> <button type="button" class="btn btn-default btn-md">Preview</button>',
+                  link: '#'
+                },
+                {
+                  name: addChapter,
+                  icon: 'fa fa-plus-square-o',
+                  link: '#'
+                },
+                {
+                  name: '<a href="/getskills" target="_blank">Help</a>',
+                  icon: 'fa fa-support',
+                  link: '#'
+                }
+              ]
+            }
+          ];
+          // HTML markup implementation, cover mode
+          $('#menu').multilevelpushmenu({
+            menu: arrayMenu,
+            containersToPush: [$('pushobj')],
+            mode: 'cover',
+            onItemClick: function() {
+              $item = arguments[2];
+              var idOfClicked = $item[0].id;
+              // If the item has the id 'deleteChapter', then spawn the modal
+              if (idOfClicked === 'deleteChapter') {
+                $('#chapterDelete').modal('show');
+              }
+              // If the item has the id 'addNewLayer', then spawn the modal
+              if (idOfClicked === 'addNewLayer') {
+                $('#add-layer-dialog').modal('show');
+              }
+            },
+            onCollapseMenuEnd: function() {
+              // Only if the entire menu is deactivated, expand map
+              var active = $('#menu').multilevelpushmenu('activemenu');
+              console.log(active);
+              if (active.prevObject.length === 0) {
+                $('#pushobj').css('width', '94%');
+              }
+            },
+            onExpandMenuStart: function() {
+              $('#pushobj').css('width', '74%');
+            }
+          });
+        };
+
+        $scope.initMenu();
       });
 
   module.provider('debugService', function() {

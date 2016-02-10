@@ -189,7 +189,7 @@
 					if( this.id != undefined ) $levelHolder.attr( { "id" : this.id } );
 					var $title = $( "<h2 />" )
 						.attr( { "style" : "text-align: " + ( ( instance.settings.direction == 'rtl' ) ? "right" : "left" ) } )
-					    .text( this.title )
+					    .html( this.title )
 					    .appendTo( $levelHolder ),
 					    $titleIcon = $( "<i />" )
 					    .prop( { "class" : ( ( instance.settings.direction == 'rtl' ) ? "floatLeft" : "floatRight" ) + " cursorPointer " + this.icon } )
