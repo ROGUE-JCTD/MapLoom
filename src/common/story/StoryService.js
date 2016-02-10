@@ -149,6 +149,8 @@
       this.configurations.push(new_chapter);
       service_.update_active_config(this.configurations.length - 1);
 
+      console.log(this.configurations);
+
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
       var index = (this.configurations.length - 1);
@@ -364,6 +366,13 @@
       if (this.configurations.length > 0) {
         this.update_active_config(0);
       }
+
+      // Angular bindings will update to reflect the above change, so just delete the last chapter in the UI
+      // TODO: Get rid of the +1 at some point when we start with a Chapter 1.
+      $(('#chapter' + (this.configurations.length + 1))).remove();
+
+      // Switch focus to base level of menu
+      $('#menu').multilevelpushmenu('collapse', 0);
     };
 
   });
