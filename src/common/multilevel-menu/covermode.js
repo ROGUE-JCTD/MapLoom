@@ -14,12 +14,8 @@ $(document).ready(function() {
       if (idOfClicked === 'addNewLayer') {
         $('#add-layer-dialog').modal('show');
       }
-      // If the item has the id 'addNewBox', then spawn the modal
-      if (idOfClicked === 'addNewBox') {
-        $('#add-storybox-dialog').modal('show');
-      }
-      if (idOfClicked === 'addNewPin') {
-        $('#add-pin-dialog').modal('show');
+      if ($(idOfClicked.target).prop('tagName').toLowerCase() === 'input') {
+        $(idOfClicked.target).focus();
       }
     },
     onCollapseMenuEnd: function() {
