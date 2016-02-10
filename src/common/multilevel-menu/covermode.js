@@ -4,7 +4,7 @@ $(document).ready(function() {
     containersToPush: [$('pushobj')],
     mode: 'cover',
     onItemClick: function() {
-      $item = arguments[2];
+      $item = arguments[0];
       var idOfClicked = $item[0].id;
       // If the item has the id 'deleteChapter', then spawn the modal
       if (idOfClicked === 'deleteChapter') {
@@ -14,8 +14,8 @@ $(document).ready(function() {
       if (idOfClicked === 'addNewLayer') {
         $('#add-layer-dialog').modal('show');
       }
-      if ($(idOfClicked.target).prop('tagName').toLowerCase() === 'input') {
-        $(idOfClicked.target).focus();
+      if ($(item.target).prop('tagName').toLowerCase() == 'input') {
+        $(item.target).focus();
       }
     },
     onCollapseMenuEnd: function() {

@@ -189,7 +189,7 @@
                           link: '#'
                         },
                         {
-                          name: '<textarea rows ="6" cols="40"></textarea>',
+                          name: '<textarea rows ="6" cols="30"></textarea>',
                           link: '#'
                         },
                         {
@@ -278,8 +278,56 @@
                       items: [
                         {
                           name: 'Add a New StoryPin...',
-                          id: 'addNewPin',
-                          link: '#'
+                          link: '#',
+                          items: [
+                            {
+                              title: 'Add StoryPin',
+                              icon: 'fa fa-bookmark',
+                              link: '#',
+                              items: [
+                                {
+                                  name: 'StoryPin Title',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<input type="text" name="storyPinTitle" />',
+                                  link: '#'
+                                },
+                                {
+                                  name: 'StoryPin Content',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<input type="text" name="storyPinContent" />',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<button class = "btn btn-default btn-lg center-block">Link Media...</button>',
+                                  link: '#'
+                                },
+                                {
+                                  name: 'Pin Location',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<p>Drop pin on the map to set pin location</p><button class = "btn btn-default btn-lg center-block">Save Pin Location</button>',
+                                  link: '#'
+                                },
+                                {
+                                  name: 'Time',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<input type = "time" name = "storyPinTime">',
+                                  link: '#'
+                                },
+                                {
+                                  name: '<button class = "btn btn-default btn-lg center-block">Save StoryPin</button>',
+                                  link: '#'
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
