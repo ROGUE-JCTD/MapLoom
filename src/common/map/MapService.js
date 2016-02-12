@@ -145,7 +145,6 @@
       this.title = this.configuration.about.title;
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
-      this.configuration.map['id'] = this.id;
       this.save_method = 'POST';
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
@@ -155,12 +154,13 @@
         this.save_url = '/maps/new/data';
       }
 
-      this.maps = [];
-      this.maps.push(this.createMap());
-      this.map = this.maps[0];
+      this.map = this.createMap();
 
-      // now taht we have a map, lets try to add layers and servers
-      service_.loadLayers();
+      // now that we have a map, lets try to add layers and servers
+      service_.loadLayers(configService_.configuration);
+
+      this.chapterLayers = [];
+      this.chapterLayers.push(this.map.getLayerGroup());
 
       this.editLayer = createVectorEditLayer();
 
@@ -859,16 +859,16 @@
       return this.map.getView().getZoom();
     };
 
-    this.getSaveURL = function() {
-      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
-        return '/maps/' + service_.configuration.map.id + '/data';
+    this.getSaveURL = function(id) {
+      if (goog.isDefAndNotNull(id) && id) {
+        return '/maps/' + id + '/data';
       } else {
         return '/maps/new/data';
       }
     };
 
-    this.getSaveHTTPMethod = function() {
-      if (goog.isDefAndNotNull(service_.configuration.map.id) && service_.configuration.map.id) {
+    this.getSaveHTTPMethod = function(id) {
+      if (goog.isDefAndNotNull(id) && id) {
         return 'PUT';
       } else {
         return 'POST';
@@ -880,44 +880,48 @@
       service_.configuration.map.id = data.id;
     };
 
-    this.updateActiveMap = function(chapter_index) {
-      this.map = this.maps[chapter_index];
+    this.updateActiveMap = function(chapter_index, chapter_config) {
+      var activeLayers = this.chapterLayers[chapter_index];
+      this.map.setLayerGroup(activeLayers);
+
+      service_.loadMap(chapter_config);
     };
     //Create a new configuration object, with default map
     //Function could be used to encourage using similar projections for maps.
-    this.createNewChapter = function() {
-      var cfg = configService_.initial_config;
+    this.createNewChapter = function(new_config) {
 
-      this.maps.push(this.createMap());
+      //TODO: May have to remove layers from existing layer group instead of creating new one.
+      this.chapterLayers.push(new ol.layer.Group());
+      //var new_index = this.chapterLayers.length - 1;
 
-      return cfg;
+      //this.updateActiveMap(new_index,new_config);
     };
 
-    this.save = function(copy) {
+    this.save = function(config) {
 
-      if (goog.isDefAndNotNull(copy) && copy) {
-        // remove current map id so that it is saved as a new map.
-        service_.configuration.map.id = null;
-      }
+      //if (goog.isDefAndNotNull(copy) && copy) {
+      // remove current map id so that it is saved as a new map.
+      //service_.configuration.map.id = null;
+      //}
 
       var cfg = {
         about: {
-          abstract: service_.configuration.about.abstract,
-          title: service_.configuration.about.title
+          abstract: config.about.abstract,
+          title: config.about.title
         },
         map: {
-          id: service_.configuration.map.id || 0,
+          id: config.map.id || 0,
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
           layers: [],
-          keywords: service_.map.keywords
+          keywords: config.map.keywords
         },
         sources: [],
-        category: service_.configuration.category,
-        is_published: service_.configuration.is_published,
-        chapter_index: service_.configuration.chapter_index,
-        story_id: service_.configuration.story_id
+        category: config.category,
+        is_published: config.is_published,
+        chapter_index: config.chapter_index,
+        story_id: config.story_id
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
@@ -971,8 +975,8 @@
       console.log('--- save.cfg: ', cfg);
 
       httpService_({
-        url: service_.getSaveURL(),
-        method: service_.getSaveHTTPMethod(),
+        url: service_.getSaveURL(cfg.map.id),
+        method: service_.getSaveHTTPMethod(cfg.map.id),
         data: JSON.stringify(cfg),
         headers: {
           'X-CSRFToken': configService_.csrfToken
@@ -980,6 +984,8 @@
       }).success(function(data, status, headers, config) {
         service_.updateMap(data);
         console.log('----[ map.save success. ', data, status, headers, config);
+        return data.id;
+        //return data.id;
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));
@@ -990,26 +996,34 @@
       });
     };
 
-    this.loadLayers = function() {
-      //TODO: use configService_.configuration instead of saving ref in this service
-      console.log('=======[[ using service_.configuration: ', service_.configuration);
+    this.loadMap = function(config) {
+      //Update map view with new config view information
+      this.map.getView().setCenter(config.map.center);
+      this.map.getView().setZoom(config.map.zoom);
 
-      if (goog.isDefAndNotNull(service_.configuration) &&
-          goog.isDefAndNotNull(service_.configuration.sources) &&
-          goog.isDefAndNotNull(service_.configuration.map) &&
-          goog.isDefAndNotNull(service_.configuration.map.layers)) {
+      service_.loadLayers(config);
+    };
+
+    this.loadLayers = function(config) {
+      //TODO: use configService_.configuration instead of saving ref in this service
+      console.log('=======[[ using service_.configuration: ', config);
+
+      if (goog.isDefAndNotNull(config) &&
+          goog.isDefAndNotNull(config.sources) &&
+          goog.isDefAndNotNull(config.map) &&
+          goog.isDefAndNotNull(config.map.layers)) {
 
         // go through each server and if any of them are pointing to a specific layer's wms change it to point to
         // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
-        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
+        goog.object.forEach(config.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
             serverService_.replaceVirtualServiceUrl(serverInfo);
           }
         });
 
-        var ordered = new Array(service_.configuration.sources.length);
-        console.log('service_.configuration.sources: ', service_.configuration.sources);
-        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
+        var ordered = new Array(config.sources.length);
+        console.log('config.sources: ', config.sources);
+        goog.object.forEach(config.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
 
@@ -1056,8 +1070,8 @@
                   ' serverInfo: ', serverInfo, ', foundServer: ', foundServer);
 
               // update any layer's source that is using this duplicate server to the existing server
-              for (var index2 = 0; index2 < service_.configuration.map.layers.length; index2++) {
-                var layer = service_.configuration.map.layers[index2];
+              for (var index2 = 0; index2 < config.map.layers.length; index2++) {
+                var layer = config.map.layers[index2];
                 if (layer.source === key.toString()) {
                   console.log('====[ Note: updating layer source from old:', layer.source,
                       ', to new: ', foundServerIndex, ', layer: ', layer);
@@ -1071,8 +1085,8 @@
 
             // Ignore lazy loading if a map layer depends on the server.
             if (serverInfo.lazy === true) {
-              for (var layerIndex = 0; layerIndex < service_.configuration.map.layers.length; layerIndex++) {
-                var mapLayer = service_.configuration.map.layers[layerIndex];
+              for (var layerIndex = 0; layerIndex < config.map.layers.length; layerIndex++) {
+                var mapLayer = config.map.layers[layerIndex];
                 if (mapLayer.source === key.toString() && goog.isDefAndNotNull(mapLayer.name)) {
                   console.log('====[ Note: Server is marked as lazy, but a map layer depends on the server.  ' +
                       'Will ignore lazy flag.', serverInfo, mapLayer);
@@ -1093,7 +1107,7 @@
 
           // get all layers that refer to this serverIndex
           var configs = [];
-          goog.array.forEach(service_.configuration.map.layers, function(layerInfo, index, obj) {
+          goog.array.forEach(config.map.layers, function(layerInfo, index, obj) {
             // Note: config.source will be string while serverIndex might be number
             if (layerInfo.source == configServerIndex) {
               layerInfo.temp_layerOrder = index;
@@ -1167,7 +1181,7 @@
 
         //TODO: once all servers were added, async, then add any missing ones.
       } else {
-        console.log('invalid config object, cannot load map: ', service_.configuration);
+        console.log('invalid config object, cannot load map: ', config);
         alert('invalid config object, cannot load map');
       }
     };

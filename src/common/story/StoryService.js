@@ -39,9 +39,7 @@
         var configToSave = this.configurations[iConfig];
         configToSave['chapter_index'] = iConfig;
         configToSave['story_id'] = this.id;
-        mapservice_.configuration = configToSave;
-        mapservice_.updateActiveMap(iConfig);
-        mapservice_.save();
+        this.configurations[iConfig].map.id = mapservice_.save(configToSave);
       }
     };
 
@@ -113,9 +111,7 @@
       //All services (except mapservice) use configServices configuration
       configService_.configuration = this.active_chapter;
 
-      //TODO: This should be handled through updating the configService configuration
-      mapservice_.configuration = this.active_chapter;
-      mapservice_.updateActiveMap(this.active_index);
+      mapservice_.updateActiveMap(this.active_index, this.active_chapter);
 
     };
 
@@ -142,11 +138,13 @@
     this.add_chapter = function($scope, $compile) {
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
-      var new_chapter = mapservice_.createNewChapter();
+      var new_chapter = configService_.initial_config;
+      new_chapter['story_id'] = service_.id;
+      new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
       new_chapter.about.summary = '';
-      new_chapter['story_id'] = service_.id;
       this.configurations.push(new_chapter);
+      mapservice_.createNewChapter(new_chapter);
       service_.update_active_config(this.configurations.length - 1);
 
       console.log(this.configurations);
