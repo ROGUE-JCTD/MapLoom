@@ -11,7 +11,6 @@
   var dialogService_ = null;
   var pulldownService_ = null;
   var tableViewService_ = null;
-  //var location_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -981,11 +980,11 @@
         headers: {
           'X-CSRFToken': configService_.csrfToken
         }
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers) {
         service_.updateMap(data);
-        console.log('----[ map.save success. ', data, status, headers, config);
-        return data.id;
-        //return data.id;
+        console.log('----[ map.save success. ', data, status, headers);
+        config.map.id = data.id;
+
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));

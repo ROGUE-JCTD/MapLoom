@@ -36,10 +36,10 @@
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
-        var configToSave = this.configurations[iConfig];
-        configToSave['chapter_index'] = iConfig;
-        configToSave['story_id'] = this.id;
-        this.configurations[iConfig].map.id = mapservice_.save(configToSave);
+        this.configurations[iConfig]['chapter_index'] = iConfig;
+        this.configurations[iConfig]['story_id'] = this.id;
+        mapservice_.save(this.configurations[iConfig]);
+        console.log('===== after save:', this.configurations[iConfig]);
       }
     };
 
@@ -139,7 +139,7 @@
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
       var new_chapter = configService_.initial_config;
-      new_chapter['story_id'] = service_.id;
+      new_chapter['story_id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
       new_chapter.about.summary = '';
