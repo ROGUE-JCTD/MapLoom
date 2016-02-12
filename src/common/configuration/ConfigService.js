@@ -50,7 +50,6 @@
           abstract: ''
         },
         map: {
-          id: 0,
           about: {
             title: $translate.instant('new_map'),
             abstract: ''

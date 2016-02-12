@@ -140,7 +140,7 @@
       q_ = $q;
 
       // create map on init so that other components can use map on their init
-      this.configuration = configService_.configuration;
+      this.configuration = angular.copy(configService_.configuration);
       this.title = this.configuration.about.title;
       this.abstract = this.configuration.about.abstract;
       this.id = this.configuration.id;
@@ -156,7 +156,7 @@
       this.map = this.createMap();
 
       // now that we have a map, lets try to add layers and servers
-      service_.loadLayers(configService_.configuration);
+      service_.loadLayers(this.configuration);
 
       this.chapterLayers = [];
       this.chapterLayers.push(this.map.getLayerGroup());
@@ -896,31 +896,32 @@
       //this.updateActiveMap(new_index,new_config);
     };
 
-    this.save = function(config) {
+    this.save = function(map_config) {
 
       //if (goog.isDefAndNotNull(copy) && copy) {
       // remove current map id so that it is saved as a new map.
       //service_.configuration.map.id = null;
       //}
 
+      console.log('------ map_config:', map_config);
       var cfg = {
         about: {
-          abstract: config.about.abstract,
-          title: config.about.title
+          abstract: map_config.about.abstract,
+          title: map_config.about.title
         },
         map: {
-          id: config.map.id || 0,
+          id: map_config.map.id || 0,
           center: service_.getCenter(),
           zoom: service_.getZoom(),
           projection: service_.getProjection(),
           layers: [],
-          keywords: config.map.keywords
+          keywords: map_config.map.keywords
         },
         sources: [],
-        category: config.category,
-        is_published: config.is_published,
-        chapter_index: config.chapter_index,
-        story_id: config.story_id
+        category: map_config.category,
+        is_published: map_config.is_published,
+        chapter_index: map_config.chapter_index,
+        story_id: map_config.id
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
@@ -965,9 +966,9 @@
         } else if (goog.isDefAndNotNull(layer.get('metadata').savedSchema)) {
           config.schema = layer.get('metadata').savedSchema;
         }
-        console.log('saving layer: ', layer);
-        console.log('metadata: ', layer.get('metadata'));
-        console.log('config: ', layer.get('metadata').config);
+        //console.log('saving layer: ', layer);
+        //console.log('metadata: ', layer.get('metadata'));
+        //console.log('config: ', layer.get('metadata').config);
         cfg.map.layers.push(config);
       });
 
@@ -980,10 +981,9 @@
         headers: {
           'X-CSRFToken': configService_.csrfToken
         }
-      }).success(function(data, status, headers) {
-        service_.updateMap(data);
-        console.log('----[ map.save success. ', data, status, headers);
-        config.map.id = data.id;
+      }).success(function(data, status, headers, config) {
+        console.log('----[ map.save success. ', data, status, headers, config);
+        map_config.map.id = data.id;
 
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {

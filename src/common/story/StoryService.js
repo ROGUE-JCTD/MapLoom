@@ -22,11 +22,12 @@
       this.category = null;
       this.is_published = false;
       this.configurations = [];
-      this.configurations.push(mapservice_.configuration);
+      this.configurations.push(angular.copy(mapservice_.configuration));
       this.active_index = 0;
       this.active_chapter = this.configurations[this.active_index];
-      console.log(this.active_chapter.story_id);
-      this.id = this.active_chapter.story_id;
+      this.active_chapter.map['id'] = 0;
+      console.log('-----story_config:', this.active_chapter);
+      this.id = this.active_chapter.id;
       this.category = null;
       this.is_published = false;
       this.keywords = [];
@@ -36,11 +37,10 @@
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
-        this.configurations[iConfig]['chapter_index'] = iConfig;
-        this.configurations[iConfig]['story_id'] = this.id;
+        service_.configurations[iConfig]['chapter_index'] = iConfig;
         mapservice_.save(this.configurations[iConfig]);
-        console.log('===== after save:', this.configurations[iConfig]);
       }
+      this.print_configurations();
     };
 
     this.save = function() {
@@ -99,6 +99,13 @@
       }
     };
 
+    this.print_configurations = function() {
+      console.log('=====configurations======');
+      for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
+        console.log('configuration ', iConfig, this.configurations[iConfig]);
+      }
+    };
+
     this.get_chapter_config = function(index) {
       return this.configurations[index];
     };
@@ -108,11 +115,8 @@
       //active configuration to the other services.
       this.active_chapter = this.configurations[index];
       this.active_index = index;
-      //All services (except mapservice) use configServices configuration
-      configService_.configuration = this.active_chapter;
 
       mapservice_.updateActiveMap(this.active_index, this.active_chapter);
-
     };
 
     this.change_chapter = function(chapter_index) {
@@ -138,8 +142,8 @@
     this.add_chapter = function($scope, $compile) {
       //TODO: Add new config object that is clone of current without layers, boxes, or pins
       //TODO: This will also need to switch the document focus to the new map and chapter in the menu
-      var new_chapter = configService_.initial_config;
-      new_chapter['story_id'] = this.id;
+      var new_chapter = angular.copy(configService_.initial_config);
+      new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
       new_chapter.about.summary = '';
@@ -147,7 +151,8 @@
       mapservice_.createNewChapter(new_chapter);
       service_.update_active_config(this.configurations.length - 1);
 
-      console.log(this.configurations);
+      this.print_configurations();
+
 
       // Update the front end push menu
       var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
