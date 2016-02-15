@@ -885,13 +885,13 @@
 
       service_.loadMap(chapter_config);
     };
-    //Create a new configuration object, with default map
-    //Function could be used to encourage using similar projections for maps.
-    this.createNewChapter = function(new_config) {
+
+    //Create the new layergroup for the  new chapter
+    //Parameter currently unused
+    this.create_chapter = function(new_config) {
 
       //TODO: May have to remove layers from existing layer group instead of creating new one.
       this.chapterLayers.push(new ol.layer.Group());
-      //var new_index = this.chapterLayers.length - 1;
 
       //this.updateActiveMap(new_index,new_config);
     };

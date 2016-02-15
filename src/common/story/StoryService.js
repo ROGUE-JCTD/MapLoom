@@ -21,9 +21,11 @@
       this.abstract = 'This is the default summary';
       this.category = null;
       this.is_published = false;
+      //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
       this.configurations = [];
       this.configurations.push(angular.copy(mapservice_.configuration));
       this.active_index = 0;
+      //All mapstories have one default chapter added
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
       console.log('-----story_config:', this.active_chapter);
@@ -34,15 +36,18 @@
       return this;
     };
 
+    //Save all chapter configuration objects
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
+        //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
         mapservice_.save(this.configurations[iConfig]);
       }
       this.print_configurations();
     };
 
+    //Method saves mapstory and underlying chapters
     this.save = function() {
       var cfg = {
         id: this.id || 0,
@@ -52,7 +57,6 @@
         category: this.category
       };
 
-      //After saving all maps we need to save the possible changed data from storyService
       console.log('saving new Mapstory');
       httpService_({
         url: service_.getSaveURL(),
@@ -62,6 +66,8 @@
           'X-CSRFToken': configService_.csrfToken
         }
       }).success(function(data, status, headers, config) {
+        //After we successfully save a mapstory update the composer to reference the backend object
+        //and save chapters
         service_.updateStoryID(data.id);
         service_.saveMaps();
         console.log('----[ mapstory.save success. ', data, status, headers, config);
@@ -110,6 +116,8 @@
       return this.configurations[index];
     };
 
+    //Composer only allows you to edit one chapter at a time
+    //This function should be called whenever
     this.update_active_config = function(index) {
       //This function updates the active_chapter and propagates the new
       //active configuration to the other services.
@@ -117,6 +125,14 @@
       this.active_index = index;
 
       mapservice_.updateActiveMap(this.active_index, this.active_chapter);
+    };
+
+    //Updates the stored chapter_info information for the current chapter
+    //Does not invoke a map save
+    this.update_chapter_info = function(chapter_info) {
+
+      this.active_chapter.about.title = chapter_info.chapter_title;
+      this.active_chapter.about.abstract = chapter_info.abstract;
     };
 
     this.change_chapter = function(chapter_index) {
@@ -140,15 +156,17 @@
     };
 
     this.add_chapter = function($scope, $compile) {
-      //TODO: Add new config object that is clone of current without layers, boxes, or pins
-      //TODO: This will also need to switch the document focus to the new map and chapter in the menu
+      //The config service is the entrypoint and contains the initial configuration for a chapter
       var new_chapter = angular.copy(configService_.initial_config);
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
       new_chapter.about.summary = '';
       this.configurations.push(new_chapter);
-      mapservice_.createNewChapter(new_chapter);
+      //This creates the new layergroup on the open layers map that is being displayed.
+      //Parameter is currently unused, but may be changed if we decide map load should occur here.
+      mapservice_.create_chapter(new_chapter);
+      //Immediately set focus to new chapter after creation. This causes the new chapter map to load
       service_.update_active_config(this.configurations.length - 1);
 
       this.print_configurations();
