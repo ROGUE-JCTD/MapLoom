@@ -124,6 +124,13 @@
                 $(e.target).focus();
               }
             },
+            onGroupItemClick: function() {
+              // Update active config to tell it which chapter we're on using a zero based index.
+              var $item = arguments[2];
+              var idOfClicked = $item[0].id;
+              var index = (idOfClicked.match(/\d+$/)[0]) - 1;
+              update_active_config(index);
+            },
             onCollapseMenuEnd: function() {
               // Only if the entire menu is deactivated, expand map
               var active = $('#menu').multilevelpushmenu('activemenu');
