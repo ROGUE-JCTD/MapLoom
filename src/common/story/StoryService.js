@@ -218,7 +218,7 @@
                           link: '#'
                         },
                         {
-                          name: '<button class = "btn btn-default btn-lg center-block">Save Chapter Info</button>'
+                          name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Chapter Info</button>'
                         }
                       ]
                     }
@@ -281,7 +281,7 @@
                                   link: '#'
                                 },
                                 {
-                                  name: '<button class = "btn btn-default btn-lg center-block">Save Storybox</button>',
+                                  name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Storybox</button>',
                                   link: '#'
                                 }
                               ]
@@ -347,7 +347,7 @@
                                   link: '#'
                                 },
                                 {
-                                  name: '<button class = "btn btn-default btn-lg center-block">Save StoryPin</button>',
+                                  name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save StoryPin</button>',
                                   link: '#'
                                 }
                               ]
