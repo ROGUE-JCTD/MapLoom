@@ -361,6 +361,14 @@
       // Expand to the chapter info form
       var $expandTo = $(('#chapter-info-' + (index + 1)));
       $('#menu').multilevelpushmenu('expand', $expandTo);
+      $('#menu').multilevelpushmenu({
+        onItemClick: function() {
+          var e = arguments[0];
+          if ($(e.target).prop('tagName').toLowerCase() == 'input') {
+            $(e.target).focus();
+          }
+        }
+      });
     };
 
     this.remove_chapter = function() {
