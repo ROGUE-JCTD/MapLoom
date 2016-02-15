@@ -386,7 +386,7 @@
     this.remove_chapter = function() {
       //If the chapter map has been saved beforehand we need to remove that chapter link
       map_id = this.configurations[this.active_index].map.id;
-      if(map_id != 0) {
+      if (map_id !== 0) {
         this.removedChapterIDs.push(map_id);
       }
 
