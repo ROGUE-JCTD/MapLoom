@@ -109,8 +109,9 @@
             containersToPush: [$('pushobj')],
             mode: 'cover',
             onItemClick: function() {
-              $item = arguments[2];
+              var $item = arguments[2];
               var idOfClicked = $item[0].id;
+              var e = arguments[0];
               // If the item has the id 'deleteChapter', then spawn the modal
               if (idOfClicked === 'deleteChapter') {
                 $('#chapterDelete').modal('show');
@@ -118,6 +119,9 @@
               // If the item has the id 'addNewLayer', then spawn the modal
               if (idOfClicked === 'addNewLayer') {
                 $('#add-layer-dialog').modal('show');
+              }
+              if ($(e.target).prop('tagName').toLowerCase() == 'input' || $(e.target).prop('tagName').toLowerCase() == 'textarea') {
+                $(e.target).focus();
               }
             },
             onCollapseMenuEnd: function() {
@@ -164,4 +168,3 @@
     $translateProvider.preferredLanguage('en');
   });
 }());
-
