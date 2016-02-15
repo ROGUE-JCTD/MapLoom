@@ -194,7 +194,7 @@
                           link: '#'
                         },
                         {
-                          name: '<textarea rows ="6" cols="19"></textarea>',
+                          name: '<textarea rows ="6" cols="20"></textarea>',
                           link: '#'
                         },
                         {
