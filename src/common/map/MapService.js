@@ -1004,8 +1004,7 @@
     };
 
     this.loadLayers = function(config) {
-      //TODO: use configService_.configuration instead of saving ref in this service
-      console.log('=======[[ using service_.configuration: ', config);
+      console.log('=======[[ using parameter config: ', config);
 
       if (goog.isDefAndNotNull(config) &&
           goog.isDefAndNotNull(config.sources) &&

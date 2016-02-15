@@ -23,6 +23,7 @@
       this.is_published = false;
       //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
       this.configurations = [];
+      this.removedChapterIDs = [];
       this.configurations.push(angular.copy(mapservice_.configuration));
       this.active_index = 0;
       //All mapstories have one default chapter added
@@ -54,7 +55,8 @@
         title: this.title,
         abstract: this.abstract,
         is_published: this.is_published,
-        category: this.category
+        category: this.category,
+        removed_chapters: this.removedChapterIDs
       };
 
       console.log('saving new Mapstory');
@@ -382,7 +384,13 @@
     };
 
     this.remove_chapter = function() {
-      //TODO: After removing a chapter we will need to switch focus to the base level of menu
+      //If the chapter map has been saved beforehand we need to remove that chapter link
+      map_id = this.configurations[this.active_index].map.id;
+      if(map_id != 0) {
+        this.removedChapterIDs.push(map_id);
+      }
+
+      //Remove the active chapter from the list of configurations
       this.configurations.splice(this.active_index, 1);
       if (this.configurations.length > 0) {
         this.update_active_config(0);
