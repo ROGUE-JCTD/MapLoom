@@ -119,10 +119,13 @@
     };
 
     //Composer only allows you to edit one chapter at a time
-    //This function should be called whenever
+    //This function should be called whenever we select a different chapter from the list.
     this.update_active_config = function(index) {
       //This function updates the active_chapter and propagates the new
       //active configuration to the other services.
+      if (this.active_index === index) {
+        return;
+      }
       this.active_chapter = this.configurations[index];
       this.active_index = index;
 
@@ -188,7 +191,7 @@
           items: [
             {
               title: 'Chapter ' + (index + 1),
-              id: 'sub-chapter' + (index + 1),
+              id: 'sub-menu' + (index + 1),
               icon: 'fa fa-bookmark',
               items: [
                 {
@@ -377,7 +380,7 @@
       // Bind the subtitle to the created chapter menu
       template = '<h2> {{ storyService.configurations[' + index + '].about.title }} </h2>';
       var subtitle = $compile(angular.element(template))($scope);
-      $(('#sub-chapter' + (index + 1) + ' > h2')).after(subtitle);
+      $(('#sub-menu' + (index + 1) + ' > h2')).after(subtitle);
       // Expand to the chapter info form
       var $expandTo = $(('#chapter-info-' + (index + 1)));
       $('#menu').multilevelpushmenu('expand', $expandTo);

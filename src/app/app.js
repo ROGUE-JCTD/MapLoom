@@ -126,10 +126,15 @@
             },
             onGroupItemClick: function() {
               // Update active config to tell it which chapter we're on using a zero based index.
+              //This function gets called whenever a menu element that has other items present under it is clicked
               var $item = arguments[2];
               var idOfClicked = $item[0].id;
-              var index = idOfClicked.match(/\d+$/) - 1;
-              storyService.update_active_config(index);
+              //Check that we are clicking a base level chapter element first.
+              var itemName = idOfClicked.match(/\bchapter\d+\b/);
+              if (itemName !== null) {
+                var index = idOfClicked.match(/\d+$/) - 1;
+                storyService.update_active_config(index);
+              }
             },
             onCollapseMenuEnd: function() {
               // Only if the entire menu is deactivated, expand map
