@@ -966,9 +966,9 @@
         } else if (goog.isDefAndNotNull(layer.get('metadata').savedSchema)) {
           config.schema = layer.get('metadata').savedSchema;
         }
-        //console.log('saving layer: ', layer);
-        //console.log('metadata: ', layer.get('metadata'));
-        //console.log('config: ', layer.get('metadata').config);
+        console.log('saving layer: ', layer);
+        console.log('metadata: ', layer.get('metadata'));
+        console.log('config: ', layer.get('metadata').config);
         cfg.map.layers.push(config);
       });
 

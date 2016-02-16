@@ -73,7 +73,48 @@
         $scope.refreshService = refreshService;
 
         $scope.addChapter = function() {
-          storyService.add_chapter($scope, $compile);
+          //Add chapter to backend story service will return new chapter ID or null if failure
+          var new_index = storyService.add_chapter();
+          if (new_index !== null) {
+            $scope.addMenuChapter(new_index);
+            // Expand to the chapter info form
+            var $expandTo = $(('#chapter-info-' + (new_index + 1)));
+            $scope.expandMenu($expandTo);
+          }
+        };
+
+        //front end initialization of new chapter on menu element
+        $scope.addMenuChapter = function(index) {
+          var menu_element = $('#menu');
+          if (menu_element === null) {
+            return;
+          }
+          //human readable index
+          var readable_index = index + 1;
+
+          // Update the front end push menu
+          var $addTo = menu_element.multilevelpushmenu('activemenu').first();
+
+          var addChapter = create_chapter_template(readable_index);
+          menu_element.multilevelpushmenu('additems', addChapter, $addTo, index + 1);
+          // Bind the chapter title to the created menu object
+          var template = '<p> {{ storyService.configurations[' + index + '].about.title }} </p>';
+          var chapterTitle = $compile(angular.element(template))($scope);
+          $(chapterTitle).appendTo($(('#chapter' + (readable_index))));
+          // Bind the subtitle to the created chapter menu
+          template = '<h2> {{ storyService.configurations[' + index + '].about.title }} </h2>';
+          var subtitle = $compile(angular.element(template))($scope);
+          $(('#sub-chapter' + (readable_index) + ' > h2')).after(subtitle);
+
+        };
+
+        $scope.expandMenu = function(element_id) {
+
+          var element = $(element_id);
+          if (element === null) {
+            return;
+          }
+          $('#menu').multilevelpushmenu('expand', element);
         };
 
         $scope.initMenu = function() {
@@ -130,9 +171,10 @@
               var $item = arguments[2];
               var idOfClicked = $item[0].id;
               //Check that we are clicking a base level chapter element first.
-              var itemName = idOfClicked.match(/\bchapter\d+\b/);
-              if (itemName !== null) {
-                var index = idOfClicked.match(/\d+$/) - 1;
+              var chapter_match = idOfClicked.match(/^chapter(\d+)/);
+              if (chapter_match !== null) {
+                console.log(chapter_match);
+                var index = chapter_match[1] - 1;
                 storyService.update_active_config(index);
               }
             },
@@ -150,7 +192,9 @@
           });
         };
 
+        //Initialize the multilevel menu and add first default chapter.
         $scope.initMenu();
+        $scope.addMenuChapter(0);
       });
 
   module.provider('debugService', function() {

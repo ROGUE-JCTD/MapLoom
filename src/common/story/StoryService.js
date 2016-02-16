@@ -29,11 +29,14 @@
       //All mapstories have one default chapter added
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
+      this.active_chapter.about.title = 'Untitled Chapter';
+      this.active_chapter.about.abstract = 'This is the default summary';
       console.log('-----story_config:', this.active_chapter);
       this.id = this.active_chapter.id;
       this.category = null;
       this.is_published = false;
       this.keywords = [];
+
       return this;
     };
 
@@ -171,219 +174,13 @@
       //This creates the new layergroup on the open layers map that is being displayed.
       //Parameter is currently unused, but may be changed if we decide map load should occur here.
       mapservice_.create_chapter(new_chapter);
+      var new_index = (this.configurations.length - 1);
       //Immediately set focus to new chapter after creation. This causes the new chapter map to load
-      service_.update_active_config(this.configurations.length - 1);
-
+      service_.update_active_config(new_index);
       this.print_configurations();
 
+      return new_index;
 
-      // Update the front end push menu
-      var $addTo = $('#menu').multilevelpushmenu('activemenu').first();
-      var index = (this.configurations.length - 1);
-      var chapterTemplate = '<div><label>Chapter Title</label><input class="form-control" placeholder="Chapter Title">';
-      chapterTemplate += '<label>Summary</label><textarea class="form-control" placeholder="Chapter Summary" rows="5"></textarea>';
-      chapterTemplate += '<button type="submit" class="btn btn-default">Save chapter info</button></div>';
-      var addChapter = [
-        {
-          name: 'Chapter ' + (index + 1),
-          id: 'chapter' + (index + 1),
-          link: '#',
-          items: [
-            {
-              title: 'Chapter ' + (index + 1),
-              id: 'sub-menu' + (index + 1),
-              icon: 'fa fa-bookmark',
-              items: [
-                {
-                  name: 'Chapter Info',
-                  icon: 'fa fa-info-circle',
-                  link: '#',
-                  items: [
-                    {
-                      title: 'Chapter Info',
-                      id: ('chapter-info-' + (index + 1)),
-                      icon: 'fa fa-info-cicle',
-                      items: [
-                        {
-                          name: 'Chapter Title',
-                          link: '#'
-                        },
-                        {
-                          name: '<input type="text" name="test" id="test" value="" />',
-                          link: '#'
-                        },
-                        {
-                          name: 'Chapter Summary',
-                          link: '#'
-                        },
-                        {
-                          name: '<textarea rows ="6" cols="20"></textarea>',
-                          link: '#'
-                        },
-                        {
-                          name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Chapter Info</button>'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  name: 'StoryLayers',
-                  icon: 'fa fa-clone',
-                  link: '#',
-                  items: [
-                    {
-                      title: 'Chapter ' + (index + 1),
-                      icon: 'fa fa-bookmark',
-                      items: [
-                        {
-                          name: 'Add a New StoryLayer...',
-                          id: 'addNewLayer',
-                          link: '#'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  name: 'StoryBoxes',
-                  icon: 'fa fa-object-group',
-                  link: '#',
-                  items: [
-                    {
-                      title: 'Chapter ' + (index + 1),
-                      icon: 'fa fa-bookmark',
-                      items: [
-                        {
-                          name: 'Add a New StoryBox...',
-                          link: '#',
-                          items: [
-                            {
-                              title: 'Add Storybox',
-                              icon: 'fa fa-bookmark',
-                              link: '#',
-                              items: [
-                                {
-                                  name: 'Story # Map Extents',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<p>Pan and zoom on the map to set the map bounds.</p><button class = "btn btn-default btn-lg center-block">Set Map Bounds</button>',
-                                  link: '#'
-                                },
-                                {
-                                  name: 'Time Frame',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<p>Start Time</p><input type = "time" name = "start_time">',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<p>End Time<p><input type = "time" name = "end_time">',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Storybox</button>',
-                                  link: '#'
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  name: 'StoryPins',
-                  icon: 'fa fa-neuter',
-                  link: '#',
-                  items: [
-                    {
-                      title: 'Chapter ' + (index + 1),
-                      icon: 'fa fa-bookmark',
-                      items: [
-                        {
-                          name: 'Add a New StoryPin...',
-                          link: '#',
-                          items: [
-                            {
-                              title: 'Add StoryPin',
-                              icon: 'fa fa-bookmark',
-                              link: '#',
-                              items: [
-                                {
-                                  name: 'StoryPin Title',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<input type="text" name="storyPinTitle" />',
-                                  link: '#'
-                                },
-                                {
-                                  name: 'StoryPin Content',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<input type="text" name="storyPinContent" />',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<button class = "btn btn-default btn-lg center-block">Link Media...</button>',
-                                  link: '#'
-                                },
-                                {
-                                  name: 'Pin Location',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<p>Drop pin on the map to set pin location</p><button class = "btn btn-default btn-lg center-block">Save Pin Location</button>',
-                                  link: '#'
-                                },
-                                {
-                                  name: 'Time',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<input type = "time" name = "storyPinTime">',
-                                  link: '#'
-                                },
-                                {
-                                  name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save StoryPin</button>',
-                                  link: '#'
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  name: 'Delete Chapter',
-                  id: 'deleteChapter',
-                  icon: 'fa fa-trash-o',
-                  link: '#'
-                }
-              ]
-            }
-          ]
-        }
-      ];
-      $('#menu').multilevelpushmenu('additems', addChapter, $addTo, index);
-      // Bind the chapter title to the created menu object
-      var template = '<p> {{ storyService.configurations[' + index + '].about.title }} </p>';
-      var chapterTitle = $compile(angular.element(template))($scope);
-      $(chapterTitle).appendTo($(('#chapter' + (index + 1))));
-      // Bind the subtitle to the created chapter menu
-      template = '<h2> {{ storyService.configurations[' + index + '].about.title }} </h2>';
-      var subtitle = $compile(angular.element(template))($scope);
-      $(('#sub-menu' + (index + 1) + ' > h2')).after(subtitle);
-      // Expand to the chapter info form
-      var $expandTo = $(('#chapter-info-' + (index + 1)));
-      $('#menu').multilevelpushmenu('expand', $expandTo);
     };
 
     this.remove_chapter = function() {
