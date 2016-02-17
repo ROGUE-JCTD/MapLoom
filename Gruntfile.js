@@ -20,6 +20,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-gjslint');
+  grunt.loadNpmTasks('grunt-gh-pages');
 
   /**
    * Load in our build configuration file.
@@ -37,6 +38,12 @@ module.exports = function ( grunt ) {
      */
     pkg: grunt.file.readJSON("package.json"),
 
+    'gh-pages': {
+      options: {
+        base: 'build'
+      },
+      src: ['**']
+    },
     /**
      * The banner is the comment that is placed at the top of our compiled
      * source files. It is first processed as a Grunt template, where the `<%=`
