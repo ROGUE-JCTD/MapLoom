@@ -95,6 +95,7 @@
           // Update the front end push menu
           var $addTo = menu_element.multilevelpushmenu('activemenu').first();
 
+          //call to global function to setup chapter template I feel this should all be done some other way
           var addChapter = create_chapter_template(readable_index);
           menu_element.multilevelpushmenu('additems', addChapter, $addTo, index + 1);
           // Bind the chapter title to the created menu object

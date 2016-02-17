@@ -62,7 +62,7 @@
         removed_chapters: this.removedChapterIDs
       };
 
-      console.log('saving new Mapstory');
+      console.log('saving Mapstory');
       httpService_({
         url: service_.getSaveURL(),
         method: service_.getSaveHTTPMethod(),
@@ -163,7 +163,7 @@
       service_.update_active_config(prevChapter);
     };
 
-    this.add_chapter = function($scope, $compile) {
+    this.add_chapter = function() {
       //The config service is the entrypoint and contains the initial configuration for a chapter
       var new_chapter = angular.copy(configService_.initial_config);
       new_chapter['id'] = this.id;
@@ -177,10 +177,14 @@
       var new_index = (this.configurations.length - 1);
       //Immediately set focus to new chapter after creation. This causes the new chapter map to load
       service_.update_active_config(new_index);
+      mapservice_.loadMap(new_chapter);
       this.print_configurations();
 
       return new_index;
+    };
 
+    this.reorder_chapter = function(from_index, to_index) {
+      this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
     };
 
     this.remove_chapter = function() {

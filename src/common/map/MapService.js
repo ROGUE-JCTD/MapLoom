@@ -883,7 +883,7 @@
       var activeLayers = this.chapterLayers[chapter_index];
       this.map.setLayerGroup(activeLayers);
 
-      service_.loadMap(chapter_config);
+      //service_.loadMap(chapter_config);
     };
 
     //Create the new layergroup for the  new chapter

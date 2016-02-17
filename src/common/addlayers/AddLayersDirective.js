@@ -12,7 +12,7 @@
             scope.currentServer = null;
             scope.filterLayers = null;
 
-            angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
+            //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
               var server = serverService.getServerById(serverId);
               if (goog.isDefAndNotNull(server)) {
