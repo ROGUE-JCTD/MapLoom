@@ -40,7 +40,8 @@ module.exports = function ( grunt ) {
 
     'gh-pages': {
       options: {
-        base: 'build'
+        base: 'build',
+        only: ['**/**', '!CNAME']
       },
       src: ['**']
     },
