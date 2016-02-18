@@ -437,6 +437,56 @@ var SERVER_SERVICE_USE_PROXY = true;
       return layerConfig;
     };
 
+    this.reformatLayerConfigs = function(elastic_response) {
+      var final_configs = [];
+      var layer_objects = elastic_response.objects;
+
+      for (var iLayer = 0; iLayer < layer_objects.length; iLayer += 1) {
+        var layer_info = layer_objects[iLayer];
+        var config_template = {
+          Abstract: layer_info.abstract,
+          Name: layer_info.typename,
+          Title: layer_info.title,
+          CRS: layer_info.srid,
+          thumbnail_url: layer_info.thumbnail_url
+        };
+
+        final_configs.push(config_template);
+      }
+
+      return final_configs;
+    };
+
+    this.populateLayersConfigElastic = function(server, deferredResponse) {
+      var url = 'http://mapstory.org/api/layers/search/?is_published=false&limit=100';
+
+      server.populatingLayersConfig = true;
+      var config = {};
+      config.headers = {};
+      if (goog.isDefAndNotNull(server.authentication)) {
+        config.headers['Authorization'] = 'Basic ' + server.authentication;
+      } else {
+        config.headers['Authorization'] = '';
+      }
+      // server hasn't been added yet, so specify the auth headers here
+      http_.get(url, config).then(function(xhr) {
+        if (xhr.status === 200) {
+          server.layersConfig = service_.reformatLayerConfigs(xhr.data);
+          console.log('---- populateLayersConfig.populateLayersConfig server', server);
+          rootScope_.$broadcast('layers-loaded', server.id);
+          deferredResponse.resolve(server);
+          server.populatingLayersConfig = false;
+        } else {
+          deferredResponse.resolve(server);
+          server.populatingLayersConfig = false;
+        }
+      }, function(xhr) {
+        deferredResponse.resolve(server);
+        server.populatingLayersConfig = false;
+      });
+
+    };
+
     this.populateLayersConfig = function(server, force) {
       var deferredResponse = q_.defer();
       console.log('---- ServerService.populateLayersConfig. server', server);
@@ -523,57 +573,12 @@ var SERVER_SERVICE_USE_PROXY = true;
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_wmscsource' ||
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
-          console.log('---- ServerService.Sending GetCapabilities.server: ', server);
+          console.log('---- ServerService.Sending Elastic Search: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
-            // prevent getCapabilities request until ran by the user.
-            if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
-              var parser = new ol.format.WMSCapabilities();
-              var url = server.url;
-
-              // If this is a virtual service, use the virtual service url for getCapabilties
-              if (server.isVirtualService === true) {
-                url = server.virtualServiceUrl;
-              }
-
-              url += '?SERVICE=WMS&REQUEST=GetCapabilities';
-
-              server.populatingLayersConfig = true;
-              var config = {};
-              config.headers = {};
-              if (goog.isDefAndNotNull(server.authentication)) {
-                config.headers['Authorization'] = 'Basic ' + server.authentication;
-              } else {
-                config.headers['Authorization'] = '';
-              }
-              // server hasn't been added yet, so specify the auth headers here
-              http_.get(url, config).then(function(xhr) {
-                if (xhr.status === 200) {
-                  var response = parser.read(xhr.data);
-                  if (goog.isDefAndNotNull(response.Capability) &&
-                      goog.isDefAndNotNull(response.Capability.Layer)) {
-                    server.layersConfig = response.Capability.Layer.Layer;
-                    console.log('---- populateLayersConfig.populateLayersConfig server', server);
-                    rootScope_.$broadcast('layers-loaded', server.id);
-                    deferredResponse.resolve(server);
-                  } else {
-                    deferredResponse.resolve(server);
-                  }
-                  server.populatingLayersConfig = false;
-                } else {
-                  deferredResponse.resolve(server);
-                  server.populatingLayersConfig = false;
-                }
-              }, function(xhr) {
-                deferredResponse.resolve(server);
-                server.populatingLayersConfig = false;
-              });
-            } else {
-              deferredResponse.resolve(server);
-              server.populatingLayersConfig = false;
-            }
+            service_.populateLayersConfigElastic(server, deferredResponse);
           }
         } else {
           deferredResponse.reject();
