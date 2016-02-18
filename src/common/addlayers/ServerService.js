@@ -404,6 +404,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
+    this.getLayersConfigByName = function(server_name) {
+      var server = service_.getServerByName(server_name);
+      if (goog.isDefAndNotNull(server)) {
+        return server.layersConfig;
+      }
+    };
+
     this.getLayersConfig = function(serverId) {
       var server = service_.getServerById(serverId);
       if (goog.isDefAndNotNull(server)) {
