@@ -455,7 +455,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           Name: layer_info.typename,
           Title: layer_info.title,
           CRS: layer_info.srid,
-          thumbnail_url: layer_info.thumbnail_url
+          thumbnail_url: layer_info.thumbnail_url,
+          author: layer_info.owner__first_name + ' ' + layer_info.owner__last_name
         };
 
         final_configs.push(config_template);
