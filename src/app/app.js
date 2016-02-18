@@ -22,6 +22,7 @@
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
                                                 refreshService, dialogService, storyService, $compile) {
+
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;
@@ -196,6 +197,7 @@
         //Initialize the multilevel menu and add first default chapter.
         $scope.initMenu();
         $scope.addMenuChapter(0);
+
       });
 
   module.provider('debugService', function() {
