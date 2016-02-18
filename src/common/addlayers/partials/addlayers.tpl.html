@@ -21,17 +21,13 @@
                                 </div>
                             </nav>
                             <div class="clearfix search-results">
-                                <!-- TODO: Query MapLoom API and display results in a grid -->
-
-                                    <div class = "col-sm-4 panel panel-default" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers | limitTo:9">
-                                        <div class = "panel-heading">
+                                    <div class = "col-sm-4 panel panel-default" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers | limitTo:3">
+                                        <div class = "panel-body">
                                             <img class = "img-responsive" src = "http://4.bp.blogspot.com/-xTMI8vGVtMk/Tt02EkO6OjI/AAAAAAAABww/ilpYBaUSNC4/s1600/Grand_Tour_Beckford.jpg">
-                                            <h3 class = "panel-title">
-                                                {{ layer.Title }}
-                                            </h3>
-                                            <p>Author</p>
-                                            <button class = "btn btn-default">Use</button>
-                                            <button class = "btn btn-default">View</button>
+                                            <h4>{{ layer.Title }}</h4>
+                                            <i class = "icon-user"></i><h4>{{ layer.author }}</h4>
+                                            <button class = "btn btn-default center-block">Use</button>
+                                            <a ng-href="http://www.mapstory.org{{ layer.detail_url }}" target = "_blank"><button class = "btn btn-default center-block">View</button></a>
                                         </div>
                                     </div>
 
@@ -43,9 +39,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <span class="pull-left"></span>
-        <button class="btn btn-primary">Use Selected</button>
     </div>
 </div>
