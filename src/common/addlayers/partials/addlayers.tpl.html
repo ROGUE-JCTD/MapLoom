@@ -22,6 +22,19 @@
                             </nav>
                             <div class="clearfix search-results">
                                 <!-- TODO: Query MapLoom API and display results in a grid -->
+
+                                    <div class = "col-sm-4 panel panel-default" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers | limitTo:9">
+                                        <div class = "panel-heading">
+                                            <img class = "img-responsive" src = "http://4.bp.blogspot.com/-xTMI8vGVtMk/Tt02EkO6OjI/AAAAAAAABww/ilpYBaUSNC4/s1600/Grand_Tour_Beckford.jpg">
+                                            <h3 class = "panel-title">
+                                                {{ layer.Title }}
+                                            </h3>
+                                            <p>Author</p>
+                                            <button class = "btn btn-default">Use</button>
+                                            <button class = "btn btn-default">View</button>
+                                        </div>
+                                    </div>
+
                             </div>
                             <div class="search-pagination">
                             </div>

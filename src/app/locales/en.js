@@ -8,7 +8,7 @@
     'map_layers': 'Add a StoryLayer',
     'edit_feature': 'Edit',
     'add_layer_btn': 'Add StoryLayer',
-    'add_layers': 'Add StoryLayers',
+    'add_layers': 'Explore StoryLayers',
     'remove_layer': 'Remove StoryLayer',
     'attributes': 'Attributes',
     'local_geoserver': 'Local Geoserver',
