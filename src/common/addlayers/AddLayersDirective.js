@@ -42,6 +42,8 @@
             };
 
             scope.addLayers = function(layersConfig) {
+              console.log('Layer: ' + layersConfig.Title);
+
               // if the server is not a typical server and instead the hardcoded ones
               var length = layersConfig.length;
               for (var index = 0; index < length; index += 1) {
