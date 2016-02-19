@@ -1441,13 +1441,8 @@
     };
 
     this.getCRSCode = function(CRS) {
-      var code = 'EPSG:4326';
-      forEachArrayish(CRS, function(_code) {
-        if (_code !== 'CRS:84') {
-          code = _code;
-        }
-      });
-      return code;
+      //TODO: Update with handling multiple projections per layer if needed.
+      return CRS;
     };
   });
 

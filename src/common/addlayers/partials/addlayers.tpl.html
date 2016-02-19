@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
                     <li><a data-toggle="tab">Search</a></li>
-                    <li><a data-toggle="tab">My Uploads</a></li>
+                    <li><a data-toggle="tab" ng-click="filterOptions.text = null;filterOptions.owner = true;applyFilters()">My Uploads</a></li>
                     <li><a data-toggle="tab">My Favorites</a></li>
                 </ul>
             </div>
@@ -14,9 +14,9 @@
                         <div>
                             <nav class="filter">
                                 <div class="input-group search-bar" >
-                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="layerName" type="text" class="form-control search-input">
+                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-primary search-btn" ng-disabled="!layerName" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                        <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" ng-click="applyFilters()" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
                                     </span>
                                 </div>
                             </nav>

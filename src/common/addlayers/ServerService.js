@@ -426,15 +426,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
             layersConfig[index].Name === layerName.split(':')[1])) {
           layerConfig = layersConfig[index];
-
-          if (goog.isDefAndNotNull(layerConfig.CRS)) {
-            for (var code in layerConfig.CRS) {
-              if (layerConfig.CRS[code] !== 'CRS:84') {
-                layerConfig.CRS = layerConfig.CRS[code];
-                break;
-              }
-            }
-          }
+          //TODO: Update with handling multiple projections per layer if needed.
           console.log('getting layer config, crs', layerConfig.CRS);
           break;
         }
@@ -448,9 +440,11 @@ var SERVER_SERVICE_USE_PROXY = true;
       var final_configs = [];
       var layer_objects = elastic_response.objects;
 
+      //TODO: Update with handling multiple projections per layer if needed.
       for (var iLayer = 0; iLayer < layer_objects.length; iLayer += 1) {
         var layer_info = layer_objects[iLayer];
         var config_template = {
+          add: true,
           Abstract: layer_info.abstract,
           Name: layer_info.typename,
           Title: layer_info.title,
@@ -466,10 +460,29 @@ var SERVER_SERVICE_USE_PROXY = true;
       return final_configs;
     };
 
-    this.populateLayersConfigElastic = function(server, deferredResponse) {
-      var url = 'http://mapstory.org/api/layers/search/?is_published=false&limit=100';
 
+    this.apply_filter = function(url, filter_options) {
+
+      if (filter_options.owner !== null) {
+        url = url + '&owner=' + configService_.username;
+      }
+      if (filter_options.text !== null) {
+        url = url + '&q=' + filter_options.text;
+      }
+      return url;
+    };
+
+    this.populateLayersConfigElastic = function(server, filter_options) {
+      var url = 'http://mapstory.org/api/layers/search/?is_published=true&limit=100';
+      var layers_loaded = false;
+
+      if (filter_options !== null) {
+        url = service_.apply_filter(url, filter_options);
+      }
+
+      console.log('---url: ', url);
       server.populatingLayersConfig = true;
+      server.layersConfig = [];
       var config = {};
       config.headers = {};
       if (goog.isDefAndNotNull(server.authentication)) {
@@ -483,17 +496,17 @@ var SERVER_SERVICE_USE_PROXY = true;
           server.layersConfig = service_.reformatLayerConfigs(xhr.data);
           console.log('---- populateLayersConfig.populateLayersConfig server', server);
           rootScope_.$broadcast('layers-loaded', server.id);
-          deferredResponse.resolve(server);
+          layers_loaded = true;
           server.populatingLayersConfig = false;
         } else {
-          deferredResponse.resolve(server);
+          layers_loaded = false;
           server.populatingLayersConfig = false;
         }
       }, function(xhr) {
-        deferredResponse.resolve(server);
+        layers_loaded = false;
         server.populatingLayersConfig = false;
       });
-
+      return layers_loaded;
     };
 
     this.populateLayersConfig = function(server, force) {
@@ -587,7 +600,9 @@ var SERVER_SERVICE_USE_PROXY = true;
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
-            service_.populateLayersConfigElastic(server, deferredResponse);
+            service_.populateLayersConfigElastic(server, null);
+            deferredResponse.resolve(server);
+
           }
         } else {
           deferredResponse.reject();

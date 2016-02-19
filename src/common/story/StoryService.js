@@ -5,6 +5,7 @@
   var configService_ = null;
   var httpService_ = null;
   var dialogService_ = null;
+  var translate_ = null;
 
 
   module.provider('storyService', function() {
@@ -15,6 +16,7 @@
       configService_ = configService;
       httpService_ = $http;
       dialogService_ = dialogService;
+      translate_ = $translate;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';

@@ -11,6 +11,10 @@
             scope.currentServerId = -1;
             scope.currentServer = null;
             scope.filterLayers = null;
+            scope.filterOptions = {
+              owner: null,
+              text: null
+            };
 
             //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
@@ -20,6 +24,7 @@
                 scope.currentServer = server;
               }
             };
+
 
             scope.getConnectedString = function() {
               return $translate.instant('connected_as', {value: scope.currentServer.username});
@@ -32,6 +37,14 @@
               scope.setCurrentServerId(server.id);
             }
 
+            scope.clearFilters = function() {
+
+            };
+
+            scope.applyFilters = function() {
+              serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
+            };
+
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
               if (goog.isDefAndNotNull(server)) {
@@ -41,29 +54,23 @@
               return '';
             };
 
-            scope.addLayers = function(layersConfig) {
-              console.log('Layer: ' + layersConfig.Title);
+            scope.addLayers = function(layerConfig) {
+              console.log(layerConfig);
 
-              // if the server is not a typical server and instead the hardcoded ones
-              var length = layersConfig.length;
-              for (var index = 0; index < length; index += 1) {
-                var config = layersConfig[index];
-                if (config.add) {
-                  // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
-                  //       maploom such as geonode. At this point, only source (server id), and name are used. If you
-                  //       find the need to add more parameters here, you need to put them in MapService.addLayer
-                  //       instead. that's because MapService.addLayer may be invoked from here, when a saved
-                  //       map is opened, or when a map is created from a layer in which case the logic here will be
-                  //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
-                  //       has already been resolved so you can used that info to append values to the layer.
-                  var minimalConfig = {
-                    name: config.Name,
-                    source: scope.currentServerId
-                  };
-                  mapService.addLayer(minimalConfig);
-
-                  config.add = false;
-                }
+              if (layerConfig.add) {
+                // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
+                //       maploom such as geonode. At this point, only source (server id), and name are used. If you
+                //       find the need to add more parameters here, you need to put them in MapService.addLayer
+                //       instead. that's because MapService.addLayer may be invoked from here, when a saved
+                //       map is opened, or when a map is created from a layer in which case the logic here will be
+                //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
+                //       has already been resolved so you can used that info to append values to the layer.
+                var minimalConfig = {
+                  name: layerConfig.Name,
+                  source: scope.currentServerId
+                };
+                mapService.addLayer(minimalConfig);
+                layerConfig.add = false;
               }
             };
 
