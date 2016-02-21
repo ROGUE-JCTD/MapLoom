@@ -30,22 +30,18 @@ You can then open `file:///path/to/MapLoom/build/index.html` in your browser.
 ## Recommended Development Setup
 The recommended way to develop maploom is to:
 
-- create a [GeoSHAPE Virtual Machine](https://docs.google.com/document/d/1KMpk6dXuqvwfEi0pfRpaGY62j6ikoYtpYUPU0sJQAmk) which will have maploom configured as GeoNodes viewer/editor. We recommend using the ```vagrant``` approach specified in the document.
-- clone maploom repo on your host machine
-- expose the MapLoom repository on the host into the VM.  If using vagrant, you can add the following line to your [```Vagrantfile```](https://github.com/ROGUE-JCTD/rogue-chef-repo/blob/master/Vagrantfile#L70). Note that this assumes your `MapLoom` and `rogue-chef-repo` repositories are in the same folder.
+- create a [GeoSHAPE CentOS Virtual Machine](https://docs.google.com/document/d/1SOX8pldVskbnngXNLEfxFPlWkgC93lr8j3AE5mgmC_8) which will have maploom configured as GeoNodes viewer/editor. We recommend using the ```vagrant``` approach specified in the document.
+- clone maploom repo on your host machine in the same folder in which you cloned the vagrant-geoshape repo
+- expose the MapLoom repository on the host into the VM by uncommenting this line in your Vagrant file in the `geoshape-vagrant` folder [```Vagrantfile```](https://github.com/ROGUE-JCTD/geoshape-vagrant/blob/master/Vagrantfile#L18). Note that this assumes your `MapLoom` and `geoshape-vagrant` repositories are in the same folder.
 
    ```config.vm.synced_folder "../MapLoom", "/MapLoom"```
 
 - run ```vagrant reload``` (or `vagrant halt` followed by `vagrant up`) to apply changes made to the vagrant file.
 - run ```grunt watch``` in the maploom directory on the host to buid maploom
 - symbolic link the built maploom into the virtual machine such that GeoNode uses the latest build maploom. from in-side the geoshape VM, run:
-    ```
-      rm -rf /var/www/rogue/maploom/*
-      ln -s /MapLoom/build/* /var/www/rogue/maploom/
-      rm /var/lib/geonode/lib/python2.7/site-packages/maploom/templates/maps/maploom.html
-      ln -s /MapLoom/build/maploom.html /var/lib/geonode/lib/python2.7/site-packages/maploom/templates/maps/maploom.html
-    ```
-
-- you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. 
+   ```
+   geoshape-config maploom_dev
+   ```
+- you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. Changes on your host machine will cause `grunt watch` to rebuild MapLoom, and the symbolic links created by `geoshape-config maploom_dev` will make the newly buit maploom immediately available to Geonode in your VM. 
 
 Note that linter used by `grunt watch` is very paticular about the js programing style and guildlines. Be sure to fix all compile issues. 
