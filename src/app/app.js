@@ -122,8 +122,10 @@
         $scope.initMenu = function() {
           var titleTemplate = '<p>{{ storyService.title }}</p>';
           var addChapterTemplate = '<a id="addchapter" ng-click="addChapter();">Add a new chapter</a>';
+          var storyLayerTemplate = '<div ng-include = "storylayer.tpl.html"></div>';
           var title = $compile(angular.element(titleTemplate))($scope);
           var addChapter = $compile(angular.element(addChapterTemplate))($scope);
+          var storyLayer = $compile(angular.element(storyLayerTemplate))($scope);
           var arrayMenu = [
             {
               title: title,
@@ -142,6 +144,16 @@
                   name: '<a href="/getskills" target="_blank">Help</a>',
                   icon: 'fa fa-support',
                   link: '#'
+                },
+                {
+                  name: 'StoryLayer Test',
+                  link: '#',
+                  items: [
+                    {
+                      name: storyLayer,
+                      link: '#'
+                    }
+                  ]
                 }
               ]
             }
