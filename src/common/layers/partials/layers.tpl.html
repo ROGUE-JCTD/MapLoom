@@ -61,6 +61,12 @@
                class="btn btn-sm btn-default">
               <i class="glyphicon glyphicon-info-sign"></i>
             </a>
+             <a type="button" ng-show="!layer.get('metadata').placeholder && layer.get('metadata').editable"
+               tooltip-append-to-body="true" ng-click="getLayerAttributeVisibility(layer)"
+               tooltip-placement="top" tooltip="{{'show_attribute_visibility_info' | translate}}"
+               class="btn btn-sm btn-default">
+              <i class="glyphicon glyphicon-eye-open"></i>
+            </a>
             <a type="button" ng-click="removeLayer(layer)" id="remove-button"
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'remove_layer' | translate}}">
@@ -68,7 +74,7 @@
             </a>
           </div>
         </div>
-        <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' |
+        <!-- <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' |
           translate}}</label>
 
         <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
@@ -84,7 +90,7 @@
               </div>
             </li>
           </ul>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
