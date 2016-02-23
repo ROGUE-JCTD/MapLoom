@@ -1,0 +1,55 @@
+#menu {
+    width: 350px;
+    min-height: 100%;
+    height: 700px;
+    margin-top: 0px;
+    background-color: #F5F5F5;
+}
+
+#menu i {
+    float: right;
+}
+
+#mainMenu {
+
+}
+
+#chapterInfo {
+    display: none;
+}
+
+#storyLayers {
+    display: none;
+}
+
+#editStoryLayer {
+    display: none;
+}
+
+#addStoryLayer {
+    display: none;
+}
+
+#storyBoxes {
+    display: none;
+}
+
+#editStoryBox {
+    display: none;
+}
+
+#addStoryBox {
+    display: none;
+}
+
+#storyPins {
+    display: none;
+}
+
+#editStoryPin {
+    display: none;
+}
+
+#addStoryPin {
+    display: none;
+}
