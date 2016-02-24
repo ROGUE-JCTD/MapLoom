@@ -22,6 +22,28 @@ var forEachArrayish = function(arrayish, funct) {
 
 var ignoreNextScriptError = false;
 
+var getScrollbarWidth = function() {
+  var parent, child, width;
+
+  if (width === undefined) {
+    parent = $('<div style="width:50px;height:50px;overflow:auto"><div/></div>').appendTo('body');
+    child = parent.children();
+    width = child.innerWidth() - child.height(99).innerWidth();
+    parent.remove();
+  }
+
+  return width;
+};
+
+var clean = function(array, deleteValue) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] == deleteValue) {
+      array.splice(i, 1);
+      i--;
+    }
+  }
+  return array;
+};
 
 var create_chapter_template = function(index) {
   var add_chapter_template = [
@@ -74,8 +96,9 @@ var create_chapter_template = function(index) {
               link: '#',
               items: [
                 {
-                  title: 'Chapter ' + (index),
+                  title: 'Chapter ' + (index) + ' StoryLayers',
                   icon: 'fa fa-bookmark',
+                  id: 'storylayers' + (index),
                   items: [
                     {
                       name: 'Add a New StoryLayer...',
@@ -214,29 +237,6 @@ var create_chapter_template = function(index) {
     }
   ];
   return add_chapter_template;
-};
-
-var getScrollbarWidth = function() {
-  var parent, child, width;
-
-  if (width === undefined) {
-    parent = $('<div style="width:50px;height:50px;overflow:auto"><div/></div>').appendTo('body');
-    child = parent.children();
-    width = child.innerWidth() - child.height(99).innerWidth();
-    parent.remove();
-  }
-
-  return width;
-};
-
-var clean = function(array, deleteValue) {
-  for (var i = 0; i < array.length; i++) {
-    if (array[i] == deleteValue) {
-      array.splice(i, 1);
-      i--;
-    }
-  }
-  return array;
 };
 
 

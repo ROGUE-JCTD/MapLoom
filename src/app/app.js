@@ -73,19 +73,60 @@
         $scope.storyService = storyService;
         $scope.refreshService = refreshService;
 
+
         $scope.addChapter = function() {
           //Add chapter to backend story service will return new chapter ID or null if failure
           var new_index = storyService.add_chapter();
           if (new_index !== null) {
-            $scope.addMenuChapter(new_index);
+            $scope.addChapterToMenu(new_index);
             // Expand to the chapter info form
             var $expandTo = $(('#chapter-info-' + (new_index + 1)));
             $scope.expandMenu($expandTo);
           }
         };
 
+        $scope.addStorylayerToMenu = function(chapter_index, layer_config) {
+          console.log('layer to add:', layer_config);
+          var menu_element = $('#menu');
+          var html = "<ng-include src=\"'multilevel-menu/partials/storylayer.tpl.html'\"></ng-include>";
+          //var noDiv = "<div ng-include=\"'multilevel-menu/partials/storylayer.tpl.html'\"></div>";
+          var div = $('<div>');
+          div.html(html);
+          var storyLayer = $compile(div)($scope);
+
+          console.log(storyLayer);
+          if (!goog.isDefAndNotNull(layer_config.title)) {
+            return;
+          }
+          var story_layer_item = [
+            {
+              id: layer_config.title,
+              name: layer_config.title,
+              title: layer_config.title,
+              link: '#',
+              items: [
+                {
+                  name: storyLayer[0],
+                  title: layer_config.title,
+                  link: '#',
+                  items: []
+                }
+              ]
+            }
+          ];
+
+          var add_location = menu_element.multilevelpushmenu('findmenusbytitle', 'Chapter ' + (chapter_index) + ' StoryLayers');
+          if (add_location !== false) {
+            console.log('Adding layer to menu:', layer_config);
+            menu_element.multilevelpushmenu('additems', story_layer_item, add_location, 0);
+
+          } else {
+            console.log('Could not find StoryLayer subMenu for Chapter ', chapter_index);
+          }
+
+        };
         //front end initialization of new chapter on menu element
-        $scope.addMenuChapter = function(index) {
+        $scope.addChapterToMenu = function(index) {
           var menu_element = $('#menu');
           if (menu_element === null) {
             return;
@@ -108,6 +149,14 @@
           var subtitle = $compile(angular.element(template))($scope);
           $(('#sub-chapter' + (readable_index) + ' > h2')).after(subtitle);
 
+          var story_layers = storyService.configurations[index].map.layers;//mapService.getLayers(true, true);
+          console.log('story_layers: ', story_layers);
+          for (var iLayer = 0; iLayer < story_layers.length; iLayer += 1) {
+            var story_layer = story_layers[iLayer];
+            $scope.addStorylayerToMenu(readable_index, story_layer);
+
+          }
+
         };
 
         $scope.expandMenu = function(element_id) {
@@ -122,10 +171,8 @@
         $scope.initMenu = function() {
           var titleTemplate = '<p>{{ storyService.title }}</p>';
           var addChapterTemplate = '<a id="addchapter" ng-click="addChapter();">Add a new chapter</a>';
-          var storyLayerTemplate = '<div ng-include = "storylayer.tpl.html"></div>';
           var title = $compile(angular.element(titleTemplate))($scope);
           var addChapter = $compile(angular.element(addChapterTemplate))($scope);
-          var storyLayer = $compile(angular.element(storyLayerTemplate))($scope);
           var arrayMenu = [
             {
               title: title,
@@ -144,16 +191,6 @@
                   name: '<a href="/getskills" target="_blank">Help</a>',
                   icon: 'fa fa-support',
                   link: '#'
-                },
-                {
-                  name: 'StoryLayer Test',
-                  link: '#',
-                  items: [
-                    {
-                      name: storyLayer,
-                      link: '#'
-                    }
-                  ]
                 }
               ]
             }
@@ -208,7 +245,7 @@
 
         //Initialize the multilevel menu and add first default chapter.
         $scope.initMenu();
-        $scope.addMenuChapter(0);
+        $scope.addChapterToMenu(0);
 
       });
 
