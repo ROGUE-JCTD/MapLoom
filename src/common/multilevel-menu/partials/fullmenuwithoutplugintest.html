@@ -6,12 +6,12 @@
 <script src="http://oss.maxcdn.com/libs/modernizr/2.6.2/modernizr.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/umd/tab.js"></script>
-<html>
+<html ng-app="SideBarApp">
 <head>
     <title>MapStory Composer</title>
 </head>
 <body>
-<div id="menu">
+<div ng-controller="SideBarController" id="menu">
     <nav>
         <div id="mainMenu">
             <h2><i class="fa fa-reorder"></i>{{ storyService.title }}</h2>
@@ -26,7 +26,7 @@
 
             <a href="#"><h2><i class="fa fa-plus-square-o"></i>Chapter 1</h2></a>
 
-            <a href="#" id="chapterInfoButton"><i class="fa fa-info-cicle"></i><h2 id = "chapterInfoButton">Chapter Info</h2></a>
+            <i class="fa fa-info-circle"></i><h2><a href="#" id="chapterInfoButton">Chapter Info</a></h2>
 
             <a id="addchapter" ng-click="addChapter();"><h2>Add a new chapter</h2></a>
 
@@ -34,8 +34,9 @@
             <a href="/getskills" target="_blank"><h2>Help</h2></a>
         </div>
         <div id="chapterInfo">
-            <h2><i class="fa fa-info-cicle"></i>Chapter Info</h2>
 
+            <h2><i class="fa fa-info-circle"></i>Chapter Info</h2>
+            <h2 id="chapterInfoBackButton"><a href="#" id="chapterInfoBackButton">Back</a></h2>
             <a href="#">Chapter Title</a>
             <input class="form-control" type="text" name="chapterTitle" id="chapterTitle"/>
 
@@ -294,6 +295,11 @@
         $('#menu').children('div').not('#mainMenu').hide();
         $('#chapterInfoButton').click(function () {
             $('#chapterInfo').toggle();
+            $('#mainMenu').toggle();
+        });
+        $('#chapterInfoBackButton').click(function () {
+            $('#chapterInfo').toggle();
+            $('#mainMenu').toggle();
         });
     });
 </script>
