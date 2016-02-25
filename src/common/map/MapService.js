@@ -216,6 +216,7 @@
     };
 
     this.zoomToExtent = function(extent, animate, map, scale) {
+
       if (!goog.isDefAndNotNull(animate)) {
         animate = true;
       }
@@ -254,7 +255,7 @@
         map.beforeRender(pan, zoom);
       }
 
-      view.fitExtent(extent, map.getSize());
+      service_.map.getView().fit(extent, service_.map.getSize());
     };
 
     this.zoomToLayerFeatures = function(layer) {
@@ -319,10 +320,9 @@
                         JSON.parse(upper[0], 10),
                         JSON.parse(upper[1], 10)];
           //console.log('------- [[ bounds: ', bounds);
-          var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
-              ol.proj.get('EPSG:900913'));
-          var extent900913 = ol.extent.applyTransform(bounds, transform);
-          service_.zoomToExtent(extent900913, null, null, 0.1);
+          var finalExtent = ol.proj.transformExtent(bounds, ol.proj.get(layer.get('metadata').projection),
+              service_.configuration.map.projection);
+          service_.zoomToExtent(finalExtent, null, null, 0.1);
           deferredResponse.resolve();
         }).error(function(data, status, headers, config) {
           console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
@@ -1206,10 +1206,10 @@
         ol3Logo: false,
         target: 'map',
         view: new ol.View({
-          center: this.configuration.map.center,
-          zoom: this.configuration.map.zoom,
-          maxZoom: 17,
-          maxResolution: 40075016.68557849 / 2048
+          projection: service_.configuration.map.projection,
+          center: service_.configuration.map.center,
+          zoom: service_.configuration.map.zoom,
+          maxZoom: 17
         })
       });
 
@@ -1308,7 +1308,7 @@
         strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
           maxZoom: 19
         })),
-        projection: 'EPSG:3857'
+        projection: service_.configuration.map.projection
       });
 
       var vector = new ol.layer.Heatmap({
