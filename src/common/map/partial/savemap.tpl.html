@@ -3,11 +3,11 @@
         <div class="form-group">
 
             <div class="form-group">
-                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="mapService.title" type="text" class="form-control" value="{{mapService.title}}" placeholder="{{mapService.title || ('title' | translate)}}">
+                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="storyService.title" type="text" class="form-control" value="{{storyService.title}}" placeholder="{{storyService.title || ('title' | translate)}}">
             </div>
 
             <div class="form-group">
-                <label for="mapAbstract">{{ 'abstract' | translate }}</label><textarea id="mapAbstract" ng-model="mapService.abstract" class="form-control" rows="4" value="{{mapService.abstract}}" placeholder="{{mapService.abstract || ('abstract' | translate)}}"></textarea>
+                <label for="mapAbstract">{{ 'abstract' | translate }}</label><textarea id="mapAbstract" ng-model="storyService.abstract" class="form-control" rows="4" value="{{storyService.abstract}}" placeholder="{{storyService.abstract || ('abstract' | translate)}}"></textarea>
             </div>
 
         </div>
@@ -16,9 +16,9 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate }}</button>
   <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
-          ng-click="mapService.save(true)" ng-show="mapService.id" >{{'save_copy_btn' | translate}}</button>
+          ng-click="storyService.save()" ng-show="storyService.id" >{{'save_copy_btn' | translate}}</button>
   <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
-          ng-click="mapService.save()">{{'save_btn' | translate}}</button>
+          ng-click="storyService.save()">{{'save_btn' | translate}}</button>
 </div>
 
 

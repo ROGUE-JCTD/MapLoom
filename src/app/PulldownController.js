@@ -24,6 +24,8 @@
           $scope.storyboxPanel = ($scope.view_mode == 'edit') ? false : pulldownService.storyboxPanel.getVisible();
           $scope.saveButton = ($scope.view_mode == 'edit') ? false : true;
           $scope.addStorybox = pulldownService.addStorybox;
+          $scope.addChapter = pulldownService.addChapter;
+          $scope.chapterPanel = pulldownService.chapterPanel.getVisible();
         }
 
 

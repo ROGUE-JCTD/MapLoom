@@ -17,6 +17,7 @@
   module.provider('pulldownService', function() {
 
     this.diffPanel = new PulldownPanel(true, false);
+    this.chapterPanel = new PulldownPanel(true, true);
     this.notificationsPanel = new PulldownPanel(true, true);
     this.layersPanel = new PulldownPanel(true, true);
     this.storyboxPanel = new PulldownPanel(true, true);
@@ -24,6 +25,7 @@
     this.historyPanel = new PulldownPanel(true, false);
     this.toggleEnabled = true;
     this.addLayers = true;
+    this.addChapter = true;
     this.serversLoading = false;
     this.addStorybox = true;
 
@@ -54,6 +56,7 @@
     this.defaultMode = function() {
       this.diffPanel.visible = true;
       this.notificationsPanel.visible = true;
+      this.chapterPanel.visible = true;
       this.layersPanel.visible = true;
       this.syncPanel.visible = true;
       this.historyPanel.visible = true;
@@ -87,6 +90,12 @@
     this.showStoryboxPanel = function() {
       timeout_(function() {
         $('#storybox-manager-panel').collapse('show');
+      }, 1);
+    };
+
+    this.showChapterPanel = function() {
+      timeout_(function() {
+        $('#chapter-manager-panel').collapse('show');
       }, 1);
     };
 

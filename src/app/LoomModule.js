@@ -1,5 +1,6 @@
 (function() {
   angular.module('loom', [
+    'loom_story',
     'loom_configuration',
     'loom_map',
     'loom_story',
