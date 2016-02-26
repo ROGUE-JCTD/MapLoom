@@ -1,0 +1,10 @@
+<div class="container" id="menu">
+
+  <div class="layer" ng-repeat="layer in layers">
+    <div class="form-group">
+      <label for="layerAlias">Layer Alias</label>
+      <textarea class="form-control" class="layerAlias" rows="2" id="layer-{{layer.id}}">{{layer.title}}</textarea>
+    </div>
+  </div>
+  <button ng-click="saveMasking()">Save</button>
+</div>
