@@ -45,16 +45,33 @@
 
     this.replaceLayers = function(newLayers) {
       var featurePanel = this;
-      var layers = this.map.getLayers();
+      var layers = featurePanel.map.getLayers();
+
       layers.forEach(function(layer) {
         featurePanel.map.removeLayer(layer);
       });
+
       newLayers.forEach(function(layer) {
+        var layerChecker = featurePanel.map.getLayers();
+
+        /*
+          TODO: The initial layer removal iteration isn't removing all
+          layers, causing conflict when the layers are re-added. Revisit
+          why this is happening. In the meantime, this forEach ensures
+          that the layer being added doesn't already exist.
+        */
+
+        layerChecker.forEach(function(chkLyr) {
+          if (layer === chkLyr) {
+            featurePanel.map.removeLayer(chkLyr);
+          }
+        });
+
         if (!goog.isDefAndNotNull(layer.get('metadata').internalLayer) || !layer.get('metadata').internalLayer) {
           featurePanel.map.addLayer(layer);
         }
       });
-      this.map.addLayer(this.featureLayer);
+      featurePanel.map.addLayer(featurePanel.featureLayer);
     };
   };
 
@@ -137,23 +154,25 @@
     this.layer = null;
     this.combinedExtent = [0, 0, 0, 0];
 
-    this.$get = function($rootScope, mapService, geogigService, dialogService, $translate) {
+    this.$get = function($rootScope, configService, mapService, geogigService, dialogService, $translate) {
       service_ = this;
+      configService_ = configService;
+      service_.configuration = configService_.configuration;
       rootScope_ = $rootScope;
       mapService_ = mapService;
       geogigService_ = geogigService;
+      globalConfigProj = service_.configuration.map.projection;
       dialogService_ = dialogService;
       translate_ = $translate;
       ol.extent.empty(this.combinedExtent);
+
       var createMap = function(panel) {
+        var sharedView = mapService.map.getView();
+
         panel.map = new ol.Map({
           //renderer: ol.RendererHint.CANVAS,
           ol3Logo: false,
-          view: new ol.View({
-            center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 14,
-            maxZoom: 20
-          })
+          view: sharedView
         });
 
         var controls = panel.map.getControls();
@@ -167,8 +186,6 @@
       createMap(this.left);
       createMap(this.right);
       createMap(this.merged);
-      this.merged.map.bindTo('view', service_.left.map);
-      this.right.map.bindTo('view', service_.left.map);
 
       return this;
     };
