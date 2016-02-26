@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css">
+<link rel="stylesheet" href="style.css">
+
+
+<html ng-app="sideBarApp">
+<head>
+    <title>MapStory Composer</title>
+</head>
+<body>
+<div ng-controller="sideBarController" id="menu">
+    <nav>
+        <div id="mainMenu">
+            <h2><i class="fa fa-reorder"></i>{{ mapstories.name }}</h2>
+
+            <div class="form-group" ng-show="menuSection=='mainMenu'">
+                <button class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary
+                </button>
+                <button class="btn btn-default btn-md" data-target="#mapSave" data-toggle="modal">Save MapStory...
+                </button>
+                <button class="btn btn-default btn-md" data-target="mapPreview" data-toggle="modal">Preview</button>
+            </div>
+
+            <div ng-repeat="chapter in mapstories.chapters">
+                <div id="chaptersList" ng-show="menuSection=='mainMenu'">
+                    <a href="#"><h2 ng-click="updateMenuSection('selectedChapter' + chapter.id)">
+                        <i class="fa fa-plus-square-o"></i>{{ chapter.chapter }}</h2>
+                    </a>
+                </div>
+
+                <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
+                    <h2 ng-click="">{{ chapter.chapter }}</h2>
+                    <h2 ng-click="">{{ chapter.title }}</h2>
+                    <a href="#"><h2 ng-click="updateMenuSection('mainMenu')">Back to Chapters List</h2></a>
+                    <a href="#"><h2 ng-click="updateMenuSection('chapterInfo' + chapter.id)">Chapter Info</h2></a>
+                    <a href="#"><h2 ng-click="updateMenuSection('storyLayers' + chapter.id)">StoryLayers</h2></a>
+                    <a href="#"><h2 ng-click="">StoryBoxes</h2></a>
+                    <a href="#"><h2 ng-click="">StoryPins</h2></a>
+                    <a href="#"><h2 ng-click="">Delete this Chapter</h2></a>
+                </div>
+
+                <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
+                    <h2><i class="fa fa-info-circle"></i>Chapter Info</h2>
+                    <h2 id="chapterInfoBackButton" ng-click="updateMenuSection('selectedChapter' + chapter.id)"><a href="#"
+                                                                                                                   id="chapterInfoBackButton">Back</a>
+                    </h2>
+                    <a href="#">Chapter Title</a>
+                    <input ng-model="chapter.title" class="form-control" type="text" name="chapterTitle" id="chapterTitle"/>
+
+                    <a href="#">Chapter Summary</a>
+                    <textarea ng-model="chapter.summary" class="form-control" name="chapterSummary" id="chapterSummary"></textarea>
+
+                    <button data-target="#mapSave" data-toggle="modal" type="button"
+                            class="btn btn-default btn-lg center-block">Save Chapter Info
+                    </button>
+                </div>
+                <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
+                    <h2>{{ chapter.chapter }}</h2>
+                    <h2>{{ chapter.title }}</h2>
+                    <a href = "#"><h2 ng-click="menuSection='selectedChapter' + chapter.id">Back</h2></a>
+                    <a href="#"><h2>Add a New StoryLayer...</h2></a>
+                    <div ng-repeat="storyLayer in chapter.storyLayers">
+                        <h2>{{ storyLayer.title }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div id="addChapter" ng-show="menuSection=='mainMenu'">
+                <a id="addchapter" ng-click="addChapter();"><h2>Add a new chapter</h2></a>
+            </div>
+            <div id="getSkills" ng-show="menuSection=='mainMenu'">
+                <a href="/getskills" target="_blank"><h2>Help</h2></a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/umd/tab.js"></script>
+<script src="js/app.js"></script>
+<script src="js/controllers/sidebarcontroller.js"></script>
+</body>
+</html>
