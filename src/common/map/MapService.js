@@ -497,7 +497,7 @@
         if (goog.isDefAndNotNull(projcode)) {
           console.log('----[ addLayer, looking up projection: ', projcode);
           // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
-          // it we we have internet connectivity. When working in disconnected mode, you can only use projections
+          // it if we have internet connectivity. When working in disconnected mode, you can only use projections
           // that have been defined by maploom in Proj4jDefs
           var prj = null;
           try {
@@ -596,8 +596,10 @@
           dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
               {type: 'gxp_googlesource'}));
         } else if (server.ptype === 'gxp_mapboxsource') {
+
           var parms = {
-            url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
+            //url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
+            url: 'http://api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
             crossOrigin: true
           };
           var mbsource = new ol.source.TileJSON(parms);
@@ -611,6 +613,23 @@
               },
               visible: minimalConfig.visibility,
               source: mbsource
+            });
+          } else {
+            console.log('====[ Error: could not create base layer.');
+          }
+        } else if (server.ptype === 'gxp_tilejsonsource') {
+          //currently we assume only one layer per 'server'
+          var jsontile_source = server.layersConfig[0].TileJSONSource;
+
+          if (goog.isDefAndNotNull(jsontile_source)) {
+            layer = new ol.layer.Tile({
+              metadata: {
+                serverId: server.id,
+                name: minimalConfig.name,
+                title: fullConfig.Title
+              },
+              visible: minimalConfig.visibility,
+              source: jsontile_source
             });
           } else {
             console.log('====[ Error: could not create base layer.');
@@ -786,14 +805,12 @@
         } else {
           this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
         }
-
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
           var layerPrjObject = ol.proj.get(meta.projection);
           console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
-
         rootScope_.$broadcast('layer-added');
       } else {
         console.log('====[Error: could not load layer: ', minimalConfig);

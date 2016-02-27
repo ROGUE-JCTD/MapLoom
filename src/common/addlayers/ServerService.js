@@ -521,6 +521,46 @@ var SERVER_SERVICE_USE_PROXY = true;
               sourceParams: {layer: 'world-print'}}
           ];
           deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_tilejsonsource') {
+
+          //first we need to add/connect to the server. we need to init some placeholder
+          //layersConfig data just so to satisfy some logic in the doWork() function above.
+          //The logic itself should be re-analyzed in the future.
+          server.defaultServer = true;
+          server.layersConfig = [
+            {Title: 'Loading...', Name: 'null'}
+          ];
+          deferredResponse.resolve(server);
+
+          var json_parms = {
+            url: server.url,
+            crossOrigin: true
+          };
+
+          //in order to populate the layer list, (once connected to the server) we need override the TileJSON class from openlayers.
+          //the payload that comes back into code, the JSON, is stripped of the name attribute. hence, we overload the handler
+          //to intercept the full JSON and keep track of the name for the layer list.
+          var TileJSONClass = ol.source.TileJSON;
+
+          //store the original handler in a dynamically added member function 'responseHandler' so
+          //we can call it later on since we are altering the prototype (original) in the line after
+          TileJSONClass.prototype.responseHandler = ol.source.TileJSON.prototype.handleTileJSONResponse;
+          TileJSONClass.prototype.handleTileJSONResponse = function(tileJSON) {
+            server.layersConfig[0].Title = tileJSON.name;
+            server.layersConfig[0].Name = tileJSON.id;
+            server.layersConfig[0].sourceParams = {layer: tileJSON.id};
+            this.responseHandler(tileJSON);
+          };
+
+          //using bind so 'this' in the handler above points to the TileJSON class object and not something else
+          TileJSONClass.prototype.handleTileJSONResponse.bind(TileJSONClass);
+
+          //this internally fires off the 'get' call
+          var jsontile_source = new TileJSONClass(json_parms);
+
+          //stash the returned source in the layersConfig so MapService.js can instantiate the tile later on
+          server.layersConfig[0].TileJSONSource = jsontile_source;
+
         } else if (server.ptype === 'gxp_wmscsource' ||
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
           console.log('---- ServerService.Sending GetCapabilities.server: ', server);

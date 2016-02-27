@@ -167,8 +167,8 @@
       createMap(this.left);
       createMap(this.right);
       createMap(this.merged);
-      this.merged.map.bindTo('view', service_.left.map);
-      this.right.map.bindTo('view', service_.left.map);
+      this.merged.map.on('view', service_.left.map);
+      this.right.map.on('view', service_.left.map);
 
       return this;
     };
