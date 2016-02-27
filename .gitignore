@@ -7,5 +7,3 @@ bower_components/
 vendor/
 .idea
 ZZZIGNORE_*.js
-.DS_Store
-.log
