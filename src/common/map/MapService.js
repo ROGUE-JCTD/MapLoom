@@ -254,7 +254,7 @@
         map.beforeRender(pan, zoom);
       }
 
-      view.fitExtent(extent, map.getSize());
+      view.fit(extent, map.getSize());
     };
 
     this.zoomToLayerFeatures = function(layer) {
