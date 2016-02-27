@@ -329,7 +329,7 @@
       service_.merged.replaceLayers(layers);
 
       crs_ = goog.isDefAndNotNull(feature.crs) ? feature.crs : null;
-      var repoName = geogigService_.getRepoById(repoId_).name;
+      var repoName = geogigService_.getRepoById(repoId_).uuid;
       var splitFeature = feature.id.split('/');
       mapService_.map.getLayers().forEach(function(layer) {
         var metadata = layer.get('metadata');
