@@ -1,4 +1,4 @@
-describe( 'StoryLegendDirective', function() {
+describe('StoryLegendDirective', function() {
   var element, scope;
   var createLayer = function(id, name, titleAlias) {
     data = {
@@ -6,7 +6,7 @@ describe( 'StoryLegendDirective', function() {
       title: name,
       config: {}
     };
-    if(titleAlias) { data.config.titleAlias = titleAlias; }
+    if (titleAlias) { data.config.titleAlias = titleAlias; }
     return {
       metadata: data,
       get: function(key) {
@@ -17,19 +17,19 @@ describe( 'StoryLegendDirective', function() {
       }
     };
   };
-  beforeEach( module( 'MapLoom' ) );
-  beforeEach( module( 'loom_storylegend' ) );
+  beforeEach(module('MapLoom'));
+  beforeEach(module('loom_storylegend'));
   beforeEach(module('storylegends/partials/storylegend.tpl.html'));
-	beforeEach(function () {
-		module(function ($provide) {
-			$provide.factory('mapService', function () {
-				return {
+  beforeEach(function() {
+    module(function($provide) {
+      $provide.factory('mapService', function() {
+        return {
           getLayers: function(hidden, editable) {
-            return [createLayer(1, 'Ocean Beach'), createLayer(2,'Ocean Beach', 'O.B.') ];
+            return [createLayer(1, 'Ocean Beach'), createLayer(2, 'Ocean Beach', 'O.B.')];
           }
-				};
-			});
-			$provide.factory('configService', function () {
+        };
+      });
+      $provide.factory('configService', function() {
         return {
           configuration: {
             map: {
@@ -38,9 +38,9 @@ describe( 'StoryLegendDirective', function() {
           }
         };
       });
-		});
-	});
-  beforeEach( inject( function(  $rootScope , $compile, $templateCache ) {
+    });
+  });
+  beforeEach(inject(function($rootScope, $compile, $templateCache) {
     scope = $rootScope.$new();
     element = angular.element('<div class="loom-storylegend"></div>');
     $compile(element)(scope);
@@ -60,23 +60,23 @@ describe( 'StoryLegendDirective', function() {
       var layers = element.find('div label');
       expect(layers.length).toBe(2);
     });
-    it( 'gets all layers', inject( function() {
+    it('gets all layers', inject(function() {
       expect(scope.layers.length).toBe(2);
     }));
-    it( 'the layers have an id', inject( function() {
+    it('the layers have an id', inject(function() {
       expect(scope.layers[0]).toEqual(jasmine.objectContaining({
-            id: 1
-          }));
+        id: 1
+      }));
     }));
-    it( 'the layers have a title', inject( function() {
+    it('the layers have a title', inject(function() {
       expect(scope.layers[0]).toEqual(jasmine.objectContaining({
-            title: 'Ocean Beach'
-          }));
+        title: 'Ocean Beach'
+      }));
     }));
-    it( 'the layers can have a titleAlias', inject( function() {
+    it('the layers can have a titleAlias', inject(function() {
       expect(scope.layers[1]).toEqual(jasmine.objectContaining({
-            title: 'O.B.'
-          }));
+        title: 'O.B.'
+      }));
     }));
   });
   describe('#saveMasking', function() {
