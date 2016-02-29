@@ -1,0 +1,10 @@
+<h2>{{ chapter.chapter }}</h2>
+<h2>{{ chapter.title }}</h2>
+<a href="#"><h2 ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</h2></a>
+<a href="#"><h2 ng-click="updateMenuSection('addStoryLayer' + chapter.id)">Add a New
+    StoryLayer...</h2>
+</a>
+<div ng-repeat="storyLayer in chapter.storyLayers">
+    <a href="#"><h2 ng-click="updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">{{
+        storyLayer.title }}</h2></a>
+</div>
