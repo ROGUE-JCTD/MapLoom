@@ -11,8 +11,7 @@ module.exports = function ( karma ) {
     files: [
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
-      'src/**/*.js',
-      'src/**/*.coffee',
+      'src/**/*.js'
     ],
     exclude: [
       'src/assets/**/*.js'
@@ -20,7 +19,6 @@ module.exports = function ( karma ) {
     frameworks: [ 'jasmine' ],
     plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher' ],
     preprocessors: {
-      '**/*.coffee': 'coffee',
     },
 
     /**
