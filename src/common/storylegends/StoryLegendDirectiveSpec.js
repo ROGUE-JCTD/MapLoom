@@ -1,14 +1,19 @@
 describe( 'StoryLegendDirective', function() {
   var element, scope;
   var createLayer = function(id, name, titleAlias) {
+    data = {
+      uniqueID: id,
+      title: name,
+      config: {}
+    };
+    if(titleAlias) { data.config.titleAlias = titleAlias; }
     return {
-      get: function(metadata) {
-        layer = {
-          uniqueID: id,
-          title: name
-        };
-        if(titleAlias) { layer.titleAlias = titleAlias; }
-        return layer;
+      metadata: data,
+      get: function(key) {
+        return this.metadata;
+      },
+      set: function(key, value) {
+        this.metadata = value;
       }
     };
   };
@@ -47,33 +52,41 @@ describe( 'StoryLegendDirective', function() {
     expect(layers.length).toBe(0);
   });
   describe('layer-added', function() {
-    it('shows two layers', function() {
+    beforeEach(function() {
       scope.$broadcast('layer-added');
+    });
+    it('shows two layers', function() {
       scope.$digest();
       var layers = element.find('div label');
       expect(layers.length).toBe(2);
     });
     it( 'gets all layers', inject( function() {
-      scope.$broadcast('layer-added');
       expect(scope.layers.length).toBe(2);
     }));
     it( 'the layers have an id', inject( function() {
-      scope.$broadcast('layer-added');
       expect(scope.layers[0]).toEqual(jasmine.objectContaining({
             id: 1
           }));
     }));
     it( 'the layers have a title', inject( function() {
-      scope.$broadcast('layer-added');
       expect(scope.layers[0]).toEqual(jasmine.objectContaining({
             title: 'Ocean Beach'
           }));
     }));
     it( 'the layers can have a titleAlias', inject( function() {
-      scope.$broadcast('layer-added');
       expect(scope.layers[1]).toEqual(jasmine.objectContaining({
             title: 'O.B.'
           }));
     }));
+  });
+  describe('#saveMasking', function() {
+    beforeEach(function() {
+      scope.$broadcast('layer-added');
+    });
+    it('saves the masking to the configration', function() {
+      scope.layers[0].title = 'Test';
+      scope.saveMasking();
+      expect(scope.layers[0].layer.get('metadata').config.titleAlias).toBe('Test');
+    });
   });
 });
