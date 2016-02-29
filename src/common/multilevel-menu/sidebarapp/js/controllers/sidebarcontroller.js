@@ -31,6 +31,26 @@ sideBarApp.controller('sideBarController',
               id: 1,
               title: 'Civil War Chapter 3 StoryLayer 2'
             }
+          ],
+          storyBoxes: [
+            {
+              id: 0,
+              title: 'Civil War Chapter 3 Box 1'
+            },
+            {
+              id: 1,
+              title: 'Civil War Chapter 3 Box 2'
+            }
+          ],
+          storyPins: [
+            {
+              id: 0,
+              title: 'Civil War Chapter 3 Pin 1'
+            },
+            {
+              id: 1,
+              title: 'Civil War Chapter 3 Pin 2'
+            }
           ]
         }
       ]
