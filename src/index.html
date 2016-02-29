@@ -86,8 +86,67 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
 <% } %>
-        <div id="menu" style="float: left;">
+<nav>
+        <div id="mainMenu">
+            <div id ="mainMenuTop">
+                <ng-include src="'partials/mainMenuTop.tpl.html'"></ng-include>
+            </div>
+
+            <div ng-repeat="chapter in mapstories.chapters">
+                <div id="chaptersList" ng-show="menuSection=='mainMenu'">
+                    <ng-include src="'sidebarapp/partials/chaptersList.tpl.html'"></ng-include>
+                </div>
+
+                <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
+                    <ng-include src="'sidebarapp/partials/selectedChapter.tpl.html'"></ng-include>
+                </div>
+
+                <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
+                    <ng-include src="'sidebarapp/partials/chapterInfo.tpl.html'"></ng-include>
+                </div>
+
+                <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
+                    <ng-include src="'sidebarapp/partials/storyLayers.tpl.html'"></ng-include>
+                </div>
+
+                <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
+                    <ng-include src="'sidebarapp/partials/editStoryLayer.tpl.html'"></ng-include>
+                </div>
+
+                <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
+                    <ng-include src="'sidebarapp/partials/storyBoxes.tpl.html'"></ng-include>
+                </div>
+
+                <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
+                    <ng-include src="'sidebarapp/partials/addStoryBox.tpl.html'"></ng-include>
+                </div>
+
+                <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
+                    <ng-include src="'sidebarapp/partials/editStoryBox.tpl.html'"></ng-include>
+                </div>
+
+                <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
+                    <ng-include src="'sidebarapp/partials/storyPins.tpl.html'"></ng-include>
+                </div>
+
+                <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
+                    <ng-include src="'sidebarapp/partials/addStoryPin.tpl.html'"></ng-include>
+                </div>
+
+                <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
+                    <ng-include src="'sidebarapp/partials/editStoryPin.tpl.html'"></ng-include>
+                </div>
+            </div>
+
+            <div id="addChapter" ng-show="menuSection=='mainMenu'">
+                <ng-include src="'sidebarapp/partials/addChapter.tpl.html'"></ng-include>
+            </div>
+
+            <div id="getSkills" ng-show="menuSection=='mainMenu'">
+                <ng-include src="'sidebarapp/partials/getSkills.tpl.html'"></ng-include>
+            </div>
         </div>
+    </nav>
 <div id="pushobj" style="width: 74%; height: 100%; float: left;">
   <div id="map" class="map">
     <div class="map-shadow"></div>
