@@ -7,14 +7,6 @@
         <div class="layer-title ellipsis" ng-class="{'placeholder-storybox-title': storyBox.title}">
           {{storyBox.title }}
         </div>
-        <div class="layer-buttons">
-          <span ng-click="showEditForm(storyBox)" tooltip-append-to-body="true"
-                tooltip-placement="top" tooltip="{{'edit_box' | translate}}"
-                ng-show="storyBox" stop-event="click mousedown" class="btn btn-xs btn-default"
-                ng-disabled="(!storyBox)">
-            <i class="glyphicon glyphicon-pencil"></i>
-          </span>
-        </div>
       </div>
     </div>
     <div id="{{storyBox.id}}" class="panel-collapse collapse">
@@ -40,23 +32,6 @@
             </a>
           </div>
         </div>
-        <!--label id="attribute-label" for="attributeRow" ng-show="storyBox">{{'attributes' |
-          translate}}</label-->
-
-        <!--div id="attributeRow" class="row" ng-show="storyBox">
-          <ul class="list-group">
-            <li class="list-group-item" ng-repeat="attribute in getAttrListd(storyBox)">
-              <div class="attribute-value ellipsis">{{attribute}}</div>
-              <div class="layer-buttons">
-              <span ng-click="toggleAttributeVisibility(attribute)"
-                    class="btn btn-xs btn-default layer-visible-button"
-                    ng-class="{'layer-visible': attribute.visible}">
-                <i class="glyphicon" ng-class="{'glyphicon-eye-close': !attribute.visible, 'glyphicon-eye-open': attribute.visible}"></i>
-              </span>
-              </div>
-            </li>
-          </ul>
-        </div-->
       </div>
     </div>
   </div>

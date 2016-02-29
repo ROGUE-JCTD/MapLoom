@@ -574,6 +574,10 @@
         });
       } else {
         if (server.ptype === 'gxp_osmsource') {
+          var osmParams = {};
+          if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
+            goog.object.extend(osmParams, fullConfig.sourceParams);
+          }
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -581,7 +585,7 @@
               title: fullConfig.Title
             },
             visible: minimalConfig.visibility,
-            source: new ol.source.OSM()
+            source: new ol.source.OSM(osmParams)
           });
         } else if (server.ptype === 'gxp_bingsource') {
 

@@ -40,90 +40,6 @@
 
             </div>
         </div>
-        <!--div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="playbackRate">Playback Rate</label>
-
-                    <div class="input-group">
-                        <input type="number" ng-model="box.playbackRate" class="form-control"
-                               style="float: left;width: 50%;" id="playbackRate">
-                        <select class="form-control" ng-model="box.playbackRateUnit"
-                                style="-webkit-appearance:none; border-left:0px; float: left;width: initial;">
-                            <option>Seconds</option>
-                            <option>Minutes</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="timestep">Timestep</label>
-                    <div class="input-group">
-                        <input type="number" ng-model="box.timeStep" class="form-control"
-                               style="float: left;width: 50%;" id="timestep">
-                        <select class="form-control" ng-model="box.timeStepUnit"
-                                style="-webkit-appearance:none; border-left:0px; float: left;width: initial;">
-                            <option>Minutes</option>
-                            <option>Hours</option>
-                            <option>Weeks</option>
-                            <option>Months</option>
-                            <option>Years</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div-->
-
-
-        <!--div class="form-group">
-          <div class="btn-group custom-width-100">
-            <div class="btn-group custom-width-88">
-              <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
-                <span class="pull-left"> {{getCurrentServerName()}} </span>
-                <span class="caret right-and-center"></span>
-              </button>
-              <ul id="server-list" class="dropdown-menu col-md-12">
-                <li ng-repeat="server in servers = serverService.getServers()">
-                  <a ng-click="setCurrentServerId(server.id)">{{server.name}}
-                    <div ng-hide="server.defaultServer" stop-event='click' ng-click="removeServer(server.id)" class="glyphicon glyphicon-remove-circle pull-right"></div>
-                    <div ng-hide="server.defaultServer" stop-event='click' ng-click="editServer(server)" class="glyphicon glyphicon-pencil pull-right server-edit-icon"></div>
-                  </a>
-
-                </li>
-                <li class="divider"></li>
-                <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
-              </ul>
-            </div>
-            <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
-                    type="button"
-                    ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)" class="btn btn-default">
-              <i class="glyphicon glyphicon-repeat"></i>
-            </button>
-          </div>
-        </div-->
-        <!--div class="form-group">
-          <div ng-class="{'input-group':filterLayers !== '' && filterLayers !== null && filterLayers !== undefined}">
-            <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control filter-field"
-                   placeholder="{{'filter_layers' | translate}}">
-            <span ng-if="filterLayers !== '' && filterLayers != null && filterLayers != undefined" class="input-group-btn">
-              <a class="btn btn-default" ng-click="clearFilter()" type="button">
-                <i class="glyphicon glyphicon-remove"></i>
-              </a>
-            </span>
-          </div>
-        </div>
-        <div class="form-group" ng-if="currentServer.username !== null && currentServer.username !== undefined">
-          <div ng-class="{'input-group':!currentServer.isLocal}">
-            <input type="text" value="{{getConnectedString()}}" disabled class="form-control logged-in-as-input">
-            <span class="input-group-btn" ng-if="!currentServer.isLocal">
-              <a class="switch-user-btn btn btn-default" tooltip-append-to-body="true" tooltip-placement="top"
-                 tooltip="{{'connect_as' | translate}}" ng-click="changeCredentials()" type="button">
-                <i class="glyphicon glyphicon-transfer"></i>
-              </a>
-            </span>
-          </div>
-        </div-->
         <button type="button" style="margin-left:-15px;"
                 ng-if="currentServer.lazy && currentServer.layersConfig.length===0 && !currentServer.populatingLayersConfig"
                 tooltip="This server is configured to lazily load layers." tooltip-placement="right"
@@ -133,24 +49,6 @@
             <span>{{'fetch_layers_from_server' | translate}}</span>
         </button>
         <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
-        <div class="form-group layer-container">
-            <ul id="layer-list" class="list-group">
-                <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerId) | filter:filterLayers | filter:filterAddedLayers"
-                    class="list-group-item loom-layerinfo-popover" data-placement="left">
-                    <div class="row">
-                        <div class="col-xs-2">
-                            <div class="loom-check-button btn btn-xs" ng-model="layer.add" btn-checkbox
-                                 btn-checkbox-true="true"
-                                 btn-checkbox-false="false">
-                                <i class="glyphicon"
-                                   ng-class="{'glyphicon-unchecked': !layer.add, 'glyphicon-check': layer.add}"></i>
-                            </div>
-                        </div>
-                        <div class="ellipsis">{{layer.title}}</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
         <!--pre>box = {{box | json}}</pre-->
     </form>
 </div>

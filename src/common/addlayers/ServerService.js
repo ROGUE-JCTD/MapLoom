@@ -484,7 +484,9 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.name = 'OpenStreetMap';
           }
           server.layersConfig = [
-            {Title: 'OpenStreetMap', Name: 'mapnik'}
+            {Title: 'OpenStreetMap', Name: 'mapnik'},
+            {Title: 'HOT OSM', Name: 'hot',
+              sourceParams: {url: 'http://tile-{a-c}.openstreetmap.fr/hot/{z}/{x}/{y}.png'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_mapboxsource') {

@@ -3,6 +3,7 @@
   var stutils = storytools.core.time.utils;
   var service_ = null;
   var mapService_ = null;
+  var boxService_ = null;
   var timelineTicks_ = null;
   var currentTickIndex_ = null;
   var currentTime_ = null;
@@ -13,10 +14,9 @@
   var filterByTime_ = true;
   var featureManagerService_ = null;
   var boxes_ = [];
-  var tBoxes_ = [];
-  var tGroups_ = [];
+  var timelinePointsList = [];
+  var timelineGroupsList_ = [];
   var range_ = new stutils.Range(null, null);
-  var steps_ = 0;
 
   function computeTicks(layersWithTime) {
 
@@ -97,9 +97,10 @@
     // public variable can be placed on scope
     this.hasLayerWithTime = false;
 
-    this.$get = function(mapService, $interval, $rootScope, featureManagerService) {
+    this.$get = function(mapService, boxService, $interval, $rootScope, featureManagerService) {
       service_ = this;
       mapService_ = mapService;
+      boxService_ = boxService;
       interval_ = $interval;
       rootScope_ = $rootScope;
       featureManagerService_ = featureManagerService;
@@ -118,14 +119,15 @@
 
       // when a box is added, reinitialize the service.
       $rootScope.$on('box-added', function(event, box) {
-        console.log('----[ timelineService, box added. initializing');
-        boxes_.push(box);
+        console.log('----[ timelineService, box added. initializing', box);
+        boxes_ = boxService_.getBoxes();
         service_.initialize();
       });
 
       // when a box is removed, reinitialize the service.
       $rootScope.$on('boxRemoved', function(event, box) {
-        console.log('----[ timelineService, box removed. initializing');
+        console.log('----[ timelineService, box removed. initializing', box);
+        boxes_ = boxService_.getBoxes();
         service_.initialize();
       });
 
@@ -137,17 +139,17 @@
       var uniqueTicks = {};
       var layersWithTime = 0;
       var layersWithTimeList = [];
-      tGroups_ = [];
+      timelineGroupsList_ = [];
 
       var layers = mapService_.getLayers(true, true);
-      tBoxes_ = [];
+      timelinePointsList = [];
       for (var i = 0; i < layers.length; i++) {
         var layer = layers[i];
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
           var timeDimension = service_.getTimeDimension(layer);
           if (goog.isDefAndNotNull(timeDimension)) {
-            tGroups_.push({id: metadata.uniqueID, content: metadata.title});
+            timelineGroupsList_.push({id: metadata.uniqueID, content: metadata.title});
 
             layersWithTime++;
             metadata.timeline = true;
@@ -160,7 +162,7 @@
               } else {
                 uniqueTicks[timeDimension[j]] = 1;
                 var id_ = i + ':' + j;
-                tBoxes_.push({id: id_,
+                timelinePointsList.push({id: id_,
                   group: metadata.uniqueID,
                   content: "<img src='" + metadata.styles[0].legendUrl + "&TRANSPARENT=true' />",
                   start: timeDimension[j],
@@ -204,20 +206,18 @@
 
       if (boxes_.length > 0) {
         for (var c = 0; c < boxes_.length; c++) {
-          var box_range = stutils.createRange(boxes_[c].startTime, boxes_[c].endTime);
+          var box_range = stutils.createRange(boxes_[c].start_time, boxes_[c].end_time);
           console.log('----[ Info: Box Range ', box_range.toString());
           range_.extend(box_range);
           console.log('----[ Info: Total Range ', range_.toString());
-          tBoxes_.push({
+          timelinePointsList.push({
             id: 'sb' + c,
             content: boxes_[c].title,
             start: (new Date(boxes_[c].start_time)).toISOString(),
             end: (new Date(boxes_[c].end_time)).toISOString(),
             type: 'background'
           });
-          var m = moment.duration(boxes_[c].timeStep, boxes_[c].timeStepUnit).asMilliseconds();
-          var steps = Math.floor(box_range.width() / m) + 1;
-          steps_ = steps;
+
           boxes_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
                               (new Date(boxes_[c].start_time)).toISOString(),
                               (new Date(boxes_[c].end_time)).toISOString()
@@ -293,15 +293,11 @@
 
     this.getTimeLineElements = function() {
       var elements = {
-        'points': new vis.DataSet(tBoxes_),
-        'groups': new vis.DataSet(tGroups_)
+        'points': new vis.DataSet(timelinePointsList),
+        'groups': new vis.DataSet(timelineGroupsList_)
       };
 
       return elements;
-    };
-
-    this.getTimeLineSteps = function() {
-      return steps_;
     };
 
     this.getTimeLineConfig = function() {
