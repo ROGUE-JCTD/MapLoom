@@ -17,7 +17,9 @@
 
             var target = 'preview-map-' + scope.mapid;
             var loadingtarget = '#loading-' + scope.mapid;
+
             function updateVariables() {
+
               scope.authorsShown = false;
               scope.isMergePanel = scope.panel === featureDiffService.merged;
               scope.isConflictPanel = scope.isMergePanel && featureDiffService.change !== 'MERGED';
