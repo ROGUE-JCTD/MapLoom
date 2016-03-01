@@ -6,296 +6,302 @@
 <html ng-app="MapLoom" ng-controller="AppCtrl">
 <head>
 
-<title ng-bind="pageTitle"></title>
+    <title ng-bind="pageTitle"></title>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-COMPATIBLE" content="IE-Edge">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE-Edge">
 
-<!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
-        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}maploom/<%= file %>"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}maploom/<%= file %>"/>
     <% }else{ %>
-        <link rel="stylesheet" type="text/css" href="<%= file %>"/>
+    <link rel="stylesheet" type="text/css" href="<%= file %>"/>
     <% } %>
 
-<% }); %>
+    <% }); %>
 
-<link rel="stylesheet" type="text/css" href="http://visjs.org/dist/vis.css"/>
+    <link rel="stylesheet" type="text/css" href="http://visjs.org/dist/vis.css"/>
     <!--link rel="stylesheet" type="text/css" href="/static/mapstory/css/app.css"/-->
 
-<!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
-        <script type="text/javascript" src="{{STATIC_URL}}maploom/<%= file %>"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}maploom/<%= file %>"></script>
     <% }else{ %>
-        <script type="text/javascript" src="<%= file %>"></script>
+    <script type="text/javascript" src="<%= file %>"></script>
     <% } %>
-<% }); %>
+    <% }); %>
 
-<% if (!(typeof django === 'undefined') && (django)) { %>
-    {% get_current_language as language%}
-<script type="text/javascript">
-    config =  {
-        authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
-        username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
-        currentLanguage: "{{language|default:'en'}}",
-        userprofilename: {% if user.is_authenticated %} "{{ user.get_full_name }}" {% else %} undefined {% endif %},
-        userprofileemail: {% if user.is_authenticated %} "{{ user.email }}" {% else %} undefined {% endif %},
-        proxy: "/proxy/?url=",
-        nominatimUrl: "http://nominatim.openstreetmap.org",
-        printService: "{{GEOSERVER_BASE_URL}}pdf/",
-        /* The URL to a REST map configuration service.  This service
-         * provides listing and, with an authenticated user, saving of
-         * maps on the server for sharing and editing.
-         */
-        rest: "{% url "maps_browse" %}",
-        ajaxLoginUrl: "{% url "account_ajax_login" %}",
-        homeUrl: "{% url "home" %}",
-        portalItems: [{
+    <% if (!(typeof django === 'undefined') && (django)) { %>
+    {% get_current_language as language %}
+    <script type="text/javascript">
+        config = {
+            authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
+            username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
+            currentLanguage: "{{language|default:'en'}}",
+            userprofilename: {% if user.is_authenticated %} "{{ user.get_full_name }}" {% else %} undefined {% endif %},
+            userprofileemail: {% if user.is_authenticated %} "{{ user.email }}" {% else %} undefined {% endif %},
+            proxy: "/proxy/?url=",
+            nominatimUrl: "http://nominatim.openstreetmap.org",
+            printService: "{{GEOSERVER_BASE_URL}}pdf/",
+            /* The URL to a REST map configuration service.  This service
+             * provides listing and, with an authenticated user, saving of
+             * maps on the server for sharing and editing.
+             */
+            rest: "{% url "maps_browse" %}",
+            ajaxLoginUrl: "{% url "account_ajax_login" %}",
+            homeUrl: "{% url "home" %}",
+            portalItems: [{
                 xtype: "container",
                 layout: "fit",
-        {% if classification_banner_enabled %}
-            height: 99,
-        {% else %}
-            height: 81,
-        {% endif %}
-        region: "north"
-        }],
-        localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
-        localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
-        csrfToken: "{{ csrf_token }}",
-        tools: [{ptype: "gxp_getfeedfeatureinfo"}],
+                {% if classification_banner_enabled %}
+                    height: 99,
+                {% else %}
+                    height: 81,
+                {% endif %}
+                region: "north"
+            }],
+            localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
+            localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
+            csrfToken: "{{ csrf_token }}",
+            tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         };
 
-    goog.object.extend( config, {{ config|safe }});
+        goog.object.extend(config, {{ config|safe }});
 
-    console.log('############ config: ', config);
-</script>
-<% } %>
+        console.log('############ config: ', config);
+    </script>
+    <% } %>
 
-<script type="text/javascript">
-  var onErrorCallback = function(msg, url, linenumber) { return true; };
-  window.onerror = function(msg, url, linenumber) {
-    onErrorCallback(msg,url,linenumber);
-  };
-</script>
-
+    <script type="text/javascript">
+        var onErrorCallback = function (msg, url, linenumber) {
+            return true;
+        };
+        window.onerror = function (msg, url, linenumber) {
+            onErrorCallback(msg, url, linenumber);
+        };
+    </script>
 
 
 </head>
 <body class="maploom-body">
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
-<% } %>
-<nav>
-        <div id="mainMenu">
-            <div id ="mainMenuTop">
-                <ng-include src="'sidebarapp/partials/mainMenuTop.tpl.html'"></ng-include>
-            </div>
+    <% } %>
+    <div class="row">
+        <div class="col-md-4">
+            <nav>
+                <div id="mainMenu">
+                    <div id="mainMenuTop">
+                        <ng-include src="'sidebarapp/partials/mainMenuTop.tpl.html'"></ng-include>
+                    </div>
 
-            <div ng-repeat="chapter in mapstories.chapters">
-                <div id="chaptersList" ng-show="menuSection=='mainMenu'">
-                    <ng-include src="'sidebarapp/partials/chaptersList.tpl.html'"></ng-include>
+                    <div ng-repeat="chapter in mapstories.chapters">
+                        <div id="chaptersList" ng-show="menuSection=='mainMenu'">
+                            <ng-include src="'sidebarapp/partials/chaptersList.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
+                            <ng-include src="'sidebarapp/partials/selectedChapter.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
+                            <ng-include src="'sidebarapp/partials/chapterInfo.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
+                            <ng-include src="'sidebarapp/partials/storyLayers.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
+                            <ng-include src="'sidebarapp/partials/editStoryLayer.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
+                            <ng-include src="'sidebarapp/partials/storyBoxes.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
+                            <ng-include src="'sidebarapp/partials/addStoryBox.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
+                            <ng-include src="'sidebarapp/partials/editStoryBox.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
+                            <ng-include src="'sidebarapp/partials/storyPins.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
+                            <ng-include src="'sidebarapp/partials/addStoryPin.tpl.html'"></ng-include>
+                        </div>
+
+                        <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
+                            <ng-include src="'sidebarapp/partials/editStoryPin.tpl.html'"></ng-include>
+                        </div>
+                    </div>
+
+                    <div id="addChapter" ng-show="menuSection=='mainMenu'">
+                        <ng-include src="'sidebarapp/partials/addChapter.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="getSkills" ng-show="menuSection=='mainMenu'">
+                        <ng-include src="'sidebarapp/partials/getSkills.tpl.html'"></ng-include>
+                    </div>
                 </div>
-
-                <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
-                    <ng-include src="'sidebarapp/partials/selectedChapter.tpl.html'"></ng-include>
+            </nav>
+        </div>
+        <div class="col-md-8">
+            <div id="pushobj" style="width: 74%; height: 100%; float: left;">
+                <div id="map" class="map">
+                    <div class="map-shadow"></div>
+                    <div class="loom-notification-poster"></div>
+                    <div class="loom-legend"></div>
+                    <div class="loom-exclusive-mode"></div>
+                    <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
+                         tooltip-placement="left" tooltip="{{ 'zoom_world' | translate }}">
+                        <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
+                            <i class="glyphicon glyphicon-globe"></i>
+                        </div>
+                    </div>
+                    <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
+                         tooltip-placement="right" tooltip="{{ 'switch_coords' | translate }}">
+                        <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
+                            <i class="glyphicon glyphicon-map-marker"></i>
+                        </div>
+                    </div>
+                    <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
+                         tooltip-placement="left" tooltip="{{ 'toggle_fullscreen' | translate }}">
+                        <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
+                            <i class="glyphicon glyphicon-fullscreen"></i>
+                        </div>
+                    </div>
+                    <div class="loom-timeline"></div>
                 </div>
-
-                <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
-                    <ng-include src="'sidebarapp/partials/chapterInfo.tpl.html'"></ng-include>
-                </div>
-
-                <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
-                    <ng-include src="'sidebarapp/partials/storyLayers.tpl.html'"></ng-include>
-                </div>
-
-                <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
-                    <ng-include src="'sidebarapp/partials/editStoryLayer.tpl.html'"></ng-include>
-                </div>
-
-                <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
-                    <ng-include src="'sidebarapp/partials/storyBoxes.tpl.html'"></ng-include>
-                </div>
-
-                <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
-                    <ng-include src="'sidebarapp/partials/addStoryBox.tpl.html'"></ng-include>
-                </div>
-
-                <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
-                    <ng-include src="'sidebarapp/partials/editStoryBox.tpl.html'"></ng-include>
-                </div>
-
-                <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
-                    <ng-include src="'sidebarapp/partials/storyPins.tpl.html'"></ng-include>
-                </div>
-
-                <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
-                    <ng-include src="'sidebarapp/partials/addStoryPin.tpl.html'"></ng-include>
-                </div>
-
-                <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
-                    <ng-include src="'sidebarapp/partials/editStoryPin.tpl.html'"></ng-include>
-                </div>
-            </div>
-
-            <div id="addChapter" ng-show="menuSection=='mainMenu'">
-                <ng-include src="'sidebarapp/partials/addChapter.tpl.html'"></ng-include>
-            </div>
-
-            <div id="getSkills" ng-show="menuSection=='mainMenu'">
-                <ng-include src="'sidebarapp/partials/getSkills.tpl.html'"></ng-include>
             </div>
         </div>
-    </nav>
-<div id="pushobj" style="width: 74%; height: 100%; float: left;">
-  <div id="map" class="map">
-    <div class="map-shadow"></div>
-    <div class="loom-notification-poster"></div>
-    <div class="loom-legend"></div>
-    <div class="loom-exclusive-mode"></div>
-    <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
-               tooltip-placement="left" tooltip="{{'zoom_world' | translate}}">
-      <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
-        <i class="glyphicon glyphicon-globe"></i>
-      </div>
     </div>
-    <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
-         tooltip-placement="right" tooltip="{{'switch_coords' | translate}}">
-      <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
-        <i class="glyphicon glyphicon-map-marker"></i>
-      </div>
+    <!--modal titles are in a lower case underscore separated format so that they can be translated-->
+    <div loom-modal id="add-layer-dialog" modal-title="add_layers">
+        <div loom-addlayers id="add-layers">
+        </div>
     </div>
-    <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
-         tooltip-placement="left" tooltip="{{'toggle_fullscreen' | translate}}">
-      <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
-        <i class="glyphicon glyphicon-fullscreen"></i>
-      </div>
+    <div loom-modal id="add-server-dialog" modal-title="add_server">
+        <div loom-add-server id="add-server">
+        </div>
     </div>
-    <div class="loom-timeline"></div>
-  </div>
-</div>
-</div>
-<!--modal titles are in a lower case underscore separated format so that they can be translated-->
-<div loom-modal id="add-layer-dialog" modal-title="add_layers">
-  <div loom-addlayers id="add-layers">
-  </div>
-</div>
-<div loom-modal id="add-server-dialog" modal-title="add_server">
-  <div loom-add-server id="add-server">
-  </div>
-</div>
-<div loom-modal id="mergeWindow" modal-title="{{'merge' | translate}}" close-button="false">
-  <div loom-merge id="merge">
-  </div>
-</div>
-<div loom-modal id="historyDiffWindow" modal-title="{{'select_date_range' | translate}}" close-button="false">
-  <div loom-history-diff id="historyDiff">
-  </div>
-</div>
-<div loom-modal id="generate-notification-dialog" modal-title="{{'select_start_time' | translate}}" close-button="false">
-  <div loom-generate-notification id="generateNotification">
-  </div>
-</div>
-<div loom-modal id="addSyncWindow" modal-title="{{'add_sync' | translate}}">
-  <div loom-addsync id="add-sync">
-  </div>
-</div>
-<div loom-modal id="configWindow" modal-title="config">
-  <div loom-syncconfig id="sync-config">
-  </div>
-</div>
-<div loom-modal id="remoteSelectDialog" close-button="false" modal-title="remote">
-  <div loom-remoteselect id="remote-select">
-  </div>
-</div>
-<div loom-modal id="drawSelectDialog" close-button="false" modal-title="draw">
-  <div loom-drawselect id="draw-select">
-  </div>
-</div>
-<div loom-modal id="feature-diff-dialog" ng-controller="LoomFeatureDiffController" modal-title="{{title}}">
-  <div class="loom-feature-diff" id="feature-diff">
-  </div>
-</div>
-<div loom-modal id="attribute-edit-dialog" modal-title="{{'edit_attributes' | translate}}">
-  <div class="loom-attribute-edit" id="edit-feature">
-  </div>
-</div>
-<div loom-modal id="table-view-window" modal-title="{{'table_view' | translate}}" close-button="true">
-  <div class="loom-table-view" id="table-view">
-  </div>
-</div>
-<div loom-modal id="statistics-view-window" modal-title="{{'statistics_view' | translate}}"  close-button="true">
-  <div class="loom-statistics-view" id="statistics-view">
-  </div>
-</div>
-<div loom-modal id="layerInfoDialog" modal-title="layerinfo">
-  <div loom-layer-info id="layer-info">
-  </div>
-</div>
-<div loom-modal id="storyBoxInfoDialog" modal-title="{{'box_info' | translate}}">
-  <div loom-box-info id="box-info">
-  </div>
-</div>
-<div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
-     class="feature-info-box-popup">
-</div>
-<div loom-modal id="saveMap" modal-title="{{ 'save_this_map' | translate}}">
-    <div loom-save-map id="save-map">
+    <div loom-modal id="mergeWindow" modal-title="{{ 'merge' | translate }}" close-button="false">
+        <div loom-merge id="merge">
+        </div>
     </div>
-</div>
-<div loom-modal id="add-storybox-dialog" modal-title="add_storybox">
-  <div loom-storybox id="storybox">
-  </div>
-</div>
-<!-- New Modals -->
-<div loom-modal id="mapProperties" modal-title="MapStory Properties">
-  <div loom-map-properties id="map-properties">
-  </div>
-</div>
-<div loom-modal id="mapSave" modal-title="Save MapStory?">
-  <div loom-map-save id="map-save">
-  </div>
-</div>
-<div loom-modal id="chapterDelete" modal-title="Are you sure you want to delete this chapter?">
-  <div loom-chapter-delete id="chapter-delete">
-  </div>
-</div>
+    <div loom-modal id="historyDiffWindow" modal-title="{{ 'select_date_range' | translate }}" close-button="false">
+        <div loom-history-diff id="historyDiff">
+        </div>
+    </div>
+    <div loom-modal id="generate-notification-dialog" modal-title="{{ 'select_start_time' | translate }}" close-button="false">
+        <div loom-generate-notification id="generateNotification">
+        </div>
+    </div>
+    <div loom-modal id="addSyncWindow" modal-title="{{ 'add_sync' | translate }}">
+        <div loom-addsync id="add-sync">
+        </div>
+    </div>
+    <div loom-modal id="configWindow" modal-title="config">
+        <div loom-syncconfig id="sync-config">
+        </div>
+    </div>
+    <div loom-modal id="remoteSelectDialog" close-button="false" modal-title="remote">
+        <div loom-remoteselect id="remote-select">
+        </div>
+    </div>
+    <div loom-modal id="drawSelectDialog" close-button="false" modal-title="draw">
+        <div loom-drawselect id="draw-select">
+        </div>
+    </div>
+    <div loom-modal id="feature-diff-dialog" ng-controller="LoomFeatureDiffController" modal-title="{{ title }}">
+        <div class="loom-feature-diff" id="feature-diff">
+        </div>
+    </div>
+    <div loom-modal id="attribute-edit-dialog" modal-title="{{ 'edit_attributes' | translate }}">
+        <div class="loom-attribute-edit" id="edit-feature">
+        </div>
+    </div>
+    <div loom-modal id="table-view-window" modal-title="{{ 'table_view' | translate }}" close-button="true">
+        <div class="loom-table-view" id="table-view">
+        </div>
+    </div>
+    <div loom-modal id="statistics-view-window" modal-title="{{ 'statistics_view' | translate }}" close-button="true">
+        <div class="loom-statistics-view" id="statistics-view">
+        </div>
+    </div>
+    <div loom-modal id="layerInfoDialog" modal-title="layerinfo">
+        <div loom-layer-info id="layer-info">
+        </div>
+    </div>
+    <div loom-modal id="storyBoxInfoDialog" modal-title="{{ 'box_info' | translate }}">
+        <div loom-box-info id="box-info">
+        </div>
+    </div>
+    <div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
+         class="feature-info-box-popup">
+    </div>
+    <div loom-modal id="saveMap" modal-title="{{ 'save_this_map' | translate }}">
+        <div loom-save-map id="save-map">
+        </div>
+    </div>
+    <div loom-modal id="add-storybox-dialog" modal-title="add_storybox">
+        <div loom-storybox id="storybox">
+        </div>
+    </div>
+    <!-- New Modals -->
+    <div loom-modal id="mapProperties" modal-title="MapStory Properties">
+        <div loom-map-properties id="map-properties">
+        </div>
+    </div>
+    <div loom-modal id="mapSave" modal-title="Save MapStory?">
+        <div loom-map-save id="map-save">
+        </div>
+    </div>
+    <div loom-modal id="chapterDelete" modal-title="Are you sure you want to delete this chapter?">
+        <div loom-chapter-delete id="chapter-delete">
+        </div>
+    </div>
 
-<!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
-<div id="blueimp-gallery" class="blueimp-gallery">
-  <!-- The container for the modal slides -->
-  <div class="slides"></div>
-  <!-- Controls for the borderless lightbox -->
-  <h3 class="title"></h3>
-  <a class="prev">‹</a>
-  <a class="next">›</a>
-  <a class="close">×</a>
-  <a class="play-pause"></a>
-  <ol class="indicator"></ol>
-  <!-- The modal dialog, which will be used to wrap the lightbox content -->
-  <div class="modal fade">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" aria-hidden="true">&times;</button>
-          <h4 class="modal-title"></h4>
+    <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
+    <div id="blueimp-gallery" class="blueimp-gallery">
+        <!-- The container for the modal slides -->
+        <div class="slides"></div>
+        <!-- Controls for the borderless lightbox -->
+        <h3 class="title"></h3>
+        <a class="prev">‹</a>
+        <a class="next">›</a>
+        <a class="close">×</a>
+        <a class="play-pause"></a>
+        <ol class="indicator"></ol>
+        <!-- The modal dialog, which will be used to wrap the lightbox content -->
+        <div class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body next"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left prev">
+                            <i class="glyphicon glyphicon-chevron-left"></i>
+                            Previous
+                        </button>
+                        <button type="button" class="btn btn-primary next">
+                            Next
+                            <i class="glyphicon glyphicon-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="modal-body next"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left prev">
-            <i class="glyphicon glyphicon-chevron-left"></i>
-            Previous
-          </button>
-          <button type="button" class="btn btn-primary next">
-            Next
-            <i class="glyphicon glyphicon-chevron-right"></i>
-          </button>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
-<% if (!(typeof django === 'undefined') && (django)) { %>
+    <% if (!(typeof django === 'undefined') && (django)) { %>
 {% endverbatim %}
 <% } %>
 </body>
