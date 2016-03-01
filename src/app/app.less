@@ -1,40 +1,40 @@
 .loom-notification-poster {
-	position:absolute;
-	.z-index(@menuLevel);
-	left:325px;
+  position: absolute;
+  .z-index(@menuLevel);
+  left: 325px;
 }
 
 html, body {
-  -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-  margin  : 0;
-  padding : 0;
-  height  : 100%;
-  width   : 100%;
+  -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   font: @mainFont;
   color: @mainFontColor;
   /* width   : 100%; */
 }
 
 #pulldown {
-	position: absolute;
-	left: 0;
-	width: 320px;
-    .z-index(@menuLevel);
-	top: 0;
+  position: absolute;
+  left: 0;
+  width: 320px;
+  .z-index(@menuLevel);
+  top: 0;
 }
 
 #pulldown .panel {
-	margin: 0;
-	border: 0;
-	font-weight: normal;
-	overflow: visible;
-	background-color:@mainPanelColor;
+  margin: 0;
+  border: 0;
+  font-weight: normal;
+  overflow: visible;
+  background-color: @mainPanelColor;
 }
 
 .panel-body {
-	padding: 10px;
-    margin: 10px;
-    background-color: #dcdcdc;
+  padding: 10px;
+  margin: 10px;
+  background-color: #dcdcdc;
 }
 
 .map-title-text {
@@ -43,11 +43,11 @@ html, body {
 }
 
 #pulldown-content .panel-heading {
-	background-color: @mainHeaderColor;
-	color: @mainHeaderFontColor;
-	display: block;
-	text-decoration: none;
-	border-top: 1px solid darken(@mainPanelColor, 5%);
+  background-color: @mainHeaderColor;
+  color: @mainHeaderFontColor;
+  display: block;
+  text-decoration: none;
+  border-top: 1px solid darken(@mainPanelColor, 5%);
 
   .panel-header-button {
     font-size: 17px;
@@ -67,7 +67,7 @@ html, body {
 }
 
 #pulldown-content {
-	max-height: 80%;
+  max-height: 80%;
 }
 
 .modal-open {
@@ -88,15 +88,15 @@ html, body {
   border-color: #b94a48 !important;
 }
 
-#add-layer-dialog .modal-dialog{
+#add-layer-dialog .modal-dialog {
   width: 80%;
 }
 
-#add-box-dialog .modal-dialog{
+#add-box-dialog .modal-dialog {
   width: 414px;
 }
 
-#add-pin-dialog .modal-dialog{
+#add-pin-dialog .modal-dialog {
   width: 414px;
 }
 
@@ -104,7 +104,7 @@ html, body {
   width: 450px;
 }
 
-#attribute-edit-dialog .modal-dialog{
+#attribute-edit-dialog .modal-dialog {
   width: 450px;
 }
 
@@ -116,60 +116,62 @@ html, body {
 #pulldown-shadow {
   position: relative;
   .z-index(@menuLevel);
-	.box-shadow(0 0 20px rgba(0, 0, 0, 0.4));
+  .box-shadow(0 0 20px rgba(0, 0, 0, 0.4));
 }
 
 .toggle-menu {
   .box-shadow(0 0 20px rgba(0, 0, 0, 0.4));
   .z-index(@mapLevel);
-  position:relative;
+  position: relative;
   top: -1px;
 }
 
 .notification-panel-heading {
-    background-color: @notificationHeaderColor !important;
+  background-color: @notificationHeaderColor !important;
 }
 
 .panel {
-	margin: 0;
-	border: 0;
-	font-weight: normal;
-	/*overflow: visible;*/
-	background-color:@mainPanelColor;
+  margin: 0;
+  border: 0;
+  font-weight: normal;
+  /*overflow: visible;*/
+  background-color: @mainPanelColor;
 }
 
-.panel-group .panel-heading + .panel-collapse .panel-body{
-	border-top: 1px solid darken(@mainPanelColor, 5%);
+.panel-group .panel-heading + .panel-collapse .panel-body {
+  border-top: 1px solid darken(@mainPanelColor, 5%);
 
 }
+
 .close {
-	color:#808080;
+  color: #808080;
 }
+
 .flat {
-	border-radius: 0;
+  border-radius: 0;
 }
 
 hr {
-	border-top: 1px solid darken(@mainPanelColor, 5%);
+  border-top: 1px solid darken(@mainPanelColor, 5%);
 }
 
-#map-title{
-  .panel-heading{
+#map-title {
+  .panel-heading {
     font-size: 20px;
     font-weight: 100;
     padding-bottom: 2px;
   }
 
-   i{
+  i {
     color: @saveIconColor;
     cursor: pointer;
   }
 
-  #saveButton:before{
+  #saveButton:before {
     content: @saveIcon;
     padding-left: 5px;
   }
-  #refreshButton:before{
+  #refreshButton:before {
     content: @refreshIcon;
     padding: 2px;
   }
@@ -184,46 +186,46 @@ hr {
 
 /* Overwriting these because the default rounded corners didn't look quite right */
 .panel-heading, .flat-top {
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 #layer-panel a.accordion-toggle {
-	display: inline-block;
+  display: inline-block;
 }
 
 .badge {
-    background-color: @badgeColor;
-    color:@badgeFontColor;
-    font-size: 14px;
-    padding:5px 10px;
-    border-radius: 20px;
+  background-color: @badgeColor;
+  color: @badgeFontColor;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 20px;
 }
 
 #pulldown-content .badge {
-    position: relative;
-    top: -4px;
+  position: relative;
+  top: -4px;
 }
 
 .list-group {
-    margin-bottom:0;
+  margin-bottom: 0;
 }
 
 .list-group-item {
-	background-color:@mainListItemColor;
-	border: 1px solid darken(@mainListItemColor, 5%);
+  background-color: @mainListItemColor;
+  border: 1px solid darken(@mainListItemColor, 5%);
 }
 
 .notification-text {
-    margin: 0;
+  margin: 0;
 }
 
 .notification-panel-heading {
-    font-weight:900;
+  font-weight: 900;
 }
 
 .notification-panel-heading.read {
-    font-weight:100;
+  font-weight: 100;
 }
 
 ul {
@@ -312,13 +314,17 @@ textarea {
 }
 
 #menu {
-    width: 350px;
-    min-height: 100%;
-    height: 700px;
-    margin-top: 0px;
-    background-color: #F5F5F5;
+  width: 350px;
+  min-height: 100%;
+  height: 700px;
+  margin-top: 0px;
+  background-color: #F5F5F5;
+  z-index: 1;
+  position: absolute;
+  top: 0px;
+  left: 5px;
 }
 
 #menu i {
-    float: right;
+  float: right;
 }

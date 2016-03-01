@@ -87,101 +87,95 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
 {% verbatim %}
     <% } %>
-    <div class="row">
-        <div class="col-md-3">
-            <div id="menu">
-                <nav>
-                    <div id="mainMenu">
-                        <div id="mainMenuTop">
-                            <ng-include src="'sidebarapp/partials/mainMenuTop.tpl.html'"></ng-include>
-                        </div>
-
-                        <div ng-repeat="chapter in mapstories.chapters">
-                            <div id="chaptersList" ng-show="menuSection=='mainMenu'">
-                                <ng-include src="'sidebarapp/partials/chaptersList.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
-                                <ng-include src="'sidebarapp/partials/selectedChapter.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
-                                <ng-include src="'sidebarapp/partials/chapterInfo.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
-                                <ng-include src="'sidebarapp/partials/storyLayers.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
-                                <ng-include src="'sidebarapp/partials/editStoryLayer.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
-                                <ng-include src="'sidebarapp/partials/storyBoxes.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
-                                <ng-include src="'sidebarapp/partials/addStoryBox.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
-                                <ng-include src="'sidebarapp/partials/editStoryBox.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
-                                <ng-include src="'sidebarapp/partials/storyPins.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
-                                <ng-include src="'sidebarapp/partials/addStoryPin.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
-                                <ng-include src="'sidebarapp/partials/editStoryPin.tpl.html'"></ng-include>
-                            </div>
-                        </div>
-
-                        <div id="addChapter" ng-show="menuSection=='mainMenu'">
-                            <ng-include src="'sidebarapp/partials/addChapter.tpl.html'"></ng-include>
-                        </div>
-
-                        <div id="getSkills" ng-show="menuSection=='mainMenu'">
-                            <ng-include src="'sidebarapp/partials/getSkills.tpl.html'"></ng-include>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
-        <div class="col-md-9">
-            <div id="pushobj">
-                <div id="map" class="map">
-                    <div class="map-shadow"></div>
-                    <div class="loom-notification-poster"></div>
-                    <div class="loom-legend"></div>
-                    <div class="loom-exclusive-mode"></div>
-                    <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
-                         tooltip-placement="left" tooltip="{{ 'zoom_world' | translate }}">
-                        <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
-                            <i class="glyphicon glyphicon-globe"></i>
-                        </div>
-                    </div>
-                    <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
-                         tooltip-placement="right" tooltip="{{ 'switch_coords' | translate }}">
-                        <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
-                            <i class="glyphicon glyphicon-map-marker"></i>
-                        </div>
-                    </div>
-                    <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
-                         tooltip-placement="left" tooltip="{{ 'toggle_fullscreen' | translate }}">
-                        <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
-                            <i class="glyphicon glyphicon-fullscreen"></i>
-                        </div>
-                    </div>
-                    <div class="loom-timeline"></div>
+    <div id="pushobj">
+        <div id="map" class="map">
+            <div class="map-shadow"></div>
+            <div class="loom-notification-poster"></div>
+            <div class="loom-legend"></div>
+            <div class="loom-exclusive-mode"></div>
+            <div id="zoom-to-world-border" class="map-btn-border" tooltip-append-to-body="true"
+                 tooltip-placement="left" tooltip="{{ 'zoom_world' | translate }}">
+                <div id="zoom-to-world" ng-click="mapService.zoomToExtent()">
+                    <i class="glyphicon glyphicon-globe"></i>
                 </div>
             </div>
+            <div id="switch-coords-border" class="map-btn-border" tooltip-append-to-body="true"
+                 tooltip-placement="right" tooltip="{{ 'switch_coords' | translate }}">
+                <div id="switch-coords" ng-click="mapService.switchMousePosCoordFormat()">
+                    <i class="glyphicon glyphicon-map-marker"></i>
+                </div>
+            </div>
+            <div id="toggle-fullscreen-border" class="map-btn-border" tooltip-append-to-body="true"
+                 tooltip-placement="left" tooltip="{{ 'toggle_fullscreen' | translate }}">
+                <div id="toggle-fullscreen" ng-click="mapService.toggleFullscreen()">
+                    <i class="glyphicon glyphicon-fullscreen"></i>
+                </div>
+            </div>
+            <div class="loom-timeline"></div>
         </div>
+    </div>
+    <div id="menu">
+        <nav>
+            <div id="mainMenu">
+                <div id="mainMenuTop">
+                    <ng-include src="'sidebarapp/partials/mainMenuTop.tpl.html'"></ng-include>
+                </div>
+
+                <div ng-repeat="chapter in mapstories.chapters">
+                    <div id="chaptersList" ng-show="menuSection=='mainMenu'">
+                        <ng-include src="'sidebarapp/partials/chaptersList.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
+                        <ng-include src="'sidebarapp/partials/selectedChapter.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="chapterInfo" ng-show="menuSection=='chapterInfo'+ chapter.id">
+                        <ng-include src="'sidebarapp/partials/chapterInfo.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
+                        <ng-include src="'sidebarapp/partials/storyLayers.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
+                        <ng-include src="'sidebarapp/partials/editStoryLayer.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
+                        <ng-include src="'sidebarapp/partials/storyBoxes.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
+                        <ng-include src="'sidebarapp/partials/addStoryBox.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
+                        <ng-include src="'sidebarapp/partials/editStoryBox.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
+                        <ng-include src="'sidebarapp/partials/storyPins.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
+                        <ng-include src="'sidebarapp/partials/addStoryPin.tpl.html'"></ng-include>
+                    </div>
+
+                    <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
+                        <ng-include src="'sidebarapp/partials/editStoryPin.tpl.html'"></ng-include>
+                    </div>
+                </div>
+
+                <div id="addChapter" ng-show="menuSection=='mainMenu'">
+                    <ng-include src="'sidebarapp/partials/addChapter.tpl.html'"></ng-include>
+                </div>
+
+                <div id="getSkills" ng-show="menuSection=='mainMenu'">
+                    <ng-include src="'sidebarapp/partials/getSkills.tpl.html'"></ng-include>
+                </div>
+            </div>
+        </nav>
     </div>
     <!--modal titles are in a lower case underscore separated format so that they can be translated-->
     <div loom-modal id="add-layer-dialog" modal-title="add_layers">
