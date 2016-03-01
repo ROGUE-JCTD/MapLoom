@@ -1,5 +1,5 @@
 <h2 ng-click="">{{ chapter.chapter }}</h2>
-<h2 ng-click="">{{ chapter.title }}</h2>
+<h2 ng-click="">{{ storyService.active_chapter.about.title }}</h2>
 <a href="#"><h2 ng-click="updateMenuSection('mainMenu')">Back to Chapters List</h2></a>
 <a href="#"><h2 ng-click="updateMenuSection('chapterInfo' + chapter.id)">Chapter Info</h2></a>
 <a href="#"><h2 ng-click="updateMenuSection('storyLayers' + chapter.id)">StoryLayers</h2></a>

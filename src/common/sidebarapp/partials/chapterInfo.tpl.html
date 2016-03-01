@@ -4,11 +4,11 @@
         id="chapterInfoBackButton">Back</a>
 </h2>
 <a href="#">Chapter Title</a>
-<input ng-model="chapter.title" class="form-control" type="text" name="chapterTitle"
+<input ng-model="storyService.active_chapter.about.title" class="form-control" type="text" name="chapterTitle"
        id="chapterTitle"/>
 
 <a href="#">Chapter Summary</a>
-<textarea ng-model="chapter.summary" class="form-control" name="chapterSummary"
+<textarea ng-model="storyService.active_chapter.about.abstract" class="form-control" name="chapterSummary"
           id="chapterSummary"></textarea>
 
 <button data-target="#mapSave" data-toggle="modal" type="button"

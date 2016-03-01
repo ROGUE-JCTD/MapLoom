@@ -444,7 +444,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       for (var iLayer = 0; iLayer < layer_objects.length; iLayer += 1) {
         var layer_info = layer_objects[iLayer];
         var config_template = {
-          add: true,
           Abstract: layer_info.abstract,
           Name: layer_info.typename,
           Title: layer_info.title,
@@ -473,7 +472,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.populateLayersConfigElastic = function(server, filter_options) {
-      var url = 'http://mapstory.org/api/layers/search/?is_published=true&limit=100';
+      var url = '/api/layers/search/?is_published=true&limit=100';
       var layers_loaded = false;
 
       if (filter_options !== null) {
