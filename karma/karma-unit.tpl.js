@@ -18,7 +18,7 @@ module.exports = function ( karma ) {
       'src/assets/**/*.js'
     ],
     frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher' ],
+    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-ng-html2js-preprocessor' ],
     preprocessors: {
       '**/*.html': ['ng-html2js']
     },
