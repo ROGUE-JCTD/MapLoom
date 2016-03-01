@@ -91,7 +91,7 @@
           if (new_index !== null) {
             $scope.addChapterToMenu(new_index);
             //Change focus to chapter info for newly created chapter
-            //$scope.updateMenuSection('chapterinfo' + new_index);
+            $scope.updateMenuSection('chapterInfo' + new_index);
           }
         };
 
@@ -108,23 +108,23 @@
         //front end initialization of new chapter on menu element
         $scope.addChapterToMenu = function(index) {
           var new_chapter_item = {
-              id: index,
-              chapter: 'Chapter' + (index + 1),
-              title: storyService.configurations[index].about.title,
-              summary: storyService.configurations[index].about.abstract,
-              storyLayers: [],
-              storyBoxes: [],
-              storyPins: []
-            };
+            id: index,
+            chapter: 'Chapter' + (index + 1),
+            title: storyService.configurations[index].about.title,
+            summary: storyService.configurations[index].about.abstract,
+            storyLayers: [],
+            storyBoxes: [],
+            storyPins: []
+          };
 
-            //Add new chapter to sidebar menu
-            $scope.mapstories.chapters.push(new_chapter_item);
+          //Add new chapter to sidebar menu
+          $scope.mapstories.chapters.push(new_chapter_item);
 
-            for (var iLayer = 0; iLayer < storyService.configurations[index].map.layers.length; iLayer += 1) {
-              var layer_config = storyService.configurations[index].map.layers[iLayer];
+          for (var iLayer = 0; iLayer < storyService.configurations[index].map.layers.length; iLayer += 1) {
+            var layer_config = storyService.configurations[index].map.layers[iLayer];
 
-              $scope.addStorylayerToMenu(index, layer_config);
-            }
+            $scope.addStorylayerToMenu(index, layer_config);
+          }
 
         };
 
