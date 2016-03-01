@@ -102,8 +102,6 @@ module.exports = {
       'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js',
       'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js',
       'vendor/angular-xeditable/dist/js/xeditable.min.js',
-
-      'vendor/multilevel-menu/jquery.multilevelpushmenu.min.js'
     ],
     css: [
       'vendor/ol3/ol.css',
@@ -121,9 +119,7 @@ module.exports = {
       'vendor/vis/dist/vis.min.css',
       'vendor/nouislider/distribute/jquery.nouislider.min.css',
 
-      'vendor/multilevel-menu/jquery.multilevelpushmenu.css',
-
-      'vendor/font-awesome/css/font-awesome.min.css'
+      'vendor/font-awesome/css/font-awesome.min.css',
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',
