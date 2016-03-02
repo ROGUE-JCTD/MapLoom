@@ -38,7 +38,7 @@
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ boxService, notified that the map was saved', config);
-        httpService_.post('/maps/' + config.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
+        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
           console.log('----[ boxService, saved. ', data);
           return 'success';
         });
@@ -48,7 +48,7 @@
         if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.id)) {
           console.log('----[ boxService, map created. initializing', config);
           httpService_({
-            url: '/maps/' + config.id + '/boxes',
+            url: '/maps/' + config.map.id + '/boxes',
             method: 'GET'
           }).then(function(result) {
             console.log(result);

@@ -984,6 +984,7 @@
       }).success(function(data, status, headers, config) {
         console.log('----[ map.save success. ', data, status, headers, config);
         map_config.map.id = data.id;
+        rootScope_.$broadcast('map-saved', map_config);
 
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {

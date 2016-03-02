@@ -100,7 +100,7 @@
           var add_index = $scope.mapstories.chapters[chapter_index].storyLayers.length;
           var new_layer = {
             id: add_index,
-            title: layer_config.Title || 'Untitled Layer'
+            title: layer_config.title || 'Untitled Layer'
           };
           $scope.mapstories.chapters[chapter_index].storyLayers.push(new_layer);
 
@@ -109,7 +109,7 @@
         $scope.addChapterToMenu = function(index) {
           var new_chapter_item = {
             id: index,
-            chapter: 'Chapter' + (index + 1),
+            chapter: 'Chapter ' + (index + 1),
             title: storyService.configurations[index].about.title,
             summary: storyService.configurations[index].about.abstract,
             storyLayers: [],

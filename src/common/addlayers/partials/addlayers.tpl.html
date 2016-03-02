@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
-                    <li><a data-toggle="tab">Search</a></li>
+                    <li><a data-toggle="tab" ng-click="filterOptions.text = null;filterOptions.owner = null;applyFilters()">Search</a></li>
                     <li><a data-toggle="tab" ng-click="filterOptions.text = null;filterOptions.owner = true;applyFilters()">My Uploads</a></li>
                     <li><a data-toggle="tab">My Favorites</a></li>
                 </ul>

@@ -1,5 +1,5 @@
 <h2>{{ chapter.chapter }}</h2>
-<h2>{{ chapter.title }}</h2>
+<h2>{{ storyService.active_chapter.title }}</h2>
 <h2>{{ chapter.storyLayers.title }}</h2>
 <a href="#"><h2 ng-click="updateMenuSection('storyLayers' + chapter.id)">Back</h2></a>
 <ul class="nav nav-tabs" data-tabs="tabs">
@@ -35,7 +35,7 @@
     </div>
     <div id="edit" class="tab-pane fade">
         <button class="btn btn-default btn-lg btn-block">Start Editing</button>
-        <button class="btn btn-default btn-lg btn-block">View Attribute Table
+        <button class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#table-view-window">View Attribute Table
         </button>
         <button class="btn btn-default btn-lg btn-block">View History</button>
         <button class="btn btn-default btn-lg btn-block">Delete This
