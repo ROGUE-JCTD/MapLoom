@@ -1,6 +1,6 @@
 <h2>{{ chapter.chapter }}</h2>
 <h2>{{ storyService.active_chapter.title }}</h2>
-<h2>{{ chapter.storyLayers.title }}</h2>
+<h2>{{ storyService.active_layer.get('metadata').title}}</h2>
 <a href="#"><h2 ng-click="updateMenuSection('storyLayers' + chapter.id)">Back</h2></a>
 <ul class="nav nav-tabs" data-tabs="tabs">
     <li class="active"><a data-toggle="tab" href="#style">Style</a>
@@ -27,7 +27,7 @@
             <option>Classification</option>
         </select>
         <hr>
-        <button class="btn btn-default btn-lg btn-block">Delete this
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.removeLayer()">Delete this
             StoryLayer
         </button>
 
@@ -35,10 +35,10 @@
     </div>
     <div id="edit" class="tab-pane fade">
         <button class="btn btn-default btn-lg btn-block">Start Editing</button>
-        <button class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#table-view-window">View Attribute Table
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()">View Attribute Table
         </button>
         <button class="btn btn-default btn-lg btn-block">View History</button>
-        <button class="btn btn-default btn-lg btn-block">Delete This
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.removeLayer()">Delete This
             StoryLayer
         </button>
     </div>
@@ -81,7 +81,7 @@
         </div>
         <hr>
         <button class="btn btn-default btn-lg btn-block">Save Settings</button>
-        <button class="btn btn-default btn-lg btn-block">Delete this
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.removeLayer()">Delete this
             StoryLayer
         </button>
     </div>

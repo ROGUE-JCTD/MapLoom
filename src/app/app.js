@@ -120,12 +120,6 @@
           //Add new chapter to sidebar menu
           $scope.mapstories.chapters.push(new_chapter_item);
 
-          for (var iLayer = 0; iLayer < storyService.configurations[index].map.layers.length; iLayer += 1) {
-            var layer_config = storyService.configurations[index].map.layers[iLayer];
-
-            $scope.addStorylayerToMenu(index, layer_config);
-          }
-
         };
 
         $scope.addChapterToMenu(0);

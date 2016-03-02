@@ -1,22 +1,26 @@
 (function() {
   var module = angular.module('loom_story_service', ['ngCookies']);
   var service_ = null;
-  var mapservice_ = null;
+  var mapService_ = null;
   var configService_ = null;
   var httpService_ = null;
   var dialogService_ = null;
   var translate_ = null;
+  var tableViewService_ = null;
+  var rootScope_ = null;
 
 
   module.provider('storyService', function() {
 
-    this.$get = function($window, $http, $cookies, $location, $translate, mapService, configService, dialogService) {
+    this.$get = function($window, $http, $cookies, $location, $translate, $rootScope, mapService, configService, dialogService, tableViewService) {
       service_ = this;
-      mapservice_ = mapService;
+      mapService_ = mapService;
       configService_ = configService;
       httpService_ = $http;
       dialogService_ = dialogService;
       translate_ = $translate;
+      rootScope_ = $rootScope;
+      tableViewService_ = tableViewService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -26,9 +30,10 @@
       //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
       this.configurations = [];
       this.removedChapterIDs = [];
-      this.configurations.push(angular.copy(mapservice_.configuration));
+      this.configurations.push(angular.copy(mapService_.configuration));
       this.active_index = 0;
       //All mapstories have one default chapter added
+      this.active_layer = null;
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
       this.active_chapter.about.title = 'Untitled Chapter';
@@ -42,13 +47,44 @@
       return this;
     };
 
+    //Layer functions
+    this.selectLayer = function(layer_config) {
+      this.active_layer = layer_config;
+    };
+
+    this.showTable = function() {
+      service_.active_layer.get('metadata').loadingTable = true;
+      tableViewService_.showTable(service_.active_layer).then(function() {
+        service_.active_layer.get('metadata').loadingTable = false;
+        $('#table-view-window').modal('show');
+      }, function() {
+        service_.active_layer.get('metadata').loadingTable = false;
+        dialogService_.error(translate_.instant('show_table'), translate_.instant('show_table_failed'));
+      });
+    };
+
+
+    this.removeLayer = function() {
+      dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            mapService_.map.removeLayer(service_.active_layer);
+            rootScope_.$broadcast('layerRemoved', service_.active_layer);
+            break;
+          case 1:
+            break;
+        }
+      });
+    };
+
     //Save all chapter configuration objects
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
-        mapservice_.save(this.configurations[iConfig]);
+        mapService_.save(this.configurations[iConfig]);
       }
       this.print_configurations();
     };
@@ -134,7 +170,7 @@
       this.active_chapter = this.configurations[index];
       this.active_index = index;
 
-      mapservice_.updateActiveMap(this.active_index, this.active_chapter);
+      mapService_.updateActiveMap(this.active_index, this.active_chapter);
     };
 
     //Updates the stored chapter_info information for the current chapter
@@ -165,6 +201,23 @@
       service_.update_active_config(prevChapter);
     };
 
+    this.getLayers = function() {
+      var layers = mapService_.map.getLayers().getArray();
+
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        if (!goog.isDefAndNotNull(layer.get('metadata')) ||
+            (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
+            layer.get('metadata').vectorEditLayer)) {
+          layers.splice(iLayer, 1);
+          console.log(layer);
+
+        }
+      }
+
+      return layers;
+    };
+
     this.add_chapter = function() {
       //The config service is the entrypoint and contains the initial configuration for a chapter
       var new_chapter = angular.copy(configService_.initial_config);
@@ -175,11 +228,11 @@
       this.configurations.push(new_chapter);
       //This creates the new layergroup on the open layers map that is being displayed.
       //Parameter is currently unused, but may be changed if we decide map load should occur here.
-      mapservice_.create_chapter(new_chapter);
+      mapService_.create_chapter(new_chapter);
       var new_index = (this.configurations.length - 1);
       //Immediately set focus to new chapter after creation. This causes the new chapter map to load
       service_.update_active_config(new_index);
-      mapservice_.loadMap(new_chapter);
+      mapService_.loadMap(new_chapter);
       this.print_configurations();
 
       return new_index;
@@ -201,13 +254,6 @@
       if (this.configurations.length > 0) {
         this.update_active_config(0);
       }
-
-      // Angular bindings will update to reflect the above change, so just delete the last chapter in the UI
-      // TODO: Get rid of the +1 at some point when we start with a Chapter 1.
-      $(('#chapter' + (this.configurations.length + 1))).remove();
-
-      // Switch focus to base level of menu
-      $('#menu').multilevelpushmenu('collapse', 0);
     };
 
   });
