@@ -1,10 +1,9 @@
-<h2 ng-show="menuSection=='mainMenu'"><i class="fa fa-reorder" ng-click="updateMenuSection('None')"></i>{{ storyService.title }}</h2>
-
-<div class="form-group menuItem" ng-show="menuSection=='mainMenu'">
+<h2 ng-show="menuSection=='mainMenu'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>{{ storyService.title }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>{{ storyService.title }}</h2>
+<div class="menuItem" ng-show="menuSection=='mainMenu'">
     <button class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary
     </button>
     <button class="btn btn-default btn-md" data-target="#mapSave" data-toggle="modal">Save MapStory...
     </button>
     <button class="btn btn-default btn-md" data-target="mapPreview" data-toggle="modal">Preview</button>
 </div>
-<hr>

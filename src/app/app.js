@@ -21,7 +21,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, storyService, $compile) {
+                                                refreshService, dialogService, storyService, $http) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -84,6 +84,22 @@
           $scope.menuSection = updateMenuSection;
         };
 
+        $scope.locations = {};
+
+        $http.get('/api/regions/').success(function(data) {
+          $scope.locations = data.objects;
+        });
+
+        $scope.isShown = true;
+
+        $scope.toggleSidebar = function() {
+          $scope.isShown = !$scope.isShown;
+          if ($scope.menuSection == 'mainMenu') {
+            $scope.menuSection = 'mainMenuHidden';
+          } else {
+            $scope.menuSection = 'mainMenu';
+          }
+        };
 
         $scope.removeChapter = function() {
           storyService.remove_chapter().then(function(removed_index) {
