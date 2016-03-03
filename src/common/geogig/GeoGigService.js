@@ -58,18 +58,19 @@
     this.beginTransaction = function(repoId) {
       var deferredResponse = q.defer();
 
-      service_.command(repoId, 'beginTransaction').then(function(response) {
+      service_.command(repoId, 'beginTransaction')
+      .then(_handleResponse,
+            deferredResponse.reject,
+            deferredResponse.update);
+
+      function _handleResponse(response) {
         if (response.success === true) {
           var transaction = new GeoGigTransaction(service_.command, repoId, response.Transaction);
           deferredResponse.resolve(transaction);
         } else {
           deferredResponse.reject(response.error);
         }
-      }, function(reject) {
-        deferredResponse.reject(reject);
-      }, function(update) {
-        deferredResponse.update(update);
-      });
+      }
 
       return deferredResponse.promise;
     };
@@ -81,29 +82,34 @@
         var URL = repo.url + '/' + command + '?output_format=JSON';
         URL += '&_dc=' + new Date().getTime(); // Disable caching of responses.
         if (goog.isDefAndNotNull(options)) {
-          for (var property in options) {
-            if (property !== null && options.hasOwnProperty(property) && options[property] !== null) {
-              var underscore = property.indexOf('_');
-              var trimmed;
-              if (underscore > 0) {
-                trimmed = property.substring(0, property.indexOf('_'));
-              } else {
-                trimmed = property;
-              }
-              if (goog.isArray(options[property])) {
-                for (var i = 0; i < options[property].length; i++) {
-                  var element = options[property][i];
-                  URL += '&' + trimmed + '=' + encodeURIComponent(element);
-                }
-              } else {
-                URL += '&' + trimmed + '=' + encodeURIComponent(options[property]);
-              }
-            }
-          }
+          URL = service_.returnOptionsAsQueryString(URL, options);
         }
         issueRequest(URL, deferredResponse);
       }
       return deferredResponse.promise;
+    };
+
+    this.returnOptionsAsQueryString = function(URL, options) {
+      for (var property in options) {
+        if (property !== null && options.hasOwnProperty(property) && options[property] !== null) {
+          var underscore = property.indexOf('_');
+          var trimmed;
+          if (underscore > 0) {
+            trimmed = property.substring(0, property.indexOf('_'));
+          } else {
+            trimmed = property;
+          }
+          if (goog.isArray(options[property])) {
+            for (var i = 0; i < options[property].length; i++) {
+              var element = options[property][i];
+              URL += '&' + trimmed + '=' + encodeURIComponent(element);
+            }
+          } else {
+            URL += '&' + trimmed + '=' + encodeURIComponent(options[property]);
+          }
+        }
+      }
+      return URL;
     };
 
     this.post = function(repoId, command, data) {
@@ -137,7 +143,7 @@
           return result.promise;
         }
         if (repo.uuid === newRepo.uuid) {
-          newRepo.branchs = repo.branches;
+          newRepo.branches = repo.branches;
           newRepo.remotes = repo.remotes;
           newRepo.unique = false;
           found = true;

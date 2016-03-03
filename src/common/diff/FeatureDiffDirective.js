@@ -9,7 +9,14 @@
           restrict: 'C',
           templateUrl: 'diff/partial/featurediff.tpl.html',
           link: function(scope, element) {
+
             function updateVariables() {
+
+              var readyOnlyEval = goog.isDefAndNotNull(featureDiffService.layer) &&
+                  goog.isDefAndNotNull(featureDiffService.layer.get('metadata')) &&
+                  (featureDiffService.layer.get('metadata').readOnly ||
+                  !featureDiffService.layer.get('metadata').editable);
+
               scope.authorsLoaded = false;
               scope.authorsShown = false;
               scope.isLoading = false;
@@ -17,12 +24,24 @@
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
               scope.readOnly = false;
-              if (goog.isDefAndNotNull(featureDiffService.layer) &&
-                  goog.isDefAndNotNull(featureDiffService.layer.get('metadata')) &&
-                  (featureDiffService.layer.get('metadata').readOnly ||
-                   !featureDiffService.layer.get('metadata').editable)) {
+
+              if (readyOnlyEval) {
                 scope.readOnly = true;
               }
+
+              updateFeatureDiffTitles();
+
+              scope.numPanels = 0;
+              scope.leftPanel = false;
+              scope.mergePanel = false;
+              scope.rightPanel = false;
+              scope.leftSeparator = false;
+              scope.rightSeparator = false;
+
+              setModalDialogueWidth();
+            }
+
+            function updateFeatureDiffTitles() {
               switch (featureDiffService.change) {
                 case 'ADDED':
                   scope.rightTitle = $translate.instant('new_feature');
@@ -46,13 +65,10 @@
                   scope.rightTitle = featureDiffService.rightName;
                   break;
               }
+            }
+
+            function setPanelNumberAndReturnWidth() {
               var width = 80 + getScrollbarWidth();
-              scope.numPanels = 0;
-              scope.leftPanel = false;
-              scope.mergePanel = false;
-              scope.rightPanel = false;
-              scope.leftSeparator = false;
-              scope.rightSeparator = false;
               if (featureDiffService.left.active) {
                 width += 230;
                 scope.numPanels += 1;
@@ -75,7 +91,11 @@
                 }
               }
               width += (scope.numPanels - 1) * 36;
+              return width;
+            }
 
+            function setModalDialogueWidth() {
+              var width = setPanelNumberAndReturnWidth();
               element.closest('.modal-dialog').css('width', width);
             }
 
@@ -220,10 +240,17 @@
               scope.authorsShown = false;
             });
 
+            //dja - made some pretty significant changes to undo that still need to be cleaned up.
+            //test it against a feature that will fail
+            //a variable isnt getting passed correctly somewhere
             var undo = function() {
               var branch = featureDiffService.layer.get('metadata').branchName;
               var layerName = featureDiffService.layer.get('metadata').uniqueID;
               var options = new GeoGigRevertFeatureOptions();
+              var repoId = featureDiffService.getRepoId();
+              var transaction;
+
+              // Options to pass to GeoGig transaction
               options.authorName = configService.configuration.userprofilename;
               options.authorEmail = configService.configuration.userprofileemail;
               options.path = featureDiffService.feature.id;
@@ -237,45 +264,61 @@
               options.commitMessage = $translate.instant('reverted_changes_to_feature',
                   {feature: featureDiffService.feature.id}) + ' ' + $translate.instant('applied_via_maploom');
               options.mergeMessage = options.commitMessage;
-              var repoId = featureDiffService.getRepoId();
-              geogigService.beginTransaction(repoId).then(function(transaction) {
-                transaction.command('revertfeature', options).then(function() {
-                  transaction.finalize().then(function() {
-                    dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));
-                    scope.undoEnabled = false;
-                    historyService.refreshHistory(layerName);
-                    mapService.dumpTileCache(layerName);
-                  }, function(endTransactionFailure) {
-                    if (goog.isObject(endTransactionFailure) &&
-                        goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
-                      handleConflicts(repoId, endTransactionFailure, transaction,
-                          dialogService, conflictService, $translate,
-                          $translate.instant('transaction'), $translate.instant('repository'), scope,
-                          $translate.instant('transaction'));
-                    } else {
-                      dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
-                      transaction.abort();
-                      scope.cancel();
-                      console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
-                    }
-                  });
-                }, function(mergeFailure) {
-                  if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
-                    handleConflicts(repoId, mergeFailure, transaction,
-                        dialogService, conflictService, $translate, branch, $translate.instant('fixed_feature'),
-                        scope, $translate.instant('fixed_feature'));
-                  } else {
-                    dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
-                    transaction.abort();
-                    scope.cancel();
-                    console.log('ERROR: Revert failure: ', options, mergeFailure);
-                  }
-                });
-              }, function(beginTransactionFailure) {
+
+              geogigService.beginTransaction(repoId)
+              .then(_continueTransaction, _handleTransactionFailure);
+
+              function _continueTransaction(_transaction) {
+                transaction = _transaction;
+                transaction.command('revertfeature', options)
+                .then(_finalizeTransaction, _handleMergeFailure);
+              }
+
+              function _finalizeTransaction() {
+                transaction.finalize()
+                .then(_finishUndo, _endTransactionFailure);
+              }
+
+              function _finishUndo() {
+                dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));
+                scope.undoEnabled = false;
+                historyService.refreshHistory(layerName);
+                mapService.dumpTileCache(layerName);
+              }
+
+              function _handleTransactionFailure(beginTransactionFailure) {
                 dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
                 console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
-              });
+              }
+
+              function _endTransactionFailure(endTransactionFailure) {
+                if (goog.isObject(endTransactionFailure) &&
+                    goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
+                  handleConflicts(repoId, endTransactionFailure, transaction,
+                      dialogService, conflictService, $translate,
+                      $translate.instant('transaction'), $translate.instant('repository'), scope,
+                      $translate.instant('transaction'));
+                } else {
+                  dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
+                  transaction.abort();
+                  scope.cancel();
+                  console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
+                }
+              }
+
+              function _handleMergeFailure(mergeFailure) {
+                if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
+                  handleConflicts(repoId, mergeFailure, transaction,
+                      dialogService, conflictService, $translate, branch, $translate.instant('fixed_feature'),
+                      scope, $translate.instant('fixed_feature'));
+                } else {
+                  dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
+                  transaction.abort();
+                  scope.cancel();
+                  console.log('ERROR: Revert failure: ', options, mergeFailure);
+                }
+              }
             };
 
             scope.undoChanges = function() {

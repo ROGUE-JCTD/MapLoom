@@ -315,7 +315,39 @@
       return merges;
     };
 
+    this.getDiffServiceLayer = function(repo, changeFeature) {
+      var diffServiceLayer;
+      mapService_.map.getLayers().forEach(function(layer) {
+        if (service_.isDiffServiceLayer(layer, repo, changeFeature)) {
+          diffServiceLayer = layer;
+        }
+      });
+      return diffServiceLayer;
+    };
+
+    this.isDiffServiceLayer = function(layer, repo, changeFeature) {
+      var metadata = layer.get('metadata');
+      if (goog.isDefAndNotNull(metadata)) {
+        if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repo) {
+          if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === changeFeature) {
+            return true;
+          }
+        }
+      }
+    };
+
+    this.returnLayerProjection = function(layer) {
+      var metadata = layer.get('metadata');
+      if (goog.isDefAndNotNull(metadata.projection)) {
+        return metadata.projection;
+      }
+    };
+
     this.setFeature = function(feature, ours, theirs, ancestor, merged, repoId) {
+      var layers = mapService_.map.getLayers(),
+          splitFeature = feature.id.split('/'),
+          repoName;
+
       service_.change = feature.change;
       service_.left.clearFeature();
       service_.right.clearFeature();
@@ -326,34 +358,75 @@
       ancestor_ = ancestor;
       merged_ = merged;
       repoId_ = repoId;
-      var layers = mapService_.map.getLayers();
       service_.feature = feature;
       service_.layer = null;
       service_.left.replaceLayers(layers);
       service_.right.replaceLayers(layers);
       service_.merged.replaceLayers(layers);
-
       crs_ = goog.isDefAndNotNull(feature.crs) ? feature.crs : null;
-      var repoName = geogigService_.getRepoById(repoId_).uuid;
-      var splitFeature = feature.id.split('/');
-      mapService_.map.getLayers().forEach(function(layer) {
-        var metadata = layer.get('metadata');
-        if (goog.isDefAndNotNull(metadata)) {
-          if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repoName) {
-            if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
-              service_.layer = layer;
-              if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
-                service_.schema = layer.get('metadata').schema;
-              }
-              if (goog.isDefAndNotNull(metadata.projection)) {
-                crs_ = metadata.projection;
-              }
-            }
+      repoName = geogigService_.getRepoById(repoId_).uuid;
+
+      service_.layer = service_.getDiffServiceLayer(repoName, splitFeature[0]);
+      _setSchema(service_.layer);
+      _initLsTreeRequest();
+
+      function _setSchema(layer) {
+        if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
+          service_.schema = layer.get('metadata').schema;
+          if (goog.isDefAndNotNull(layer.get('metadata').projection)) {
+            crs_ = service_.returnLayerProjection(layer);
           }
         }
-      });
+      }
 
-      var continueWork = function() {
+      function _initLsTreeRequest() {
+        if (!goog.isDefAndNotNull(service_.layer)) {
+          // try to get the schema from geogig.
+          var lsTreeOptions = new GeoGigLsTreeOptions();
+          lsTreeOptions.onlyTree = true;
+          lsTreeOptions.showTree = true;
+          lsTreeOptions.verbose = true;
+          geogigService_.command(repoId_, 'ls-tree', lsTreeOptions)
+          .then(_handleLsTreeResponse, _continueWork());
+        } else {
+          _continueWork();
+        }
+      }
+
+      function _handleLsTreeResponse(response) {
+        // get featuretype
+        var layerFound = false;
+        forEachArrayish(response.node, function(node) {
+          if (node.path === splitFeature[0]) {
+            layerFound = true;
+            var catOptions = new GeoGigCatOptions();
+            catOptions.objectid = node.metadataId;
+            geogigService_.command(repoId_, 'cat', catOptions)
+            .then(_handleCatResponse, _continueWork);
+          }
+        });
+        if (layerFound === false) {
+          _continueWork();
+        }
+      }
+
+      function _handleCatResponse(response) {
+        // create schema and get projection from crs
+        service_.schema = {};
+        if (goog.isDefAndNotNull(response.featuretype) &&
+            goog.isDefAndNotNull(response.featuretype.attribute)) {
+          forEachArrayish(response.featuretype.attribute, function(attribute) {
+            var attrType = convertAttributeType(attribute.type);
+            service_.schema[attribute.name] = {_type: attrType};
+            if (attrType.search('gml:') > -1) {
+              crs_ = attribute.crs;
+            }
+          });
+        }
+        _continueWork();
+      }
+
+      function _continueWork() {
         var geom = WKT.read(feature.geometry);
         if (goog.isDefAndNotNull(crs_)) {
           geom.transform(crs_, mapService_.map.getView().getProjection());
@@ -393,49 +466,6 @@
         }
         service_.title = feature.id;
         rootScope_.$broadcast('feature-diff-feature-set');
-      };
-
-      if (!goog.isDefAndNotNull(service_.layer)) {
-        // try to get the schema from geogig.
-        var lsTreeOptions = new GeoGigLsTreeOptions();
-        lsTreeOptions.onlyTree = true;
-        lsTreeOptions.showTree = true;
-        lsTreeOptions.verbose = true;
-        geogigService_.command(repoId_, 'ls-tree', lsTreeOptions).then(function(response) {
-          // get featuretype
-          var layerFound = false;
-          forEachArrayish(response.node, function(node) {
-            if (node.path === splitFeature[0]) {
-              layerFound = true;
-              var catOptions = new GeoGigCatOptions();
-              catOptions.objectid = node.metadataId;
-              geogigService_.command(repoId_, 'cat', catOptions).then(function(response) {
-                // create schema and get projection from crs
-                service_.schema = {};
-                if (goog.isDefAndNotNull(response.featuretype) &&
-                    goog.isDefAndNotNull(response.featuretype.attribute)) {
-                  forEachArrayish(response.featuretype.attribute, function(attribute) {
-                    var attrType = convertAttributeType(attribute.type);
-                    service_.schema[attribute.name] = {_type: attrType};
-                    if (attrType.search('gml:') > -1) {
-                      crs_ = attribute.crs;
-                    }
-                  });
-                }
-                continueWork();
-              }, function(error) {
-                continueWork();
-              });
-            }
-          });
-          if (layerFound === false) {
-            continueWork();
-          }
-        }, function(error) {
-          continueWork();
-        });
-      } else {
-        continueWork();
       }
     };
 
@@ -446,7 +476,10 @@
       diffOptions.oldTreeish = oldCommit;
       diffOptions.path = feature.id;
       panel.active = true;
-      geogigService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
+      geogigService_.command(repoId_, 'featurediff', diffOptions)
+      .then(_handleFeatureDiffResponse, _rejectFeatureDiffResponse);
+
+      function _handleFeatureDiffResponse(response) {
         forEachArrayish(response.diff, function(item) {
           if (item.geometry !== true) {
             if (!goog.isDefAndNotNull(item.newvalue)) {
@@ -520,14 +553,16 @@
             rootScope_.$broadcast('feature-diff-performed');
           }
         }
-      }, function(reject) {
+      }
+
+      function _rejectFeatureDiffResponse(reject) {
         diffsNeeded_ -= 1;
         diffsInError_ += 1;
         if (diffsNeeded_ === 0) {
           dialogService_.error(translate_.instant('error'), translate_.instant('feature_diff_error'));
         }
         console.log('Feature diff failed: ', panel, reject);
-      });
+      }
     };
   });
 

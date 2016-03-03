@@ -389,12 +389,36 @@ module.exports = function ( grunt ) {
      */
     karma: {
       options: {
-        configFile: '<%= build_dir %>/karma-unit.js'
-      },
-      unit: {
-        runnerPort: 9101,
-        background: true,
-        port: 9877
+        basepath: '.',
+        browsers: [
+          'PhantomJS'
+        ],
+        client: {
+          captureConsole: false
+        },
+        files: [
+          'vendor/ol3/ol-debug.js',
+          'vendor/jquery/jquery.js',
+          'vendor/angular/angular.js',
+          'vendor/angular-bootstrap/ui-bootstrap.min.js',
+          'vendor/angular-mocks/angular-mocks.js',
+          'vendor/angular-cookies/angular-cookies.min.js',
+          'vendor/angular-ui-router/release/angular-ui-router.js',
+          'vendor/angular-translate/angular-translate.js',
+          'vendor/angular-xeditable/dist/js/xeditable.min.js',
+          'build/*.js',
+          'src/app/*.js',
+          'src/app/**/*.js',
+          'src/common/**/*.js',
+          'test/**/*.test.js',
+          'node_modules/phantomjs-polyfill/bind-polyfill.js'
+        ],
+        frameworks: [ 'jasmine' ],
+        exclude: [
+          'src/app/*.spec.js'
+        ],
+        plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-spec-reporter' ],
+        reporters: ['spec']
       },
       continuous: {
         singleRun: true
