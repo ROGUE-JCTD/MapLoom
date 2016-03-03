@@ -7,12 +7,14 @@
   var dialogService_ = null;
   var translate_ = null;
   var tableViewService_ = null;
+  var featureManagerService_ = null;
   var rootScope_ = null;
 
 
   module.provider('storyService', function() {
 
-    this.$get = function($window, $http, $cookies, $location, $translate, $rootScope, mapService, configService, dialogService, tableViewService) {
+    this.$get = function($window, $http, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
+                         configService, dialogService, tableViewService) {
       service_ = this;
       mapService_ = mapService;
       configService_ = configService;
@@ -21,6 +23,7 @@
       translate_ = $translate;
       rootScope_ = $rootScope;
       tableViewService_ = tableViewService;
+      featureManagerService_ = featureManagerService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -77,6 +80,30 @@
         }
       });
     };
+
+    this.isEditable = function() {
+      if (this.active_layer == null) {
+        return true;
+      }
+      return (!this.active_layer.get('visible') || !this.active_layer.get('metadata').schema ||
+              this.active_layer.get('metadata').readOnly);
+    };
+
+    this.startFeatureAdd = function() {
+      if (this.active_layer == null) {
+        return;
+      }
+      featureManagerService_.startFeatureInsert(this.active_layer);
+    };
+
+    //StoryBox functions
+
+
+
+
+
+
+    //StoryPin functions
 
     //Save all chapter configuration objects
     this.saveMaps = function() {
