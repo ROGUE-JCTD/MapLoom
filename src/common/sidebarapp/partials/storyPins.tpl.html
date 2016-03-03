@@ -1,10 +1,7 @@
-<h2>{{ chapter.chapter }}</h2>
-<h2>{{ storyService.active_chapter.title }}</h2>
-<a href="#"><h2 ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</h2></a>
-<a href="#"><h2 ng-click="updateMenuSection('addStoryPin' + chapter.id)">Add a New
-    StoryPin...</h2>
-</a>
+<a>{{ chapter.chapter }}</a>
+<a>{{ storyService.active_chapter.title }}</a>
+<a href="#" class="menuItem" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+<a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)">Add a New StoryPin...</a>
 <div ng-repeat="storyPin in chapter.storyPins">
-    <a href="#"><h2 ng-click="updateMenuSection('editStoryBox' + chapter.id + storyPins.id)">{{
-        storyPin.title }}</h2></a>
+    <a href="#" class="menuItem" ng-click="updateMenuSection('editStoryBox' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>
 </div>

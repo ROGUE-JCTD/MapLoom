@@ -1,10 +1,15 @@
-<h2>{{ chapter.chapter }}</h2>
-<h2>{{ storyService.active_chapter.about.title }}</h2>
-<a href="#"><h2 ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</h2></a>
-<a href="#add-layer-dialog" data-toggle="modal"><h2>Add a New
-    StoryLayer...</h2>
+<a>{{ chapter.chapter }}</a>
+<a>{{ storyService.active_chapter.about.title }}</a>
+<a href="#" class="menuItem" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+<a href="#add-layer-dialog" class="menuItem" data-toggle="modal">Add a New StoryLayer...
 </a>
+
 <div ng-repeat="storyLayer in storyLayers = storyService.getLayers()">
-    <a href="#"><h2 ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">{{
-        storyLayer.get('metadata').title }}</h2></a>
+    <div class="menuItem">
+        <i class="fa fa-navicon"></i>
+        <i class="fa fa-eye"></i>
+        <a href="#" ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">
+            {{ storyLayer.get('metadata').title }}
+        </a>
+    </div>
 </div>
