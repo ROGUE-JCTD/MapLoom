@@ -34,8 +34,10 @@
         <hr>
     </div>
     <div id="edit" class="tab-pane fade">
-        <button class="btn btn-default btn-lg btn-block">Start Editing</button>
-        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()">View Attribute Table
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.startFeatureAdd()"
+        ng-disabled="storyService.isEditable()">Start Editing</button>
+        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
+        ng-disabled="storyService.isEditable()">View Attribute Table
         </button>
         <button class="btn btn-default btn-lg btn-block">View History</button>
         <button class="btn btn-default btn-lg btn-block" ng-click="storyService.removeLayer()">Delete This
