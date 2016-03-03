@@ -1,5 +1,11 @@
 <h2><a><i class="fa fa-info-circle"></i>Chapter Info</a></h2>
-<a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)" id="chapterInfoBackButton">Back</a>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+</div>
+
+<div class="menuItem"></div>
+
 <label for="chapterTitle">Chapter Title</label>
 <input ng-model="storyService.active_chapter.about.title" class="form-control" type="text" name="chapterTitle"
        id="chapterTitle"/>

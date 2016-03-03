@@ -1,5 +1,5 @@
-<a>{{ chapter.chapter }}</a>
-<a>{{ storyService.active_chapter.title }}</a>
+<h2>{{ chapter.chapter }}</h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
 <a href="#" class="menuItem" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
 <a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)">Add a New StoryPin...</a>
 <div ng-repeat="storyPin in chapter.storyPins">
