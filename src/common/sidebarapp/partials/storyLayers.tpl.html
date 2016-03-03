@@ -7,7 +7,8 @@
 <div ng-repeat="storyLayer in storyLayers = storyService.getLayers()">
     <div class="menuItem">
         <i class="fa fa-navicon"></i>
-        <i class="fa fa-eye"></i>
+        <i ng-click="storyService.toggleVisiblity(storyLayer)"
+           ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
         <a href="#" ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">
             {{ storyLayer.get('metadata').title }}
         </a>

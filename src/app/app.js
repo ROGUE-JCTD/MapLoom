@@ -85,6 +85,23 @@
         };
 
 
+        $scope.removeChapter = function() {
+          storyService.remove_chapter().then(function(removed_index) {
+            if (removed_index !== null) {
+              var num_chapters = $scope.mapstories.chapters.length;
+              for (var iChapter = removed_index + 1; iChapter < num_chapters; iChapter += 1) {
+                $scope.mapstories.chapters[iChapter].chapter = 'Chapter ' + (iChapter);
+                $scope.mapstories.chapters[iChapter].id -= 1;
+              }
+              //Remove front end chapter from menu
+              $scope.mapstories.chapters.splice(removed_index, 1);
+
+              $scope.updateMenuSection('mainMenu');
+            }
+          });
+
+        };
+
         $scope.addChapter = function() {
           //Add chapter to backend story service will return new chapter ID or null if failure
           var new_index = storyService.add_chapter();

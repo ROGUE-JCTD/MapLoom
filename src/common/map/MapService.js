@@ -886,6 +886,9 @@
       //service_.loadMap(chapter_config);
     };
 
+    this.remove_chapter = function(removed_index) {
+      this.chapterLayers.splice(removed_index, 1);
+    };
     //Create the new layergroup for the  new chapter
     //Parameter currently unused
     this.create_chapter = function(new_config) {

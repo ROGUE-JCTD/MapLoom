@@ -9,13 +9,15 @@
   var tableViewService_ = null;
   var featureManagerService_ = null;
   var rootScope_ = null;
+  var q_ = null;
 
 
   module.provider('storyService', function() {
 
-    this.$get = function($window, $http, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
+    this.$get = function($window, $http, $q, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
                          configService, dialogService, tableViewService) {
       service_ = this;
+      q_ = $q;
       mapService_ = mapService;
       configService_ = configService;
       httpService_ = $http;
@@ -53,6 +55,10 @@
     //Layer functions
     this.selectLayer = function(layer_config) {
       this.active_layer = layer_config;
+    };
+
+    this.toggleVisiblity = function(layer) {
+      layer.set('visible', !layer.get('visible'));
     };
 
     this.showTable = function() {
@@ -269,18 +275,40 @@
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
     };
 
-    this.remove_chapter = function() {
-      //If the chapter map has been saved beforehand we need to remove that chapter link
-      map_id = this.configurations[this.active_index].map.id;
-      if (map_id !== 0) {
-        this.removedChapterIDs.push(map_id);
-      }
+    this.canRemoveChapter = function() {
+      return (service_.configurations.length > 1);
+    };
 
-      //Remove the active chapter from the list of configurations
-      this.configurations.splice(this.active_index, 1);
-      if (this.configurations.length > 0) {
-        this.update_active_config(0);
+    this.remove_chapter = function() {
+      var removed_index = q_.defer();
+      if (this.canRemoveChapter() === false) {
+        dialogService_.error(translate_.instant('remove_chapter'), translate_.instant('cannot_remove_chapter'));
+        removed_index.resolve(null);
+        return removed_index.promise;
       }
+      removed_index = dialogService_.warn(translate_.instant('remove_chapter'), translate_.instant('sure_remove_chapter'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            //If the chapter map has been saved beforehand we need to remove that chapter link
+            map_id = service_.configurations[service_.active_index].map.id;
+            if (map_id !== 0) {
+              service_.removedChapterIDs.push(map_id);
+            }
+
+            //Remove the active chapter from the list of configurations
+            removed_index = service_.active_index;
+            mapService_.remove_chapter(removed_index);
+            service_.configurations.splice(removed_index, 1);
+            if (service_.configurations.length > 0) {
+              service_.update_active_config(0);
+            }
+            return removed_index;
+          case 1:
+            return null;
+        }
+      });
+      return removed_index;
     };
 
   });
