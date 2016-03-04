@@ -1,4 +1,6 @@
-<a href="#">Add a New StoryPin...</a>
+<h2 ng-show="menuSection=='addStoryPin' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('addStoryPin' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('addStoryPin' + chapter.id)"></i></h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>Add a New StoryPin</h2>
 
 <div class="menuItem">

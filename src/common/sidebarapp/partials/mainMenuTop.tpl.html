@@ -1,5 +1,5 @@
-<h2 ng-show="menuSection=='mainMenu'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>{{ storyService.title }}</h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>{{ storyService.title }}</h2>
+<h2 ng-show="menuSection=='mainMenu'"><i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>{{ storyService.title }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>{{ storyService.title }}</h2>
 <div class="menuItem" ng-show="menuSection=='mainMenu'">
     <button class="btn btn-default btn-md" data-target="#mapProperties" data-toggle="modal">Summary
     </button>

@@ -100,12 +100,12 @@
 
         $scope.isShown = true;
 
-        $scope.toggleSidebar = function() {
+        $scope.toggleSidebar = function(savedMenuSection) {
           $scope.isShown = !$scope.isShown;
-          if ($scope.menuSection == 'mainMenu') {
-            $scope.menuSection = 'mainMenuHidden';
+          if ($scope.menuSection == 'mainMenuHidden') {
+            $scope.updateMenuSection(savedMenuSection);
           } else {
-            $scope.menuSection = 'mainMenu';
+            $scope.updateMenuSection('mainMenuHidden');
           }
         };
 
