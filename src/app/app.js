@@ -78,10 +78,18 @@
           chapters: []
         };
 
+        $scope.active_menu_chapter = null;
         $scope.menuSection = 'mainMenu';
 
         $scope.updateMenuSection = function(updateMenuSection) {
           $scope.menuSection = updateMenuSection;
+          if (updateMenuSection.startsWith('selectedChapter')) {
+            var re = /(\d+)/;
+            var chapter_index = updateMenuSection.match(re);
+            $scope.active_menu_chapter = $scope.mapstories.chapters[chapter_index[0]];
+          } else if (updateMenuSection == 'mainMenu') {
+            $scope.active_menu_chapter = null;
+          }
         };
 
         $scope.locations = {};
@@ -116,6 +124,15 @@
             }
           });
 
+        };
+
+        $scope.removeLayer = function() {
+          storyService.removeLayer().then(function(layer_removed) {
+            if (layer_removed === true) {
+              $scope.updateMenuSection('storyLayers' + $scope.active_menu_chapter.id);
+              storyService.active_layer = null;
+            }
+          });
         };
 
         $scope.addChapter = function() {

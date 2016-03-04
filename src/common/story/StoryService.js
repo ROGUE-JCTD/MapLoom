@@ -74,17 +74,18 @@
 
 
     this.removeLayer = function() {
-      dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
+      dialogResult = dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
           [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
         switch (button) {
           case 0:
             mapService_.map.removeLayer(service_.active_layer);
             rootScope_.$broadcast('layerRemoved', service_.active_layer);
-            break;
+            return true;
           case 1:
-            break;
+            return false;
         }
       });
+      return dialogResult;
     };
 
     this.isEditable = function() {
