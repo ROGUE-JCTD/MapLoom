@@ -1,90 +1,99 @@
-<h2>{{ chapter.chapter }}</h2>
-<h2>{{ storyService.active_chapter.title }}</h2>
-<h2>{{ storyService.active_layer.get('metadata').title}}</h2>
-<a href="#"><h2 ng-click="updateMenuSection('storyLayers' + chapter.id)">Back</h2></a>
-<ul class="nav nav-tabs" data-tabs="tabs">
-    <li class="active"><a data-toggle="tab" href="#style">Style</a>
-    <li><a data-toggle="tab" href="#edit">Edit</a></li>
-    <li><a data-toggle="tab" href="#infobox">Infobox</a></li>
-</ul>
-<div class="tab-content">
-    <div id="style" class="tab-pane fade in active">
-        <p>Carousel</p>
-        <hr>
-        <select class="form-control">
-            <option>Color</option>
-            <option>Red</option>
-            <option>Green</option>
-            <option>Blue</option>
-        </select>
-        <select class="form-control">
-            <option>Symbol Size</option>
-        </select>
-        <select class="form-control">
-            <option>Symbol Style</option>
-        </select>
-        <select class="form-control">
-            <option>Classification</option>
-        </select>
-        <hr>
-        <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
-            StoryLayer
-        </button>
+<h2 ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i></h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>{{ storyService.active_layer.get('metadata').title }}</h2>
 
-        <hr>
-    </div>
-    <div id="edit" class="tab-pane fade">
-        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.startFeatureAdd()"
-        ng-disabled="storyService.isEditable()">Start Editing</button>
-        <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
-        ng-disabled="storyService.isEditable()">View Attribute Table
-        </button>
-        <button class="btn btn-default btn-lg btn-block">View History</button>
-        <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete This
-            StoryLayer
-        </button>
-    </div>
-    <div id="infobox" class="tab-pane fade">
-        <div class="form-group">
-            <label for="layerAlias">Layer Alias</label>
-            <textarea class="form-control" id="layerAlias" rows="2"></textarea>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">Back</a>
+</div>
+
+<div class="menuItem">
+    <ul class="nav nav-tabs" data-tabs="tabs">
+        <li class="active"><a data-toggle="tab" href="#style">Style</a>
+        <li><a data-toggle="tab" href="#edit">Edit</a></li>
+        <li><a data-toggle="tab" href="#infobox">Infobox</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="style" class="tab-pane fade in active">
+            <p>Carousel</p>
+            <hr>
+            <select class="form-control">
+                <option>Color</option>
+                <option>Red</option>
+                <option>Green</option>
+                <option>Blue</option>
+            </select>
+            <select class="form-control">
+                <option>Symbol Size</option>
+            </select>
+            <select class="form-control">
+                <option>Symbol Style</option>
+            </select>
+            <select class="form-control">
+                <option>Classification</option>
+            </select>
+            <hr>
+            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
+                StoryLayer
+            </button>
+
+            <hr>
         </div>
-        <hr>
-        <div class="form-group">
-            <label for="customizeInfoBox">Customize Info Box</label>
-            <table class="table table-striped table-bordered"
-                   id="customizeInfoBox">
-                <tr>
-                    <th class="text-center">Attr</th>
-                    <th class="text-center">Mask</th>
-                    <th class="text-center">Show?</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
+        <div id="edit" class="tab-pane fade">
+            <button class="btn btn-default btn-lg btn-block" ng-click="storyService.startFeatureAdd()"
+                    ng-disabled="storyService.isEditable()">Start Editing
+            </button>
+            <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
+                    ng-disabled="storyService.isEditable()">View Attribute Table
+            </button>
+            <button class="btn btn-default btn-lg btn-block">View History</button>
+            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete This
+                StoryLayer
+            </button>
         </div>
-        <hr>
-        <button class="btn btn-default btn-lg btn-block">Save Settings</button>
-        <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
-            StoryLayer
-        </button>
+        <div id="infobox" class="tab-pane fade">
+            <div class="form-group">
+                <label for="layerAlias">Layer Alias</label>
+                <textarea class="form-control" id="layerAlias" rows="2"></textarea>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="customizeInfoBox">Customize Info Box</label>
+                <table class="table table-striped table-bordered"
+                       id="customizeInfoBox">
+                    <tr>
+                        <th class="text-center">Attr</th>
+                        <th class="text-center">Mask</th>
+                        <th class="text-center">Show?</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <hr>
+            <button class="btn btn-default btn-lg btn-block">Save Settings</button>
+            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
+                StoryLayer
+            </button>
+        </div>
     </div>
 </div>

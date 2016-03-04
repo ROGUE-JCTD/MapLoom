@@ -1,7 +1,15 @@
-<h2>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='storyPins' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('storyPins' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('storyPins' + chapter.id)"></i></h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>
-<a href="#" class="menuItem" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+<h2>StoryPins</h2>
+
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+</div>
+
 <a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)">Add a New StoryPin...</a>
+
 <div ng-repeat="storyPin in chapter.storyPins">
     <a href="#" class="menuItem" ng-click="updateMenuSection('editStoryBox' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>
 </div>
