@@ -1,7 +1,13 @@
 <h2>{{ chapter.chapter }}</h2>
 <h2>{{ storyService.active_chapter.title }}</h2>
 <h2>Add a New StoryBox</h2>
-<a href="#"><h2 ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</h2></a>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back</a>
+</div>
+
+<div class="menuItem"></div>
+
 <h2>Map Extents</h2>
 <div class="form-group">
     <label for="updateMapBounds">Pan and zoom on the map to set the map
