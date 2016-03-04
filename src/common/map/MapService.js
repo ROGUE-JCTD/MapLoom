@@ -626,7 +626,9 @@
               metadata: {
                 serverId: server.id,
                 name: minimalConfig.name,
-                title: fullConfig.Title
+                title: fullConfig.Title,
+                bbox: fullConfig.bounds,
+                sourceParms: fullConfig.sourceParams
               },
               visible: minimalConfig.visibility,
               source: jsontile_source
