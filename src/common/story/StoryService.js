@@ -268,6 +268,7 @@
       service_.update_active_config(new_index);
       mapService_.loadMap(new_chapter);
       this.print_configurations();
+      rootScope_.$broadcast('chapter-added', new_index);
 
       return new_index;
     };
@@ -304,6 +305,7 @@
             if (service_.configurations.length > 0) {
               service_.update_active_config(0);
             }
+            rootScope_.$broadcast('chapter-removed', removed_index);
             return removed_index;
           case 1:
             return null;

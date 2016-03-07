@@ -7,6 +7,19 @@
     <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id)">Back</a>
 </div>
 <div class="menuItem">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <div>
+            <input ng-model="box.title" ng-required class="form-control" id="title" placeholder="Title">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <div>
+                <textarea ng-model="box.description" class="form-control" id="description"
+                          placeholder="Description"></textarea>
+        </div>
+    </div>
     <h2>Map Extents</h2>
     <div class="form-group">
         <small><label for="updateMapBounds">Pan and zoom on the map to set the map sounds.</label></small>
@@ -14,14 +27,18 @@
     </div>
     <h2>Time Frame</h2>
     <div class="form-group">
-        <small><label for="startTime">Start Time</label></small>
-        <input class="form-control" type="datetime" id="startTime"/>
+        <label for="start_time">Start Time</label>
+        <div>
+            <datetimepicker date-object="box.start_time" default-date="inserting"></datetimepicker>
+        </div>
     </div>
     <div class="form-group">
-        <small><label for="endTime">End Time</label></small>
-        <input class="form-control" type="datetime" id="endTime">
+        <label for="end_time">End Time</label>
+        <div>
+            <datetimepicker date-object="box.end_time" default-date="inserting"></datetimepicker>
+        </div>
     </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block">Save StoryBox</button>
+    <button class="btn btn-default btn-block" ng-click="addStoryBox(box)">Save StoryBox</button>
 </div>

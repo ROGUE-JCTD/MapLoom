@@ -118,16 +118,16 @@
       });
 
       // when a box is added, reinitialize the service.
-      $rootScope.$on('box-added', function(event, box) {
-        console.log('----[ timelineService, box added. initializing', box);
-        boxes_ = boxService_.getBoxes();
+      $rootScope.$on('box-added', function(event, chapter_index) {
+        console.log('----[ timelineService, box added. initializing');
+        boxes_ = boxService_.getBoxes(chapter_index);
         service_.initialize();
       });
 
       // when a box is removed, reinitialize the service.
-      $rootScope.$on('boxRemoved', function(event, box) {
+      $rootScope.$on('boxRemoved', function(event, chapter_index) {
         console.log('----[ timelineService, box removed. initializing', box);
-        boxes_ = boxService_.getBoxes();
+        boxes_ = boxService_.getBoxes(chapter_index);
         service_.initialize();
       });
 

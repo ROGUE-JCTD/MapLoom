@@ -1,9 +1,9 @@
 (function() {
   var module = angular.module('loom_box_service', []);
-  var boxes_ = [];
+  var boxes_ = [[]];
   var service_ = null;
   var rootScope_ = null;
-  var pulldownService_ = null;
+  //var pulldownService_ = null;
   var q_ = null;
   var httpService_ = null;
   var Box = function(data) {
@@ -32,13 +32,22 @@
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
-      pulldownService_ = pulldownService;
+      //pulldownService_ = pulldownService;
       q_ = $q;
 
+      $rootScope.$on('chapter-added', function(event, config) {
+        console.log('---Box Service: chapter-added');
+        boxes_.push([]);
+      });
+
+      $rootScope.$on('chapter-removed', function(event, chapter_index) {
+        console.log('---Box Service: chapter-removed', chapter_index);
+        boxes_.splice(chapter_index, 1);
+      });
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ boxService, notified that the map was saved', config);
-        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
+        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_[config.chapter_index], {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
           console.log('----[ boxService, saved. ', data);
           return 'success';
         });
@@ -67,28 +76,28 @@
       return service_;
     };
 
-    this.getBoxes = function() {
-      return boxes_;
+    this.getBoxes = function(chapter_index) {
+      return boxes_[chapter_index];
     };
 
-    this.removeBox = function(storyBox) {
+    this.removeBox = function(storyBox, chapter_index) {
 
-      for (var i = 0; i < boxes_.length; i++) {
-        if (storyBox._id == boxes_[i]._id) {
-          boxes_.splice(i, 1);
+      for (var i = 0; i < boxes_[chapter_index].length; i++) {
+        if (storyBox._id == boxes_[chapter_index][i]._id) {
+          boxes_[chapter_index].splice(i, 1);
           break;
         }
       }
 
     };
 
-    this.addBox = function(props, loaded) {
+    this.addBox = function(props, chapter_index) {
       var deferredResponse = q_.defer();
       var storyBox = new Box(props);
-      boxes_.push(storyBox);
-      rootScope_.$broadcast('box-added', storyBox);
+      boxes_[chapter_index].push(storyBox);
+      rootScope_.$broadcast('box-added', chapter_index);
       console.log('-- BoxService.addBox, added: ', storyBox);
-      pulldownService_.showStoryboxPanel();
+      //pulldownService_.showStoryboxPanel();
 
       return deferredResponse.promise;
     };

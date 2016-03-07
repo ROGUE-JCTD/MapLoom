@@ -23,7 +23,7 @@
     <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id)">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-object-group"></i>
-        StoryBoxes
+        StoryBoxes ({{ boxService.getBoxes(chapter.id).length }})
     </a>
 </div>
 <div class="menuItem">
