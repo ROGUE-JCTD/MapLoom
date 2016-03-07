@@ -535,7 +535,7 @@
               }
 
               if (!goog.isDefAndNotNull(prj)) {
-                service_.downloadProjection(projcode).then(function() {
+                prj = service_.downloadProjection(projcode).then(function() {
                   // this should work if we get the projection
                   ol.proj.getTransform(projcode, 'EPSG:4326');
                 }, function(reject) {
@@ -1450,11 +1450,11 @@
 
     this.getCRSCode = function(CRS) {
       var code = 'EPSG:4326';
-      forEachArrayish(CRS, function(_code) {
-        if (_code !== 'CRS:84') {
-          code = _code;
-        }
-      });
+      //forEachArrayish(CRS, function(_code) {
+      //if (_code !== 'CRS:84') {
+      //code = _code;
+      //}
+      //});
       return code;
     };
   });
