@@ -1,5 +1,8 @@
-<h2 ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i>{{ chapter.chapter }}</h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i></h2>
+<h2 ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id"><i class="fa fa-reorder"
+                                                                             ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i>{{ chapter.chapter }}
+</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i>
+</h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>{{ storyService.active_layer.get('metadata').title }}</h2>
 
@@ -10,14 +13,18 @@
 
 <div class="menuItem">
     <ul class="nav nav-tabs" data-tabs="tabs">
-        <li class="active"><a data-toggle="tab" href="#style">Style</a>
-        <li><a data-toggle="tab" href="#edit">Edit</a></li>
-        <li><a data-toggle="tab" href="#infobox">Infobox</a></li>
+        <li class="active"><a data-toggle="tab" href="#style{{ chapter.id }}{{ storyLayers.id }}">Style</a>
+        <li><a data-toggle="tab" href="#edit{{ chapter.id }}{{ storyLayers.id }}">Edit</a></li>
+        <li><a data-toggle="tab" href="#infobox{{ chapter.id }}{{ storyLayers.id }}">Infobox</a></li>
     </ul>
     <div class="tab-content">
-        <div id="style" class="tab-pane fade in active">
+        <div id="style{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade in active">
             <p>Carousel</p>
-            <hr>
+
+            <div id="styleRow" class="row" ng-show="storyService.canEditStyle()">
+                <!--<style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="storyService.isEditable()" on-change="styleChanged"></style-editor> -->
+            </div>
+
             <select class="form-control">
                 <option>Color</option>
                 <option>Red</option>
@@ -40,7 +47,7 @@
 
             <hr>
         </div>
-        <div id="edit" class="tab-pane fade">
+        <div id="edit{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade">
             <button class="btn btn-default btn-lg btn-block" ng-click="storyService.startFeatureAdd()"
                     ng-disabled="storyService.isEditable()">Start Editing
             </button>
@@ -52,7 +59,7 @@
                 StoryLayer
             </button>
         </div>
-        <div id="infobox" class="tab-pane fade">
+        <div id="infobox{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade">
             <div class="form-group">
                 <label for="layerAlias">Layer Alias</label>
                 <textarea class="form-control" id="layerAlias" rows="2"></textarea>
