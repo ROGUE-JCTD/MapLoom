@@ -554,39 +554,11 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.url = urlSansParameters;
           }
 
-
-          //in order to populate the layer list, (once connected to the server) we need override the TileJSON class from openlayers.
-          //the payload that comes back into code, the JSON, is stripped of the name attribute. hence, we overload the handler
-          //to intercept the full JSON and keep track of the name for the layer list.
-          var TileJSONClass = ol.source.TileJSON;
-
-          //store the original handler in a dynamically added member function 'responseHandler' so
-          //we can call it later on since we are altering the prototype (original) in the line after
-          if (!goog.isDefAndNotNull(TileJSONClass.prototype.responseHandler)) {
-            TileJSONClass.prototype.responseHandler = ol.source.TileJSON.prototype.handleTileJSONResponse;
-          }
-
-          TileJSONClass.prototype.handleTileJSONResponse = function(tileJSON) {
-            server.layersConfig[0].Title = tileJSON.name;
-            server.layersConfig[0].Name = tileJSON.id;
-            server.layersConfig[0].sourceParams = {urlArgs: urlParams, layer: tileJSON.id};
-            server.layersConfig[0].bounds = tileJSON.bounds;
-            this.responseHandler(tileJSON);
-            deferredResponse.resolve(server);
-          };
-
-          if (!goog.isDefAndNotNull(TileJSONClass.prototype.errorResponseHandler)) {
-            //do the same pattern as above but for the error handling function
-            TileJSONClass.prototype.errorResponseHandler = ol.source.TileJSON.prototype.handleTileJSONError;
-          }
-          TileJSONClass.prototype.handleTileJSONError = function() {
-            this.errorResponseHandler();
-            deferredResponse.reject(server);
-          };
-
-          //using bind so 'this' in the handler above points to the TileJSON class object and not something else
-          TileJSONClass.prototype.handleTileJSONResponse.bind(TileJSONClass);
-          TileJSONClass.prototype.handleTileJSONError.bind(TileJSONClass);
+          //In order to populate the layer list, (once connected to the server) we need to override the TileJSON class from openlayers.
+          //The payload that comes back into code, the JSON, is stripped of the name attribute. Hence, we overload the handler
+          //to intercept the full JSON and keep track of the name for the layer list etc.
+          var TileJSONClass = {};
+          angular.copy(ol.source.TileJSON.prototype, TileJSONClass);
 
           //HACK: We need to know if there is an xhr error (Currently TileJSON provides no feedback if there is).
           //This is slightly unsafe if another xhr goes out and returns during this one
@@ -599,7 +571,31 @@ var SERVER_SERVICE_USE_PROXY = true;
           });
 
           //this internally fires off the 'get' call
-          var jsontile_source = new TileJSONClass(json_parms);
+          var jsontile_source = new TileJSONClass.constructor(json_parms);
+
+          //copy and override the handler functions that are 'inherited' from ol.source.TileJSON
+          //this is how the full json returns/errors are intercepted
+          if (!goog.isDefAndNotNull(jsontile_source.responseHandler)) {
+            jsontile_source.responseHandler = jsontile_source.handleTileJSONResponse;
+          }
+
+          jsontile_source.handleTileJSONResponse = function(tileJSON) {
+            server.layersConfig[0].Title = tileJSON.name;
+            server.layersConfig[0].Name = tileJSON.id;
+            server.layersConfig[0].sourceParams = {urlArgs: urlParams, layer: tileJSON.id};
+            server.layersConfig[0].bounds = tileJSON.bounds;
+            this.responseHandler(tileJSON);
+            deferredResponse.resolve(server);
+          };
+
+          if (!goog.isDefAndNotNull(jsontile_source.errorResponseHandler)) {
+            jsontile_source.errorResponseHandler = jsontile_source.handleTileJSONError;
+          }
+
+          jsontile_source.handleTileJSONError = function() {
+            this.errorResponseHandler();
+            deferredResponse.reject(server);
+          };
 
           //stash the returned source in the layersConfig so MapService.js can instantiate the tile later on
           server.layersConfig[0].TileJSONSource = jsontile_source;
@@ -698,3 +694,11 @@ function addXMLRequestCallback(callback) {
     };
   }
 }
+
+function TileTest(serv, defResponse) {
+  this.server = serv;
+  this.handleTileJSONResponse = function() {
+    alert('hello');
+  };
+}
+
