@@ -90,9 +90,13 @@
         };
 
         $scope.active_menu_chapter = null;
+        $scope.prev_menu_section = null;
         $scope.menuSection = 'mainMenu';
 
         $scope.updateMenuSection = function(updateMenuSection) {
+          if (updateMenuSection == 'mainMenuHidden') {
+            $scope.prev_menu_section = $scope.menuSection;
+          }
           $scope.menuSection = updateMenuSection;
           if (updateMenuSection.startsWith('selectedChapter')) {
             var re = /(\d+)/;
@@ -111,10 +115,10 @@
 
         $scope.isShown = true;
 
-        $scope.toggleSidebar = function(savedMenuSection) {
+        $scope.toggleSidebar = function() {
           $scope.isShown = !$scope.isShown;
           if ($scope.menuSection == 'mainMenuHidden') {
-            $scope.updateMenuSection(savedMenuSection);
+            $scope.updateMenuSection($scope.prev_menu_section);
           } else {
             $scope.updateMenuSection('mainMenuHidden');
           }
