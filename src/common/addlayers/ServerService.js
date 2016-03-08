@@ -449,6 +449,15 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
         return thumbnailUrl;
       };
+      var author = function(layerInfo) {
+        if (layerInfo.owner__first_name) {
+          return layerInfo.owner__first_name + ' ' + layerInfo.owner__last_name;
+        }
+        if (layerInfo.owner__username) {
+          return layerInfo.owner__username;
+        }
+        return 'No owner name available';
+      };
       //TODO: Update with handling multiple projections per layer if needed.
       for (var iLayer = 0; iLayer < layer_objects.length; iLayer += 1) {
         var layer_info = layer_objects[iLayer];
@@ -457,8 +466,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           Name: layer_info.typename,
           Title: layer_info.title,
           CRS: layer_info.srid,
-          author: layer_info.owner__first_name + ' ' + layer_info.owner__last_name,
           thumbnail_url: thumbnail(layer_info.thumbnail_url, layerName(layer_info.detail_url)),
+          author: author(layer_info),
           detail_url: layer_info.detail_url
         };
 
