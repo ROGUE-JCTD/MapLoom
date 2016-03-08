@@ -119,8 +119,10 @@
           $scope.isShown = !$scope.isShown;
           if ($scope.menuSection == 'mainMenuHidden') {
             $scope.updateMenuSection($scope.prev_menu_section);
+            document.getElementById('pushobj').style.width = '75%';
           } else {
             $scope.updateMenuSection('mainMenuHidden');
+            document.getElementById('pushobj').style.width = '100%';
           }
         };
 

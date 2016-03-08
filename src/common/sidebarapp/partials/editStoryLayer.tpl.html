@@ -20,7 +20,7 @@
     <div class="tab-content">
         <div id="style{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade in active">
 
-            <div id="styleRow" class="row" ng-show="true">
+            <div>
                 <style-editor ng-if="menuSection=='editStoryLayer' + chapter.id + storyLayers.id" class="minheight" control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true" on-change="styleChanged"></style-editor>
             </div>
             <hr>
