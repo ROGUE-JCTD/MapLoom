@@ -439,7 +439,16 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.reformatLayerConfigs = function(elastic_response, serverUrl) {
       var final_configs = [];
       var layer_objects = elastic_response.objects;
-
+      var layerName = function(detailUrl) {
+        if (!detailUrl) { return ''; }
+        return detailUrl.split('/').pop();
+      };
+      var thumbnail = function(thumbnailUrl, layerName) {
+        if (thumbnailUrl && thumbnailUrl.indexOf('missing_thumb') !== -1) {
+          return serverUrl + '/reflect?format=application/openlayers&layers=' + layerName + '&width=200';
+        }
+        return thumbnailUrl;
+      };
       //TODO: Update with handling multiple projections per layer if needed.
       for (var iLayer = 0; iLayer < layer_objects.length; iLayer += 1) {
         var layer_info = layer_objects[iLayer];
@@ -448,8 +457,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           Name: layer_info.typename,
           Title: layer_info.title,
           CRS: layer_info.srid,
-          thumbnail_url: layer_info.thumbnail_url,
           author: layer_info.owner__first_name + ' ' + layer_info.owner__last_name,
+          thumbnail_url: thumbnail(layer_info.thumbnail_url, layerName(layer_info.detail_url)),
           detail_url: layer_info.detail_url
         };
 
