@@ -511,7 +511,10 @@ var SERVER_SERVICE_USE_PROXY = true;
         pathArray = url.split('/');
         protocol = pathArray[0];
         host = pathArray[2];
-        return protocol + '//' + host + '/geoserver/wms';
+        if (protocol.indexOf(':') !== -1) {
+          return protocol + '//' + host + '/geoserver/wms';
+        }
+        return '/geoserver/wms';
       };
       // server hasn't been added yet, so specify the auth headers here
       http_.get(url, config).then(function(xhr) {
