@@ -19,27 +19,10 @@
     </ul>
     <div class="tab-content">
         <div id="style{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade in active">
-            <p>Carousel</p>
 
-            <div id="styleRow" class="row" ng-show="storyService.canEditStyle()">
-                <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="storyService.isEditable()" on-change="styleChanged"></style-editor>
+            <div id="styleRow" class="row" ng-show="true">
+                <style-editor ng-if="menuSection=='editStoryLayer' + chapter.id + storyLayers.id" class="minheight" control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true" on-change="styleChanged"></style-editor>
             </div>
-
-            <select class="form-control">
-                <option>Color</option>
-                <option>Red</option>
-                <option>Green</option>
-                <option>Blue</option>
-            </select>
-            <select class="form-control">
-                <option>Symbol Size</option>
-            </select>
-            <select class="form-control">
-                <option>Symbol Style</option>
-            </select>
-            <select class="form-control">
-                <option>Classification</option>
-            </select>
             <hr>
             <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
                 StoryLayer
