@@ -1,47 +1,47 @@
 <div class="modal-body">
-  <div ng-show="name">
+  <div ng-show="storyService.active_layer.get('metadata').name">
     <div><h4 translate="server_name"></h4></div>
-    <div class="well">{{name}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').name }}</div>
   </div>
-  <div ng-show="title">
+  <div ng-show="storyService.active_layer.get('metadata').title">
     <div><h4 translate="title"></h4></div>
-    <div class="well">{{title}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').title }}</div>
   </div>
-  <div ng-show="workspace">
+  <div ng-show="storyService.active_layer.get('metadata').workspace">
     <div><h4 translate="workspace"></h4></div>
-    <div class="well">{{workspace}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').workspace }}</div>
   </div>
-  <div ng-show="featureType">
+  <div ng-show="storyService.active_layer.get('metadata').featureType">
     <div><h4 translate="featuretype"></h4></div>
-    <div class="well">{{featureType}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').featureType }}</div>
   </div>
-  <div ng-show="abstract">
+  <div ng-show="storyService.active_layer.get('metadata').abstract">
     <div><h4 translate="abstract"></h4></div>
-    <div class="well">{{abstract}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').abstract }}</div>
   </div>
-  <div ng-show="keywords">
+  <div ng-show="storyService.active_layer.get('metadata').keywords">
     <div><h4 translate="keywords"></h4></div>
-    <div class="well">{{keywords}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').keywords }}</div>
   </div>
-  <div ng-show="srs">
+  <div ng-show="storyService.active_layer.get('metadata').srs">
     <div><h4 translate="srs"></h4></div>
-    <div class="well">{{srs}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').srs }}</div>
   </div>
-  <div ng-show="serverName">
+  <div ng-show="storyService.active_layer.get('metadata').serverName">
     <div><h4 translate="server"></h4></div>
-    <div class="well">{{serverName}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').serverName }}</div>
   </div>
-  <div ng-show="serverURL">
+  <div ng-show="storyService.active_layer.get('metadata').serverURL">
     <div><h4 translate="server_url"></h4></div>
-    <div class="well">{{serverURL}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').serverURL }}</div>
   </div>
-  <div ng-show="repoName">
+  <div ng-show="storyService.active_layer.get('metadata').repoName">
     <div><h4 translate="repo"></h4></div>
-    <div class="well">{{repoName}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').repoName }}</div>
   </div>
-  <div ng-show="branchName">
+  <div ng-show="storyService.active_layer.get('metadata').branchName">
     <div><h4 translate="branch"></h4></div>
-    <div class="well">{{branchName}}</div>
+    <div class="well">{{ storyService.active_layer.get('metadata').branchName }}</div>
   </div>
 </div>
 <div class="modal-footer">
