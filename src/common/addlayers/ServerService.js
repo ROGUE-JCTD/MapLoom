@@ -436,7 +436,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return layerConfig;
     };
 
-    this.reformatLayerConfigs = function(elastic_response) {
+    this.reformatLayerConfigs = function(elastic_response, serverUrl) {
       var final_configs = [];
       var layer_objects = elastic_response.objects;
 
@@ -489,10 +489,16 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         config.headers['Authorization'] = '';
       }
+      serverGeoserverUrl = function(url) {
+        pathArray = url.split('/');
+        protocol = pathArray[0];
+        host = pathArray[2];
+        return protocol + '//' + host + '/geoserver/wms';
+      };
       // server hasn't been added yet, so specify the auth headers here
       http_.get(url, config).then(function(xhr) {
         if (xhr.status === 200) {
-          server.layersConfig = service_.reformatLayerConfigs(xhr.data);
+          server.layersConfig = service_.reformatLayerConfigs(xhr.data, serverGeoserverUrl(url));
           console.log('---- populateLayersConfig.populateLayersConfig server', server);
           rootScope_.$broadcast('layers-loaded', server.id);
           layers_loaded = true;
