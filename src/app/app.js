@@ -126,6 +126,13 @@
           }
         };
 
+        $scope.styleChanged = function(layer) {
+          layer.on('change:type', function(evt) {
+            mapService.updateStyle(evt.target);
+          });
+          mapService.updateStyle(layer);
+        };
+
         $scope.removeChapter = function() {
           storyService.remove_chapter().then(function(removed_index) {
             if (removed_index !== null) {
