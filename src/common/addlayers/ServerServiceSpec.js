@@ -1,9 +1,15 @@
 describe('addLayers/ServerService', function() {
   var serverService, $httpBackend;
+  var configService = {};
   beforeEach(module('MapLoom'));
   beforeEach(module('loom_addlayers'));
 
-  beforeEach(inject(function(_serverService_, _$httpBackend_) {
+  beforeEach(function() {
+    module(function($provide) {
+      $provide.value('configService', configService);
+    });
+  });
+  beforeEach(inject(function(_serverService_, _configService_, _$httpBackend_) {
     serverService = _serverService_;
     $httpBackend = _$httpBackend_;
   }));
@@ -103,7 +109,7 @@ describe('addLayers/ServerService', function() {
     describe('server is available and returns results', function() {
       beforeEach(function() {
         $httpBackend
-        .when('GET', '/api/layers/search/?is_published=true&limit=100&owner=anonymous&q=undefined')
+        .when('GET', '/api/layers/search/?is_published=true&limit=100&owner__username__in=undefined&q=undefined')
         .respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
@@ -123,7 +129,7 @@ describe('addLayers/ServerService', function() {
       beforeEach(function() {
         $httpBackend.resetExpectations();
         $httpBackend
-            .when('GET', '/api/layers/search/?is_published=true&limit=100&owner=anonymous&q=undefined')
+            .when('GET', '/api/layers/search/?is_published=true&limit=100&owner__username__in=undefined&q=undefined')
             .respond(501, '');
       });
       it('reformats the Layer configs based on the server data', function() {
@@ -131,6 +137,38 @@ describe('addLayers/ServerService', function() {
         layers_loaded = serverService.populateLayersConfigElastic({}, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).not.toHaveBeenCalled();
+      });
+    });
+  });
+  describe('#apply_filter', function() {
+    describe('no filter', function() {
+      it('returns the url', function() {
+        var filterOptions = {
+          owner: null,
+          text: null
+        };
+        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory');
+      });
+    });
+    describe('only text filter', function() {
+      it('returns the url with q', function() {
+        var filterOptions = {
+          owner: null,
+          text: 'Ocean'
+        };
+        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
+      });
+    });
+    describe('only owner filter', function() {
+      beforeEach(function() {
+        configService.username = 'Dijkstra';
+      });
+      it('returns the url with q', function() {
+        var filterOptions = {
+          owner: true,
+          text: null
+        };
+        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
       });
     });
   });

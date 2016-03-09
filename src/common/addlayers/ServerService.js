@@ -481,7 +481,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.apply_filter = function(url, filter_options) {
 
       if (filter_options.owner !== null) {
-        url = url + '&owner=' + configService_.username;
+        url = url + '&owner__username__in=' + configService_.username;
       }
       if (filter_options.text !== null) {
         url = url + '&q=' + filter_options.text;
