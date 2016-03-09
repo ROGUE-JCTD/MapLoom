@@ -30,7 +30,7 @@
     <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-neuter"></i>
-        StoryPins
+        StoryPins ({{ pinService.getPins(chapter.id).length }})
     </a>
 </div>
 <div class="menuItem">

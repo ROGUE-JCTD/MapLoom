@@ -54,7 +54,6 @@
       return this;
     };
 
-    //Layer functions
 
     this.clearSelectedItems = function() {
       this.active_layer = null;
@@ -65,6 +64,14 @@
 
     this.selectLayer = function(layer_config) {
       this.active_layer = layer_config;
+    };
+
+    this.selectBox = function(box) {
+      this.active_box = box;
+    };
+
+    this.selectPin = function(pin) {
+      this.active_pin = pin;
     };
 
     this.toggleVisiblity = function(layer) {

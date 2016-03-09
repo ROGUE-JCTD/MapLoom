@@ -15,7 +15,7 @@
   var model_attributes = ['id', '_id', 'title', 'content', 'start_time', 'end_time', 'in_map', 'in_timeline'];
 
   model_attributes.forEach(function(prop) {
-    Object.defineProperty(Box.prototype, prop, {
+    Object.defineProperty(Pin.prototype, prop, {
       get: function() {
         var val = this.get(prop);
         return typeof val === 'undefined' ? null : val;
@@ -75,7 +75,7 @@
     };
 
     this.getPins = function(chapter_index) {
-      return boxes_[chapter_index];
+      return pins_[chapter_index];
     };
 
     this.removePin = function(storyPin, chapter_index) {

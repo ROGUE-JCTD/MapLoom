@@ -10,5 +10,5 @@
 
 <a href="#" class="menuItem" ng-click="updateMenuSection('addStoryBox' + chapter.id)">Add a New StoryBox...</a>
 <div ng-repeat="storyBox in storyBoxes = boxService.getBoxes(chapter.id)">
-    <a href="#" class="menuItem" ng-click="updateMenuSection('editStoryBox' + chapter.id + storyBoxes.id)">{{ storyBox.title }}</a>
+    <a href="#" class="menuItem" ng-click="storyService.selectBox(storyBox);updateMenuSection('editStoryBox' + chapter.id + storyBoxes.id)">{{ storyBox.title }}</a>
 </div>
