@@ -91,6 +91,11 @@
 
     };
 
+    this.updateBox = function(box, chapter_index) {
+      //TODO: more may need to be done here like updating the map extent
+      rootScope_.$broadcast('box-added', chapter_index);
+    };
+
     this.addBox = function(props, chapter_index) {
       var deferredResponse = q_.defer();
       var storyBox = new Box(props);

@@ -160,7 +160,7 @@
               }
               //Remove front end chapter from menu
               $scope.mapstories.chapters.splice(removed_index, 1);
-              $scope.storyService.update_active_config($scope.mapstories.chapters[0].id);
+              $scope.storyService.update_active_config($scope.mapstories.chapters[0].id, true);
               $scope.updateMenuSection('mainMenu');
             }
           });

@@ -70,6 +70,7 @@
       this.active_box = box;
     };
 
+
     this.selectPin = function(pin) {
       this.active_pin = pin;
     };
@@ -211,10 +212,10 @@
 
     //Composer only allows you to edit one chapter at a time
     //This function should be called whenever we select a different chapter from the list.
-    this.update_active_config = function(index) {
+    this.update_active_config = function(index, deleteOverride) {
       //This function updates the active_chapter and propagates the new
       //active configuration to the other services.
-      if (this.active_index === index) {
+      if (this.active_index === index && !goog.isDefAndNotNull(deleteOverride)) {
         return;
       }
       this.active_chapter = this.configurations[index];
