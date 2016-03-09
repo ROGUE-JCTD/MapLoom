@@ -6,10 +6,12 @@
       restrict: 'C',
       link: function(scope, element, attrs) { // Unused: attrs
         $(function() {
+          var containerToDrop = null;
           var startIndex = -1;
           var config = {
             // set item relative to cursor position
             onDragStart: function($item, container, _super) {
+              containerToDrop = container;
               var height = $item.outerHeight();
               var width = $item.outerWidth();
               var offset = $item.offset(),
@@ -35,7 +37,7 @@
             },
             onDrop: function($item, container, _super) {
               scope.$eval(attrs.arrangeableCallback)(startIndex, $item.index());
-              _super($item);
+              _super($item, containerToDrop);
             },
             distance: 5
           };

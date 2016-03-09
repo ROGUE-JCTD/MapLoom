@@ -29,6 +29,7 @@
     'loom_search',
     'loom_test',
     'loom_timeline',
-    'loom_storybox'
+    'loom_storybox',
+    'loom_storypin'
   ]);
 }());

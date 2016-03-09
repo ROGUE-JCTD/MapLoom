@@ -39,6 +39,8 @@
       this.active_index = 0;
       //All mapstories have one default chapter added
       this.active_layer = null;
+      this.active_box = null;
+      this.active_pin = null;
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
       this.active_chapter.about.title = 'Untitled Chapter';
@@ -53,6 +55,14 @@
     };
 
     //Layer functions
+
+    this.clearSelectedItems = function() {
+      this.active_layer = null;
+      this.active_box = null;
+      this.active_pin = null;
+      this.active_chapter = null;
+    };
+
     this.selectLayer = function(layer_config) {
       this.active_layer = layer_config;
     };
@@ -71,7 +81,6 @@
         dialogService_.error(translate_.instant('show_table'), translate_.instant('show_table_failed'));
       });
     };
-
 
     this.removeLayer = function() {
       dialogResult = dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
@@ -112,15 +121,6 @@
       featureManagerService_.startFeatureInsert(this.active_layer);
     };
 
-    //StoryBox functions
-
-
-
-
-
-
-    //StoryPin functions
-
     //Save all chapter configuration objects
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
@@ -143,7 +143,7 @@
         removed_chapters: this.removedChapterIDs
       };
 
-      console.log('saving Mapstory');
+      console.log('saving Mapstory: ', this.title);
       httpService_({
         url: service_.getSaveURL(),
         method: service_.getSaveHTTPMethod(),
@@ -311,9 +311,6 @@
             removed_index = service_.active_index;
             mapService_.remove_chapter(removed_index);
             service_.configurations.splice(removed_index, 1);
-            if (service_.configurations.length > 0) {
-              service_.update_active_config(0);
-            }
             rootScope_.$broadcast('chapter-removed', removed_index);
             return removed_index;
           case 1:

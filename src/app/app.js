@@ -21,7 +21,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, storyService, boxService, $http) {
+                                                refreshService, dialogService, storyService, boxService, pinService, $http) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -73,7 +73,9 @@
         $scope.storyService = storyService;
         $scope.refreshService = refreshService;
         $scope.boxService = boxService;
+        $scope.pinService = pinService;
         $scope.box = {};
+        $scope.pin = {};
 
         $scope.addStoryBox = function(box) {
           var clone = angular.copy(box);
@@ -82,6 +84,14 @@
           boxService.addBox(clone, $scope.active_menu_chapter.id);
           $scope.box = {};
           $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+        };
+
+        $scope.addStoryPin = function(pin) {
+          var clone = angular.copy(pin);
+          goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
+          pinService.addPin(clone, $scope.active_menu_chapter.id);
+          $scope.pin = {};
+          $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
         };
 
         $scope.mapstories = {
@@ -104,7 +114,14 @@
             $scope.active_menu_chapter = $scope.mapstories.chapters[chapter_index[0]];
           } else if (updateMenuSection == 'mainMenu') {
             $scope.active_menu_chapter = null;
+            $scope.storyService.clearSelectedItems();
           }
+        };
+
+        $scope.reorderLayer = function(startIndex, endIndex) {
+          var length = mapService.map.getLayers().getArray().length - 1;
+          var layer = mapService.map.removeLayer(mapService.map.getLayers().item(length - startIndex));
+          mapService.map.getLayers().insertAt(length - endIndex, layer);
         };
 
         $scope.locations = {};
@@ -143,7 +160,7 @@
               }
               //Remove front end chapter from menu
               $scope.mapstories.chapters.splice(removed_index, 1);
-
+              $scope.storyService.update_active_config($scope.mapstories.chapters[0].id);
               $scope.updateMenuSection('mainMenu');
             }
           });

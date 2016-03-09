@@ -10,14 +10,14 @@
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinTitle">StoryPin Title</label>
-        <input type="text" class="form-control" id="storyPinTitle"/>
+        <input type="text" class="form-control" id="storyPinTitle" ng-model="pin.title"/>
     </div>
 </div>
 
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinContent">StoryPin Content</label>
-        <textarea class="form-control" id="storyPinContent"></textarea>
+        <textarea class="form-control" id="storyPinContent" ng-model="pin.content"></textarea>
         <br>
         <button class="btn btn-default btn-block" id="linkMedia">Link Media...</button>
     </div>
@@ -33,10 +33,18 @@
 
 <div class="menuItem">
     <div class="form-group">
-        <label for="storyPinTime">Time</label>
-        <input type="datetime" class="form-control" id="storyPinTime"/>
+        <label for="start_time">Start Time</label>
+        <div>
+            <datetimepicker date-object="pin.start_time" default-date="inserting"></datetimepicker>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="end_time">End Time</label>
+        <div>
+            <datetimepicker date-object="pin.end_time" default-date="inserting"></datetimepicker>
+        </div>
     </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block" id="saveStoryPin">Save StoryPin</button>
+    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="addStoryPin(pin)">Save StoryPin</button>
 </div>
