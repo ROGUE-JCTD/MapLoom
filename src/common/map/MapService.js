@@ -1116,7 +1116,7 @@
           goog.array.forEach(config.map.layers, function(layerInfo, index, obj) {
             // Note: config.source will be string while serverIndex might be number
             if (layerInfo.source == configServerIndex) {
-              layerInfo.temp_layerOrder = index;
+              layerInfo.temp_layerOrder = (index > configs.length) ? config.length : index;
               configs.push(layerInfo);
             }
           });
