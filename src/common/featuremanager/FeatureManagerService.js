@@ -918,7 +918,7 @@
         service_.hide();
 
         var view = mapService_.map.getView();
-        var layers = mapService_.getLayers();
+        var layers = mapService_.getLayers(false, true);
         var completed = 0;
 
         var infoPerLayer = [];
@@ -938,10 +938,11 @@
         };
 
         goog.array.forEach(layers, function(layer, index) {
-          if (!layer.get('metadata').editable) {
+
+          var source = layer.getSource();
+          if (!goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
             return;
           }
-          var source = layer.getSource();
           var url = source.getGetFeatureInfoUrl(evt.coordinate, view.getResolution(), view.getProjection(),
               {
                 'INFO_FORMAT': 'application/json',

@@ -627,7 +627,7 @@
                 serverId: server.id,
                 name: minimalConfig.name,
                 title: fullConfig.Title,
-                bbox: fullConfig.bounds,
+                bbox: { extent: fullConfig.bounds, crs: 'CRS:84' },
                 sourceParms: fullConfig.sourceParams
               },
               visible: minimalConfig.visibility,

@@ -695,10 +695,3 @@ function addXMLRequestCallback(callback) {
   }
 }
 
-function TileTest(serv, defResponse) {
-  this.server = serv;
-  this.handleTileJSONResponse = function() {
-    alert('hello');
-  };
-}
-
