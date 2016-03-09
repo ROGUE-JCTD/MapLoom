@@ -919,15 +919,27 @@
 
         var view = mapService_.map.getView();
         var layers = mapService_.getLayers(false, true);
-        var completed = 0;
+        var validRequestCount = 0;
+        var completedRequestCount = 0;
 
         var infoPerLayer = [];
 
-        // wait for all get feature infos to retun before proceeding.
-        var getFeatureInfoCompleted = function() {
-          completed += 1;
+        //we need to count the number of layers that support GetFeatureInfo
+        //that way when the requests are processed we can keep track of when
+        //all features are returned
+        goog.array.forEach(layers, function(layer, index) {
+          var source = layer.getSource();
+          if (goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
+            validRequestCount++;
+          }
+        });
 
-          if (completed === layers.length) {
+        //This function is called each time a get feature info request returns (call is made below).
+        //when the completedRequestCount == validRequestCount, we can display the popup
+        var getFeatureInfoCompleted = function() {
+          completedRequestCount++;
+
+          if (completedRequestCount === validRequestCount) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
@@ -937,8 +949,9 @@
           }
         };
 
-        goog.array.forEach(layers, function(layer, index) {
 
+        //Get the feature info for each layer that supports it
+        goog.array.forEach(layers, function(layer, index) {
           var source = layer.getSource();
           if (!goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
             return;
