@@ -7,9 +7,8 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - npm install --quiet -g grunt-cli karma bower
   - bower install
-  - grunt karmaconfig
 
 script:
   - grunt
-  - grunt karma
+  - grunt karmaconfig && grunt karma
 
