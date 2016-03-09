@@ -45,16 +45,22 @@
 
     this.replaceLayers = function(newLayers) {
       var featurePanel = this;
-      var layers = this.map.getLayers();
+      var layers = mapService_.map.getLayers();
+
       layers.forEach(function(layer) {
         featurePanel.map.removeLayer(layer);
       });
+
+      if (goog.isDefAndNotNull(featurePanel.featureLayer)) {
+        featurePanel.map.removeLayer(featurePanel.featureLayer);
+      }
+
       newLayers.forEach(function(layer) {
         if (!goog.isDefAndNotNull(layer.get('metadata').internalLayer) || !layer.get('metadata').internalLayer) {
           featurePanel.map.addLayer(layer);
         }
       });
-      this.map.addLayer(this.featureLayer);
+      featurePanel.map.addLayer(featurePanel.featureLayer);
     };
   };
 
@@ -145,15 +151,15 @@
       dialogService_ = dialogService;
       translate_ = $translate;
       ol.extent.empty(this.combinedExtent);
+
+      var sharedMapView = new ol.View(mapService_.getMapViewParams());
+
       var createMap = function(panel) {
+
         panel.map = new ol.Map({
           //renderer: ol.RendererHint.CANVAS,
           ol3Logo: false,
-          view: new ol.View({
-            center: ol.proj.transform([-87.2011, 14.1], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 14,
-            maxZoom: 20
-          })
+          view: sharedMapView
         });
 
         var controls = panel.map.getControls();
@@ -164,11 +170,10 @@
         });
         panel.featureLayer = makeFeatureLayer();
       };
+
       createMap(this.left);
       createMap(this.right);
       createMap(this.merged);
-      this.merged.map.on('view', service_.left.map);
-      this.right.map.on('view', service_.left.map);
 
       return this;
     };

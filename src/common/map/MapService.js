@@ -320,7 +320,7 @@
                         JSON.parse(upper[1], 10)];
           //console.log('------- [[ bounds: ', bounds);
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
-              ol.proj.get('EPSG:900913'));
+              ol.proj.get(service_.map.getView().getProjection()));
           var extent900913 = ol.extent.applyTransform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
           deferredResponse.resolve();
@@ -834,6 +834,21 @@
       return this.map.getView().getCenter();
     };
 
+    this.getMapViewParams = function() {
+      var params = {
+        projection: service_.configuration.map.projection,
+        center: service_.configuration.map.center,
+        zoom: service_.configuration.map.zoom,
+        maxZoom: 17
+      };
+      if (service_.configuration.map.projection === 'EPSG:4326') {
+        params['minZoom'] = 3;
+      } else {
+        params['maxResolution'] = 40075016.68557849 / 2048;
+      }
+      return params;
+    };
+
     this.getProjection = function() {
       return this.map.getView().getProjection().getCode();
     };
@@ -1224,12 +1239,7 @@
         //renderer: ol.RendererHint.CANVAS,
         ol3Logo: false,
         target: 'map',
-        view: new ol.View({
-          center: this.configuration.map.center,
-          zoom: this.configuration.map.zoom,
-          maxZoom: 17,
-          maxResolution: 40075016.68557849 / 2048
-        })
+        view: new ol.View(service_.getMapViewParams())
       });
 
       map.on('dragend', function() {

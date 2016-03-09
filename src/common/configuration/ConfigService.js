@@ -50,6 +50,7 @@
           abstract: ''
         },
         map: {
+          projection: 'EPSG:900913',
           center: [-9707182.048613328, 1585691.7893914054],
           zoom: 14,
           layers: [
