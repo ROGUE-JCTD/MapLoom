@@ -819,6 +819,9 @@
               service_.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
             }
 
+            service_.zoomToExtent(layer.getExtent(), true);
+
+
             if (goog.isDefAndNotNull(meta.projection)) {
               // ping proj4js to pre-download projection if we don't have it
               var layerPrjObject = ol.proj.get(meta.projection);
