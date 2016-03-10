@@ -127,7 +127,8 @@ module.exports = {
     ],
     fonts: [
       'vendor/bootstrap/fonts/*',
-      'vendor/font-awesome/fonts/*'
+      'vendor/font-awesome/fonts/*',
+      'vendor/open-sans-condensed/*'
     ]
   }
 };
