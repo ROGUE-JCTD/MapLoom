@@ -4,6 +4,7 @@
   var service_ = null;
   var mapService_ = null;
   var boxService_ = null;
+  //var pinService_ = null;
   var timelineTicks_ = null;
   var currentTickIndex_ = null;
   var currentTime_ = null;
@@ -14,6 +15,7 @@
   var filterByTime_ = true;
   var featureManagerService_ = null;
   var boxes_ = [];
+  //var pins_ = [];
   var timelinePointsList = [];
   var timelineGroupsList_ = [];
   var range_ = new stutils.Range(null, null);
@@ -126,8 +128,26 @@
 
       // when a box is removed, reinitialize the service.
       $rootScope.$on('boxRemoved', function(event, chapter_index) {
-        console.log('----[ timelineService, box removed. initializing', box);
+        console.log('----[ timelineService, box removed. initializing');
         boxes_ = boxService_.getBoxes(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('chapter-switch', function(event, chapter_index) {
+        console.log('----[ timelineService, chapter switch. initializing', chapter_index);
+        boxes_ = boxService_.getBoxes(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('pin-added', function(event, chapter_index) {
+        console.log('----[ timelineService, pin added. initializing');
+        //pins_ = pinService_.getPins(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('pinRemoved', function(event, chapter_index) {
+        console.log('----[ timelineService, pin removed. initializing');
+        //pins_ = pinService_.getPins(chapter_index);
         service_.initialize();
       });
 

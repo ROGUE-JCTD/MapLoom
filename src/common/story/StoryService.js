@@ -222,6 +222,7 @@
       this.active_index = index;
 
       mapService_.updateActiveMap(this.active_index, this.active_chapter);
+      rootScope_.$broadcast('chapter-switch', this.active_index);
     };
 
     //Updates the stored chapter_info information for the current chapter
@@ -282,10 +283,10 @@
       mapService_.create_chapter(new_chapter);
       var new_index = (this.configurations.length - 1);
       //Immediately set focus to new chapter after creation. This causes the new chapter map to load
+      rootScope_.$broadcast('chapter-added', new_index);
       service_.update_active_config(new_index);
       mapService_.loadMap(new_chapter);
       this.print_configurations();
-      rootScope_.$broadcast('chapter-added', new_index);
 
       return new_index;
     };

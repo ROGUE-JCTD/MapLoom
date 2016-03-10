@@ -210,9 +210,6 @@
             } else if (scope.time === 'false') {
               dateOptions.defaultDate = scope.dateObject.replace('Z', '');
             } else {
-              if (scope.dateObject.search('Z') === -1) {
-                scope.dateObject += 'Z';
-              }
               dateOptions.defaultDate = scope.dateObject;
               timeOptions.defaultDate = scope.dateObject;
             }
