@@ -21,7 +21,9 @@
         <div id="style{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade in active">
 
             <div>
-                <style-editor ng-if="menuSection=='editStoryLayer' + chapter.id + storyLayers.id" class="minheight" control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true" on-change="styleChanged"></style-editor>
+                <style-editor ng-if="menuSection=='editStoryLayer' + chapter.id + storyLayers.id" class="minheight"
+                              control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true"
+                              on-change="styleChanged"></style-editor>
             </div>
             <hr>
             <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
@@ -31,8 +33,13 @@
             <hr>
         </div>
         <div id="edit{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade">
-            <button class="btn btn-default btn-lg btn-block" ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
-                    ng-disabled="storyService.isEditable()">Start Editing
+            <button class="btn btn-default btn-lg btn-block"
+                    ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
+                    ng-disabled="storyService.isEditable()">Add a New Feature
+            </button>
+            <button class="btn btn-default btn-lg btn-block"
+                    ng-click="showHelpBox('To edit an existing feature, just click on a feature that you want to edit.'); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
+                    ng-disabled="storyService.isEditable()">Edit an Existing Feature
             </button>
             <button class="btn btn-default btn-lg btn-block" data-target="#layerInfoDialog" data-toggle="modal">View Layer Metadata</button>
             <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
