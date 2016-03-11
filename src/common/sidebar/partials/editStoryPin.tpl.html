@@ -8,6 +8,11 @@
 </div>
 
 <div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">Back to StoryPins List</a>
+</div>
+
+<div class="menuItem">
     <div class="form-group">
         <label for="storyPinTitle">StoryPin Title</label>
         <input type="text" class="form-control" id="storyPinTitle" ng-model="storyService.active_pin.title"/>
