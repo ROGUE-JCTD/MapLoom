@@ -1247,6 +1247,10 @@
       }
     };
 
+    this.updateMapSize = function() {
+      this.map.updateSize();
+    };
+
     this.createMap = function() {
       var coordDisplay;
       if (settings.coordinateDisplay === coordinateDisplays.DMS) {

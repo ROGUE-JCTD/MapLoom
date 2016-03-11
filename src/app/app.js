@@ -145,6 +145,7 @@
             $scope.updateMenuSection('mainMenuHidden');
             document.getElementById('pushobj').style.width = '100%';
           }
+          $scope.mapService.updateMapSize();
         };
 
         $scope.styleChanged = function(layer) {
