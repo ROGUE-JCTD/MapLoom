@@ -86,6 +86,10 @@
           $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
         };
 
+        $scope.setPinLocation = function() {
+
+        };
+
         $scope.addStoryPin = function(pin) {
           var clone = angular.copy(pin);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});

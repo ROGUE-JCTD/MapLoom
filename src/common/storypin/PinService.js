@@ -3,8 +3,12 @@
   var pins_ = [[]];
   var service_ = null;
   var rootScope_ = null;
-  var q_ = null;
+  //var q_ = null;
   var httpService_ = null;
+  //var exclusiveModeService_ = null;
+  //var mapService_ = null;
+  //var translate_ = null;
+  //var dialogService_ = null;
   var Pin = function(data) {
     ol.Feature.call(this, data);
     this.start_time = getTime(this.start_time);
@@ -27,11 +31,10 @@
   });
 
   module.provider('pinService', function() {
-    this.$get = function($rootScope, $http, $q) {
+    this.$get = function($rootScope, $http) {
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
-      q_ = $q;
 
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Pin Service: chapter-added');
@@ -90,13 +93,16 @@
     };
 
     this.addPin = function(props, chapter_index) {
-      var deferredResponse = q_.defer();
       var storyPin = new Pin(props);
       pins_[chapter_index].push(storyPin);
       rootScope_.$broadcast('pin-added', chapter_index);
       console.log('-- pinService.addPin, added: ', storyPin);
+    };
 
-      return deferredResponse.promise;
+
+    this.updatePin = function(pin, chapter_index) {
+      //TODO: more may need to be done here like updating the map extent
+      rootScope_.$broadcast('pin-added', chapter_index);
     };
 
   });
