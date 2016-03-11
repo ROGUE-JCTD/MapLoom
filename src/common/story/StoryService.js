@@ -163,6 +163,7 @@
         //After we successfully save a mapstory update the composer to reference the backend object
         //and save chapters
         service_.updateStoryID(data.id);
+        service_.removedChapterIDs = [];
         service_.saveMaps();
         console.log('----[ mapstory.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
