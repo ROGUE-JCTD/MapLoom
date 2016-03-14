@@ -1,6 +1,7 @@
 describe('addLayers/ServerService', function() {
   var serverService, $httpBackend;
   var configService = {};
+  var filterOptions = { owner: null, text: null };
   beforeEach(module('MapLoom'));
   beforeEach(module('loom_addlayers'));
 
@@ -108,19 +109,20 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
+        $httpBackend.resetExpectations();
         $httpBackend
-        .when('GET', '/api/layers/search/?is_published=true&limit=100&owner__username__in=undefined&q=undefined')
+        .when('GET', '/api/layers/search/?is_published=true&limit=100')
         .respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], '/geoserver/wms');
       });
@@ -129,12 +131,12 @@ describe('addLayers/ServerService', function() {
       beforeEach(function() {
         $httpBackend.resetExpectations();
         $httpBackend
-            .when('GET', '/api/layers/search/?is_published=true&limit=100&owner__username__in=undefined&q=undefined')
+            .when('GET', '/api/layers/search/?is_published=true&limit=100')
             .respond(501, '');
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).not.toHaveBeenCalled();
       });
@@ -199,10 +201,9 @@ describe('addLayers/ServerService', function() {
     });
   });
   describe('#addSearchResultsForFavorites', function() {
-    var filterOptions = { owner: null, text: null };
     describe('no server', function() {
       it('returns an empty array', function() {
-        expect(serverService.addSearchResultsForFavorites('', {})).toEqual(false);
+        expect(serverService.addSearchResultsForFavorites('', filterOptions)).toEqual(false);
       });
     });
     describe('server is available and returns results', function() {
@@ -244,7 +245,7 @@ describe('addLayers/ServerService', function() {
         .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra')
         .respond(200, []);
       });
-      it('returns the url with q', function() {
+      it('returns the url with title__contains', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
         var filterOptions = {
           owner: null,
