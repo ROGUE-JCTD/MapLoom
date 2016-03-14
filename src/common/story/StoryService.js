@@ -166,6 +166,7 @@
         service_.updateStoryID(data.id);
         service_.removedChapterIDs = [];
         service_.saveMaps();
+        service_.update_active_config(service_.active_index, true);
         console.log('----[ mapstory.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
@@ -176,7 +177,6 @@
         }
       });
 
-      this.update_active_config(this.active_index, true);
     };
 
     this.updateStoryID = function(id) {
