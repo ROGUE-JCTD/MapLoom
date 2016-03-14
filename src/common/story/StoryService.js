@@ -177,6 +177,7 @@
         }
       });
 
+      this.update_active_config(this.active_index, true);
     };
 
     this.updateStoryID = function(id) {
