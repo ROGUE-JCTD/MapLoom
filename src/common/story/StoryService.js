@@ -135,9 +135,11 @@
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
+        mapService_.updateActiveMap(iConfig);
         mapService_.save(this.configurations[iConfig]);
       }
       this.print_configurations();
+      this.update_active_config(0, true);
     };
 
     //Method saves mapstory and underlying chapters
