@@ -114,13 +114,13 @@ describe('addLayers/ServerService', function() {
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        layers_loaded = serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        layers_loaded = serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], '/geoserver/wms');
       });
@@ -134,7 +134,7 @@ describe('addLayers/ServerService', function() {
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        layers_loaded = serverService.populateLayersConfigElastic({}, {});
+        serverService.populateLayersConfigElastic({}, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).not.toHaveBeenCalled();
       });
@@ -169,6 +169,72 @@ describe('addLayers/ServerService', function() {
           text: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
+      });
+    });
+  });
+  describe('#reformatConfigForFavorites', function() {
+    describe('no layers', function() {
+      it('returns an empty array', function() {
+        expect(serverService.reformatConfigForFavorites({objects: [] }, '').length).toEqual(0);
+      });
+    });
+    describe('result has one layer', function() {
+      var layers = {};
+      beforeEach(function() {
+        layers.objects = [
+          {
+            content_object: {
+              title: 'Ocean Beach',
+              detail_url: '/layers/OceanBeach',
+              thumbnail_url: 'beach.png',
+              owner__first_name: 'Edsger',
+              owner__last_name: 'Dijkstra'
+            }
+          }
+        ];
+      });
+      it('returns one formatted layer', function() {
+        expect(serverService.reformatConfigForFavorites(layers, '').length).toEqual(1);
+      });
+    });
+  });
+  describe('#addSearchResultsForFavorites', function() {
+    describe('no server', function() {
+      it('returns an empty array', function() {
+        expect(serverService.addSearchResultsForFavorites('', {})).toEqual(false);
+      });
+    });
+    describe('server is available and returns results', function() {
+      beforeEach(function() {
+        $httpBackend
+        .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100')
+        .respond(200, []);
+      });
+      it('reformats the Layer configs based on the server data', function() {
+        spyOn(serverService, 'reformatConfigForFavorites');
+        serverService.addSearchResultsForFavorites({}, {});
+        $httpBackend.flush();
+        expect(serverService.reformatConfigForFavorites).toHaveBeenCalled();
+      });
+      it('calls reformatLayerConfigs with a geoserver URL', function() {
+        spyOn(serverService, 'reformatConfigForFavorites');
+        serverService.addSearchResultsForFavorites({}, {});
+        $httpBackend.flush();
+        expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], 'http://beta.mapstory.org/geoserver/wms');
+      });
+    });
+    describe('search server is invalid', function() {
+      beforeEach(function() {
+        $httpBackend.resetExpectations();
+        $httpBackend
+            .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100')
+            .respond(501, '');
+      });
+      it('reformats the Layer configs based on the server data', function() {
+        spyOn(serverService, 'reformatConfigForFavorites');
+        serverService.addSearchResultsForFavorites({}, {});
+        $httpBackend.flush();
+        expect(serverService.reformatConfigForFavorites).not.toHaveBeenCalled();
       });
     });
   });

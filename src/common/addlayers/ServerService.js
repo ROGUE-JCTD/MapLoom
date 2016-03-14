@@ -532,6 +532,11 @@ var SERVER_SERVICE_USE_PROXY = true;
       return createSearchLayerObjects(elasticResponse.objects, serverUrl);
     };
 
+    this.reformatConfigForFavorites = function(response, serverUrl) {
+      var formattedResponse = response.objects.map(function(obj) { return obj.content_object; });
+      return createSearchLayerObjects(formattedResponse, serverUrl);
+    };
+
     this.applyESFilter = function(url, filter_options) {
       if (filter_options.owner !== null) {
         url = url + '&owner__username__in=' + configService_.username;
@@ -552,7 +557,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100';
-      return addSearchResults(searchUrl, server);
+      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {
