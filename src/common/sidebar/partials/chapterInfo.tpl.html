@@ -16,5 +16,5 @@
     <textarea ng-model="storyService.active_chapter.about.abstract" class="form-control" name="chapterSummary" id="chapterSummary"></textarea>
 </div>
 <div class="menuItem">
-    <button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default center-block">Save Chapter Info</button>
+    <button ng-click="storyService.save()" type="button" class="btn btn-default center-block">Save Chapter Info</button>
 </div>
