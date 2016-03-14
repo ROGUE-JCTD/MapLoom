@@ -143,6 +143,10 @@
                         <ng-include src="'sidebar/partials/editStoryLayer.tpl.html'"></ng-include>
                     </div>
 
+                    <div id="viewLayerHistory" ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id">
+                        <ng-include src="'sidebar/partials/viewLayerHistory.tpl.html'"></ng-include>
+                    </div>
+
                     <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
                         <ng-include src="'sidebar/partials/storyBoxes.tpl.html'"></ng-include>
                     </div>
