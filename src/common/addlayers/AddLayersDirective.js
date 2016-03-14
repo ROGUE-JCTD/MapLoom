@@ -16,6 +16,12 @@
               text: null
             };
 
+            var resetText = function() {
+              scope.filterOptions.text = null;
+            };
+            var resetOwner = function() {
+              scope.filterOptions.owner = null;
+            };
             //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
               var server = serverService.getServerById(serverId);
@@ -37,12 +43,31 @@
               scope.setCurrentServerId(server.id);
             }
 
-            scope.clearFilters = function() {
-
+            var clearFilters = function() {
+              resetText();
+              resetOwner();
+              searchFavorites = false;
             };
 
+            scope.defaultSearch = function() {
+              clearFilters();
+              scope.search();
+            };
+
+            scope.searchMyUploads = function() {
+              clearFilters();
+              scope.filterOptions.owner = true;
+              scope.search();
+            };
             scope.applyFilters = function() {
-              serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
+            };
+
+            scope.search = function() {
+              if (searchFavorites) {
+                serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
+              } else {
+                serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
+              }
             };
 
             scope.getCurrentServerName = function() {
