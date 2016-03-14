@@ -66,7 +66,6 @@
       title_ = title;
       buttons_ = [buttonOne, buttonTwo];
       enabled_ = true;
-      angular.element('#pulldown-menu').collapse('hide');
       pulldownService_.toggleEnabled = false;
       geometryType_ = geometryType;
       setTimeout(function() {
@@ -79,7 +78,6 @@
       pulldownService_.toggleEnabled = true;
       enabled_ = false;
       setTimeout(function() {
-        angular.element('#pulldown-menu').collapse('show');
         title_ = '';
         buttons_ = [];
       }, 350);

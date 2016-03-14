@@ -7,13 +7,17 @@
   var dialogService_ = null;
   var translate_ = null;
   var tableViewService_ = null;
+  var featureManagerService_ = null;
   var rootScope_ = null;
+  var q_ = null;
 
 
   module.provider('storyService', function() {
 
-    this.$get = function($window, $http, $cookies, $location, $translate, $rootScope, mapService, configService, dialogService, tableViewService) {
+    this.$get = function($window, $http, $q, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
+                         configService, dialogService, tableViewService) {
       service_ = this;
+      q_ = $q;
       mapService_ = mapService;
       configService_ = configService;
       httpService_ = $http;
@@ -21,6 +25,7 @@
       translate_ = $translate;
       rootScope_ = $rootScope;
       tableViewService_ = tableViewService;
+      featureManagerService_ = featureManagerService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -34,6 +39,8 @@
       this.active_index = 0;
       //All mapstories have one default chapter added
       this.active_layer = null;
+      this.active_box = null;
+      this.active_pin = null;
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
       this.active_chapter.about.title = 'Untitled Chapter';
@@ -47,9 +54,29 @@
       return this;
     };
 
-    //Layer functions
+
+    this.clearSelectedItems = function() {
+      this.active_layer = null;
+      this.active_box = null;
+      this.active_pin = null;
+      this.active_chapter = null;
+    };
+
     this.selectLayer = function(layer_config) {
       this.active_layer = layer_config;
+    };
+
+    this.selectBox = function(box) {
+      this.active_box = box;
+    };
+
+
+    this.selectPin = function(pin) {
+      this.active_pin = pin;
+    };
+
+    this.toggleVisiblity = function(layer) {
+      layer.set('visible', !layer.get('visible'));
     };
 
     this.showTable = function() {
@@ -63,19 +90,43 @@
       });
     };
 
-
     this.removeLayer = function() {
-      dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
+      dialogResult = dialogService_.warn(translate_.instant('remove_layer'), translate_.instant('sure_remove_layer'),
           [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
         switch (button) {
           case 0:
             mapService_.map.removeLayer(service_.active_layer);
             rootScope_.$broadcast('layerRemoved', service_.active_layer);
-            break;
+            return true;
           case 1:
-            break;
+            return false;
         }
       });
+      return dialogResult;
+    };
+
+    this.canEditStyle = function() {
+      if (this.active_layer == null) {
+        return false;
+      } else {
+        return (this.active_layer.get('metadata').editable && this.active_layer.get('metadata').active_btn == 'style_layer');
+      }
+
+    };
+
+    this.isEditable = function() {
+      if (this.active_layer == null) {
+        return true;
+      }
+      return (!this.active_layer.get('visible') || !this.active_layer.get('metadata').schema ||
+              this.active_layer.get('metadata').readOnly);
+    };
+
+    this.startFeatureAdd = function() {
+      if (this.active_layer == null) {
+        return;
+      }
+      featureManagerService_.startFeatureInsert(this.active_layer);
     };
 
     //Save all chapter configuration objects
@@ -84,6 +135,7 @@
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {
         //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
+        mapService_.updateActiveMap(iConfig);
         mapService_.save(this.configurations[iConfig]);
       }
       this.print_configurations();
@@ -100,7 +152,7 @@
         removed_chapters: this.removedChapterIDs
       };
 
-      console.log('saving Mapstory');
+      console.log('saving Mapstory: ', this.title);
       httpService_({
         url: service_.getSaveURL(),
         method: service_.getSaveHTTPMethod(),
@@ -112,7 +164,9 @@
         //After we successfully save a mapstory update the composer to reference the backend object
         //and save chapters
         service_.updateStoryID(data.id);
+        service_.removedChapterIDs = [];
         service_.saveMaps();
+        service_.update_active_config(service_.active_index, true);
         console.log('----[ mapstory.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
@@ -161,16 +215,17 @@
 
     //Composer only allows you to edit one chapter at a time
     //This function should be called whenever we select a different chapter from the list.
-    this.update_active_config = function(index) {
+    this.update_active_config = function(index, deleteOverride) {
       //This function updates the active_chapter and propagates the new
       //active configuration to the other services.
-      if (this.active_index === index) {
+      if (this.active_index === index && !goog.isDefAndNotNull(deleteOverride)) {
         return;
       }
       this.active_chapter = this.configurations[index];
       this.active_index = index;
 
       mapService_.updateActiveMap(this.active_index, this.active_chapter);
+      rootScope_.$broadcast('chapter-switch', this.active_index);
     };
 
     //Updates the stored chapter_info information for the current chapter
@@ -231,6 +286,7 @@
       mapService_.create_chapter(new_chapter);
       var new_index = (this.configurations.length - 1);
       //Immediately set focus to new chapter after creation. This causes the new chapter map to load
+      rootScope_.$broadcast('chapter-added', new_index);
       service_.update_active_config(new_index);
       mapService_.loadMap(new_chapter);
       this.print_configurations();
@@ -242,18 +298,38 @@
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
     };
 
-    this.remove_chapter = function() {
-      //If the chapter map has been saved beforehand we need to remove that chapter link
-      map_id = this.configurations[this.active_index].map.id;
-      if (map_id !== 0) {
-        this.removedChapterIDs.push(map_id);
-      }
+    this.canRemoveChapter = function() {
+      return (service_.configurations.length > 1);
+    };
 
-      //Remove the active chapter from the list of configurations
-      this.configurations.splice(this.active_index, 1);
-      if (this.configurations.length > 0) {
-        this.update_active_config(0);
+    this.remove_chapter = function() {
+      var removed_index = q_.defer();
+      if (this.canRemoveChapter() === false) {
+        dialogService_.error(translate_.instant('remove_chapter'), translate_.instant('cannot_remove_chapter'));
+        removed_index.resolve(null);
+        return removed_index.promise;
       }
+      removed_index = dialogService_.warn(translate_.instant('remove_chapter'), translate_.instant('sure_remove_chapter'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            //If the chapter map has been saved beforehand we need to remove that chapter link
+            map_id = service_.configurations[service_.active_index].map.id;
+            if (map_id !== 0) {
+              service_.removedChapterIDs.push(map_id);
+            }
+
+            //Remove the active chapter from the list of configurations
+            removed_index = service_.active_index;
+            mapService_.remove_chapter(removed_index);
+            service_.configurations.splice(removed_index, 1);
+            rootScope_.$broadcast('chapter-removed', removed_index);
+            return removed_index;
+          case 1:
+            return null;
+        }
+      });
+      return removed_index;
     };
 
   });

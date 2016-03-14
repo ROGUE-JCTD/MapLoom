@@ -1,0 +1,65 @@
+<h2 ng-show="menuSection=='addStoryPin' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('addStoryPin' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('addStoryPin' + chapter.id)"></i></h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>Add a New StoryPin</h2>
+
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">Back to StoryPins List</a>
+</div>
+<div class="menuItem">
+    <div class="form-group">
+        <label for="storyPinTitle">StoryPin Title</label>
+        <input type="text" class="form-control" id="storyPinTitle" ng-model="pin.title"/>
+    </div>
+</div>
+
+<div class="menuItem">
+    <div class="form-group">
+        <label for="storyPinContent">StoryPin Content</label>
+        <textarea class="form-control" id="storyPinContent" ng-model="pin.content"></textarea>
+        <br>
+        <button class="btn btn-default btn-block" id="linkMedia">Link Media...</button>
+    </div>
+</div>
+
+<div class="menuItem">
+    <div class="form-group">
+        <label for="storyPinLocation">Pin Location</label>
+        <small><p>Drop pin on the map to set pin location.</p></small>
+        <button class="btn btn-default btn-block" id="savePinLocation">Save Pin Location</button>
+    </div>
+</div>
+
+<div class="menuItem">
+    <div class="form-group">
+        <label for="start_time">Start Time</label>
+        <div>
+            <datetimepicker date-object="pin.start_time" default-date="inserting"></datetimepicker>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="end_time">End Time</label>
+        <div>
+            <datetimepicker date-object="pin.end_time" default-date="inserting"></datetimepicker>
+        </div>
+    </div>
+</div>
+
+<div class="menuItem">
+    <div class="form-group">
+        <label for="in_map">Show pin on map</label>
+        <div>
+            <input id="in_map" type="checkbox" ng-init="pin.in_map = true" ng-model="pin.in_map"> In map</input>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="in_timeline">Show pin on timeline</label>
+        <div>
+            <input id="in_timeline" type="checkbox" ng-init="pin.in_timeline = false" ng-model="pin.in_timeline"> In timeline</input>
+        </div>
+    </div>
+</div>
+<div class="menuItem">
+    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="addStoryPin(pin)">Save StoryPin</button>
+</div>

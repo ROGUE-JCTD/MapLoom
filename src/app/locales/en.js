@@ -1,6 +1,9 @@
 (function() {
   var translations = {
     'new_map': 'New MapStory',
+    'remove_chapter': 'Remove Chapter',
+    'sure_remove_chapter': 'Are you sure that you want to remove this chapter?',
+    'cannot_remove_chapter': 'Mapstory must contain at least one chapter.',
     'layer_type_not_supported': 'Layer type not supported',
     'projection_not_supported': 'Projection not supported',
     'notifications_tab': 'Notifications',

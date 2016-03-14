@@ -313,18 +313,114 @@ textarea {
   }
 }
 
-#menu {
+#pushobj {
+  float: right;
+  width: 75%;
+  height: 100%;
+  background: whitesmoke;
+}
+
+.menu {
+  width: 25%;
+  height: 100%;
+  background: whitesmoke;
+  overflow-y: scroll;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1em;
+}
+
+.menuHidden {
   width: 350px;
   min-height: 100%;
-  height: 700px;
-  margin-top: 0px;
-  background-color: #F5F5F5;
+  background-color: whitesmoke;
   z-index: 1;
   position: absolute;
   top: 0px;
-  left: 5px;
+  left: -320px;
+  font-family: 'Open Sans', sans-serif;
 }
 
-#menu i {
+.menu i {
   float: right;
+  padding-right: 4px;
+}
+
+.menuHidden i {
+  float: right;
+  padding-right: 4px;
+}
+
+.menu h2 {
+  font-size: 24px;
+  line-height: 26px;
+  font-weight: bold;
+  padding: 1px 1px 1px 10px;
+  margin: 20px 5px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menuHidden h2 {
+  font-size: 24px;
+  line-height: 26px;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+}
+.menu a {
+  display: block;
+  outline: none;
+  overflow: hidden;
+  font-size: 18px;
+  line-height: 20px;
+  text-decoration: none;
+  padding: 4px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menu a h2 {
+  font-size: 18px;
+  line-height: 20px;
+  margin: 0px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menu small {
+  font-size: 14px;
+  line-height: 20px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menu label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menuItem {
+  display: block;
+  border-top: 1px solid darkgrey;
+  padding: 4px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+style-editor button {
+  padding: 6px 12px !important;
+  font-size: 14px !important;
+}
+
+#helpTextBox {
+  position: absolute;
+  left: 40%;
+  bottom: 50px;
+  z-index: 1;
+  background-color: darkgrey;
+  height: 100px;
+  width: 400px;
+  opacity: 0.5;
+  color: white;
+  text-align: center;
+  vertical-align: center;
 }

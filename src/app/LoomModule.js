@@ -1,8 +1,8 @@
 (function() {
   angular.module('loom', [
     'loom_configuration',
-    'loom_story',
     'loom_map',
+    'loom_story',
     'loom_notifications',
     'loom_notification_poster',
     'loom_notification_controller',
@@ -29,6 +29,7 @@
     'loom_search',
     'loom_test',
     'loom_timeline',
-    'loom_storybox'
+    'loom_storybox',
+    'loom_storypin'
   ]);
 }());

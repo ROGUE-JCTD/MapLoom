@@ -21,7 +21,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, storyService, $compile) {
+                                                refreshService, dialogService, storyService, boxService, pinService, $http) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -72,18 +72,123 @@
         $scope.mapService = mapService;
         $scope.storyService = storyService;
         $scope.refreshService = refreshService;
+        $scope.boxService = boxService;
+        $scope.pinService = pinService;
+        $scope.box = {};
+        $scope.pin = {};
+
+        $scope.addStoryBox = function(box) {
+          var clone = angular.copy(box);
+          goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
+          goog.object.extend(clone, {'extent': mapService.map.getView().calculateExtent(mapService.map.getSize())});
+          boxService.addBox(clone, $scope.active_menu_chapter.id);
+          $scope.box = {};
+          $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+        };
+
+        $scope.setPinLocation = function() {
+
+        };
+
+        $scope.addStoryPin = function(pin) {
+          var clone = angular.copy(pin);
+          goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
+          pinService.addPin(clone, $scope.active_menu_chapter.id);
+          $scope.pin = {};
+          $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+        };
 
         $scope.mapstories = {
           name: storyService.title,
           chapters: []
         };
 
+        $scope.active_menu_chapter = null;
+        $scope.prev_menu_section = null;
         $scope.menuSection = 'mainMenu';
 
         $scope.updateMenuSection = function(updateMenuSection) {
+          if (updateMenuSection == 'mainMenuHidden') {
+            $scope.prev_menu_section = $scope.menuSection;
+          }
           $scope.menuSection = updateMenuSection;
+          if (updateMenuSection.startsWith('selectedChapter')) {
+            var re = /(\d+)/;
+            var chapter_index = updateMenuSection.match(re);
+            $scope.active_menu_chapter = $scope.mapstories.chapters[chapter_index[0]];
+          } else if (updateMenuSection == 'mainMenu') {
+            $scope.active_menu_chapter = null;
+            $scope.storyService.clearSelectedItems();
+          }
         };
 
+        $scope.reorderLayer = function(startIndex, endIndex) {
+          var length = mapService.map.getLayers().getArray().length - 1;
+          var layer = mapService.map.removeLayer(mapService.map.getLayers().item(length - startIndex));
+          mapService.map.getLayers().insertAt(length - endIndex, layer);
+        };
+
+        $scope.locations = {};
+
+        $http.get('/api/regions/').success(function(data) {
+          $scope.locations = data.objects;
+        });
+
+        $scope.isShown = true;
+
+        $scope.toggleSidebar = function() {
+          $scope.isShown = !$scope.isShown;
+          if ($scope.menuSection == 'mainMenuHidden') {
+            $scope.updateMenuSection($scope.prev_menu_section);
+            $scope.helpBoxVisible = false;
+            document.getElementById('pushobj').style.width = '75%';
+          } else {
+            $scope.updateMenuSection('mainMenuHidden');
+            document.getElementById('pushobj').style.width = '100%';
+          }
+          $scope.mapService.updateMapSize();
+        };
+
+        $scope.helpBoxVisible = false;
+
+        $scope.showHelpBox = function(helpText) {
+          angular.element(document.querySelector('#helpTextBox')).html(helpText);
+          $scope.helpBoxVisible = true;
+        };
+
+
+        $scope.styleChanged = function(layer) {
+          layer.on('change:type', function(evt) {
+            mapService.updateStyle(evt.target);
+          });
+          mapService.updateStyle(layer);
+        };
+
+        $scope.removeChapter = function() {
+          storyService.remove_chapter().then(function(removed_index) {
+            if (removed_index !== null) {
+              var num_chapters = $scope.mapstories.chapters.length;
+              for (var iChapter = removed_index + 1; iChapter < num_chapters; iChapter += 1) {
+                $scope.mapstories.chapters[iChapter].chapter = 'Chapter ' + (iChapter);
+                $scope.mapstories.chapters[iChapter].id -= 1;
+              }
+              //Remove front end chapter from menu
+              $scope.mapstories.chapters.splice(removed_index, 1);
+              $scope.storyService.update_active_config($scope.mapstories.chapters[0].id, true);
+              $scope.updateMenuSection('mainMenu');
+            }
+          });
+
+        };
+
+        $scope.removeLayer = function() {
+          storyService.removeLayer().then(function(layer_removed) {
+            if (layer_removed === true) {
+              $scope.updateMenuSection('storyLayers' + $scope.active_menu_chapter.id);
+              storyService.active_layer = null;
+            }
+          });
+        };
 
         $scope.addChapter = function() {
           //Add chapter to backend story service will return new chapter ID or null if failure

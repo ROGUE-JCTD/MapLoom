@@ -1,0 +1,44 @@
+<h2 ng-show="menuSection=='editStoryBox' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryBox' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryBox' + chapter.id)"></i></h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>Edit StoryBox</h2>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id)">Back to StoryBoxes List</a>
+</div>
+<div class="menuItem">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <div>
+            <input ng-model="storyService.active_box.title" ng-required class="form-control" id="title" placeholder="Title">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <div>
+                <textarea ng-model="storyService.active_box.description" class="form-control" id="description"
+                          placeholder="Description"></textarea>
+        </div>
+    </div>
+    <h2>Map Extents</h2>
+    <div class="form-group">
+        <label for="updateMapBounds">Pan and zoom on the map to set the map sounds.</label>
+        <button class="btn btn-default btn-block" id="updateMapBounds">Update Map Bounds</button>
+    </div>
+    <h2>Time Frame</h2>
+    <div class="form-group">
+        <label for="start_time">Start Time</label>
+        <div>
+            <datetimepicker date-object="storyService.active_box.start_time" default-date="inserting"></datetimepicker>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="end_time">End Time</label>
+        <div>
+            <datetimepicker date-object="storyService.active_box.end_time" default-date="inserting"></datetimepicker>
+        </div>
+    </div>
+</div>
+<div class="menuItem">
+    <button class="btn btn-default btn-block" ng-click="boxService.updateBox(storyService.active_box, chapter.id)">Save StoryBox</button>
+</div>

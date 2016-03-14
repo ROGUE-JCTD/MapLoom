@@ -512,327 +512,334 @@
 
       var fullConfig = null;
       if (goog.isDefAndNotNull(server)) {
-        fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
-      }
+        serverService_.getFullLayerConfig(server.id, minimalConfig.name).then(function(config) {
+          fullConfig = config;
 
-      console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
-          server, ', opt_layerOrder: ', opt_layerOrder);
 
-      // download missing projection projection if we don't have it
-      if (goog.isDefAndNotNull(fullConfig)) {
-        var projcode = service_.getCRSCode(fullConfig.CRS);
-        if (goog.isDefAndNotNull(projcode)) {
-          console.log('----[ addLayer, looking up projection: ', projcode);
-          // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
-          // it we we have internet connectivity. When working in disconnected mode, you can only use projections
-          // that have been defined by maploom in Proj4jDefs
-          var prj = null;
-          try {
-            prj = ol.proj.get(projcode);
-          } catch (e) {
-            console.log('----[ projection not found: ', projcode);
-          }
+          console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
+              server, ', opt_layerOrder: ', opt_layerOrder);
 
-          if (!goog.isDefAndNotNull(prj)) {
-            service_.downloadProjection(projcode).then(function() {
-              // this should work if we get the projection
-              ol.proj.getTransform(projcode, 'EPSG:4326');
-            }, function(reject) {
-              console.log('----[ Error downloading projection: ', reject);
-            });
+          // download missing projection projection if we don't have it
+          if (goog.isDefAndNotNull(fullConfig)) {
+            var projcode = service_.getCRSCode(fullConfig.CRS);
+            if (goog.isDefAndNotNull(projcode)) {
+              console.log('----[ addLayer, looking up projection: ', projcode);
+              // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
+              // it we we have internet connectivity. When working in disconnected mode, you can only use projections
+              // that have been defined by maploom in Proj4jDefs
+              var prj = null;
+              try {
+                prj = ol.proj.get(projcode);
+              } catch (e) {
+                console.log('----[ projection not found: ', projcode);
+              }
 
-            // TODO: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure
-            // it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user
-            // the promise properly
-            try {
-              prj = ol.proj.get(projcode);
-            } catch (e) {
-              dialogService_.error(translate_.instant('add_layers'), translate_.instant('projection_not_supported', projcode));
-              console.log('====[ NOTE: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure ' +
-                  'it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user ' +
-                  'the promise properly ', projcode);
+              if (!goog.isDefAndNotNull(prj)) {
+                prj = service_.downloadProjection(projcode).then(function() {
+                  // this should work if we get the projection
+                  ol.proj.getTransform(projcode, 'EPSG:4326');
+                }, function(reject) {
+                  console.log('----[ Error downloading projection: ', reject);
+                });
+
+                // TODO: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure
+                // it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user
+                // the promise properly
+                try {
+                  prj = ol.proj.get(projcode);
+                } catch (e) {
+                  dialogService_.error(translate_.instant('add_layers'), translate_.instant('projection_not_supported', projcode));
+                  console.log('====[ NOTE: proj file is downloaded and added to proj4 but we need to either do syncronous call or make sure ' +
+                      'it is resolved before we continue on or return a promis and make sure all invokaction of addLayer user ' +
+                      'the promise properly ', projcode);
+                }
+              }
             }
           }
-        }
-      }
 
-      var layer = null;
-      var nameSplit = null;
-      var url = null;
-      if (!goog.isDefAndNotNull(fullConfig)) {
-        //dialogService_.error(translate_.instant('map_layers'), translate_.instant('load_layer_failed',
-        //    {'layer': minimalConfig.name}), [translate_.instant('btn_ok')], false);
-        layer = new ol.layer.Vector({
-          metadata: {
-            name: minimalConfig.name,
-            title: minimalConfig.name,
-            savedSchema: minimalConfig.schema,
-            editable: false,
-            placeholder: true
-          },
-          visible: minimalConfig.visibility,
-          source: new ol.source.Vector({
-            parser: null
-          })
+          var layer = null;
+          var nameSplit = null;
+          var url = null;
+          if (!goog.isDefAndNotNull(fullConfig)) {
+            //dialogService_.error(translate_.instant('map_layers'), translate_.instant('load_layer_failed',
+            //    {'layer': minimalConfig.name}), [translate_.instant('btn_ok')], false);
+            layer = new ol.layer.Vector({
+              metadata: {
+                name: minimalConfig.name,
+                title: minimalConfig.name,
+                savedSchema: minimalConfig.schema,
+                editable: false,
+                placeholder: true
+              },
+              visible: minimalConfig.visibility,
+              source: new ol.source.Vector({
+                parser: null
+              })
+            });
+          } else {
+            if (server.ptype === 'gxp_osmsource') {
+              layer = new ol.layer.Tile({
+                metadata: {
+                  serverId: server.id,
+                  name: minimalConfig.name,
+                  title: fullConfig.Title
+                },
+                visible: minimalConfig.visibility,
+                source: new ol.source.OSM()
+              });
+            } else if (server.ptype === 'gxp_bingsource') {
+
+              var sourceParams = {
+                key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                imagerySet: 'Aerial'
+              };
+
+              if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
+                goog.object.extend(sourceParams, fullConfig.sourceParams);
+              }
+
+              // console.log(sourceParams, config.sourceParams, {});
+
+              layer = new ol.layer.Tile({
+                metadata: {
+                  serverId: server.id,
+                  name: minimalConfig.name,
+                  title: fullConfig.Title
+                },
+                visible: minimalConfig.visibility,
+                source: new ol.source.BingMaps(sourceParams)
+              });
+            } else if (server.ptype === 'gxp_googlesource') {
+              dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
+                  {type: 'gxp_googlesource'}));
+            } else if (server.ptype === 'gxp_mapboxsource') {
+              var parms = {
+                url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
+                crossOrigin: true
+              };
+              var mbsource = new ol.source.TileJSON(parms);
+
+              if (goog.isDefAndNotNull(mbsource)) {
+                layer = new ol.layer.Tile({
+                  metadata: {
+                    serverId: server.id,
+                    name: minimalConfig.name,
+                    title: fullConfig.Title
+                  },
+                  visible: minimalConfig.visibility,
+                  source: mbsource
+                });
+              } else {
+                console.log('====[ Error: could not create base layer.');
+              }
+            } else if (server.ptype === 'gxp_mapquestsource') {
+              var source = new ol.source.MapQuest(fullConfig.sourceParams);
+
+              if (goog.isDefAndNotNull(source)) {
+                layer = new ol.layer.Tile({
+                  metadata: {
+                    serverId: server.id,
+                    name: minimalConfig.name,
+                    title: fullConfig.Title
+                  },
+                  visible: minimalConfig.visibility,
+                  source: source
+                });
+              } else {
+                console.log('====[ Error: could not create base layer.');
+              }
+
+            } else if (server.ptype === 'gxp_wmscsource') {
+              nameSplit = fullConfig.Name.split(':');
+
+              // favor virtual service url when available
+              var mostSpecificUrl = server.url;
+              var mostSpecificUrlWms = server.url;
+              if (goog.isDefAndNotNull(server.isVirtualService) && server.isVirtualService === true) {
+                mostSpecificUrlWms = server.virtualServiceUrl;
+              }
+
+              // favor virtual service url when available
+              if (goog.isDefAndNotNull(mostSpecificUrlWms)) {
+                var urlIndex = mostSpecificUrlWms.lastIndexOf('/');
+                if (urlIndex !== -1) {
+                  mostSpecificUrl = mostSpecificUrlWms.slice(0, urlIndex);
+                }
+              }
+
+              var styles = [];
+              if (goog.isDefAndNotNull(fullConfig.Style)) {
+                console.log('config style', fullConfig.Style);
+                for (var index = 0; index < fullConfig.Style.length; index++) {
+                  var style = fullConfig.Style[index];
+                  styles.push({
+                    name: style.Name,
+                    title: style.Title,
+                    abstract: style.Abstract,
+                    legendUrl: style.LegendURL[0].OnlineResource
+                  });
+                }
+              }
+
+              console.log('config crs', fullConfig.CRS);
+              console.log('getCode', service_.getCRSCode(fullConfig.CRS));
+              layer = new ol.layer.Tile({
+                metadata: {
+                  serverId: server.id,
+                  name: minimalConfig.name,
+                  url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
+                  title: fullConfig.Title,
+                  abstract: fullConfig.Abstract,
+                  keywords: fullConfig.KeywordList,
+                  workspace: nameSplit.length > 1 ? nameSplit[0] : '',
+                  readOnly: false,
+                  editable: false,
+                  styles: styles,
+                  bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
+                  projection: service_.getCRSCode(fullConfig.CRS),
+                  savedSchema: minimalConfig.schema,
+                  dimensions: fullConfig.Dimension
+                },
+                visible: minimalConfig.visibility,
+                source: new ol.source.TileWMS({
+                  url: mostSpecificUrlWms,
+                  params: {
+                    'LAYERS': minimalConfig.name,
+                    'tiled': 'true'
+                  }
+                })
+              });
+
+              // Test if layer is read-only
+              if (goog.isDefAndNotNull(mostSpecificUrl)) {
+                layer.get('metadata').readOnly = true;
+                var testReadOnly = function() {
+                  var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
+                      '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
+                      'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                      'service="WFS" version="1.0.0" ' +
+                      'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd"> ' +
+                      '<wfs:Update xmlns:feature="' + layer.get('metadata').workspaceURL + '" typeName="' +
+                      minimalConfig.name + '">' +
+                      '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+                      '<ogc:FeatureId fid="garbage_id" />' +
+                      '</ogc:Filter></wfs:Update>' +
+                      '</wfs:Transaction>';
+
+                  var wfsurl = mostSpecificUrl + '/wfs/WfsDispatcher';
+                  httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
+                    var x2js = new X2JS();
+                    var json = x2js.xml_str2json(data);
+                    if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
+                        goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException) &&
+                        json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
+                    } else {
+                      layer.get('metadata').readOnly = false;
+                    }
+                  }).error(function(data, status, headers, config) {
+                  });
+                };
+                geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
+                  testReadOnly();
+                }, function() {
+                  testReadOnly();
+                });
+              }
+            } else if (server.ptype === 'gxp_tmssource') {
+              nameSplit = fullConfig.Name.split(':');
+              url = server.url;
+
+              if (goog.isDefAndNotNull(server.url)) {
+                if (server.url.lastIndexOf('/') !== server.url.length - 1) {
+                  url += '/';
+                }
+              }
+
+              layer = new ol.layer.Tile({
+                metadata: {
+                  serverId: server.id,
+                  name: minimalConfig.name,
+                  url: goog.isDefAndNotNull(url) ? url : undefined,
+                  title: fullConfig.Title,
+                  abstract: fullConfig.Abstract,
+                  keywords: fullConfig.KeywordList,
+                  workspace: nameSplit.length > 1 ? nameSplit[0] : '',
+                  editable: false,
+                  bbox: fullConfig.BoundingBox[0]
+                },
+                visible: minimalConfig.visibility,
+                source: new ol.source.XYZ({
+                  tileUrlFunction: function(coordinate) {
+                    if (coordinate == null) {
+                      return '';
+                    }
+                    var z = coordinate[0];
+                    var x = coordinate[1];
+                    var y = (1 << z) - coordinate[2] - 1;
+                    return '/proxy/?url=' + url + minimalConfig.name + '/' + z + '/' + x + '/' + y + '.png';
+                  }
+                })
+              });
+
+            } else if (server.ptype === 'gxp_olsource') {
+              dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
+                  {type: 'gxp_olsource'}));
+            }
+          }
+
+          if (goog.isDefAndNotNull(layer)) {
+            // convert source id to a number. even though geonode gives it as a string, it wants it back as number
+            minimalConfig.source = parseInt(minimalConfig.source, 10);
+
+            //TODO: assume all layers have a meta object. we can go through rest of the code and remove any checks for meta
+            //      being defined. If it is not defined, we should add an empty one here.
+            var meta = layer.get('metadata');
+
+            meta.config = minimalConfig;
+            // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
+            meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
+
+            var mapLayers = service_.map.getLayerGroup().getLayers().getArray();
+            meta.layerOrder = goog.isDefAndNotNull(opt_layerOrder) ? opt_layerOrder : mapLayers.length;
+
+            var insertIndex = -1;
+
+            for (var idx = 0; idx < mapLayers.length; idx++) {
+              var lyr = mapLayers[idx];
+              var lyrLayerOrder = lyr.get('metadata').layerOrder;
+              if (meta.layerOrder < lyrLayerOrder) {
+                insertIndex = idx;
+                break;
+              }
+            }
+
+            if (insertIndex === -1) {
+              service_.map.addLayer(layer);
+            } else {
+              service_.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
+            }
+
+            service_.zoomToExtent(layer.getExtent(), true);
+
+
+            if (goog.isDefAndNotNull(meta.projection)) {
+              // ping proj4js to pre-download projection if we don't have it
+              var layerPrjObject = ol.proj.get(meta.projection);
+              console.log('==== layerPrjObject', layerPrjObject);
+              ol.proj.getTransform(meta.projection, 'EPSG:4326');
+            }
+
+            rootScope_.$broadcast('layer-added');
+          } else {
+            console.log('====[Error: could not load layer: ', minimalConfig);
+          }
+
+          console.log('-- MapService.addLayer, added: ', layer);
+          pulldownService_.showLayerPanel();
+          return layer;
+
         });
-      } else {
-        if (server.ptype === 'gxp_osmsource') {
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              name: minimalConfig.name,
-              title: fullConfig.Title
-            },
-            visible: minimalConfig.visibility,
-            source: new ol.source.OSM()
-          });
-        } else if (server.ptype === 'gxp_bingsource') {
-
-          var sourceParams = {
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
-            imagerySet: 'Aerial'
-          };
-
-          if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
-            goog.object.extend(sourceParams, fullConfig.sourceParams);
-          }
-
-          // console.log(sourceParams, config.sourceParams, {});
-
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              name: minimalConfig.name,
-              title: fullConfig.Title
-            },
-            visible: minimalConfig.visibility,
-            source: new ol.source.BingMaps(sourceParams)
-          });
-        } else if (server.ptype === 'gxp_googlesource') {
-          dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
-              {type: 'gxp_googlesource'}));
-        } else if (server.ptype === 'gxp_mapboxsource') {
-          var parms = {
-            url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
-            crossOrigin: true
-          };
-          var mbsource = new ol.source.TileJSON(parms);
-
-          if (goog.isDefAndNotNull(mbsource)) {
-            layer = new ol.layer.Tile({
-              metadata: {
-                serverId: server.id,
-                name: minimalConfig.name,
-                title: fullConfig.Title
-              },
-              visible: minimalConfig.visibility,
-              source: mbsource
-            });
-          } else {
-            console.log('====[ Error: could not create base layer.');
-          }
-        } else if (server.ptype === 'gxp_mapquestsource') {
-          var source = new ol.source.MapQuest(fullConfig.sourceParams);
-
-          if (goog.isDefAndNotNull(source)) {
-            layer = new ol.layer.Tile({
-              metadata: {
-                serverId: server.id,
-                name: minimalConfig.name,
-                title: fullConfig.Title
-              },
-              visible: minimalConfig.visibility,
-              source: source
-            });
-          } else {
-            console.log('====[ Error: could not create base layer.');
-          }
-
-        } else if (server.ptype === 'gxp_wmscsource') {
-          nameSplit = fullConfig.Name.split(':');
-
-          // favor virtual service url when available
-          var mostSpecificUrl = server.url;
-          var mostSpecificUrlWms = server.url;
-          if (goog.isDefAndNotNull(server.isVirtualService) && server.isVirtualService === true) {
-            mostSpecificUrlWms = server.virtualServiceUrl;
-          }
-
-          // favor virtual service url when available
-          if (goog.isDefAndNotNull(mostSpecificUrlWms)) {
-            var urlIndex = mostSpecificUrlWms.lastIndexOf('/');
-            if (urlIndex !== -1) {
-              mostSpecificUrl = mostSpecificUrlWms.slice(0, urlIndex);
-            }
-          }
-
-          var styles = [];
-          if (goog.isDefAndNotNull(fullConfig.Style)) {
-            console.log('config style', fullConfig.Style);
-            for (var index = 0; index < fullConfig.Style.length; index++) {
-              var style = fullConfig.Style[index];
-              styles.push({
-                name: style.Name,
-                title: style.Title,
-                abstract: style.Abstract,
-                legendUrl: style.LegendURL[0].OnlineResource
-              });
-            }
-          }
-
-          console.log('config crs', fullConfig.CRS);
-          console.log('getCode', service_.getCRSCode(fullConfig.CRS));
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              name: minimalConfig.name,
-              url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
-              title: fullConfig.Title,
-              abstract: fullConfig.Abstract,
-              keywords: fullConfig.KeywordList,
-              workspace: nameSplit.length > 1 ? nameSplit[0] : '',
-              readOnly: false,
-              editable: false,
-              styles: styles,
-              bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
-              projection: service_.getCRSCode(fullConfig.CRS),
-              savedSchema: minimalConfig.schema,
-              dimensions: fullConfig.Dimension
-            },
-            visible: minimalConfig.visibility,
-            source: new ol.source.TileWMS({
-              url: mostSpecificUrlWms,
-              params: {
-                'LAYERS': minimalConfig.name,
-                'tiled': 'true'
-              }
-            })
-          });
-
-          // Test if layer is read-only
-          if (goog.isDefAndNotNull(mostSpecificUrl)) {
-            layer.get('metadata').readOnly = true;
-            var testReadOnly = function() {
-              var wfsRequestData = '<?xml version="1.0" encoding="UTF-8"?> ' +
-                  '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs" ' +
-                  'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-                  'service="WFS" version="1.0.0" ' +
-                  'xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd"> ' +
-                  '<wfs:Update xmlns:feature="' + layer.get('metadata').workspaceURL + '" typeName="' +
-                  minimalConfig.name + '">' +
-                  '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
-                  '<ogc:FeatureId fid="garbage_id" />' +
-                  '</ogc:Filter></wfs:Update>' +
-                  '</wfs:Transaction>';
-
-              var wfsurl = mostSpecificUrl + '/wfs/WfsDispatcher';
-              httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
-                var x2js = new X2JS();
-                var json = x2js.xml_str2json(data);
-                if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
-                    goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException) &&
-                    json.ServiceExceptionReport.ServiceException.indexOf('read-only') >= 0) {
-                } else {
-                  layer.get('metadata').readOnly = false;
-                }
-              }).error(function(data, status, headers, config) {
-              });
-            };
-            geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
-              testReadOnly();
-            }, function() {
-              testReadOnly();
-            });
-          }
-        } else if (server.ptype === 'gxp_tmssource') {
-          nameSplit = fullConfig.Name.split(':');
-          url = server.url;
-
-          if (goog.isDefAndNotNull(server.url)) {
-            if (server.url.lastIndexOf('/') !== server.url.length - 1) {
-              url += '/';
-            }
-          }
-
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              name: minimalConfig.name,
-              url: goog.isDefAndNotNull(url) ? url : undefined,
-              title: fullConfig.Title,
-              abstract: fullConfig.Abstract,
-              keywords: fullConfig.KeywordList,
-              workspace: nameSplit.length > 1 ? nameSplit[0] : '',
-              editable: false,
-              bbox: fullConfig.BoundingBox[0]
-            },
-            visible: minimalConfig.visibility,
-            source: new ol.source.XYZ({
-              tileUrlFunction: function(coordinate) {
-                if (coordinate == null) {
-                  return '';
-                }
-                var z = coordinate[0];
-                var x = coordinate[1];
-                var y = (1 << z) - coordinate[2] - 1;
-                return '/proxy/?url=' + url + minimalConfig.name + '/' + z + '/' + x + '/' + y + '.png';
-              }
-            })
-          });
-
-        } else if (server.ptype === 'gxp_olsource') {
-          dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
-              {type: 'gxp_olsource'}));
-        }
       }
-
-      if (goog.isDefAndNotNull(layer)) {
-        // convert source id to a number. even though geonode gives it as a string, it wants it back as number
-        minimalConfig.source = parseInt(minimalConfig.source, 10);
-
-        //TODO: assume all layers have a meta object. we can go through rest of the code and remove any checks for meta
-        //      being defined. If it is not defined, we should add an empty one here.
-        var meta = layer.get('metadata');
-
-        meta.config = minimalConfig;
-        // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
-        meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
-
-        var mapLayers = this.map.getLayerGroup().getLayers().getArray();
-        meta.layerOrder = goog.isDefAndNotNull(opt_layerOrder) ? opt_layerOrder : mapLayers.length;
-
-        var insertIndex = -1;
-
-        for (var idx = 0; idx < mapLayers.length; idx++) {
-          var lyr = mapLayers[idx];
-          var lyrLayerOrder = lyr.get('metadata').layerOrder;
-          if (meta.layerOrder < lyrLayerOrder) {
-            insertIndex = idx;
-            break;
-          }
-        }
-
-        if (insertIndex === -1) {
-          this.map.addLayer(layer);
-        } else {
-          this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
-        }
-
-        if (goog.isDefAndNotNull(meta.projection)) {
-          // ping proj4js to pre-download projection if we don't have it
-          var layerPrjObject = ol.proj.get(meta.projection);
-          console.log('==== layerPrjObject', layerPrjObject);
-          ol.proj.getTransform(meta.projection, 'EPSG:4326');
-        }
-
-        rootScope_.$broadcast('layer-added');
-      } else {
-        console.log('====[Error: could not load layer: ', minimalConfig);
-      }
-
-      console.log('-- MapService.addLayer, added: ', layer);
-      pulldownService_.showLayerPanel();
-      return layer;
     };
 
     this.getTitle = function() {
@@ -886,6 +893,9 @@
       //service_.loadMap(chapter_config);
     };
 
+    this.remove_chapter = function(removed_index) {
+      this.chapterLayers.splice(removed_index, 1);
+    };
     //Create the new layergroup for the  new chapter
     //Parameter currently unused
     this.create_chapter = function(new_config) {
@@ -1109,7 +1119,7 @@
           goog.array.forEach(config.map.layers, function(layerInfo, index, obj) {
             // Note: config.source will be string while serverIndex might be number
             if (layerInfo.source == configServerIndex) {
-              layerInfo.temp_layerOrder = index;
+              layerInfo.temp_layerOrder = (index > configs.length) ? config.length : index;
               configs.push(layerInfo);
             }
           });
@@ -1235,6 +1245,10 @@
       } else {
         goog.dom.fullscreen.requestFullScreenWithKeys(goog.dom.getElementByClass('maploom-body'));
       }
+    };
+
+    this.updateMapSize = function() {
+      this.map.updateSize();
     };
 
     this.createMap = function() {
@@ -1442,8 +1456,13 @@
     };
 
     this.getCRSCode = function(CRS) {
-      //TODO: Update with handling multiple projections per layer if needed.
-      return CRS;
+      var code = 'EPSG:4326';
+      //forEachArrayish(CRS, function(_code) {
+      //if (_code !== 'CRS:84') {
+      //code = _code;
+      //}
+      //});
+      return code;
     };
   });
 

@@ -418,6 +418,43 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
+    this.getFullLayerConfig = function(serverId, layerName) {
+      //Issue WMS request to get full layer config for mapService
+      var result = q_.defer();
+      var layerConfig = null;
+      var server = service_.getServerLocalGeoserver();
+      if (server.id != serverId) {
+        result.resolve(service_.getLayerConfig(serverId, layerName));
+        return result.promise;
+      }
+      var parser = new ol.format.WMSCapabilities();
+      var url = server.url;
+      var namespace = layerName.split(':')[0];
+      var name = layerName.split(':')[1];
+      url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
+      url += '/' + name + '/wms?request=GetCapabilities';
+      console.log('WMS url: ', url);
+      server.populatingLayersConfig = true;
+      var config = {};
+      config.headers = {};
+      if (goog.isDefAndNotNull(server.authentication)) {
+        config.headers['Authorization'] = 'Basic ' + server.authentication;
+      } else {
+        config.headers['Authorization'] = '';
+      }
+      http_.get(url, config).then(function(xhr) {
+        if (xhr.status === 200) {
+          var response = parser.read(xhr.data);
+          if (goog.isDefAndNotNull(response.Capability) && goog.isDefAndNotNull(response.Capability.Layer)) {
+            layerConfig = response.Capability.Layer.Layer[0];
+            result.resolve(layerConfig);
+          }
+        }
+      });
+
+      return result.promise;
+    };
+
     this.getLayerConfig = function(serverId, layerName) {
       var layersConfig = service_.getLayersConfig(serverId);
       var layerConfig = null;
@@ -460,6 +497,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     var createSearchLayerObject = function(layerInfo, serverUrl) {
       return {
+        add: true,
         Abstract: layerInfo.abstract,
         Name: layerInfo.typename,
         Title: layerInfo.title,

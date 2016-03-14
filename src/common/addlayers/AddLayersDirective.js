@@ -103,9 +103,6 @@
                   source: scope.currentServerId
                 };
                 mapService.addLayer(minimalConfig);
-                layerConfig.add = false;
-
-                //TODO: Call AddStoryLayerToMenu from here.
               }
             };
 

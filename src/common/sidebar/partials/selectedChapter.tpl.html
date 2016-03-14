@@ -1,0 +1,41 @@
+<h2 ng-show="menuSection=='selectedChapter' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('selectedChapter' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('selectedChapter' + chapter.id)"></i></h2>
+<h2 ng-click="">{{ storyService.active_chapter.about.title }}</h2>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('mainMenu')">Back to Chapters List</a>
+</div>
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id)">
+        <i class="fa fa-angle-left pull-left"></i>
+        <i class="fa fa-info-circle"></i>
+        Chapter Info
+    </a>
+</div>
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">
+        <i class="fa fa-angle-left pull-left"></i>
+        <i class="fa fa-clone"></i>
+        StoryLayers ({{ storyService.getLayers().length }})
+    </a>
+</div>
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id)">
+        <i class="fa fa-angle-left pull-left"></i>
+        <i class="fa fa-object-group"></i>
+        StoryBoxes ({{ boxService.getBoxes(chapter.id).length }})
+    </a>
+</div>
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">
+        <i class="fa fa-angle-left pull-left"></i>
+        <i class="fa fa-neuter"></i>
+        StoryPins ({{ pinService.getPins(chapter.id).length }})
+    </a>
+</div>
+<div class="menuItem">
+    <a href="#" ng-click="removeChapter()">
+        <i class="fa fa-trash-o"></i>
+        Delete this Chapter
+    </a>
+</div>

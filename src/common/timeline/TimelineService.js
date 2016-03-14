@@ -4,6 +4,7 @@
   var service_ = null;
   var mapService_ = null;
   var boxService_ = null;
+  var pinService_ = null;
   var timelineTicks_ = null;
   var currentTickIndex_ = null;
   var currentTime_ = null;
@@ -14,6 +15,7 @@
   var filterByTime_ = true;
   var featureManagerService_ = null;
   var boxes_ = [];
+  var pins_ = [];
   var timelinePointsList = [];
   var timelineGroupsList_ = [];
   var range_ = new stutils.Range(null, null);
@@ -97,10 +99,11 @@
     // public variable can be placed on scope
     this.hasLayerWithTime = false;
 
-    this.$get = function(mapService, boxService, $interval, $rootScope, featureManagerService) {
+    this.$get = function(mapService, boxService, pinService, $interval, $rootScope, featureManagerService) {
       service_ = this;
       mapService_ = mapService;
       boxService_ = boxService;
+      pinService_ = pinService;
       interval_ = $interval;
       rootScope_ = $rootScope;
       featureManagerService_ = featureManagerService;
@@ -118,16 +121,42 @@
       });
 
       // when a box is added, reinitialize the service.
-      $rootScope.$on('box-added', function(event, box) {
-        console.log('----[ timelineService, box added. initializing', box);
-        boxes_ = boxService_.getBoxes();
+      $rootScope.$on('box-added', function(event, chapter_index) {
+        console.log('----[ timelineService, box added. initializing');
+        boxes_ = boxService_.getBoxes(chapter_index);
         service_.initialize();
       });
 
       // when a box is removed, reinitialize the service.
-      $rootScope.$on('boxRemoved', function(event, box) {
-        console.log('----[ timelineService, box removed. initializing', box);
-        boxes_ = boxService_.getBoxes();
+      $rootScope.$on('boxRemoved', function(event, chapter_index) {
+        console.log('----[ timelineService, box removed. initializing');
+        boxes_ = boxService_.getBoxes(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('chapter-switch', function(event, chapter_index) {
+        console.log('----[ timelineService, chapter switch. initializing', chapter_index);
+        boxes_ = boxService_.getBoxes(chapter_index);
+        pins_ = pinService_.getPins(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('chapter-added', function(event, chapter_index) {
+        console.log('----[ timelineService, chapter add. initializing', chapter_index);
+        boxes_ = boxService_.getBoxes(chapter_index);
+        pins_ = pinService_.getPins(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('pin-added', function(event, chapter_index) {
+        console.log('----[ timelineService, pin added. initializing');
+        pins_ = pinService_.getPins(chapter_index);
+        service_.initialize();
+      });
+
+      $rootScope.$on('pinRemoved', function(event, chapter_index) {
+        console.log('----[ timelineService, pin removed. initializing');
+        pins_ = pinService_.getPins(chapter_index);
         service_.initialize();
       });
 
@@ -225,7 +254,30 @@
         }
       }
 
-      if (layersWithTime > 0 || boxes_.length > 0) {
+      var pins_as_layers = [];
+
+      if (pins_.length > 0) {
+        for (var iPin = 0; iPin < pins_.length; iPin++) {
+          var pin_range = stutils.createRange(pins_[iPin].start_time, pins_[iPin].end_time);
+          console.log('----[ Info: Pin Range ', pin_range.toString());
+          range_.extend(pin_range);
+          console.log('----[ Info: Total Range ', range_.toString());
+          timelinePointsList.push({
+            id: 'sp' + iPin,
+            content: pins_[iPin].title,
+            start: (new Date(pins_[iPin].start_time)).toISOString(),
+            end: (new Date(pins_[iPin].end_time)).toISOString(),
+            type: 'background'
+          });
+
+          pins_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
+                              (new Date(pins_[iPin].start_time)).toISOString(),
+                              (new Date(pins_[iPin].end_time)).toISOString()
+                            ]}]}});
+        }
+      }
+
+      if (layersWithTime > 0 || boxes_.length > 0 || pins_.length > 0) {
         rootScope_.timelineServiceEnabled = true;
         mapService_.showTimeline(true);
       } else {
