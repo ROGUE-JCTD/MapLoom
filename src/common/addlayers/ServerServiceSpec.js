@@ -140,14 +140,14 @@ describe('addLayers/ServerService', function() {
       });
     });
   });
-  describe('#apply_filter', function() {
+  describe('#applyESFilter', function() {
     describe('no filter', function() {
       it('returns the url', function() {
         var filterOptions = {
           owner: null,
           text: null
         };
-        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory');
       });
     });
     describe('only text filter', function() {
@@ -156,7 +156,7 @@ describe('addLayers/ServerService', function() {
           owner: null,
           text: 'Ocean'
         };
-        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
       });
     });
     describe('only owner filter', function() {
@@ -168,7 +168,7 @@ describe('addLayers/ServerService', function() {
           owner: true,
           text: null
         };
-        expect(serverService.apply_filter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
       });
     });
   });
