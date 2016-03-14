@@ -546,6 +546,12 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
       return url;
     };
+    var applyFavoritesFilter = function(url, filterOptions) {
+      if(filterOptions.text !== null) {
+        url += '&title__contains=' + filterOptions.text;
+      }
+      return url;
+    };
 
     this.populateLayersConfigElastic = function(server, filterOptions) {
       var searchUrl = '/api/layers/search/?is_published=true&limit=100';
@@ -557,6 +563,9 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100';
+      if (filterOptions !== null) {
+        searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
+      }
       return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
     };
 

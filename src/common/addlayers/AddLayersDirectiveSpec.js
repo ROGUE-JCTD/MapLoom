@@ -33,6 +33,16 @@ describe('StoryLegendDirective', function() {
     beforeEach(function() {
       searchSpy = spyOn(compiledElement.scope(), 'search');
     });
+    describe('#searchMyFavorites', function() {
+      it('resets filterOptions', function() {
+        compiledElement.scope().filterOptions.text = 'Ocean Beach';
+        compiledElement.scope().searchMyFavorites();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null
+        }));
+      });
+    });
     describe('#defaultSearch', function() {
       it('resets text in the filterOptions', function() {
         compiledElement.scope().filterOptions.text = 'Ocean Beach';
@@ -55,6 +65,13 @@ describe('StoryLegendDirective', function() {
     });
   });
   describe('#search', function() {
+    describe('#searchMyFavorites', function() {
+      it('calls addSearchResultsForFavorites', function() {
+        var spy = spyOn(serverService, 'addSearchResultsForFavorites');
+        compiledElement.scope().searchMyFavorites();
+        expect(spy).toHaveBeenCalled();
+      });
+    });
     describe('#defaultSearch', function() {
       it('calls populateLayersConfigElastic', function() {
         var spy = spyOn(serverService, 'populateLayersConfigElastic');

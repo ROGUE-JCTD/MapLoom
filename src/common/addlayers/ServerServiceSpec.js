@@ -199,6 +199,7 @@ describe('addLayers/ServerService', function() {
     });
   });
   describe('#addSearchResultsForFavorites', function() {
+    var filterOptions = { owner: null, text: null };
     describe('no server', function() {
       it('returns an empty array', function() {
         expect(serverService.addSearchResultsForFavorites('', {})).toEqual(false);
@@ -212,13 +213,13 @@ describe('addLayers/ServerService', function() {
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        serverService.addSearchResultsForFavorites({}, {});
+        serverService.addSearchResultsForFavorites({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        serverService.addSearchResultsForFavorites({}, {});
+        serverService.addSearchResultsForFavorites({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], 'http://beta.mapstory.org/geoserver/wms');
       });
@@ -232,9 +233,26 @@ describe('addLayers/ServerService', function() {
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        serverService.addSearchResultsForFavorites({}, {});
+        serverService.addSearchResultsForFavorites({}, filterOptions);
         $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).not.toHaveBeenCalled();
+      });
+    });
+    describe('filter for title', function() {
+      beforeEach(function() {
+        $httpBackend
+        .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra')
+        .respond(200, []);
+      });
+      it('returns the url with q', function() {
+        spyOn(serverService, 'reformatConfigForFavorites');
+        var filterOptions = {
+          owner: null,
+          text: 'Dijkstra'
+        };
+        serverService.addSearchResultsForFavorites({}, filterOptions);
+        $httpBackend.flush();
+        expect(serverService.reformatConfigForFavorites).toHaveBeenCalled();
       });
     });
   });

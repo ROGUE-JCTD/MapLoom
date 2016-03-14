@@ -7,6 +7,7 @@
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
+            var searchFavorites = false;
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -59,6 +60,13 @@
               scope.filterOptions.owner = true;
               scope.search();
             };
+
+            scope.searchMyFavorites = function() {
+              clearFilters();
+              searchFavorites = true;
+              scope.search();
+            };
+
             scope.applyFilters = function() {
             };
 
