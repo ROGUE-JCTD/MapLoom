@@ -15,6 +15,11 @@ describe('addLayers/ServerService', function() {
     $httpBackend = _$httpBackend_;
   }));
 
+  afterEach(function() {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
+
   describe('#reformatLayerConfigs', function() {
     describe('no layers', function() {
       it('returns an empty array', function() {
@@ -110,9 +115,7 @@ describe('addLayers/ServerService', function() {
     describe('server is available and returns results', function() {
       beforeEach(function() {
         $httpBackend.resetExpectations();
-        $httpBackend
-        .when('GET', '/api/layers/search/?is_published=true&limit=100')
-        .respond(200, []);
+        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -129,10 +132,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.resetExpectations();
-        $httpBackend
-            .when('GET', '/api/layers/search/?is_published=true&limit=100')
-            .respond(501, '');
+        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -208,9 +208,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend
-        .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100')
-        .respond(200, []);
+        $httpBackend.expect('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -227,10 +225,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.resetExpectations();
-        $httpBackend
-            .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100')
-            .respond(501, '');
+        $httpBackend.expect('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100').respond(501, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -240,12 +235,8 @@ describe('addLayers/ServerService', function() {
       });
     });
     describe('filter for title', function() {
-      beforeEach(function() {
-        $httpBackend
-        .when('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra')
-        .respond(200, []);
-      });
       it('returns the url with title__contains', function() {
+        $httpBackend.expect('GET', 'http://beta.mapstory.org/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
         spyOn(serverService, 'reformatConfigForFavorites');
         var filterOptions = {
           owner: null,
