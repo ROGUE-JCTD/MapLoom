@@ -3,6 +3,7 @@
     'templates-app',
     'templates-common',
     'storytools.edit.style',
+    'colorpicker.module',
     'loom',
     'ui.bootstrap',
     'ui.router',
