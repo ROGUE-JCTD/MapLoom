@@ -3,35 +3,36 @@
   var module = angular.module('loom_storylegend_directive', []);
 
   module.directive('loomStorylegend',
-      function($rootScope, mapService, configService, $translate) {
+      function($rootScope) {
         return {
           restrict: 'C',
           replace: true,
+          scope: {
+            layer: '=',
+            save: '&'
+          },
           templateUrl: 'storylegends/partials/storylegend.tpl.html',
-          link: function(scope) {
-            scope.$on('layer-added', function() {
-              var layers = mapService.getLayers(false, true);
-              scope.layerAliases = [];
-              for (var i in layers) {
-                var layer = layers[i];
-                if (!layer.get('metadata').heatmap) {
-                  var uniqueId = layer.get('metadata').uniqueID;
-                  scope.layerAliases.push({
-                    id: uniqueId,
-                    title: layer.get('metadata').config.titleAlias || layer.get('metadata').title,
-                    layer: layer
-                  });
-                }
-              }
-            });
-            scope.saveMasking = function() {
-              for (var i in scope.layerAliases) {
-                var layer = scope.layerAliases[i];
-                var metadata = layer.layer.get('metadata');
-                metadata.config.titleAlias = layer.title;
-                layer.layer.set('metadata', metadata);
+          link: function(scope, element) {
+            var setAlias = function(layer) {
+              if (!layer.get('metadata').heatmap) {
+                var uniqueId = layer.get('metadata').uniqueID;
+                scope.layerAlias = {
+                  id: uniqueId,
+                  title: layer.get('metadata').config.titleAlias || layer.get('metadata').title
+                };
               }
             };
+            scope.layerAlias = {};
+            scope.saveMasking = function() {
+              var metadata = scope.layer.get('metadata');
+              metadata.config.titleAlias = scope.layerAlias.title;
+              scope.layer.set('metadata', metadata);
+            };
+            scope.$watch('layer', function(newLayer) {
+              if (newLayer) {
+                setAlias(newLayer);
+              }
+            });
           }
         };
       });
