@@ -105,15 +105,6 @@
       return dialogResult;
     };
 
-    this.canEditStyle = function() {
-      if (this.active_layer == null) {
-        return false;
-      } else {
-        return (this.active_layer.get('metadata').editable && this.active_layer.get('metadata').active_btn == 'style_layer');
-      }
-
-    };
-
     this.isEditable = function() {
       if (this.active_layer == null) {
         return true;
