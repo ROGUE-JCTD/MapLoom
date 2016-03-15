@@ -1,5 +1,5 @@
 module.exports = function ( karma ) {
-  karma.configure({
+  karma.set({
     /** 
      * From where to look for files, starting with the location of this file.
      */
@@ -12,15 +12,15 @@ module.exports = function ( karma ) {
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
       'src/**/*.js',
-      'src/**/*.coffee',
+      '**/*.html'
     ],
     exclude: [
       'src/assets/**/*.js'
     ],
     frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-phantomjs-launcher', 'karma-coffee-preprocessor' ],
+    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-ng-html2js-preprocessor' ],
     preprocessors: {
-      '**/*.coffee': 'coffee',
+      '**/*.html': ['ng-html2js']
     },
 
     /**
@@ -55,7 +55,7 @@ module.exports = function ( karma ) {
      * the aesthetic advantage of not launching a browser every time you save.
      */
     browsers: [
-      'Chrome'
+      'PhantomJS'
     ]
   });
 };

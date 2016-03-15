@@ -30,6 +30,7 @@
     'loom_test',
     'loom_timeline',
     'loom_storybox',
-    'loom_storypin'
+    'loom_storypin',
+    'loom_storylegend'
   ]);
 }());
