@@ -168,6 +168,7 @@
         service_.saveMaps();
         service_.update_active_config(service_.active_index, true);
         console.log('----[ mapstory.save success. ', data, status, headers, config);
+        $('#alertBox').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>All Changes Saved! </div>');
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
@@ -175,6 +176,7 @@
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed',
               {value: status}));
         }
+        $('#alertBox').html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Mapstory Failed to Save</div>');
       });
 
     };
