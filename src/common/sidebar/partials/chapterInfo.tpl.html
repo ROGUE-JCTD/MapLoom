@@ -1,4 +1,4 @@
-<h2 ng-show="menuSection=='chapterInfo' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('chapterInfo' + chapter.id)"></i>{{ chapter.chapter }}</h2>
+<h2 ng-show="menuSection=='chapterInfo' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('chapterInfo' + chapter.id)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}</h2>
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('chapterInfo' + chapter.id)"></i></h2>
 <h2>{{ storyService.active_chapter.about.title }} - Info</h2>
 <div class="menuItem">
