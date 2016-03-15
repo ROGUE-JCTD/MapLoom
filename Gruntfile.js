@@ -20,6 +20,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-gjslint');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   /**
    * Load in our build configuration file.
@@ -36,6 +37,15 @@ module.exports = function ( grunt ) {
      * version. It's already there, so we don't repeat ourselves here.
      */
     pkg: grunt.file.readJSON("package.json"),
+
+    connect: {
+      server: {
+        options: {
+          port: 9001,
+          base: 'build'
+        }
+      }
+    },
 
     /**
      * The banner is the comment that is placed at the top of our compiled
@@ -391,11 +401,6 @@ module.exports = function ( grunt ) {
       options: {
         configFile: '<%= build_dir %>/karma-unit.js'
       },
-      unit: {
-        runnerPort: 9101,
-        background: true,
-        port: 9877
-      },
       continuous: {
         singleRun: true
       }
@@ -661,6 +666,8 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'compile', [
     'recess:compile', 'copy:compile_assets', 'copy:compile_fonts', 'ngmin', 'concat:compile_js', 'index:compile', 'indexlite:compile'
   ]);
+
+  grunt.registerTask('serve', [ 'connect:server', 'watch' ]);
 
   /**
    * A utility function to get all app JavaScript sources.
