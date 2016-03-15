@@ -262,6 +262,7 @@
 
     this.updateStyle = function(layer) {
       var style = layer.get('style') || layer.get('metadata').style || '';
+      var styleName = this.configuration.username + '_' + layer.get('typeName');
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
         var layerSource = layer.getSource();
@@ -269,18 +270,44 @@
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
-            url: '/geoserver/rest/styles/' + layer.get('styleName') + '.xml',
-            method: 'PUT',
+            url: '/geoserver/rest/styles.xml?name=' + styleName,
+            method: 'POST',
             data: xml,
-            headers: {'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8'}
+            headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
           }).then(function(result) {
+            console.log('Style Create Response ', result);
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
-              layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
+              layerSource.updateParams({
+                '_dc': new Date().getTime(),
+                '_olSalt': Math.random(),
+                'STYLES': styleName
+              });
             }
+          }, function errorCallback(response) {
+            console.log('Style Create Error Response ', response);
+            if (response.status === 403) {
+              httpService_({
+                url: '/geoserver/rest/styles/' + styleName + '.xml',
+                method: 'PUT',
+                data: xml,
+                headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
+              }).then(function(result) {
+                console.log('Style Update Response ', result);
+                if (goog.isDefAndNotNull(layerSource.updateParams)) {
+                  layerSource.updateParams({
+                    '_dc': new Date().getTime(),
+                    '_olSalt': Math.random(),
+                    'STYLES': styleName
+                  });
+                }
+              });
+
+            }
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
           });
         }
       }
-
     };
 
     this.zoomToLayerFeatures = function(layer) {
