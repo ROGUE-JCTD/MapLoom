@@ -859,6 +859,7 @@
             rootScope_.$broadcast('layer-added');
           } else {
             console.log('====[Error: could not load layer: ', minimalConfig);
+            toastr.clear();
             toastr.error('Layer could not be loaded.', 'Loading Failed');
           }
 

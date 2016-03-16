@@ -89,7 +89,7 @@
 
             scope.addLayers = function(layerConfig) {
               console.log(layerConfig);
-              toastr.success('Layer is Loading...', {
+              toastr.success('Layer is Loading...', '', {
                 'timeOut': '0',
                 'extendedTimeOut': '0'
               });
