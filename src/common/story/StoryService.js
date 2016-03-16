@@ -202,10 +202,6 @@
       }
     };
 
-    this.get_chapter_config = function(index) {
-      return this.configurations[index];
-    };
-
     //Composer only allows you to edit one chapter at a time
     //This function should be called whenever we select a different chapter from the list.
     this.update_active_config = function(index, deleteOverride) {
@@ -219,34 +215,6 @@
 
       mapService_.updateActiveMap(this.active_index, this.active_chapter);
       rootScope_.$broadcast('chapter-switch', this.active_index);
-    };
-
-    //Updates the stored chapter_info information for the current chapter
-    //Does not invoke a map save
-    this.update_chapter_info = function(chapter_info) {
-
-      this.active_chapter.about.title = chapter_info.chapter_title;
-      this.active_chapter.about.abstract = chapter_info.abstract;
-    };
-
-    this.change_chapter = function(chapter_index) {
-      service_.update_active_config(chapter_index);
-    };
-
-    this.next_chapter = function() {
-      var nextChapter = this.active_index + 1;
-      if (nextChapter > this.configurations.length - 1) {
-        nextChapter = 0;
-      }
-      service_.update_active_config(nextChapter);
-    };
-
-    this.prev_chapter = function() {
-      var prevChapter = this.active_index - 1;
-      if (prevChapter < 0) {
-        prevChapter = 0;
-      }
-      service_.update_active_config(prevChapter);
     };
 
     this.getLayers = function() {
@@ -288,6 +256,7 @@
     };
 
     this.reorder_chapter = function(from_index, to_index) {
+      // TODO: Update this function to work with the new Composer.
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
     };
 
