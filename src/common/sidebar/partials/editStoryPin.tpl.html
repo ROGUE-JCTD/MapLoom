@@ -27,7 +27,7 @@
     <div class="form-group">
         <label for="storyPinLocation">Pin Location</label>
         <p>Drop pin on the map to set pin location.</p>
-        <button class="btn btn-default btn-block" id="savePinLocation">Save Pin
+        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(storyService.active_pin)">Save Pin
             Location
         </button>
     </div>

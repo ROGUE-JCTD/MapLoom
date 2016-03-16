@@ -10,9 +10,13 @@
   //var translate_ = null;
   //var dialogService_ = null;
   var Pin = function(data) {
+    var copyData = angular.copy(data);
+    delete data.geometry;
     ol.Feature.call(this, data);
+    this.setGeometry(new ol.geom.Point(copyData.geometry.coordinates));
     this.start_time = getTime(this.start_time);
     this.end_time = getTime(this.end_time);
+
   };
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;

@@ -120,6 +120,21 @@
       featureManagerService_.startFeatureInsert(this.active_layer);
     };
 
+    this.addPinLocation = function(pin) {
+      featureManagerService_.startPinInsert(pin);
+    };
+
+    this.addBoxExtent = function(box) {
+      goog.object.extend(box, {'extent': mapService_.map.getView().calculateExtent(mapService_.map.getSize())});
+    };
+
+    this.updateBoxExtent = function() {
+      if (this.active_box === null) {
+        return;
+      }
+      this.active_box.set('extent', mapService_.map.getView().calculateExtent(mapService_.map.getSize()));
+    };
+
     //Save all chapter configuration objects
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
@@ -127,7 +142,7 @@
         //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
         mapService_.updateActiveMap(iConfig);
-        mapService_.save(this.configurations[iConfig]);
+        mapService_.save(service_.configurations[iConfig]);
       }
       this.print_configurations();
     };

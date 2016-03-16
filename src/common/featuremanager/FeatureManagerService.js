@@ -393,6 +393,63 @@
       }
     };
 
+    this.startPinInsert = function(pin, chapter_index) {
+      service_.hide();
+      enabled_ = false;
+      var geometryType = 'Point';
+      var geometryName = 'Point';
+
+      exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
+          exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
+            if (mapService_.editLayer.getSource().getFeatures().length < 1) {
+              dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
+                  [translate_.instant('btn_ok')], false);
+            } else {
+              exclusiveModeService_.addMode = false;
+              exclusiveModeService_.endExclusiveMode();
+              mapService_.removeDraw();
+              mapService_.removeSelect();
+              mapService_.removeModify();
+              var feature = mapService_.editLayer.getSource().getFeatures()[0];
+              selectedItem_.geometry.type = feature.getGeometry().getType();
+              selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
+              var newGeom = transformGeometry(selectedItem_.geometry,
+                  mapService_.map.getView().getProjection(), mapService_.pinLayer.get('metadata').projection);
+              selectedItem_.geometry.coordinates = newGeom.getCoordinates();
+              service_.endPinInsert(true);
+
+            }
+          }),
+          exclusiveModeService_.button(translate_.instant('cancel_feature'), function() {
+            exclusiveModeService_.addMode = false;
+            exclusiveModeService_.endExclusiveMode();
+            mapService_.removeDraw();
+            mapService_.removeSelect();
+            mapService_.removeModify();
+            service_.endPinInsert(false);
+          }), geometryType);
+      exclusiveModeService_.addMode = true;
+      selectedItemProperties_ = pin;
+      selectedItem_ = {geometry: {type: geometryType}, geometry_name: geometryName, properties: {}};
+      mapService_.map.addLayer(mapService_.editLayer);
+      if (geometryType.toLowerCase().search('geometry') > -1) {
+        $('#drawSelectDialog').modal('toggle');
+      } else {
+        mapService_.addDraw(geometryType);
+      }
+      rootScope_.$broadcast('startFeatureInsert');
+
+    };
+
+    this.endPinInsert = function(addPin) {
+      if (addPin === true) {
+        goog.object.extend(selectedItemProperties_, {'geometry': selectedItem_.geometry});
+        service_.hide();
+      }
+      enabled_ = true;
+      rootScope_.$broadcast('endFeatureInsert', addPin);
+    };
+
     this.startFeatureInsert = function(layer) {
       // TODO: Find a better way to handle this
       service_.hide();
