@@ -24,6 +24,39 @@
 
   var editableLayers_ = null;
 
+  var createStoryPinLayer = function() {
+    return new ol.layer.Vector({
+      metadata: {
+        StoryPinLayer: true
+      },
+      source: new ol.source.Vector({
+        parser: null
+      }),
+      style: function(feature, resolution) {
+        return [new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: [0, 0, 255, 0.25]
+          }),
+          stroke: new ol.style.Stroke({
+            color: [0, 0, 255, 1],
+            width: 4
+          }),
+          image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({
+              color: [0, 0, 255, 0.25]
+            }),
+            stroke: new ol.style.Stroke({
+              color: [0, 0, 255, 1],
+              width: 1.5
+            })
+          }),
+          zIndex: 1
+        })];
+      }
+    });
+  };
+
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
@@ -162,6 +195,7 @@
       this.chapterLayers.push(this.map.getLayerGroup());
 
       this.editLayer = createVectorEditLayer();
+      this.pinLayer = createStoryPinLayer();
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
