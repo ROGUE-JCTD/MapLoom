@@ -859,9 +859,12 @@
             rootScope_.$broadcast('layer-added');
           } else {
             console.log('====[Error: could not load layer: ', minimalConfig);
+            toastr.error('Layer could not be loaded.', 'Loading Failed');
           }
 
           console.log('-- MapService.addLayer, added: ', layer);
+          toastr.clear();
+          toastr.success('Layer has been successfully loaded', 'Layer Loaded');
           pulldownService_.showLayerPanel();
           return layer;
 

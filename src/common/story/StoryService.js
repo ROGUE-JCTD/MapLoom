@@ -159,15 +159,15 @@
         service_.saveMaps();
         service_.update_active_config(service_.active_index, true);
         console.log('----[ mapstory.save success. ', data, status, headers, config);
-        $('#alertBox').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>All Changes Saved! </div>');
+        toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
-          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
+          // dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
+          toastr.error('You do not have permission to do that.', 'Permissions Error');
         } else {
-          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed',
-              {value: status}));
+          // dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed', {value: status}));
+          toastr.error('Your MapStory has failed to save.', 'Save Failed');
         }
-        $('#alertBox').html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Mapstory Failed to Save</div>');
       });
 
     };

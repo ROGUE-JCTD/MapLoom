@@ -93,6 +93,7 @@ module.exports = {
       'vendor/story-tools/dist/story-tools-edit-ng.js',
       'vendor/story-tools/dist/story-tools-edit-tpls.js',
       'vendor/story-tools/dist/ows.js',
+      'vendor/toastr/toastr.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -121,6 +122,8 @@ module.exports = {
       'vendor/nouislider/distribute/jquery.nouislider.min.css',
 
       'vendor/font-awesome/css/font-awesome.min.css',
+
+      'vendor/toastr/toastr.css',
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',
