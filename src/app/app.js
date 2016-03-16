@@ -81,14 +81,9 @@
         $scope.addStoryBox = function(box) {
           var clone = angular.copy(box);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
-          goog.object.extend(clone, {'extent': mapService.map.getView().calculateExtent(mapService.map.getSize())});
           boxService.addBox(clone, $scope.active_menu_chapter.id);
           $scope.box = {};
           $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
-        };
-
-        $scope.setPinLocation = function() {
-
         };
 
         $scope.addStoryPin = function(pin) {
