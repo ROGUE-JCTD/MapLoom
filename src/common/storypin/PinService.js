@@ -105,8 +105,11 @@
 
 
     this.updatePin = function(pin, chapter_index) {
-      var newGeom = new ol.geom.Point(pin.geometry.coordinates);
-      pin.setGeometry(newGeom);
+      //Only set new geometry if location was saved on pin object
+      if (goog.isDefAndNotNull(pin.geometry)) {
+        var newGeom = new ol.geom.Point(pin.geometry.coordinates);
+        pin.setGeometry(newGeom);
+      }
       rootScope_.$broadcast('pin-added', chapter_index);
     };
 
