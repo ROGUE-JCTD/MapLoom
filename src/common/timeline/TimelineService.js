@@ -19,6 +19,7 @@
   var timelinePointsList = [];
   var timelineGroupsList_ = [];
   var range_ = new stutils.Range(null, null);
+  var filter_ = null;
 
   function computeTicks(layersWithTime) {
 
@@ -99,7 +100,7 @@
     // public variable can be placed on scope
     this.hasLayerWithTime = false;
 
-    this.$get = function(mapService, boxService, pinService, $interval, $rootScope, featureManagerService) {
+    this.$get = function(mapService, boxService, pinService, $interval, $rootScope, $filter, featureManagerService) {
       service_ = this;
       mapService_ = mapService;
       boxService_ = boxService;
@@ -107,6 +108,7 @@
       interval_ = $interval;
       rootScope_ = $rootScope;
       featureManagerService_ = featureManagerService;
+      filter_ = $filter;
 
       // when a layer is added, reinitialize the service.
       $rootScope.$on('layer-added', function(event, layer) {
@@ -138,9 +140,10 @@
         console.log('----[ timelineService, chapter switch. initializing', chapter_index);
         boxes_ = boxService_.getBoxes(chapter_index);
         pins_ = pinService_.getPins(chapter_index);
+        var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
         mapService_.map.removeLayer(mapService_.pinLayer);
         mapService_.pinLayer.getSource().clear(true);
-        mapService_.pinLayer.getSource().addFeatures(pins_);
+        mapService_.pinLayer.getSource().addFeatures(pinsForMap);
         mapService_.map.addLayer(mapService_.pinLayer);
         service_.initialize();
       });
@@ -156,8 +159,9 @@
         console.log('----[ timelineService, pin added. initializing');
         pins_ = pinService_.getPins(chapter_index);
         mapService_.map.removeLayer(mapService_.pinLayer);
+        var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
         mapService_.pinLayer.getSource().clear(true);
-        mapService_.pinLayer.getSource().addFeatures(pins_);
+        mapService_.pinLayer.getSource().addFeatures(pinsForMap);
         mapService_.map.addLayer(mapService_.pinLayer);
         service_.initialize();
       });
@@ -263,29 +267,30 @@
       }
 
       var pins_as_layers = [];
+      var pinsForTimeline = filter_('filter')(pins_, { values_: {in_timeline: true} });
 
-      if (pins_.length > 0) {
-        for (var iPin = 0; iPin < pins_.length; iPin++) {
-          var pin_range = stutils.createRange(pins_[iPin].start_time, pins_[iPin].end_time);
+      if (pinsForTimeline.length > 0) {
+        for (var iPin = 0; iPin < pinsForTimeline.length; iPin++) {
+          var pin_range = stutils.createRange(pinsForTimeline[iPin].start_time, pinsForTimeline[iPin].end_time);
           console.log('----[ Info: Pin Range ', pin_range.toString());
           range_.extend(pin_range);
           console.log('----[ Info: Total Range ', range_.toString());
           timelinePointsList.push({
             id: 'sp' + iPin,
-            content: pins_[iPin].title,
-            start: (new Date(pins_[iPin].start_time)).toISOString(),
-            end: (new Date(pins_[iPin].end_time)).toISOString(),
+            content: pinsForTimeline[iPin].title,
+            start: (new Date(pinsForTimeline[iPin].start_time)).toISOString(),
+            end: (new Date(pinsForTimeline[iPin].end_time)).toISOString(),
             type: 'background'
           });
 
           pins_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
-                              (new Date(pins_[iPin].start_time)).toISOString(),
-                              (new Date(pins_[iPin].end_time)).toISOString()
+                              (new Date(pinsForTimeline[iPin].start_time)).toISOString(),
+                              (new Date(pinsForTimeline[iPin].end_time)).toISOString()
                             ]}]}});
         }
       }
 
-      if (layersWithTime > 0 || boxes_.length > 0 || pins_.length > 0) {
+      if (layersWithTime > 0 || boxes_.length > 0 || pinsForTimeline.length > 0) {
         rootScope_.timelineServiceEnabled = true;
         mapService_.showTimeline(true);
       } else {
