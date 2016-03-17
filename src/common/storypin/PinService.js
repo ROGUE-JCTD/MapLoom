@@ -105,7 +105,8 @@
 
 
     this.updatePin = function(pin, chapter_index) {
-      //TODO: more may need to be done here like updating the map extent
+      var newGeom = new ol.geom.Point(pin.geometry.coordinates);
+      pin.setGeometry(newGeom);
       rootScope_.$broadcast('pin-added', chapter_index);
     };
 
