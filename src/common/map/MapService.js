@@ -27,7 +27,8 @@
   var createStoryPinLayer = function() {
     return new ol.layer.Vector({
       metadata: {
-        StoryPinLayer: true
+        StoryPinLayer: true,
+        title: 'Story Pins'
       },
       source: new ol.source.Vector({
         parser: null
@@ -51,7 +52,7 @@
               width: 1.5
             })
           }),
-          zIndex: 1
+          zIndex: 2
         })];
       }
     });
@@ -483,7 +484,8 @@
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer)) {
+            !(layer.get('metadata').internalLayer) &&
+            !(layer.get('metadata').StoryPinLayer)) {
 
           // if it is imagery
           if (service_.layerIsEditable(layer)) {

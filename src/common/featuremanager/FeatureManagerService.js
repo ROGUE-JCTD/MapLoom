@@ -447,6 +447,7 @@
         service_.hide();
       }
       enabled_ = true;
+      mapService_.map.removeLayer(mapService_.editLayer);
       rootScope_.$broadcast('endFeatureInsert', addPin);
     };
 
