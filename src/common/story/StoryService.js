@@ -241,7 +241,7 @@
             (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
             layer.get('metadata').vectorEditLayer)) {
           layers.splice(iLayer, 1);
-          console.log(layer);
+          console.log('Logging getLayers layer: ' + layer);
 
         }
       }
