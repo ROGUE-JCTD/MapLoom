@@ -8,7 +8,7 @@
 
 <div id="baseMaps">
     <select>
-        <option ng-repeat="storyLayer in storyLayers | filter: { group: 'background' }">{{ storyLayer.get('metadata').title }}</option>
+        <option ng-repeat="baseMap in baseMaps = mapService.getBasemaps() ">{{ baseMap.get('metadata').title }}</option>
     </select>
 </div>
 
