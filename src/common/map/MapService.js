@@ -516,6 +516,17 @@
       return layers;
     };
 
+    this.getBasemaps = function() {
+      var layers = this.getLayers(true, true);
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        if (!goog.isDef(layer.get('metadata').config.group)) {
+          layers.splice(iLayer, 1);
+        }
+      }
+      return layers;
+    };
+
     this.layerIsEditable = function(layer) {
       return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
     };
