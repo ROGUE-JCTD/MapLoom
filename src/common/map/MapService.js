@@ -516,11 +516,34 @@
       return layers;
     };
 
-    this.getBasemaps = function() {
+    this.getBaseMaps = function() {
       var layers = this.getLayers(true, true);
       for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
         var layer = layers[iLayer];
         if (!goog.isDef(layer.get('metadata').config.group)) {
+          layers.splice(iLayer, 1);
+        }
+      }
+      return layers;
+    };
+
+    this.selectedBaseMap = function(selectedBaseMap) {
+      var layers = this.getBaseMaps();
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        layer.set('visible', false);
+      }
+      if (selectedBaseMap) {
+        var selectedLayer = selectedBaseMap;
+        selectedLayer.set('visible', true);
+      }
+    };
+
+    this.getStoryLayers = function() {
+      var layers = this.getLayers(true, true);
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        if (goog.isDef(layer.get('metadata').config.group)) {
           layers.splice(iLayer, 1);
         }
       }
