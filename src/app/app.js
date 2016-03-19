@@ -92,6 +92,7 @@
           pinService.addPin(clone, $scope.active_menu_chapter.id);
           $scope.pin = {};
           $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+          toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
         };
 
         $scope.mapstories = {
@@ -137,7 +138,6 @@
           $scope.isShown = !$scope.isShown;
           if ($scope.menuSection == 'mainMenuHidden') {
             $scope.updateMenuSection($scope.prev_menu_section);
-            $scope.helpBoxVisible = false;
             document.getElementById('pushobj').style.width = '75%';
           } else {
             $scope.updateMenuSection('mainMenuHidden');
@@ -145,14 +145,6 @@
           }
           $scope.mapService.updateMapSize();
         };
-
-        $scope.helpBoxVisible = false;
-
-        $scope.showHelpBox = function(helpText) {
-          angular.element(document.querySelector('#helpTextBox')).html(helpText);
-          $scope.helpBoxVisible = true;
-        };
-
 
         $scope.styleChanged = function(layer) {
           layer.on('change:type', function(evt) {

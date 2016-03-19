@@ -120,12 +120,17 @@
       featureManagerService_.startFeatureInsert(this.active_layer);
     };
 
+    this.startFeatureEdit = function() {
+      toastr.success('To edit an existing feature, just click on a feature that you want to edit.');
+    };
+
     this.addPinLocation = function(pin) {
       featureManagerService_.startPinInsert(pin);
     };
 
     this.addBoxExtent = function(box) {
       goog.object.extend(box, {'extent': mapService_.map.getView().calculateExtent(mapService_.map.getSize())});
+      toastr.success('Your StoryBox Bounds have been saved');
     };
 
     this.updateBoxExtent = function() {
@@ -133,6 +138,7 @@
         return;
       }
       this.active_box.set('extent', mapService_.map.getView().calculateExtent(mapService_.map.getSize()));
+      toastr.success('Your StoryBox Bounds have been saved');
     };
 
     //Save all chapter configuration objects

@@ -37,7 +37,7 @@
                     ng-disabled="storyService.isEditable()">Add a New Feature
             </button>
             <button class="btn btn-default btn-lg btn-block"
-                    ng-click="showHelpBox('To edit an existing feature, just click on a feature that you want to edit.'); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
+                    ng-click="storyService.startFeatureEdit(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
                     ng-disabled="storyService.isEditable()">Edit an Existing Feature
             </button>
             <button class="btn btn-default btn-lg btn-block" data-target="#layerInfoDialog" data-toggle="modal">View Layer Metadata</button>

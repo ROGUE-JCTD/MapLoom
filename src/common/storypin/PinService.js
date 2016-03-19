@@ -111,6 +111,7 @@
         pin.setGeometry(newGeom);
       }
       rootScope_.$broadcast('pin-added', chapter_index);
+      toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
     };
 
   });
