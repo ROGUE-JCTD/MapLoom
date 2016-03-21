@@ -1,5 +1,16 @@
 describe('StoryLegendDirective', function() {
   var element, scope, compiledElement;
+  var createAttribute = function(name, type) {
+    return {
+      __prefix: '',
+      _maxOccurs: 1,
+      _minOccurs: 0,
+      _name: name,
+      _nillable: 'true',
+      _type: type,
+      visible: true
+    };
+  };
   var createLayer = function(id, name, titleAlias) {
     data = {
       uniqueID: id,
@@ -57,5 +68,18 @@ describe('StoryLegendDirective', function() {
       compiledElement.isolateScope().saveMasking();
       expect(compiledElement.isolateScope().layer.get('metadata').config.titleAlias).toBe('Test');
     });
+  });
+  describe('attributes', function() {
+    it('the layers have an id', inject(function() {
+      var activeLayer = createLayer(1, 'Ocean Beach', 'O.B.');
+      var metadata = activeLayer.get('metadata');
+      metadata.schema = [ createAttribute('Ocean', 'water')];
+      activeLayer.set('metadata', metadata);
+      scope.activeLayer = activeLayer;
+      scope.$digest();
+      expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
+        id: 1
+      }));
+    }));
   });
 });

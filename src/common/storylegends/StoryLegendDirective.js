@@ -1,9 +1,9 @@
 (function() {
 
-  var module = angular.module('loom_storylegend_directive', []);
+  var module = angular.module('loom_storylegend_directive', ['loom_layer_service']);
 
   module.directive('loomStorylegend',
-      function($rootScope) {
+      function($rootScope, layerService) {
         return {
           restrict: 'C',
           replace: true,
@@ -22,7 +22,20 @@
                 };
               }
             };
+            var setAttributes = function(attributes, maskings) {
+              scope.attributes = [];
+              var attributesLength = attributes.length;
+              for (var i = 0; i < attributesLength; i++) {
+                var attribute = attributes[i];
+                scope.attributes.push({
+                  alias: '',
+                  name: attribute._name,
+                  show: true
+                });
+              }
+            };
             scope.layerAlias = {};
+            scope.layerService = layerService;
             scope.saveMasking = function() {
               var metadata = scope.layer.get('metadata');
               metadata.config.titleAlias = scope.layerAlias.title;
@@ -30,7 +43,9 @@
             };
             scope.$watch('layer', function(newLayer) {
               if (newLayer) {
+                var maskings = newLayer.get('metadata').config.maskings || {};
                 setAlias(newLayer);
+                setAttributes(layerService.getAttributes(newLayer), maskings);
               }
             });
           }
