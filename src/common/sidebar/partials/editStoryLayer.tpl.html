@@ -40,7 +40,7 @@
                     ng-click="storyService.startFeatureEdit(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
                     ng-disabled="storyService.isEditable()">Edit an Existing Feature
             </button>
-            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn btn-default btn-lg btn-block">View Layer Metadata</button></a>
+            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn btn-default btn-lg btn-block">View StoryLayer Details</button></a>
             <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
                     ng-disabled="storyService.isEditable()">View Attribute Table
             </button>
