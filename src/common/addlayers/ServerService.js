@@ -236,7 +236,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addServer = function(serverInfo, loaded) {
       var deferredResponse = q_.defer();
-
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
       var server = {

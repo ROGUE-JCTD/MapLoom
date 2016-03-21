@@ -662,7 +662,9 @@ module.exports = function ( grunt ) {
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /\.js$/ );
+      if(!file.match( /\.spec.js$/ )) {
+        return file.match( /\.js$/ );
+      }
     });
   }
 
