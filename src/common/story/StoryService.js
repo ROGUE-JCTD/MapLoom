@@ -10,12 +10,14 @@
   var featureManagerService_ = null;
   var rootScope_ = null;
   var q_ = null;
+  var historyService_ = null;
+  var diffService_ = null;
 
 
   module.provider('storyService', function() {
 
     this.$get = function($window, $http, $q, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
-                         configService, dialogService, tableViewService) {
+                         configService, dialogService, historyService, diffService, tableViewService) {
       service_ = this;
       q_ = $q;
       mapService_ = mapService;
@@ -26,6 +28,8 @@
       rootScope_ = $rootScope;
       tableViewService_ = tableViewService;
       featureManagerService_ = featureManagerService;
+      historyService_ = historyService;
+      diffService_ = diffService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -77,6 +81,55 @@
 
     this.toggleVisiblity = function(layer) {
       layer.set('visible', !layer.get('visible'));
+    };
+
+    this.historyLoading = function(commit) {
+      return goog.isDefAndNotNull(commit.loading) && commit.loading === true;
+    };
+
+    this.historyClicked = function(commit) {
+      commit.loading = true;
+      $('.loom-history-popover').popover('hide');
+      var lastCommitId = '0000000000000000000000000000000000000000';
+      if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
+        if (goog.isDefAndNotNull(commit.parents.id)) {
+          if (goog.isArray(commit.parents.id)) {
+            lastCommitId = commit.parents.id[0];
+          } else {
+            lastCommitId = commit.parents.id;
+          }
+        }
+      }
+      var diffOptions = new GeoGigDiffOptions();
+      diffOptions.oldRefSpec = lastCommitId;
+      diffOptions.newRefSpec = commit.id;
+      diffOptions.showGeometryChanges = true;
+      diffOptions.pathFilter = historyService_.pathFilter;
+      diffOptions.show = 1000;
+      diffService_.performDiff(historyService_.repoId, diffOptions).then(function(response) {
+        if (goog.isDefAndNotNull(response.Feature)) {
+          if (goog.isDefAndNotNull(response.nextPage) && response.nextPage === true) {
+            dialogService_.warn(translate_.instant('warning'),
+                translate_.instant('too_many_changes'), [translate_.instant('btn_ok')]);
+          } else {
+            diffService_.setTitle(translate_.instant('summary_of_changes'));
+          }
+        } else {
+          dialogService_.open(translate_.instant('history'),
+              translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
+        }
+        commit.loading = false;
+      }, function(reject) {
+        //failed to get diff
+        dialogService_.error(translate_.instant('error'),
+            translate_.instant('diff_unknown_error'), [translate_.instant('btn_ok')]);
+        commit.loading = false;
+      });
+    };
+
+    this.historyMerge = function(commit) {
+      return goog.isDefAndNotNull(commit.parents) && goog.isArray(commit.parents.id) &&
+          commit.parents.id.length > 1;
     };
 
     this.showTable = function() {

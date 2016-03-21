@@ -22,7 +22,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, storyService, boxService, pinService, $http) {
+                                                refreshService, dialogService, historyService, storyService, boxService, pinService, $http) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -75,6 +75,7 @@
         $scope.refreshService = refreshService;
         $scope.boxService = boxService;
         $scope.pinService = pinService;
+        $scope.historyService = historyService;
         $scope.box = {};
         $scope.pin = {};
 

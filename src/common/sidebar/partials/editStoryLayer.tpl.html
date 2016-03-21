@@ -44,7 +44,7 @@
             <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
                     ng-disabled="storyService.isEditable()">View Attribute Table
             </button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">View History</button>
+            <button class="btn btn-default btn-lg btn-block" ng-click="historyService.getHistory(storyService.active_layer);updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">View History</button>
             <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete This
                 StoryLayer
             </button>
