@@ -16,7 +16,7 @@
                ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
             <a href="#"
                ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">
-                {{ storyLayer.get('metadata').config.titleAlias || storyLayer.get('metadata').title }}
+                {{ layerService.getTitle(storyLayer) }}
             </a>
         </div>
     </div>
