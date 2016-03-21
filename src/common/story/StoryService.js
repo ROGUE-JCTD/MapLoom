@@ -61,6 +61,7 @@
 
     this.clearSelectedItems = function() {
       this.active_layer = null;
+      this.active_index = null;
       this.active_box = null;
       this.active_pin = null;
       this.active_chapter = null;
