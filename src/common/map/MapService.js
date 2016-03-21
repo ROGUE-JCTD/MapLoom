@@ -311,6 +311,7 @@
             headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
           }).then(function(result) {
             console.log('Style Create Response ', result);
+            layer.get('metadata').config.styles = styleName;
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
               layerSource.updateParams({
                 '_dc': new Date().getTime(),
@@ -328,6 +329,7 @@
                 headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
               }).then(function(result) {
                 console.log('Style Update Response ', result);
+                layer.get('metadata').config.styles = styleName;
                 if (goog.isDefAndNotNull(layerSource.updateParams)) {
                   layerSource.updateParams({
                     '_dc': new Date().getTime(),
