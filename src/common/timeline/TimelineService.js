@@ -141,10 +141,12 @@
         boxes_ = boxService_.getBoxes(chapter_index);
         pins_ = pinService_.getPins(chapter_index);
         var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
-        mapService_.map.removeLayer(mapService_.pinLayer);
-        mapService_.pinLayer.getSource().clear(true);
-        mapService_.pinLayer.getSource().addFeatures(pinsForMap);
-        mapService_.map.addLayer(mapService_.pinLayer);
+        if (pinsForMap.length > 0) {
+          mapService_.map.removeLayer(mapService_.pinLayer);
+          mapService_.pinLayer.getSource().clear(true);
+          mapService_.pinLayer.getSource().addFeatures(pinsForMap);
+          mapService_.map.addLayer(mapService_.pinLayer);
+        }
         service_.initialize();
       });
 

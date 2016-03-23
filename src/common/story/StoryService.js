@@ -232,7 +232,9 @@
         service_.updateStoryID(data.id);
         service_.removedChapterIDs = [];
         service_.saveMaps();
-        service_.update_active_config(service_.active_index, true);
+        if (service_.active_index !== null) {
+          service_.update_active_config(service_.active_index, true);
+        }
         console.log('----[ mapstory.save success. ', data, status, headers, config);
         toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
       }).error(function(data, status, headers, config) {
@@ -315,7 +317,7 @@
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
-      new_chapter.about.summary = '';
+      new_chapter.about.summary = 'This is the default summary';
       this.configurations.push(new_chapter);
       //This creates the new layergroup on the open layers map that is being displayed.
       //Parameter is currently unused, but may be changed if we decide map load should occur here.

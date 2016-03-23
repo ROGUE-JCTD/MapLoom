@@ -486,7 +486,8 @@
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer)) {
+            !(layer.get('metadata').internalLayer) &&
+            !(layer.get('metadata').StoryPinLayer)) {
 
           // if it is imagery
           if (service_.layerIsEditable(layer)) {
@@ -547,6 +548,9 @@
         if (layer.get('metadata').hasOwnProperty('config') && goog.isDef(layer.get('metadata').config.group)) {
           layers.splice(iLayer, 1);
         }
+      }
+      if (goog.isDefAndNotNull(this.pinLayer) && this.pinLayer.getSource().getFeatures().length > 0) {
+        layers.push(this.pinLayer);
       }
       return layers;
     };

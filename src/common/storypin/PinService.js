@@ -13,6 +13,7 @@
     var copyData = angular.copy(data);
     delete data.geometry;
     ol.Feature.call(this, data);
+    this.properties = data;
     this.setGeometry(new ol.geom.Point(copyData.geometry.coordinates));
     this.start_time = getTime(this.start_time);
     this.end_time = getTime(this.end_time);
@@ -20,7 +21,7 @@
   };
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;
-  var model_attributes = ['id', '_id', 'title', 'content', 'start_time', 'end_time', 'in_map', 'in_timeline'];
+  var model_attributes = ['title', 'id', '_id', 'content', 'start_time', 'end_time', 'in_map', 'in_timeline'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Pin.prototype, prop, {

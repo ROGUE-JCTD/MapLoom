@@ -23,7 +23,7 @@
   var clickPosition_ = null;
   var enabled_ = true;
   var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
-  var pinCaptureDistance_ = 150;
+  var pinCaptureDistance_ = 300;
 
   module.provider('featureManagerService', function() {
 
