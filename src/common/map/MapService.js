@@ -177,6 +177,45 @@
       return this;
     };
 
+    this.requestLayerBounds = function(layer) {
+      var layerTypeName = layer.get('metadata').name;
+      var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
+
+      var wpsPostData = '' +
+          '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +
+              'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+              'xmlns="http://www.opengis.net/wps/1.0.0" ' +
+              'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ' +
+              'xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" ' +
+              'xmlns:ogc="http://www.opengis.net/ogc" ' +
+              'xmlns:wcs="http://www.opengis.net/wcs/1.1.1" ' +
+              'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+              'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ' +
+              'http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">' +
+          '<ows:Identifier>gs:Bounds</ows:Identifier>' +
+          '<wps:DataInputs>' +
+          '<wps:Input>' +
+          '<ows:Identifier>features</ows:Identifier>' +
+          '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
+          '<wps:Body>' +
+          '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '" outputFormat="GML2" ' +
+              'xmlns:' + layer.get('metadata').workspace + '="' + layer.get('metadata').workspaceURL + '">' +
+          '<wfs:Query typeName="' + layerTypeName + '"/>' +
+          '</wfs:GetFeature>' +
+          '</wps:Body>' +
+          '</wps:Reference>' +
+          '</wps:Input>' +
+          '</wps:DataInputs>' +
+          '<wps:ResponseForm>' +
+          '<wps:RawDataOutput>' +
+          '<ows:Identifier>bounds</ows:Identifier>' +
+          '</wps:RawDataOutput>' +
+          '</wps:ResponseForm>' +
+          '</wps:Execute>';
+
+      return httpService_.post(url, wpsPostData);
+    };
+
     this.activateDragZoom = function() {
       //first we need to get access to the map's drag zoom interaction, if there is one
       var index;
@@ -264,78 +303,55 @@
         deferredResponse.resolve();
         return deferredResponse.promise;
       }
-
-      if (service_.layerIsEditable(layer)) {
-        var layerTypeName = layer.get('metadata').name;
-        var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
-
-        var wpsPostData = '' +
-            '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +
-                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-                'xmlns="http://www.opengis.net/wps/1.0.0" ' +
-                'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ' +
-                'xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" ' +
-                'xmlns:ogc="http://www.opengis.net/ogc" ' +
-                'xmlns:wcs="http://www.opengis.net/wcs/1.1.1" ' +
-                'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
-                'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ' +
-                'http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">' +
-            '<ows:Identifier>gs:Bounds</ows:Identifier>' +
-            '<wps:DataInputs>' +
-            '<wps:Input>' +
-            '<ows:Identifier>features</ows:Identifier>' +
-            '<wps:Reference mimeType="text/xml" xlink:href="http://geoserver/wfs" method="POST">' +
-            '<wps:Body>' +
-            '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '" outputFormat="GML2" ' +
-                'xmlns:' + layer.get('metadata').workspace + '="' + layer.get('metadata').workspaceURL + '">' +
-            '<wfs:Query typeName="' + layerTypeName + '"/>' +
-            '</wfs:GetFeature>' +
-            '</wps:Body>' +
-            '</wps:Reference>' +
-            '</wps:Input>' +
-            '</wps:DataInputs>' +
-            '<wps:ResponseForm>' +
-            '<wps:RawDataOutput>' +
-            '<ows:Identifier>bounds</ows:Identifier>' +
-            '</wps:RawDataOutput>' +
-            '</wps:ResponseForm>' +
-            '</wps:Execute>';
-
-        httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
-          //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
-          var x2js = new X2JS();
-          var json = x2js.xml_str2json(data);
-          if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
-              goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
-            console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
-            service_.zoomToLayerExtent(layer);
-            deferredResponse.resolve();
-            return;
-          }
-          var lower = json.BoundingBox.LowerCorner.toString().split(' ');
-          var upper = json.BoundingBox.UpperCorner.toString().split(' ');
-          var bounds = [JSON.parse(lower[0], 10),
-                        JSON.parse(lower[1], 10),
-                        JSON.parse(upper[0], 10),
-                        JSON.parse(upper[1], 10)];
-          //console.log('------- [[ bounds: ', bounds);
-          var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
-              ol.proj.get(service_.map.getView().getProjection()));
-          var extent900913 = ol.extent.applyTransform(bounds, transform);
-          service_.zoomToExtent(extent900913, null, null, 0.1);
-          deferredResponse.resolve();
-        }).error(function(data, status, headers, config) {
-          console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
-          service_.zoomToLayerExtent(layer);
-          deferredResponse.resolve();
-        });
-
+      if (!service_.layerIsEditable(layer)) {
+        service_.requestLayerBounds(layer)
+        .success(_zoomToLayerBounds)
+        .error(_handleError);
       } else {
-        // dealing with an non vector layer
+        _handleNonVectorFeature();
+      }
+
+      return deferredResponse.promise;
+
+      function _handleNonVectorFeature() {
         service_.zoomToLayerExtent(layer);
         deferredResponse.resolve();
       }
-      return deferredResponse.promise;
+
+      function _zoomToLayerBounds(data, status, headers, config) {
+        //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
+        var x2js = new X2JS();
+        var json = x2js.xml_str2json(data);
+        var processFailed = goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
+            goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed);
+
+        if (processFailed) {
+          console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
+          service_.zoomToLayerExtent(layer);
+          deferredResponse.resolve();
+          return;
+        }
+
+        var lower = json.BoundingBox.LowerCorner.toString().split(' ');
+        var upper = json.BoundingBox.UpperCorner.toString().split(' ');
+        var bounds = [JSON.parse(lower[0], 10),
+                      JSON.parse(lower[1], 10),
+                      JSON.parse(upper[0], 10),
+                      JSON.parse(upper[1], 10)];
+
+        var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
+            ol.proj.get(service_.map.getView().getProjection()));
+        var finalExtent = ol.extent.applyTransform(bounds, transform);
+        service_.zoomToExtent(finalExtent, null, null, 0.1);
+        deferredResponse.resolve();
+      }
+
+      function _handleError(data, status, headers, config) {
+        console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
+        service_.zoomToLayerExtent(layer);
+        deferredResponse.resolve();
+      }
+
     };
 
     this.zoomToLayerExtent = function(layer) {
@@ -364,27 +380,27 @@
         return newExtent;
       };
 
-      var extent900913;
+      var finalExtent;
       if (goog.isDefAndNotNull(layer.getSource().getExtent)) {
-        extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+        finalExtent = shrinkExtent(layer.getSource().getExtent(), 0);
       } else {
-        extent900913 = shrinkExtent(metadata.bbox.extent, 0);
+        finalExtent = shrinkExtent(metadata.bbox.extent, 0);
       }
 
-      if (goog.isDefAndNotNull(extent900913)) {
-        for (var index = 0; index < extent900913.length; index++) {
-          if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
+      if (goog.isDefAndNotNull(finalExtent)) {
+        for (var index = 0; index < finalExtent.length; index++) {
+          if (isNaN(parseFloat(finalExtent[index])) || !isFinite(finalExtent[index])) {
             if (goog.isDefAndNotNull(layer.getSource().getExtent)) {
-              extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
+              finalExtent = shrinkExtent(layer.getSource().getExtent(), 0.001);
             } else {
-              extent900913 = shrinkExtent(metadata.bbox.extent, 0.001);
+              finalExtent = shrinkExtent(metadata.bbox.extent, 0.001);
             }
             break;
           }
         }
       }
 
-      service_.zoomToExtent(extent900913);
+      service_.zoomToExtent(finalExtent);
     };
 
     this.getLayers = function(includeHidden, includeEditable) {
@@ -444,30 +460,28 @@
           deferredResponse.reject('epsgCode could not be converted to valid number');
         } else {
           var url = 'http://epsg.io/' + epsgCodeAsNumber + '.js';
-          httpService_.get(url).then(function(response) {
-            if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.data) && response.data.indexOf('proj4.defs(') === 0) {
-              try {
-                // strip the proj4.defs( and then ');' from the tail
-                var data = response.data.substring('proj4.defs('.length, response.data.length - ');'.length);
-                var params = data.split('"');
-                // add the projction
-                proj4.defs(params[1], params[3]);
-                deferredResponse.resolve();
-              } catch (e) {
-                deferredResponse.reject('Error adding layer projection code: ' + epsgCode + ' from: ' + url);
-              }
-            } else {
-              deferredResponse.reject('Error downloading layer projection code: ' + epsgCode + ' from: ' + url);
-            }
-          }, function(reject) {
-            deferredResponse.reject(reject);
-          }, function(update) {
-            deferredResponse.update(update);
-          });
+          httpService_.get(url)
+          .then(_handleResponse, deferredResponse.reject, deferredResponse.update);
         }
       }
-
       return deferredResponse.promise;
+
+      function _handleResponse(response) {
+        if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.data) && response.data.indexOf('proj4.defs(') === 0) {
+          try {
+            // strip the proj4.defs( and then ');' from the tail
+            var data = response.data.substring('proj4.defs('.length, response.data.length - ');'.length);
+            var params = data.split('"');
+            // add the projction
+            proj4.defs(params[1], params[3]);
+            deferredResponse.resolve();
+          } catch (e) {
+            deferredResponse.reject('Error adding layer projection code: ' + epsgCode + ' from: ' + url);
+          }
+        } else {
+          deferredResponse.reject('Error downloading layer projection code: ' + epsgCode + ' from: ' + url);
+        }
+      }
     };
 
     /**
