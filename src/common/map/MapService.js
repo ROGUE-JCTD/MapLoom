@@ -940,7 +940,7 @@
 
           console.log('-- MapService.addLayer, added: ', layer);
           toastr.clear();
-          toastr.success('Layer has been successfully loaded', 'Layer Loaded');
+          toastr.success(layer.get('metadata').title + ' Layer has been successfully loaded', 'Layer Loaded');
           pulldownService_.showLayerPanel();
           return layer;
 
