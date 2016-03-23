@@ -11,7 +11,7 @@
   var exclusiveModeService_ = null;
   var dialogService_ = null;
   var q_ = null;
-  var state_ = '';                 // valid values: 'layers', 'layer', 'feature', or ''
+  var state_ = '';                 // valid values: 'layers', 'layer', 'feature', 'pin', or ''
   var selectedItem_ = null;
   var selectedItemPics_ = null;
   var selectedItemProperties_ = null;

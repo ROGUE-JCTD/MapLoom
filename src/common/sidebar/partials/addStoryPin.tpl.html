@@ -19,15 +19,14 @@
         <label for="storyPinContent">StoryPin Content</label>
         <textarea class="form-control" id="storyPinContent" ng-model="pin.content"></textarea>
         <br>
-        <button class="btn btn-default btn-block" id="linkMedia">Link Media...</button>
+        <textarea class="form-control" id="linkMedia" ng-model="pin.media" placeholder="Paste media embed here..."></textarea>
     </div>
 </div>
 
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinLocation">Pin Location</label>
-        <small><p>Drop pin on the map to set pin location.</p></small>
-        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(pin)">Save Pin Location</button>
+        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(pin)">Add StoryPin to the Map</button>
     </div>
 </div>
 

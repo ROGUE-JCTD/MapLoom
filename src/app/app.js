@@ -87,6 +87,14 @@
           $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
         };
 
+        $scope.removeStoryBox = function(box) {
+          boxService.removeBox(box, $scope.active_menu_chapter.id).then(function(removedID) {
+            if (removedID !== null) {
+              $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+            }
+          });
+        };
+
         $scope.addStoryPin = function(pin) {
           var clone = angular.copy(pin);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});

@@ -6,6 +6,8 @@
   //var pulldownService_ = null;
   var q_ = null;
   var httpService_ = null;
+  var dialogService_ = null;
+  var translate_ = null;
   var Box = function(data) {
     ol.Feature.call(this, data);
     this.start_time = getTime(this.start_time);
@@ -32,6 +34,8 @@
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
+      dialogService_ = dialogService;
+      translate_ = $translate;
       //pulldownService_ = pulldownService;
       q_ = $q;
 
@@ -82,13 +86,24 @@
 
     this.removeBox = function(storyBox, chapter_index) {
 
-      for (var i = 0; i < boxes_[chapter_index].length; i++) {
-        if (storyBox._id == boxes_[chapter_index][i]._id) {
-          boxes_[chapter_index].splice(i, 1);
-          break;
+      var response = dialogService_.warn(translate_.instant('remove_box'), translate_.instant('sure_remove_box'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            for (var i = 0; i < boxes_[chapter_index].length; i++) {
+              if (storyBox._id == boxes_[chapter_index][i]._id) {
+                boxes_[chapter_index].splice(i, 1);
+                rootScope_.$broadcast('box-removed', chapter_index);
+                toastr.success('Storybox has been removed', 'Delete Storybox');
+                return storyBox.id;
+              }
+            }
+            break;
+          case 1:
+            return null;
         }
-      }
-
+      });
+      return response;
     };
 
     this.updateBox = function(box, chapter_index) {

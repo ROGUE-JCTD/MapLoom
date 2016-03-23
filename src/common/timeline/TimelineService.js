@@ -130,7 +130,7 @@
       });
 
       // when a box is removed, reinitialize the service.
-      $rootScope.$on('boxRemoved', function(event, chapter_index) {
+      $rootScope.$on('box-removed', function(event, chapter_index) {
         console.log('----[ timelineService, box removed. initializing');
         boxes_ = boxService_.getBoxes(chapter_index);
         service_.initialize();
