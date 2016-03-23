@@ -146,7 +146,7 @@
     // attributeName value will be set to the result
     attributeValuePrefix: 'TestModule',
 
-    // if teh geometry attribute type is not geom, it can be set here. for example, 'the_geom'
+    // if the geometry attribute type is not geom, it can be set here. for example, 'the_geom'
     geomAttributeName: 'geom'
   };
 

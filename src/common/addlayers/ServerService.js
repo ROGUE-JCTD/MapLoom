@@ -236,7 +236,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addServer = function(serverInfo, loaded) {
       var deferredResponse = q_.defer();
-
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
       var server = {
@@ -530,33 +529,72 @@ var SERVER_SERVICE_USE_PROXY = true;
           server.layersConfig = [
             {Title: 'Loading...', Name: 'null'}
           ];
-          deferredResponse.resolve(server);
 
+          //NOTE: server.sourceParams is only undefined when the server is being added via the add server dialog. This is because
+          //the user will have entered the 'get' params as part of the URL in one long string. In this case the params are parsed
+          //out following the next comment block.
           var json_parms = {
-            url: server.url,
+            url: goog.isDefAndNotNull(server.sourceParams) ? server.url + '?' + server.sourceParams : server.url,
             crossOrigin: true
           };
 
-          //in order to populate the layer list, (once connected to the server) we need override the TileJSON class from openlayers.
-          //the payload that comes back into code, the JSON, is stripped of the name attribute. hence, we overload the handler
-          //to intercept the full JSON and keep track of the name for the layer list.
-          var TileJSONClass = ol.source.TileJSON;
+          //change the url on both server and server.config to truncate the request parameters (we'll store the params in sourceParams below),
+          //urls are only allowed 200 chars max in the database when serialization occurs. sourceParams on the other hand
+          //is serialized as a straight-up text object.
+          if (!goog.isDefAndNotNull(server.sourceParams)) {
+            var splitURL = server.url.split('?');
+            var urlSansParameters = splitURL[0];
+            var urlParams = '';
+            if (splitURL.length > 1) {
+              urlParams = splitURL[1];
+            }
+            server.config.url = urlSansParameters;
+            server.config.sourceParams = urlParams;
+            server.url = urlSansParameters;
+          }
 
-          //store the original handler in a dynamically added member function 'responseHandler' so
-          //we can call it later on since we are altering the prototype (original) in the line after
-          TileJSONClass.prototype.responseHandler = ol.source.TileJSON.prototype.handleTileJSONResponse;
-          TileJSONClass.prototype.handleTileJSONResponse = function(tileJSON) {
-            server.layersConfig[0].Title = tileJSON.name;
-            server.layersConfig[0].Name = tileJSON.id;
-            server.layersConfig[0].sourceParams = {layer: tileJSON.id};
-            this.responseHandler(tileJSON);
-          };
+          //In order to populate the layer list, (once connected to the server) we need to override the TileJSON class from openlayers.
+          //The payload that comes back into code, the JSON, is stripped of the name attribute. Hence, we overload the handler
+          //to intercept the full JSON and keep track of the name for the layer list etc.
+          var TileJSONClass = {};
+          angular.copy(ol.source.TileJSON.prototype, TileJSONClass);
 
-          //using bind so 'this' in the handler above points to the TileJSON class object and not something else
-          TileJSONClass.prototype.handleTileJSONResponse.bind(TileJSONClass);
+          //HACK: We need to know if there is an xhr error (Currently TileJSON provides no feedback if there is).
+          //This is slightly unsafe if another xhr goes out and returns during this one
+          //because the callback will be removed before it gets a chance to execute here.
+          addXMLRequestCallback(function(xhr) {
+            xhr.onerror = function() {
+              deferredResponse.reject(server);
+            };
+            XMLHttpRequest.callbacks.length = 0;
+          });
 
           //this internally fires off the 'get' call
-          var jsontile_source = new TileJSONClass(json_parms);
+          var jsontile_source = new TileJSONClass.constructor(json_parms);
+
+          //copy and override the handler functions that are 'inherited' from ol.source.TileJSON
+          //this is how the full json returns/errors are intercepted
+          if (!goog.isDefAndNotNull(jsontile_source.responseHandler)) {
+            jsontile_source.responseHandler = jsontile_source.handleTileJSONResponse;
+          }
+
+          jsontile_source.handleTileJSONResponse = function(tileJSON) {
+            server.layersConfig[0].Title = tileJSON.name;
+            server.layersConfig[0].Name = tileJSON.id;
+            server.layersConfig[0].sourceParams = {urlArgs: urlParams, layer: tileJSON.id};
+            server.layersConfig[0].bounds = tileJSON.bounds;
+            this.responseHandler(tileJSON);
+            deferredResponse.resolve(server);
+          };
+
+          if (!goog.isDefAndNotNull(jsontile_source.errorResponseHandler)) {
+            jsontile_source.errorResponseHandler = jsontile_source.handleTileJSONError;
+          }
+
+          jsontile_source.handleTileJSONError = function() {
+            this.errorResponseHandler();
+            deferredResponse.reject(server);
+          };
 
           //stash the returned source in the layersConfig so MapService.js can instantiate the tile later on
           server.layersConfig[0].TileJSONSource = jsontile_source;
@@ -628,3 +666,31 @@ var SERVER_SERVICE_USE_PROXY = true;
 
   });
 }());
+
+function addXMLRequestCallback(callback) {
+  var oldSend, i;
+  if (XMLHttpRequest.callbacks) {
+    // we've already overridden send() so just add the callback
+    XMLHttpRequest.callbacks.push(callback);
+  } else {
+    // create a callback queue
+    XMLHttpRequest.callbacks = [callback];
+    // store the native send()
+    oldSend = XMLHttpRequest.prototype.send;
+    // override the native send()
+    XMLHttpRequest.prototype.send = function() {
+      // process the callback queue
+      // the xhr instance is passed into each callback but seems pretty useless
+      // you can't tell what its destination is or call abort() without an error
+      // so only really good for logging that a request has happened
+      // I could be wrong, I hope so...
+      // EDIT: I suppose you could override the onreadystatechange handler though
+      for (i = 0; i < XMLHttpRequest.callbacks.length; i++) {
+        XMLHttpRequest.callbacks[i](this);
+      }
+      // call the native send()
+      oldSend.apply(this, arguments);
+    };
+  }
+}
+

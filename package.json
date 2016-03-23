@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git@github.com:ROGUE-JCTD/MapLoom.git"
   },
+  "scripts": {
+    "test": "grunt karma"
+  },
   "dependencies": {},
   "devDependencies": {
     "closure-linter-wrapper": "~0.2.8",
