@@ -313,7 +313,7 @@
 
       return deferredResponse.promise;
 
-      function _handleNonVectorLayer() {
+      function _handleNonVectorFeature() {
         service_.zoomToLayerExtent(layer);
         deferredResponse.resolve();
       }
@@ -1254,9 +1254,6 @@
         target: 'map',
         view: new ol.View(service_.getMapViewParams())
       });
-
-      console.log('!!!!!!!!!!PROJECTION');
-      console.log(map.getView().getProjection());
 
       map.on('dragend', function() {
         if (dragZoomActive === false) {

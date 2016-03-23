@@ -240,9 +240,6 @@
               scope.authorsShown = false;
             });
 
-            //dja - made some pretty significant changes to undo that still need to be cleaned up.
-            //test it against a feature that will fail
-            //a variable isnt getting passed correctly somewhere
             var undo = function() {
               var branch = featureDiffService.layer.get('metadata').branchName;
               var layerName = featureDiffService.layer.get('metadata').uniqueID;
