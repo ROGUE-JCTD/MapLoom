@@ -112,7 +112,6 @@
         $scope.active_menu_chapter = null;
         $scope.prev_menu_section = null;
         $scope.menuSection = 'mainMenu';
-        $scope.storyLayers = storyService.getLayers();
 
         $scope.updateMenuSection = function(updateMenuSection) {
           if (updateMenuSection == 'mainMenuHidden') {
