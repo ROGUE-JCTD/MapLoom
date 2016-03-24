@@ -522,7 +522,7 @@
       var layers = this.getLayers(true, true);
       for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
         var layer = layers[iLayer];
-        if (!goog.isDefAndNotNull(layer.get('metadata').config) || !goog.isDef(layer.get('metadata').config.group)) {
+        if (layer.get('metadata').hasOwnProperty('config') && !goog.isDef(layer.get('metadata').config.group)) {
           layers.splice(iLayer, 1);
         }
       }
