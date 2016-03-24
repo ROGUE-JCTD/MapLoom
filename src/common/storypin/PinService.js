@@ -7,8 +7,8 @@
   var httpService_ = null;
   //var exclusiveModeService_ = null;
   //var mapService_ = null;
-  //var translate_ = null;
-  //var dialogService_ = null;
+  var translate_ = null;
+  var dialogService_ = null;
   var Pin = function(data) {
     var copyData = angular.copy(data);
     delete data.geometry;
@@ -36,10 +36,12 @@
   });
 
   module.provider('pinService', function() {
-    this.$get = function($rootScope, $http) {
+    this.$get = function($rootScope, $http, dialogService, $translate) {
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
+      dialogService_ = dialogService;
+      translate_ = $translate;
 
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Pin Service: chapter-added');
@@ -87,13 +89,24 @@
     };
 
     this.removePin = function(storyPin, chapter_index) {
-
-      for (var i = 0; i < pins_[chapter_index].length; i++) {
-        if (storyPin._id == pins_[chapter_index][i]._id) {
-          pins_[chapter_index].splice(i, 1);
-          break;
+      var response = dialogService_.warn(translate_.instant('remove_pin'), translate_.instant('sure_remove_pin'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            for (var i = 0; i < pins_[chapter_index].length; i++) {
+              if (storyPin._id == pins_[chapter_index][i]._id) {
+                pins_[chapter_index].splice(i, 1);
+                rootScope_.$broadcast('pin-removed', chapter_index);
+                toastr.success('StoryPin has been removed', 'Delete StoryPin');
+                return storyPin.id;
+              }
+            }
+            break;
+          case 1:
+            return null;
         }
-      }
+      });
+      return response;
 
     };
 
