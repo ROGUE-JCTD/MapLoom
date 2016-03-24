@@ -5,14 +5,18 @@ describe('MapService', function() {
   var q;
   var defer;
   var rootScope;
+  var httpBackend;
+  var dialogService;
 
   //include the whole application to initialize all services and modules
   beforeEach(module('MapLoom'));
 
-  beforeEach(inject(function(_mapService_, _serverService_, _configService_, $q, $rootScope) {
+  beforeEach(inject(function(_mapService_, _serverService_, _configService_,_dialogService_, $httpBackend, $q, $rootScope) {
     mapService = _mapService_;
     serverService = _serverService_;
     configService = _configService_;
+    dialogService = _dialogService_
+    httpBackend = $httpBackend;
     q = $q;
     rootScope = $rootScope;
   }));
@@ -55,6 +59,65 @@ describe('MapService', function() {
     it('should return a valid ol.Map object', function() {
       expect(map).not.toBe(null);
       expect(map).toBeDefined();
+    });
+  });
+
+  describe('save', function() {
+
+    beforeEach(function() {
+      spyOn(mapService, 'updateMap');
+      spyOn(dialogService, 'error');
+    });
+
+    describe('(true)', function() {
+      it('should set the map id to null if saving a copy i.e. function parameter is set to true', function () {
+        mapService.save(true);
+        expect(mapService.id).toBe(null);
+      });
+
+      it('$http should call POST and upon success updateMap should be called', function () {
+        mapService.save(true);
+        httpBackend.when('POST').respond({'status': 200});
+        httpBackend.flush();
+        expect(mapService.updateMap).toHaveBeenCalled();
+        httpBackend.expectPOST();
+      });
+
+      it('$http should call POST and upon failure display a dialog error', function () {
+        mapService.save(true);
+        httpBackend.when('POST').respond(401, '');
+        httpBackend.flush();
+        expect(mapService.updateMap).not.toHaveBeenCalled();
+        expect(dialogService.error).toHaveBeenCalled();
+        httpBackend.expectPOST();
+      });
+    });
+
+    describe('()', function() {
+      it('should NOT alter the map ID if just a regular save i.e. function parameter is set to false', function() {
+        mapService.save();
+        expect(mapService.id).toBeDefined();
+        expect(mapService.id).not.toBe(null);
+      });
+
+      it('$http should call PUT and upon success updateMap should be called', function() {
+        mapService.id = 1;
+        mapService.save();
+        httpBackend.when('PUT').respond({'status': 200});
+        httpBackend.flush();
+        expect(mapService.updateMap).toHaveBeenCalled();
+        httpBackend.expectPUT();
+      });
+
+      it('$http should call PUT and upon failure display a dialog error', function() {
+        mapService.id = 1;
+        mapService.save();
+        httpBackend.when('PUT').respond(401, '');
+        httpBackend.flush();
+        expect(mapService.updateMap).not.toHaveBeenCalled();
+        expect(dialogService.error).toHaveBeenCalled();
+        httpBackend.expectPUT();
+      });
     });
   });
 
