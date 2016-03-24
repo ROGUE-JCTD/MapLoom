@@ -14,7 +14,7 @@ describe('ConfigService', function() {
   beforeEach(inject(function(_serverService_, _configService_,_dialogService_, $httpBackend, $q, $rootScope, $window) {
     serverService = _serverService_;
     configService = _configService_;
-    dialogService = _dialogService_
+    dialogService = _dialogService_;
     httpBackend = $httpBackend;
     q = $q;
     rootScope = $rootScope;
@@ -42,5 +42,5 @@ describe('ConfigService', function() {
       var server = configService.getServerByURL(configService.configuration.sources[0].url);
       expect(server).toBe(configService.serverList[0]);
     });
-  })
+  });
 });

@@ -15,7 +15,7 @@ describe('MapService', function() {
     mapService = _mapService_;
     serverService = _serverService_;
     configService = _configService_;
-    dialogService = _dialogService_
+    dialogService = _dialogService_;
     httpBackend = $httpBackend;
     q = $q;
     rootScope = $rootScope;
