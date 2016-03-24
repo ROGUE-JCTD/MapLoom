@@ -56,6 +56,13 @@ describe('MapService', function() {
       expect(map.values_.view).toBeDefined();
     });
 
+    it('should have the same CRS as the config service', function() {
+      var actualProjection = map.getView().getProjection().code_; 
+      var expectedProjection = configService.configuration.map.projection;  
+
+      expect(expectedProjection).toBe(actualProjection);
+    });
+
     it('should return a valid ol.Map object', function() {
       expect(map).not.toBe(null);
       expect(map).toBeDefined();
@@ -299,4 +306,3 @@ describe('MapService', function() {
     });
   });
 });
-
