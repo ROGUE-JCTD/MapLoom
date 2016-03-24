@@ -17,14 +17,14 @@ module.exports = function ( karma ) {
       'src/assets/**/*.js'
     ],
     frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher' ],
+    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-spec-reporter' ],
     preprocessors: {
     },
 
     /**
      * How to report, by default.
      */
-    reporters: 'dots',
+    reporters: 'spec',
 
     /**
      * On which port should the browser connect, on which port is the test runner
@@ -57,4 +57,3 @@ module.exports = function ( karma ) {
     ]
   });
 };
-
