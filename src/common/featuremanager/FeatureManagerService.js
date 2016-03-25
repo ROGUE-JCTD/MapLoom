@@ -143,14 +143,16 @@
       // this is used when code calls show without the user clicking on the map.
       if (featureInfoPerLayer_.length === 0) {
 
-        if (type === 'feature') {
+        if (type === 'pin') {
+          featureInfoPerLayer_.push({features: [item], layer: selectedLayer_});
+        } else if (type === 'feature') {
           featureInfoPerLayer_.push({features: [item], layer: selectedLayer_});
         } else if (type === 'layer') {
           featureInfoPerLayer_.push(item);
         } else if (type === 'layers') {
           featureInfoPerLayer_ = item;
         } else {
-          console.log('====[ Error: expected layers, layer, or feature. got: ', item);
+          console.log('====[ Error: expected pins, layers, layer, or feature. got: ', item);
           throw ({
             name: 'featureInfoBox',
             level: 'High',
@@ -162,12 +164,15 @@
         }
       }
 
-      if (type === 'feature') {
+      if (type === 'pin') {
+        state_ = 'pin';
+        selectedItem_ = item;
+      } else if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
       } else if (type === 'layer') {
         if (item.features.length === 1) {
-          state_ = 'feature';
+          state_ = getItemType(item.features[0]);
           selectedItem_ = item.features[0];
         } else {
           state_ = 'layer';
@@ -176,7 +181,7 @@
       } else if (type === 'layers') {
         if (item.length === 1) {
           if (item[0].features.length === 1) {
-            state_ = 'feature';
+            state_ = getItemType(item[0].features[0]);
             selectedItem_ = item[0].features[0];
           } else {
             state_ = 'layer';
@@ -243,7 +248,7 @@
 
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
-        if (getItemType(selectedItem_) === 'feature') {
+        if (getItemType(selectedItem_) === 'feature' || getItemType(selectedItem_) === 'pin') {
           selectedLayer_ = this.getSelectedItemLayer().layer;
           // note that another service may make a fake feature selection on a layer not in mapservice.
           // checking to make sure it had a geometry before making assumptions about edit layer etc
@@ -305,6 +310,12 @@
           }
         }
 
+        if (getItemType(selectedItem_) === 'pin') {
+          props['title'] = selectedItem_.title;
+          props['content'] = selectedItem_.content;
+          props['media'] = selectedItem_.media;
+
+        }
         selectedItemProperties_ = props;
         //console.log('---- selectedItemProperties_: ', selectedItemProperties_);
       }
@@ -431,6 +442,7 @@
           }), geometryType);
       exclusiveModeService_.addMode = true;
       selectedItemProperties_ = pin;
+      selectedLayer_ = mapService_.pinLayer;
       selectedItem_ = {geometry: {type: geometryType}, geometry_name: geometryName, properties: {}};
       mapService_.map.addLayer(mapService_.editLayer);
       if (geometryType.toLowerCase().search('geometry') > -1) {
@@ -968,7 +980,9 @@
     var type = '';
 
     if (goog.isDefAndNotNull(item)) {
-      if (item.properties) {
+      if (item.content) {
+        type = 'pin';
+      } else if (item.properties) {
         type = 'feature';
       } else if (item.features) {
         type = 'layer';
