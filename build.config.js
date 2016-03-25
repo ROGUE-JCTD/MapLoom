@@ -94,6 +94,8 @@ module.exports = {
       'vendor/story-tools/dist/story-tools-edit-tpls.js',
       'vendor/story-tools/dist/ows.js',
       'vendor/toastr/toastr.js',
+      'vendor/hopscotch/dist/js/hopscotch.min.js',
+
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -124,6 +126,8 @@ module.exports = {
       'vendor/font-awesome/css/font-awesome.min.css',
 
       'vendor/toastr/toastr.css',
+
+      'vendor/hopscotch/dist/css/hopscotch.min.css',
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

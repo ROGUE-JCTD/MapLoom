@@ -1,0 +1,58 @@
+{% block extra_head %}
+    <link href="{{ STATIC_URL }}mapstory/css/tour.css" rel="stylesheet" />
+{% endblock %}
+
+{% load mapstory_tags %}
+
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.0/js/hopscotch.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}mapstory/js/editor_tour.js"></script>
+<script src="{{ STATIC_URL }}vendor/jquery.cookie/jquery.cookie.js"></script>
+<script type="text/javascript">
+    $("#start-tour").on('click', function() {
+       $("#tour-screen").hide();
+       hopscotch.startTour(editor_tour);
+    });
+    $("#start-composing").on('click', function() {
+       $("#tour-screen").hide();
+       $.cookie('do_not_show_tour', 'do_not_show', { expires: 365 });
+    });
+</script>
+<div id="tour-screen">
+
+    <div id="tour-content" style="padding-bottom:20px">
+        <div class="container">
+        <div class="row" id="tour-header">
+            <div class="col-sm-12">
+                <h1 class="text-center" style="padding-bottom: 10px"><strong>Welcome to the MapStory Composer</strong></h1>
+                <h3>Share your story of change in the world in four steps:</h3>
+            </div>
+        </div>
+         <div class="row">
+            <div class="col-sm-3">
+                <img class="hopscotch-icon" src="{% remote_content 'static_img/StoryLayers.png' %}">
+                <h4><strong>First</strong></h4> Select and style the StoryLayers you want to use in your Mapstory.
+            </div>
+             <div class="col-sm-3">
+                <img class="hopscotch-icon" src="{% remote_content 'static_img/StoryBoxes.png' %}">
+                <h4><strong>Second</strong></h4> Break your Mapstory up into different sections by creating StoryBoxes.
+            </div>
+             <div class="col-sm-3">
+                <img class="hopscotch-icon" src="{% remote_content 'static_img/StoryPins.png' %}">
+                <h4><strong>Third</strong></h4>Give your Mapstory meaning and context by adding StoryPins with text, audio or video.
+            </div>
+             <div class="col-sm-3">
+                <img class="hopscotch-icon" src="{% remote_content 'static_img/StoryPreview.png' %}">
+                <h4><strong>Finally</strong></h4>Preview your mapstory before you publish it for a global audience to enjoy!
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-6">
+                <a href="#" id="start-tour"><h3>Take a Tour</h3></a>
+            </div>
+            <div class="col-sm-6">
+                <a href="#" id="start-composing"><h3>Compose Mapstory</h3></a>
+            </div>
+        </div>
+    </div>
+</div>
