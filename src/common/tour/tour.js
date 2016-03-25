@@ -1,45 +1,148 @@
 var tour = {
   id: 'composer_tour',
+  showNextButton: false,
+  nextOnTargetClick: true,
   steps: [
     {
       target: 'mainMenu',
-      placement: 'center',
-      title: 'Composer Sidebar',
-      content: 'This is the composer sidebar.'
+      placement: 'right',
+      showNextButton: true,
+      content: '1. This is the composer sidebar.'
     },
     {
-      target: 'layer-manager-panel-basemap',
-      placement: 'bottom',
-      title: 'Choose your Basemap...',
-      content: 'Decide which basemap will form the background of your mapstory. MapStory.org supports a rang of open source basemaps from OpenStreetMap, MapBox, and others.'
+      target: 'chaptersList',
+      placement: 'right',
+      content: '2. Edit Chapter 1 by clicking here.'
     },
     {
-      target: 'tl-nav-style',
-      placement: 'bottom',
-      title: 'Style your StoryLayers...',
-      content: 'Once you have your StoryLayers selected, give them styles so that your viewer takes the meaning from your mapstory that you\'re hoping to convey.'
+      target: 'chapterInfoButton',
+      placement: 'right',
+      title: 'Chapter Info',
+      content: '3. Update chapter title and summary here.'
     },
     {
-      target: 'tl-nav-boxes',
-      placement: 'bottom',
-      title: 'Add StoryBoxes...',
-      content: 'Creating StoryBoxes lets you focus your mapstory at different zoom levels during different periods of time.'
+      target: 'chapterTitle',
+      placement: 'right',
+      content: '4. Update the form.  When finished, click back.'
     },
     {
-      target: 'tl-nav-pins',
-      placement: 'bottom',
-      title: 'Adding StoryPins...',
-      content: 'StoryPins are narrative elements in your story that are separate from your StoryLayer data. For example, you might want to add text, video, or images at a specific point to give your viewer more information.'
+      target: 'storyLayersButton',
+      placement: 'right',
+      content: '5. Now let\'s add your StoryLayers. Click here.'
     },
     {
-      target: 'tl-nav-preview',
-      placement: 'bottom',
-      title: 'Preview...',
-      content: 'Before you publish your mapstory for the world to see, preview it to make sure its exactly how you want it to be!'
+      target: 'addNewStoryLayerButton',
+      placement: 'right',
+      content: '6. Add a new StoryLayer by clicking here.'
+    },
+    {
+      target: 'exploreStoryLayers',
+      placement: 'right',
+      content: '7. This is the StoryLayer Explorer.  You can search using keywords, use your own uploaded StoryLayers or your favorited content.  Choose one StoryLayer and click Use.'
+    },
+    {
+      target: 'storyLayersList',
+      placement: 'right',
+      content: '8. Now let\'s edit the StoryLayer you just added.  Click on the title of the StoryLayer.'
+    },
+    {
+      target: 'editStyleTab',
+      placement: 'right',
+      content: '9. The Style tab lets you edit the appearance of your features.  Change the settings and see your changes on the map panel to the right.  When finished, click the Edit tab.'
+    },
+    {
+      target: 'editStoryLayerTab',
+      placement: 'right',
+      content: '10. The Edit tab lets you add, update and delete features on your map.  When finished exploring, click the Infobox tab'
+    },
+    {
+      target: 'editInfoboxTab',
+      placement: 'right',
+      content: '11. The Infobox tab lets you mask the StoryLayer title and your attribute names.  When finished updating your titles, hit Save and Back'
+    },
+    {
+      target: 'storyBoxesButton',
+      placement: 'right',
+      content: '12. Now let\'s add StoryBoxes.  Click here.'
+    },
+    {
+      target: 'addNewStoryBoxButton',
+      placement: 'right',
+      content: '13. Click Add a New StoryBox'
+    },
+    {
+      target: 'storyBoxTitle',
+      placement: 'right',
+      showNextButton: true,
+      content: '14. Update your StoryBox title here.'
+    },
+    {
+      target: 'updateMapBoundsButton',
+      placement: 'right',
+      showNextButton: true,
+      content: '15. To update your map extents, pan and zoom around the basemap and when finished, click here.'
+    },
+    {
+      target: 'startTime',
+      placement: 'right',
+      content: '16. Update the StoryBox time extent here.  When finished, click Save StoryBox.'
+    },
+    {
+      target: 'storyBoxList',
+      placement: 'right',
+      content: '17. Your saved StoryBox should appear here.  Now let\'s add StoryPins.  Click Back.'
+    },
+    {
+      target: 'storyPinsButton',
+      placement: 'right',
+      content: '18. Click StoryPins'
+    },
+    {
+      target: 'addNewStoryPinButton',
+      placement: 'right',
+      content: '19. Click Add a New StoryPin'
+    },
+    {
+      target: 'storyPinTitle',
+      placement: 'right',
+      showNextButton: true,
+      content: '20. Update the StoryPin title and content here.'
+    },
+    {
+      target: 'storyPinContent',
+      placement: 'right',
+      showNextButton: true,
+      content: '21. Add images and videos by pasting the embed code here.'
+    },
+    {
+      target: 'storyPinLocation',
+      placement: 'right',
+      showNextButton: true,
+      content: '22. Drop the pin on the map by clicking here first'
+    },
+    {
+      target: 'storyPinStartTime',
+      placement: 'right',
+      content: '23. Update the time information here.  When finished, click Save, then click Back.'
+    },
+    {
+      target: 'storyPinsList',
+      placement: 'right',
+      content: '24. Your saved StoryPin should appear here.  You\'re almost done.  Click Back.'
+    },
+    {
+      target: 'chapterInfoButton',
+      placement: 'right',
+      content: '25. Now you have StoryLayers, StoryBoxes, and StoryPins for your first chapter.  Click Back.'
+    },
+    {
+      target: 'addNewChapterButton',
+      placement: 'right',
+      content: '26. If you want to add another chapter, just click Add a New Chapter.  Now you\'re all set.  Good luck!'
     }
+
   ]
 };
 
 // Start the tour!
 hopscotch.startTour(tour);
-console.log('-----THE TOUR IS HERE------');

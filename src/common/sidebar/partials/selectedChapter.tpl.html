@@ -5,14 +5,14 @@
     <i class="fa fa-angle-right"></i>
     <a href="#" ng-click="updateMenuSection('mainMenu')">Back to Chapters List</a>
 </div>
-<div class="menuItem">
-    <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id)">
+<div class="menuItem" id="'chapterInfoButton">
+    <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id)" onclick="hopscotch.nextStep()">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-info-circle"></i>
         Chapter Info
     </a>
 </div>
-<div class="menuItem">
+<div class="menuItem" id="storyLayersButton">
     <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-clone"></i>
