@@ -35,7 +35,7 @@
             <span ng-bind="featureManagerService.getSelectedItemProperties()['title']"></span>
             <div ng-if="featureManagerService.getSelectedItemProperties()['media']">
                 <br>
-                <span ng-bind="featureManagerService.getSelectedItemProperties()['media']"></span>
+                <img ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}" />
             </div>
             <br>
             <span ng-bind="featureManagerService.getSelectedItemProperties()['content']"></span>
