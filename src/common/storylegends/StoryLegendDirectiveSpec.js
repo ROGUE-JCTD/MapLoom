@@ -40,7 +40,7 @@ describe('StoryLegendDirective', function() {
     scope.$digest();
   }));
 
-  it('the layers have an id', inject(function() {
+  it('the layer has an id', inject(function() {
     expect(compiledElement.isolateScope().layerAlias).toEqual(jasmine.objectContaining({
       id: 1
     }));
