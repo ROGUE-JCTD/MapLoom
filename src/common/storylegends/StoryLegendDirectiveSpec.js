@@ -40,11 +40,6 @@ describe('StoryLegendDirective', function() {
     scope.$digest();
   }));
 
-  it('shows one layer', function() {
-    scope.$digest();
-    var layers = element.find('div label');
-    expect(layers.length).toBe(1);
-  });
   it('the layers have an id', inject(function() {
     expect(compiledElement.isolateScope().layerAlias).toEqual(jasmine.objectContaining({
       id: 1
