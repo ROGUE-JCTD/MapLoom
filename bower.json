@@ -34,5 +34,8 @@
     "angular-bootstrap-colorpicker": "~3.0.8",
     "toastr": "^2.1.2",
     "hopscotch": "^0.2.5"
+  },
+  "resolutions": {
+    "angular": "1.2.21"
   }
 }

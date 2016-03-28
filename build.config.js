@@ -77,6 +77,7 @@ module.exports = {
       'vendor/x2js/xml2json.min.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/angular-cookies/angular-cookies.js',
+      'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
       'vendor/proj4js/proj4.js',

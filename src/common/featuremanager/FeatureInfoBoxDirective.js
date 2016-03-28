@@ -1,9 +1,9 @@
 
 (function() {
-  var module = angular.module('loom_feature_info_box_directive', []);
+  var module = angular.module('loom_feature_info_box_directive', ['ngSanitize']);
 
   module.directive('loomFeatureInfoBox',
-      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService) {
+      function($translate, $http, $sce, featureManagerService, mapService, historyService, dialogService, tableViewService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -15,6 +15,7 @@
             scope.mapService = mapService;
             scope.loadingHistory = false;
             scope.deletingFeature = false;
+            scope.linkType = 'None';
 
             scope.$on('feature-info-click', function() {
               scope.$apply(function() {
@@ -27,6 +28,29 @@
                 return false;
               }
               return true;
+            };
+
+            scope.sanitizeEmbed = function(html) {
+              return $sce.trustAsHtml(html);
+            };
+
+            scope.setLinkType = function(type) {
+              scope.linkType = type;
+            };
+            scope.determineLinkType = function(url) {
+              $http.head(url).success(function(data, status, headers, config) {
+                var content = headers();
+                var type = content['content-type'];
+                if (type.startsWith('image')) {
+                  scope.setLinkType('image');
+                } else if (type.startsWith('video')) {
+                  scope.setLinkType('video');
+                } else if (type.startsWith('audio')) {
+                  scope.setLinkType('audio');
+                } else {
+                  scope.setLinkType('None');
+                }
+              });
             };
 
             scope.isShowingAttributes = function() {
