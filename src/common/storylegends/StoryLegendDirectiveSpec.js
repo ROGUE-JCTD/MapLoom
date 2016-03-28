@@ -63,17 +63,58 @@ describe('StoryLegendDirective', function() {
       compiledElement.isolateScope().saveMasking();
       expect(compiledElement.isolateScope().layer.get('metadata').config.titleAlias).toBe('Test');
     });
+    it('saves the masking to the configration', function() {
+      compiledElement.isolateScope().attributes = [{ name: 'Ocean Beach', alias: 'O.B.', show: true}];
+      compiledElement.isolateScope().saveMasking();
+      expect(compiledElement.isolateScope().layer.get('metadata').config.maskings['Ocean Beach'].alias).toBe('O.B.');
+    });
   });
   describe('attributes', function() {
-    it('the layers have an id', inject(function() {
-      var activeLayer = createLayer(1, 'Ocean Beach', 'O.B.');
+    var activeLayer;
+    beforeEach(function() {
+      activeLayer = createLayer(1, 'Ocean Beach', 'O.B.');
       var metadata = activeLayer.get('metadata');
       metadata.schema = [ createAttribute('Ocean', 'water')];
       activeLayer.set('metadata', metadata);
       scope.activeLayer = activeLayer;
       scope.$digest();
+    });
+    describe('by default', function() {
+      it('have a name', inject(function() {
+        expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
+          name: 'Ocean'
+        }));
+      }));
+      it('are shown', inject(function() {
+        expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
+          show: true
+        }));
+      }));
+      it('have no alias', inject(function() {
+        expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
+          alias: ''
+        }));
+      }));
+    });
+  });
+  describe('retrieve from config', function() {
+    beforeEach(function() {
+      activeLayer = createLayer(1, 'Ocean Beach', 'O.B.');
+      var metadata = activeLayer.get('metadata');
+      metadata.schema = [ createAttribute('Ocean', 'water')];
+      metadata.config.maskings = { 'Ocean': { name: 'Ocean', alias: 'O.B.', show: false } };
+      activeLayer.set('metadata', metadata);
+      scope.activeLayer = activeLayer;
+      scope.$digest();
+    });
+    it('have the alias', inject(function() {
       expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
-        id: 1
+        alias: 'O.B.'
+      }));
+    }));
+    it('shown as expected', inject(function() {
+      expect(compiledElement.isolateScope().attributes[0]).toEqual(jasmine.objectContaining({
+        show: false
       }));
     }));
   });
