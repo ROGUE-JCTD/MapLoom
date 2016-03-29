@@ -404,11 +404,55 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
+    this.getLayersConfigByName = function(server_name) {
+      var server = service_.getServerByName(server_name);
+      if (goog.isDefAndNotNull(server)) {
+        return server.layersConfig;
+      }
+    };
+
     this.getLayersConfig = function(serverId) {
       var server = service_.getServerById(serverId);
       if (goog.isDefAndNotNull(server)) {
         return server.layersConfig;
       }
+    };
+
+    this.getFullLayerConfig = function(serverId, layerName) {
+      //Issue WMS request to get full layer config for mapService
+      var result = q_.defer();
+      var layerConfig = null;
+      var server = service_.getServerLocalGeoserver();
+      if (server.id != serverId) {
+        result.resolve(service_.getLayerConfig(serverId, layerName));
+        return result.promise;
+      }
+      var parser = new ol.format.WMSCapabilities();
+      var url = server.url;
+      var namespace = layerName.split(':')[0];
+      var name = layerName.split(':')[1];
+      url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
+      url += '/' + name + '/wms?request=GetCapabilities';
+      console.log('WMS url: ', url);
+      server.populatingLayersConfig = true;
+      var config = {};
+      config.headers = {};
+      if (goog.isDefAndNotNull(server.authentication)) {
+        config.headers['Authorization'] = 'Basic ' + server.authentication;
+      } else {
+        config.headers['Authorization'] = '';
+      }
+      http_.get(url, config).then(function(xhr) {
+        if (xhr.status === 200) {
+          var response = parser.read(xhr.data);
+          if (goog.isDefAndNotNull(response.Capability) && goog.isDefAndNotNull(response.Capability.Layer)) {
+            layerConfig = response.Capability.Layer.Layer[0];
+            result.resolve(layerConfig);
+          }
+        }
+      });
+
+      return result.promise;
     };
 
     this.getLayerConfig = function(serverId, layerName) {
@@ -435,6 +479,148 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       console.log('---- ServerService.getLayerConfig: ', layerConfig);
       return layerConfig;
+    };
+
+    var layerName = function(detailUrl) {
+      if (!detailUrl) { return ''; }
+      return detailUrl.split('/').pop();
+    };
+
+    var thumbnail = function(thumbnailUrl, layerName, serverUrl) {
+      if (thumbnailUrl && thumbnailUrl.indexOf('missing_thumb') !== -1) {
+        return serverUrl + '/reflect?format=application/openlayers&layers=' + layerName + '&width=200';
+      }
+      return thumbnailUrl;
+    };
+
+    var author = function(layerInfo) {
+      if (layerInfo.owner__first_name) {
+        return layerInfo.owner__first_name + ' ' + layerInfo.owner__last_name;
+      }
+      if (layerInfo.owner__username) {
+        return layerInfo.owner__username;
+      }
+      return 'No owner name available';
+    };
+
+    var createSearchLayerObject = function(layerInfo, serverUrl) {
+      return {
+        add: true,
+        Abstract: layerInfo.abstract,
+        Name: layerInfo.typename,
+        Title: layerInfo.title,
+        CRS: layerInfo.srid,
+        thumbnail_url: thumbnail(layerInfo.thumbnail_url, layerName(layerInfo.detail_url), serverUrl),
+        author: author(layerInfo),
+        detail_url: layerInfo.detail_url
+      };
+    };
+
+    var createSearchLayerObjects = function(layerObjects, serverUrl) {
+      var finalConfigs = [];
+      //TODO: Update with handling multiple projections per layer if needed.
+      for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
+        var layerInfo = layerObjects[iLayer];
+        var configTemplate = createSearchLayerObject(layerInfo, serverUrl);
+
+        finalConfigs.push(configTemplate);
+      }
+
+      return finalConfigs;
+    };
+
+    var createAuthorizationConfigForServer = function(server) {
+      var config = {};
+      config.headers = {};
+      if (goog.isDefAndNotNull(server.authentication)) {
+        config.headers['Authorization'] = 'Basic ' + server.authentication;
+      } else {
+        config.headers['Authorization'] = '';
+      }
+      return config;
+    };
+
+    var serverGeoserversearchUrl = function(searchUrl) {
+      pathArray = searchUrl.split('/');
+      protocol = pathArray[0];
+      host = pathArray[2];
+      if (protocol.indexOf(':') !== -1) {
+        return protocol + '//' + host + '/geoserver/wms';
+      }
+      return '/geoserver/wms';
+    };
+
+    var addSearchResults = function(searchUrl, server, layerConfigCallback) {
+      var layers_loaded = false;
+      server.layersConfig = [];
+      server.populatingLayersConfig = true;
+      var config = createAuthorizationConfigForServer(server);
+      console.log('---searchUrl: ', searchUrl);
+      http_.get(searchUrl, config).then(function(xhr) {
+        if (xhr.status === 200) {
+          server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
+          console.log('---- populateLayersConfig.populateLayersConfig server', server);
+          rootScope_.$broadcast('layers-loaded', server.id);
+          layers_loaded = true;
+          server.populatingLayersConfig = false;
+        } else {
+          layers_loaded = false;
+          server.populatingLayersConfig = false;
+        }
+      }, function(xhr) {
+        layers_loaded = false;
+        server.populatingLayersConfig = false;
+      });
+      return layers_loaded;
+    };
+
+    this.reformatLayerConfigs = function(elasticResponse, serverUrl) {
+      return createSearchLayerObjects(elasticResponse.objects, serverUrl);
+    };
+
+    this.reformatConfigForFavorites = function(response, serverUrl) {
+      var formattedResponse = response.objects.map(function(obj) { return obj.content_object; });
+      return createSearchLayerObjects(formattedResponse, serverUrl);
+    };
+
+    this.applyESFilter = function(url, filter_options) {
+      if (filter_options.owner !== null) {
+        url = url + '&owner__username__in=' + configService_.username;
+      }
+      if (filter_options.text !== null) {
+        url = url + '&q=' + filter_options.text;
+      }
+      return url;
+    };
+    var applyFavoritesFilter = function(url, filterOptions) {
+      if (filterOptions.text !== null) {
+        url += '&title__contains=' + filterOptions.text;
+      }
+      return url;
+    };
+
+    this.populateLayersConfigElastic = function(server, filterOptions) {
+      //var searchUrl = 'http://beta.mapstory.org/api/layers/search/?is_published=true&limit=100';
+      var searchUrl = '/api/layers/search/?is_published=true&limit=100';
+      if (filterOptions !== null) {
+        searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+      }
+      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+    };
+
+    this.addSearchResultsForHyper = function(server, filterOptions) {
+      var searchUrl = 'http://52.38.116.143:9200/hypermap/layer/_search?';
+      if (filterOptions !== null) {
+        searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+      }
+      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+    };
+    this.addSearchResultsForFavorites = function(server, filterOptions) {
+      var searchUrl = '/api/favorites/?content_type=42&limit=100';
+      if (filterOptions !== null) {
+        searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
+      }
+      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {
@@ -523,58 +709,14 @@ var SERVER_SERVICE_USE_PROXY = true;
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_wmscsource' ||
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
-          console.log('---- ServerService.Sending GetCapabilities.server: ', server);
+          console.log('---- ServerService.Sending Elastic Search: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
-            // prevent getCapabilities request until ran by the user.
-            if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
-              var parser = new ol.format.WMSCapabilities();
-              var url = server.url;
+            service_.populateLayersConfigElastic(server, null);
+            deferredResponse.resolve(server);
 
-              // If this is a virtual service, use the virtual service url for getCapabilties
-              if (server.isVirtualService === true) {
-                url = server.virtualServiceUrl;
-              }
-
-              var iqm = url.indexOf('?');
-              var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
-
-              server.populatingLayersConfig = true;
-              var config = {};
-              config.headers = {};
-              if (goog.isDefAndNotNull(server.authentication)) {
-                config.headers['Authorization'] = 'Basic ' + server.authentication;
-              } else {
-                config.headers['Authorization'] = '';
-              }
-              // server hasn't been added yet, so specify the auth headers here
-              http_.get(url_getcaps, config).then(function(xhr) {
-                if (xhr.status === 200) {
-                  var response = parser.read(xhr.data);
-                  if (goog.isDefAndNotNull(response.Capability) &&
-                      goog.isDefAndNotNull(response.Capability.Layer)) {
-                    server.layersConfig = response.Capability.Layer.Layer;
-                    console.log('---- populateLayersConfig.populateLayersConfig server', server);
-                    rootScope_.$broadcast('layers-loaded', server.id);
-                    deferredResponse.resolve(server);
-                  } else {
-                    deferredResponse.resolve(server);
-                  }
-                  server.populatingLayersConfig = false;
-                } else {
-                  deferredResponse.resolve(server);
-                  server.populatingLayersConfig = false;
-                }
-              }, function(xhr) {
-                deferredResponse.resolve(server);
-                server.populatingLayersConfig = false;
-              });
-            } else {
-              deferredResponse.resolve(server);
-              server.populatingLayersConfig = false;
-            }
           }
         } else {
           deferredResponse.reject();
