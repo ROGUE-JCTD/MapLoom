@@ -450,12 +450,12 @@
         return newExtent;
       };
 
-      var extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+      var extent900913 = shrinkExtent(layer.getExtent(), 0);
 
       if (goog.isDefAndNotNull(extent900913)) {
         for (var index = 0; index < extent900913.length; index++) {
           if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
-            extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
+            extent900913 = shrinkExtent(layer.getExtent(), 0.001);
             break;
           }
         }
