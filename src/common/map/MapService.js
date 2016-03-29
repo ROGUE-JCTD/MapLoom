@@ -921,7 +921,9 @@
               service_.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
             }
 
-            service_.zoomToExtent(layer.getExtent(), true);
+            if (server.isLocal === true) {
+              service_.zoomToLayerFeatures(layer);
+            }
 
 
             if (goog.isDefAndNotNull(meta.projection)) {
