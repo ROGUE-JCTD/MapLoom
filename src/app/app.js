@@ -169,6 +169,13 @@
           mapService.updateStyle(layer);
         };
 
+        $scope.updateTourStep = function(step) {
+          if (hopscotch.getState()) {
+            hopscotch.showStep(step);
+            hopscotch.refreshBubblePosition();
+          }
+        };
+
         $scope.removeChapter = function() {
           storyService.remove_chapter().then(function(removed_index) {
             if (removed_index !== null) {

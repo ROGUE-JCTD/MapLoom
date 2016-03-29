@@ -17,7 +17,6 @@ var tour = {
     {
       target: 'chapterInfoButton',
       placement: 'right',
-      title: 'Chapter Info',
       content: '3. Update chapter title and summary here.'
     },
     {
@@ -38,7 +37,7 @@ var tour = {
     {
       target: 'exploreStoryLayers',
       placement: 'right',
-      content: '7. This is the StoryLayer Explorer.  You can search using keywords, use your own uploaded StoryLayers or your favorited content.  Choose one StoryLayer and click Use.'
+      content: '7. This is the StoryLayer Explorer.  You can search using keywords, use your own uploaded StoryLayers or your favorite content.  Choose one StoryLayer and click Use.'
     },
     {
       target: 'storyLayersList',
@@ -46,17 +45,17 @@ var tour = {
       content: '8. Now let\'s edit the StoryLayer you just added.  Click on the title of the StoryLayer.'
     },
     {
-      target: 'editStyleTab',
+      target: 'style',
       placement: 'right',
       content: '9. The Style tab lets you edit the appearance of your features.  Change the settings and see your changes on the map panel to the right.  When finished, click the Edit tab.'
     },
     {
-      target: 'editStoryLayerTab',
+      target: 'edit',
       placement: 'right',
       content: '10. The Edit tab lets you add, update and delete features on your map.  When finished exploring, click the Infobox tab'
     },
     {
-      target: 'editInfoboxTab',
+      target: 'infobox',
       placement: 'right',
       content: '11. The Infobox tab lets you mask the StoryLayer title and your attribute names.  When finished updating your titles, hit Save and Back'
     },
@@ -136,13 +135,10 @@ var tour = {
       content: '25. Now you have StoryLayers, StoryBoxes, and StoryPins for your first chapter.  Click Back.'
     },
     {
-      target: 'addNewChapterButton',
+      target: 'addChapter',
       placement: 'right',
       content: '26. If you want to add another chapter, just click Add a New Chapter.  Now you\'re all set.  Good luck!'
     }
 
   ]
 };
-
-// Start the tour!
-hopscotch.startTour(tour);

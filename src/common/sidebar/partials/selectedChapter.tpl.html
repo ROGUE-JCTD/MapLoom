@@ -3,31 +3,31 @@
 <h2 ng-click="">{{ storyService.active_chapter.about.title }}</h2>
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('mainMenu')">Back to Chapters List</a>
+    <a href="#" ng-click="updateMenuSection('mainMenu'); updateTourStep(25)">Back to Chapters List</a>
 </div>
-<div class="menuItem" id="'chapterInfoButton">
-    <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id)" onclick="hopscotch.nextStep()">
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id); updateTourStep(3)" id="chapterInfoButton">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-info-circle"></i>
         Chapter Info
     </a>
 </div>
-<div class="menuItem" id="storyLayersButton">
-    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">
+<div class="menuItem">
+    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep(5)" id="storyLayersButton">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-clone"></i>
         StoryLayers ({{ mapService.getStoryLayers().length }})
     </a>
 </div>
 <div class="menuItem">
-    <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id)">
+    <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id); updateTourStep(12)" id="storyBoxesButton">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-object-group"></i>
         StoryBoxes ({{ boxService.getBoxes(chapter.id).length }})
     </a>
 </div>
 <div class="menuItem">
-    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id); updateTourStep(18)" id="storyPinsButton">
         <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-neuter"></i>
         StoryPins ({{ pinService.getPins(chapter.id).length }})

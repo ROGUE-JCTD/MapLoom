@@ -4,9 +4,9 @@
 <h2>StoryLayers</h2>
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back to Selected Chapter</a>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(11)">Back to Selected Chapter</a>
 </div>
-<a href="#add-layer-dialog" class="menuItem" data-toggle="modal">Add a New StoryLayer...
+<a href="#add-layer-dialog" class="menuItem" data-toggle="modal" id="addNewStoryLayerButton" ng-click="updateTourStep(6)">Add a New StoryLayer...
 </a>
 
 <div id="baseMaps" class="menuItem">
@@ -22,14 +22,14 @@
 
 <div class="loom-arrangeable layer-container" arrangeable-handle="i.fa-navicon"
      arrangeable-item-selector="div.menuItem" arrangeable-callback="reorderLayer"
-     arrangeable-placeholder='<div class="placeholder"></div>'>
+     arrangeable-placeholder='<div class="placeholder"></div>' id="storyLayersList">
     <div ng-repeat="storyLayer in storyLayers = mapService.getStoryLayers()">
         <div class="menuItem">
             <i class="fa fa-navicon"></i>
             <i ng-click="storyService.toggleVisiblity(storyLayer)"
                ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
             <a href="#"
-               ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">
+               ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id); updateTourStep(8)">
                 {{ storyLayer.get('metadata').title }}
             </a>
         </div>

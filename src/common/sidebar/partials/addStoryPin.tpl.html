@@ -26,7 +26,7 @@
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinLocation">Pin Location</label>
-        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(pin)">Add StoryPin to the Map</button>
+        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(pin)" id="storyPinLocation">Add StoryPin to the Map</button>
     </div>
 </div>
 
@@ -34,7 +34,7 @@
     <div class="form-group">
         <label for="start_time">Start Time</label>
         <div>
-            <datetimepicker date-object="pin.start_time" default-date="inserting"></datetimepicker>
+            <datetimepicker date-object="pin.start_time" default-date="inserting" id="storyPinStartTime"></datetimepicker>
         </div>
     </div>
     <div class="form-group">
@@ -66,5 +66,5 @@
     </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="addStoryPin(pin)">Save StoryPin</button>
+    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="addStoryPin(pin); updateTourStep(23)">Save StoryPin</button>
 </div>
