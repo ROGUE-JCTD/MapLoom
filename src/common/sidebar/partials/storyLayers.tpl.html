@@ -13,7 +13,7 @@
     <label for="baseMapList">Choose Your Basemap</label>
     <select class="form-control" name="baseMapList" id="baseMapList"
             ng-init="baseMap = baseMaps[4]"
-            ng-options="baseMap.get('metadata').title for baseMap in baseMaps = mapService.getBaseMaps()"
+            ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
             ng-model="baseMap"
             ng-change="mapService.selectedBaseMap(baseMap)"
             ng-selected="baseMaps[4]">
