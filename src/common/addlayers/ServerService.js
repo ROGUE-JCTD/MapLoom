@@ -516,12 +516,38 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
     };
 
+    var createHyperSearchLayerObject = function(layerInfo, serverUrl) {
+      return {
+        add: true,
+        Abstract: layerInfo.Abstract,
+        Name: layerInfo.LayerName,
+        Title: layerInfo.LayerTitle,
+        CRS: 'EPSG:4326',
+        detail_url: 'http://52.38.116.143/layer/' + layerInfo.LayerId,
+        thumbnail_url: '',
+        author: ''
+      };
+    };
+
     var createSearchLayerObjects = function(layerObjects, serverUrl) {
       var finalConfigs = [];
       //TODO: Update with handling multiple projections per layer if needed.
       for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
         var layerInfo = layerObjects[iLayer];
         var configTemplate = createSearchLayerObject(layerInfo, serverUrl);
+
+        finalConfigs.push(configTemplate);
+      }
+
+      return finalConfigs;
+    };
+
+    var createHyperSearchLayerObjects = function(layerObjects, serverUrl) {
+      var finalConfigs = [];
+      //TODO: Update with handling multiple projections per layer if needed.
+      for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
+        var layerInfo = layerObjects[iLayer];
+        var configTemplate = createHyperSearchLayerObject(layerInfo._source, serverUrl);
 
         finalConfigs.push(configTemplate);
       }
@@ -574,6 +600,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       return layers_loaded;
     };
 
+    this.reformatLayerHyperConfigs = function(elasticResponse, serverUrl) {
+      return createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl);
+    };
+
     this.reformatLayerConfigs = function(elasticResponse, serverUrl) {
       return createSearchLayerObjects(elasticResponse.objects, serverUrl);
     };
@@ -609,11 +639,11 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = 'http://52.38.116.143:9200/hypermap/layer/_search?';
+      var searchUrl = 'http://geoshape.geointservices.io/search/_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
     };
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';

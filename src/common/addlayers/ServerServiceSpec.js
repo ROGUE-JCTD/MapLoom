@@ -106,6 +106,39 @@ describe('addLayers/ServerService', function() {
       });
     });
   });
+  describe('#reformatLayerHyperConfigs', function() {
+    describe('no layers', function() {
+      it('returns an empty array', function() {
+        expect(serverService.reformatLayerHyperConfigs({hits: { hits: [] }}, '').length).toEqual(0);
+      });
+    });
+    describe('result has one layer', function() {
+      var layers = { hits: {} };
+      beforeEach(function() {
+        layers.hits.hits = [
+          {
+            _type: 'layer',
+            _id: '61',
+            _source: {
+              LayerTitle: 'Ocean Beach',
+              Abstract: '',
+              LayerId: '60',
+              LayerName: 'geonode:oceanbeach',
+              LayerUrl: '/layers/OceanBeach'
+            }
+          }
+        ];
+      });
+      it('returns one formatted layer', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '').length).toEqual(1);
+      });
+      it('has a Title', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          Title: 'Ocean Beach'
+        }));
+      });
+    });
+  });
   describe('#populateLayersConfigElastic', function() {
     describe('no server', function() {
       it('returns an empty array', function() {
@@ -256,19 +289,19 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', 'http://52.38.116.143:9200/hypermap/layer/_search?').respond(200, []);
+        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
-        spyOn(serverService, 'reformatLayerConfigs');
+        spyOn(serverService, 'reformatLayerHyperConfigs');
         serverService.addSearchResultsForHyper({}, filterOptions);
         $httpBackend.flush();
-        expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
-        spyOn(serverService, 'reformatLayerConfigs');
+        spyOn(serverService, 'reformatLayerHyperConfigs');
         serverService.addSearchResultsForHyper({}, filterOptions);
         $httpBackend.flush();
-        expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], 'http://52.38.116.143:9200/geoserver/wms');
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://geoshape.geointservices.io/geoserver/wms');
       });
     });
   });
