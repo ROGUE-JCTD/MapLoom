@@ -9,6 +9,7 @@
     "bootstrap": "3.0.0",
     "angular": "1.2.21",
     "angular-mocks": "1.2.21",
+    "angular-sanitize": "1.2.21",
     "angular-bootstrap": "0.11.2",
     "angular-ui-router": "0.2.0",
     "jquery": "~2.0.3",
@@ -34,8 +35,5 @@
     "angular-bootstrap-colorpicker": "~3.0.8",
     "toastr": "^2.1.2",
     "hopscotch": "^0.2.5"
-  },
-  "resolutions": {
-    "angular": "1.2.21"
   }
 }
