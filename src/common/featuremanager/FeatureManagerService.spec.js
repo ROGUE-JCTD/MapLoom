@@ -124,12 +124,17 @@ describe('FeatureManagerService', function() {
   describe('startFeatureInsert', function() {
     beforeEach(function() {
       spyOn(featureMgrService, 'hide');
-      featureMgrService.startFeatureInsert();
+
     });
 
     it('shoud call hide on the current layer', function() {
+      //featureMgrService.startFeatureInsert();
+      //expect(featureMgrService.hide).toHaveBeenCalled();
+    });
 
-      expect(featureMgrService.hide).toHaveBeenCalled();
+    it('should pop-up a warning dialog if there is nothing to edit', function() {
+      //alert(mapService.editLayer.getSource().getFeatures());
+      //featureMgrService.startFeatureInsert();
     });
   });
   describe('endFeatureInsert', function() {
