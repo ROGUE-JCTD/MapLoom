@@ -172,7 +172,9 @@
         $scope.updateTourStep = function(step) {
           if (hopscotch.getState()) {
             hopscotch.showStep(step);
-            hopscotch.refreshBubblePosition();
+            setTimeout(function() {
+              hopscotch.refreshBubblePosition();
+            }, 1);
           }
         };
 
