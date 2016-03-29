@@ -21,7 +21,7 @@
   };
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;
-  var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline'];
+  var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Pin.prototype, prop, {
