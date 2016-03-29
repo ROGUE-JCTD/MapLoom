@@ -8,6 +8,7 @@
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
             var searchFavorites = false;
+            var searchHyper = false;
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -32,6 +33,7 @@
               }
             };
 
+
             scope.getConnectedString = function() {
               return $translate.instant('connected_as', {value: scope.currentServer.username});
             };
@@ -47,6 +49,7 @@
               resetText();
               resetOwner();
               searchFavorites = false;
+              searchHyper = false;
             };
 
             scope.defaultSearch = function() {
@@ -57,6 +60,12 @@
             scope.searchMyUploads = function() {
               clearFilters();
               scope.filterOptions.owner = true;
+              scope.search();
+            };
+
+            scope.searchHyper = function() {
+              clearFilters();
+              searchHyper = true;
               scope.search();
             };
 
@@ -72,6 +81,8 @@
             scope.search = function() {
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
+              } else if (searchHyper) {
+                serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else {
                 serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
               }
@@ -86,27 +97,25 @@
               return '';
             };
 
-            scope.addLayers = function(layersConfig) {
-              // if the server is not a typical server and instead the hardcoded ones
-              var length = layersConfig.length;
-              for (var index = 0; index < length; index += 1) {
-                var config = layersConfig[index];
-                if (config.add) {
-                  // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
-                  //       maploom such as geonode. At this point, only source (server id), and name are used. If you
-                  //       find the need to add more parameters here, you need to put them in MapService.addLayer
-                  //       instead. that's because MapService.addLayer may be invoked from here, when a saved
-                  //       map is opened, or when a map is created from a layer in which case the logic here will be
-                  //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
-                  //       has already been resolved so you can used that info to append values to the layer.
-                  var minimalConfig = {
-                    name: config.Name,
-                    source: scope.currentServerId
-                  };
-                  mapService.addLayer(minimalConfig);
-
-                  config.add = false;
-                }
+            scope.addLayers = function(layerConfig) {
+              console.log(layerConfig);
+              toastr.success('Layer is Loading...', '', {
+                'timeOut': '0',
+                'extendedTimeOut': '0'
+              });
+              if (layerConfig.add) {
+                // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
+                //       maploom such as geonode. At this point, only source (server id), and name are used. If you
+                //       find the need to add more parameters here, you need to put them in MapService.addLayer
+                //       instead. that's because MapService.addLayer may be invoked from here, when a saved
+                //       map is opened, or when a map is created from a layer in which case the logic here will be
+                //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
+                //       has already been resolved so you can used that info to append values to the layer.
+                var minimalConfig = {
+                  name: layerConfig.Name,
+                  source: scope.currentServerId
+                };
+                mapService.addLayer(minimalConfig);
               }
             };
 
