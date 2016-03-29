@@ -3,6 +3,7 @@ describe('FeatureManagerService', function() {
   var mapService;
   var serverService;
   var configService;
+  var exclusiveModeService;
   var q;
   var defer;
   var rootScope;
@@ -13,11 +14,12 @@ describe('FeatureManagerService', function() {
   //include the whole application to initialize all services and modules
   beforeEach(module('MapLoom'));
 
-  beforeEach(inject(function (_featureManagerService_, _mapService_, _serverService_, _configService_, _dialogService_, $httpBackend, $q, $rootScope, $window) {
+  beforeEach(inject(function (_featureManagerService_, _mapService_, _serverService_, _exclusiveModeService_, _configService_, _dialogService_, $httpBackend, $q, $rootScope, $window) {
     featureMgrService = _featureManagerService_;
     mapService = _mapService_;
     serverService = _serverService_;
     configService = _configService_;
+    exclusiveModeService = _exclusiveModeService_;
     dialogService = _dialogService_;
     httpBackend = $httpBackend;
     q = $q;
@@ -124,17 +126,59 @@ describe('FeatureManagerService', function() {
   describe('startFeatureInsert', function() {
     beforeEach(function() {
       spyOn(featureMgrService, 'hide');
-
+      spyOn(exclusiveModeService, 'startExclusiveMode');
+      defer = q.defer();
+      defer.resolve();
+      mapService.loadLayers();
+      rootScope.$apply();
+      mapService.map.getLayers().getArray()[0].values_.metadata.schema = {geom: {_name:'geom', _type:'gml:PointPropertyType' } };
     });
 
     it('shoud call hide on the current layer', function() {
-      //featureMgrService.startFeatureInsert();
-      //expect(featureMgrService.hide).toHaveBeenCalled();
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect(featureMgrService.hide).toHaveBeenCalled();
     });
 
-    it('should pop-up a warning dialog if there is nothing to edit', function() {
-      //alert(mapService.editLayer.getSource().getFeatures());
-      //featureMgrService.startFeatureInsert();
+    it('should start exclusive mode and set exclusiveModeService.addMode to true', function() {
+      //expect(mapService.editLayer.getSource().getFeatures().length).toBe(0);
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect(exclusiveModeService.startExclusiveMode).toHaveBeenCalled();
+      expect(exclusiveModeService.addMode).toBe(true);
+    });
+
+    it('should set the internal selected layer to the layer provided as a parameter', function() {
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect(featureMgrService.getSelectedLayer()).toBe(mapService.map.getLayers().getArray()[0]);
+    });
+
+    it('shoud add the edit layer to the map for editing', function() {
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      var found = false;
+      for(var i = 0; i < mapService.map.getLayers().getArray().length; i++) {
+        if(mapService.editLayer == mapService.map.getLayers().getArray()[i]) {
+          found = true;
+        }
+      }
+      expect(found).toBe(true);
+    });
+
+    it('should call mapService.addDraw if the layer geometry is homogenous', function() {
+      spyOn(mapService,'addDraw');
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect(mapService.addDraw).toHaveBeenCalled();
+    });
+
+    it('should show a dialog with different geometry types to draw if the layer geometry is NOT homogenous', function() {
+      spyOn($.fn,'modal');
+      mapService.map.getLayers().getArray()[0].values_.metadata.schema = {geom: {_name:'geom', _type:'gml:GeometryPropertyType' } };
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect($.fn.modal).toHaveBeenCalled();
+    });
+
+    it('should broadcast to other components that startFeatureInsert has been called', function() {
+      spyOn(rootScope, '$broadcast');
+      featureMgrService.startFeatureInsert(mapService.map.getLayers().getArray()[0]);
+      expect(rootScope.$broadcast).toHaveBeenCalledWith('startFeatureInsert');
     });
   });
   describe('endFeatureInsert', function() {
