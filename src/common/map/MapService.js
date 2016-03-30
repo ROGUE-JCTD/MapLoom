@@ -550,6 +550,13 @@
         });
       } else {
         if (fullConfig.type && fullConfig.type == 'mapproxy_tms') {
+          var layername = '';
+          if (fullConfig.Name.split(':').length > 1) {
+            layername = fullConfig.Name.split(':')[1];
+          } else {
+            layername = fullConfig.Name;
+          }
+
           layer = new ol.layer.Tile({
             metadata: {
               name: minimalConfig.name,
@@ -562,7 +569,7 @@
             },
             visible: true,
             source: new ol.source.XYZ({
-              url: fullConfig.detail_url + '/map/wmts/' + fullConfig.Name.split(':')[1] + '/default_grid/{z}/{y}/{x}.png'
+              url: fullConfig.detail_url + '/map/wmts/' + layername + '/default_grid/{z}/{x}/{y}.png'
             })
           });
         } else if (server.ptype === 'gxp_osmsource') {
