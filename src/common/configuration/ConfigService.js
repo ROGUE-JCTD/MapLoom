@@ -69,12 +69,6 @@
         },
         sources: [
           {
-            'url': ('http://' + $location.host() + '/geoserver/wms'),
-            'restUrl': '/gs/rest',
-            'ptype': 'gxp_wmscsource',
-            'name': 'local geoserver'
-          },
-          {
             'ptype': 'gxp_osmsource',
             'name': 'OpenStreetMap'
           }
@@ -146,4 +140,3 @@
     };
   });
 }());
-
