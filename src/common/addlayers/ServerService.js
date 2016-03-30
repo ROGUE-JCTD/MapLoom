@@ -522,10 +522,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         Abstract: layerInfo.Abstract,
         Name: layerInfo.LayerName,
         Title: layerInfo.LayerTitle,
-        CRS: 'EPSG:4326',
+        CRS: ['EPSG:4326'],
         detail_url: 'http://52.38.116.143/layer/' + layerInfo.LayerId,
         thumbnail_url: '',
-        author: ''
+        author: '',
+        type: 'mapproxy_tms'
       };
     };
 
