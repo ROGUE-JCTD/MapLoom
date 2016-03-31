@@ -217,6 +217,7 @@
             }
           } else {
             hasValidDate = false;
+            element.find('.form-control').val('');
           }
         };
         updateDate();
