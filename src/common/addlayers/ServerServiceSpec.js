@@ -295,7 +295,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/_search?').respond(200, []);
+        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');

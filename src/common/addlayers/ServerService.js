@@ -640,7 +640,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = 'http://geoshape.geointservices.io/search/_search?';
+      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
