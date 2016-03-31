@@ -58,6 +58,17 @@
       return this;
     };
 
+    this.hasNoHistory = function() {
+      if (this.active_layer === null) {
+        return true;
+      }
+      return !this.active_layer.get('metadata').isGeoGig;
+    };
+
+    this.getHistory = function() {
+      var pathFilter = this.active_layer.get('metadata').nativeName.split(':')[1];
+      historyService_.getHistory(this.active_layer, pathFilter);
+    };
 
     this.clearSelectedItems = function() {
       this.active_layer = null;
