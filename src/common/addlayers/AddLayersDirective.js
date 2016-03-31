@@ -8,7 +8,7 @@
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
             var searchFavorites = false;
-            var searchHyper = false;
+            var searchHyper = true;
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -88,6 +88,7 @@
               }
             };
 
+            scope.search();
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
               if (goog.isDefAndNotNull(server)) {

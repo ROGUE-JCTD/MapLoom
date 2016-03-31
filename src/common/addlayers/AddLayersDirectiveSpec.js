@@ -20,14 +20,6 @@ describe('StoryLegendDirective', function() {
       }));
     });
   });
-  describe('search users uploads', function() {
-    it('changes the filterOptions', function() {
-      compiledElement.find('ul.nav-tabs li:nth-child(2) a').click();
-      expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
-        owner: true
-      }));
-    });
-  });
   describe('search', function() {
     var searchSpy;
     beforeEach(function() {
