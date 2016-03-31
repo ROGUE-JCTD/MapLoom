@@ -136,7 +136,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.getServerLocalGeoserver = function() {
       var server = null;
       for (var index = 0; index < servers.length; index += 1) {
-        if (servers[index].isLocal === true && servers[index].isVirtualService !== true) {
+        if ((servers[index].isLocal === true && servers[index].isVirtualService !== true) || servers[index].isPrimaryGeoserver === true) {
           server = servers[index];
           break;
         }

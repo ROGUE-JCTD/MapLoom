@@ -69,6 +69,15 @@
         },
         sources: [
           {
+            'url': ('http://geoshape.geointservices.io/geoserver/web/'),
+            'restUrl': '/gs/rest',
+            'ptype': 'gxp_wmscsource',
+            'name': 'local geoserver',
+            'alwaysAnonymous': true,
+            'isPrimaryGeoserver': true,
+            'lazy': true
+          },
+          {
             'ptype': 'gxp_osmsource',
             'name': 'OpenStreetMap'
           }
