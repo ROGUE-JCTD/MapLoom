@@ -51,19 +51,20 @@
         },
         map: {
           center: [-9707182.048613328, 1585691.7893914054],
-          zoom: 14,
+          zoom: 1,
           layers: [
             {
               'opacity': 1,
               'selected': true,
               'group': 'background',
-              'name': 'mapnik',
-              'title': 'OpenStreetMap',
-              'args': ['OpenStreetMap'],
+              'name': 'world-light',
+              'title': 'MapBoxWorldLight',
+              'args': ['world-light'],
               'visibility': true,
               'source': 1,
               'fixed': true,
-              'type': 'OpenLayers.Layer.OSM'
+              'type': 'OpenLayers.Layer.OSM',
+              'sourceParams': { 'layer': 'world-light' }
             }
           ]
         },
@@ -78,8 +79,8 @@
             'lazy': true
           },
           {
-            'ptype': 'gxp_osmsource',
-            'name': 'OpenStreetMap'
+            'ptype': 'gxp_mapboxsource',
+            'name': 'Mapbox'
           }
         ],
         currentLanguage: 'en',
