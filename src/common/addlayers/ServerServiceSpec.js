@@ -124,13 +124,19 @@ describe('addLayers/ServerService', function() {
               Abstract: '',
               LayerId: '60',
               LayerName: 'geonode:oceanbeach',
-              LayerUrl: '/layers/OceanBeach'
+              LayerUrl: '/layers/OceanBeach',
+              ThumbnailURL: '/test.jpg'
             }
           }
         ];
       });
       it('returns one formatted layer', function() {
         expect(serverService.reformatLayerHyperConfigs(layers, '').length).toEqual(1);
+      });
+      it('has a thumbnail image', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          thumbnail_url: 'http://52.38.116.143/test.jpg'
+        }));
       });
       it('has a Title', function() {
         expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
