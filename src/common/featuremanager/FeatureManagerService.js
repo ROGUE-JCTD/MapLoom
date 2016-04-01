@@ -46,7 +46,7 @@
     ];
   */
   var selectedItemProperties_ = null;
-
+  //The selected layer is only set when the user selects a single feature either on the map, or through the deconfliction pop-up
   var selectedLayer_ = null;
   var featureInfoPerLayer_ = [];
   var containerInstance_ = null;
@@ -131,7 +131,7 @@
     this.getSelectedItemMediaByProp = function(propName) {
       var media = null;
 
-      if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
+      if (classifyItem(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
           goog.isDefAndNotNull(selectedItemProperties_)) {
 
         goog.object.forEach(selectedItemProperties_, function(prop, index) {
@@ -198,6 +198,11 @@
       return selectedItemProperties_;
     };
 
+    //this method is intended for unit testing only
+    this.setSelectedItemProperties = function(props) {
+      selectedItemProperties_ = props;
+    };
+
     this.getSelectedLayer = function() {
       return selectedLayer_;
     };
@@ -222,7 +227,7 @@
     /**
      * item: can be a feature, a layer containing features, or a collection of layers
      */
-    // layers, layer, feature
+    // This method displays the feature info box when a user clicks on a feature or finishes creating a new one
     this.show = function(item, position, forceUpdate) {
       //console.log('---- show: ', item);
 
@@ -237,9 +242,12 @@
 
       var selectedItemOld = selectedItem_;
 
-      var type = getItemType(item);
+      //classify the item parameter as a layer, feature, or layers
+      var type = classifyItem(item);
+
       // when there is nothing in featureInfoPerLayer_, we need to used the passed in item to initialize it
-      // this is used when code calls show without the user clicking on the map.
+      // this is done when the user clicks on a single feature (on the map) vice selecting a feature from the pop-up
+      // (such as clicking on overlapping features)
       if (featureInfoPerLayer_.length === 0) {
 
         if (type === 'feature') {
@@ -261,6 +269,15 @@
         }
       }
 
+      //set the service's state_ variable (feature, layer, or layers)
+      //the state is 'layer' when the user clicks on multiple (aka overlapping) features in a single layer
+      //the state is 'layers' when the user clicks on multiple (overlapping) features that exist in separate layers
+      //the state is 'feature' when the user finishes creating a feature, they clicked on a single (non-overlapping)
+      //feature, or they select a feature from the deconfliction pop-up
+
+      //we are also going to set the selectedItem_ variable
+      //the selectedItem will be a single feature, a single layer, or a collection of layers
+      //the state is essentially a designation of the selectedItem type
       if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
@@ -301,7 +318,7 @@
 
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
-        if (getItemType(selectedItem_) === 'feature') {
+        if (classifyItem(selectedItem_) === 'feature') {
 
           selectedLayer_ = this.getSelectedItemLayer().layer;
           // note that another service may make a fake feature selection on a layer not in mapservice.
@@ -311,16 +328,14 @@
             position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
                 clickPosition_);
           }
-        } else {
-          mapService_.clearEditLayer();
-        }
 
+          // -- update selectedItemProperties_ to contain the props from the newly selected item
+          var tempProps = {};
+          var props = [];
 
-        // -- update the selectedItemProperties_
-        var tempProps = {};
-        var props = [];
-
-        if (getItemType(selectedItem_) === 'feature') {
+          //if the selectedItem_ is a feature go through and collect the properties in tempProps
+          //if the property is a media property (like photo or video), we need to parse out
+          //the value into an array (since there may be multiple photos or videos)
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (service_.isMediaPropertyName(k)) {
               if (goog.isDefAndNotNull(v)) {
@@ -349,34 +364,37 @@
               tempProps[k] = [k, v];
             }
           });
-        }
 
-        var propName = null;
-        if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
-          for (propName in selectedLayer_.get('metadata').schema) {
-            if (tempProps.hasOwnProperty(propName)) {
-              props.push(tempProps[propName]);
+          //ensure we only take properties that are defined in the layer schema, the selectedLayer_
+          //may be some other layer so
+          var propName = null;
+          if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
+            for (propName in selectedLayer_.get('metadata').schema) {
+              if (tempProps.hasOwnProperty(propName)) {
+                props.push(tempProps[propName]);
+              }
+            }
+          } else {
+            for (propName in tempProps) {
+              if (tempProps.hasOwnProperty(propName)) {
+                props.push(tempProps[propName]);
+              }
             }
           }
+          selectedItemProperties_ = props;
+          console.log('---- selectedItemProperties_: ', selectedItemProperties_);
+
+          // -- update the selectedItemMedia_
+          selectedItemMedia_ = service_.getSelectedItemMediaByProp(null);
+          console.log('---- selectedItemMedia_: ', selectedItemMedia_);
         } else {
-          for (propName in tempProps) {
-            if (tempProps.hasOwnProperty(propName)) {
-              props.push(tempProps[propName]);
-            }
-          }
+          mapService_.clearEditLayer();
         }
-
-        selectedItemProperties_ = props;
-        console.log('---- selectedItemProperties_: ', selectedItemProperties_);
-
-        // -- update the selectedItemMedia_
-        selectedItemMedia_ = service_.getSelectedItemMediaByProp(null);
-        console.log('---- selectedItemMedia_: ', selectedItemMedia_);
-
       }
 
       if (goog.isDefAndNotNull(position)) {
         position_ = position;
+        //actually display the pop-up
         mapService_.map.getOverlays().array_[0].setPosition(position);
       }
     };
@@ -494,6 +512,11 @@
       //array[1] of interactions is doubleClickZoom
       mapService_.map.interactions_.array_[1].values_.active = false;
 
+      //iterate over the schema in the layer's metadata definition
+      //the schema contains the legal attributes and geometry types the layer supports
+      //we are going to parse out the valid types of geometry for this layer
+      //and we are also going to hang on to a copy of all the supported attributes (in 'props')
+      //Note: these attributes will be stored in the feature when the user finishes creating
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
         if (!service_.isMediaPropertyName(k)) {
           if (v._type.search('gml:') == -1) {
@@ -506,6 +529,8 @@
           }
         }
       });
+
+      //Rename certain geometry types to supported ones for given WFS versions
       geometryType = geometryType.split(':')[1].replace('PropertyType', '');
       if (settings.WFSVersion == '1.1.0') {
         geometryType = geometryType.replace('Curve', 'Geometry');
@@ -513,6 +538,7 @@
         geometryType = geometryType.replace('Curve', 'LineString');
       }
       geometryType = geometryType.replace('Surface', 'Polygon');
+
 
       exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
           geometryType,
@@ -983,7 +1009,7 @@
     });
   }
 
-  function getItemType(item) {
+  function classifyItem(item) {
     var type = '';
 
     if (goog.isDefAndNotNull(item)) {
