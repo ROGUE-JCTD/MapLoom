@@ -889,10 +889,10 @@
         var infoPerLayer = [];
 
         // wait for all get feature infos to retun before proceeding.
-        var getFeatureInfoCompleted = function() {
+        var getFeatureInfoCompleted = function(fromPins) {
           completed += 1;
 
-          if (completed === (layers.length + (mapService_.pinLayer) ? 1 : 0)) {
+          if (completed === layers.length || goog.isDefAndNotNull(fromPins)) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
@@ -967,12 +967,12 @@
               layerInfo.features = pinsNearby;
               layerInfo.layer = mapService_.pinLayer;
               goog.array.insert(infoPerLayer, layerInfo);
+              getFeatureInfoCompleted(true);
             }
+
           }
         }
-        if (infoPerLayer.length > 0) {
-          getFeatureInfoCompleted();
-        }
+
       }
     });
   }
