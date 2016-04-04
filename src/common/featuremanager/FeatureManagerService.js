@@ -513,8 +513,8 @@
       mapService_.map.interactions_.array_[1].values_.active = false;
 
       //iterate over the schema in the layer's metadata definition
-      //the schema contains the legal attributes and geometry types the layer supports
-      //we are going to parse out the valid types of geometry for this layer
+      //the schema contains the legal attributes and geometry type the layer supports
+      //we are going to parse out the supported geometry type for this layer
       //and we are also going to hang on to a copy of all the supported attributes (in 'props')
       //Note: these attributes will be stored in the feature when the user finishes creating
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
@@ -539,14 +539,18 @@
       }
       geometryType = geometryType.replace('Surface', 'Polygon');
 
-
+      //exclusive mode will start the actual editing/creation process
+      //where the user can create the feature geometry
       exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
           geometryType,
           exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
+            //the user has clicked 'accept feature' button
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
+              //if the user clicks accept but they have not drawn anything, tell them they must draw something
               dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
                   [translate_.instant('btn_ok')], false);
             } else {
+              //otherwise terminate the editing/ exclusive mode
               exclusiveModeService_.addMode = false;
               exclusiveModeService_.endExclusiveMode();
               mapService_.removeDraw();
@@ -597,6 +601,7 @@
               service_.startAttributeEditing(true);
             }
           }), exclusiveModeService_.button(translate_.instant('cancel_feature'), function() {
+            //if the user clicks the cancel button, reset everything and terminate exclusive mode
             exclusiveModeService_.addMode = false;
             exclusiveModeService_.endExclusiveMode();
             mapService_.removeDraw();
@@ -630,7 +635,7 @@
         var newPos;
         var feature = mapService_.editLayer.getSource().getFeatures()[0];
         if (goog.isDefAndNotNull(coords)) {
-          // Check if either of the coordinates we changed in the attribute editing process
+          // Check if either of the coordinates were changed in the attribute editing process
           if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
               (coords[1] !== selectedItem_.geometry.coordinates[1])) {
             // Transform the geometry so we can get the new place on the map to show the info-box
@@ -690,6 +695,8 @@
       return returnResponse.promise;
     };
 
+    //this method is called when the user clicks on the edit geometry button
+    //in the feature info box/ pop-up
     this.startGeometryEditing = function() {
       rootScope_.$broadcast('startGeometryEdit');
       var geometryType = selectedItem_.geometry.type;
