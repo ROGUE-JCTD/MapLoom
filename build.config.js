@@ -96,7 +96,7 @@ module.exports = {
       'vendor/story-tools/dist/ows.js',
       'vendor/toastr/toastr.js',
       'vendor/hopscotch/dist/js/hopscotch.min.js',
-
+      'vendor/angular-ui-tree/dist/angular-ui-tree.min.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -128,7 +128,9 @@ module.exports = {
 
       'vendor/toastr/toastr.css',
 
-      'vendor/hopscotch/dist/css/hopscotch.min.css'
+      'vendor/hopscotch/dist/css/hopscotch.min.css',
+
+      'vendor/angular-ui-tree/dist/angular-ui-tree.min.css'
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

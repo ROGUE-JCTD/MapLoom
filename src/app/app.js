@@ -7,6 +7,7 @@
     'colorpicker.module',
     'ui.bootstrap',
     'ui.router',
+    'ui.tree',
     'pascalprecht.translate',
     'loom_translations_en',
     'loom_translations_es',
@@ -222,6 +223,10 @@
             title: layer_config.title || 'Untitled Layer'
           };
           $scope.mapstories.chapters[chapter_index].storyLayers.push(new_layer);
+
+        };
+
+        $scope.editSingleStoryLayer = function(layerName) {
 
         };
         //front end initialization of new chapter on menu element

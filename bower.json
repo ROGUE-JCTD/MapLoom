@@ -34,6 +34,7 @@
     "font-awesome": "fontawesome#^4.5.0",
     "angular-bootstrap-colorpicker": "~3.0.8",
     "toastr": "^2.1.2",
-    "hopscotch": "^0.2.5"
+    "hopscotch": "^0.2.5",
+    "angular-ui-tree": "^2.15.0"
   }
 }
