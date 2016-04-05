@@ -17,31 +17,5 @@
                 <small>{{getCommitTime(commit)}}</small>
             </a>
           </div>
-{#        <div ng-if="storyService.historyLoading(commit)" class="diff-loading loom-loading" spinner-hidden="false"></div>#}
-{#        <div class="commit-summary progress">#}
-{#          <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">#}
-{#            <span class="sr-only"></span>#}
-{#          </div>#}
-{#          <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">#}
-{#            <span class="sr-only"></span>#}
-{#          </div>#}
-{#          <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">#}
-{#            <span class="sr-only"></span>#}
-{#          </div>#}
-{#          <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">#}
-{#            <span class="sr-only"></span>#}
-{#          </div>#}
-{#        </div>#}
-{#        <span ng-if="storyService.historyMerge(commit)" class="glyphicon glyphicon-random merged" tooltip-placement="top"#}
-{#              tooltip="{{'merge_commit' | translate}}" tooltip-append-to-body="true"></span>#}
-{#        <div class="author-name ellipsis">{{getCommitAuthor(commit)}}</div>#}
-{#        <div class="commit-time ellipsis">{{getCommitTime(commit)}}</div>#}
-{##}
-{#      </li>#}
-{#      <li ng-if="historyService.nextPage" class="list-group-item">#}
-{#        <div class="history-loading loom-loading" spinner-hidden="false"></div>#}
-{#      </li>#}
-{#      <li class="history-last-list-item">#}
-{#      </li>#}
    </ul>
 </div>
