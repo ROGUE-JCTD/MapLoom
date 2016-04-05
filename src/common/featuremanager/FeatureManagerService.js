@@ -23,7 +23,7 @@
   var clickPosition_ = null;
   var enabled_ = true;
   var wfsPostTypes_ = { UPDATE: 0, INSERT: 1, DELETE: 2 };
-  var pinCaptureDistance_ = 300;
+  var pinCaptureDistance_ = 75;
 
   module.provider('featureManagerService', function() {
 
@@ -892,7 +892,7 @@
         var getFeatureInfoCompleted = function(fromPins) {
           completed += 1;
 
-          if (completed === layers.length || goog.isDefAndNotNull(fromPins)) {
+          if (completed >= layers.length || goog.isDefAndNotNull(fromPins)) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
