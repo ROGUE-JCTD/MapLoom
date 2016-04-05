@@ -255,8 +255,9 @@
           dropped: function(event) {
             function updateChaptersList(value, index) {
               value.chapter = 'Chapter ' + (index + 1);
+              value.id = index;
             }
-            //storyService.reorder_chapter(event.source.index, event.dest.index);
+            storyService.reorder_chapter(event.source.index, event.dest.index);
             $scope.mapstories.chapters.forEach(updateChaptersList);
           }
         };
