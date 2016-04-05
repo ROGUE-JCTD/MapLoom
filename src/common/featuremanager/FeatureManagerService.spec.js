@@ -204,7 +204,7 @@ describe('FeatureManagerService', function() {
 
     describe('(save = true)', function() {
       beforeEach(function() {
-         //spy on this service to stub the call without the actual implementation being called
+        //spy on this service to stub the call without the actual implementation being called
         spyOn(mapService, 'addToEditLayer');
         //spyOn so we can return the value we want
         spyOn(featureMgrService, 'getSelectedItemLayer').and.returnValue({layer:mapService.map.getLayers().array_[0]});
@@ -406,7 +406,34 @@ describe('FeatureManagerService', function() {
       expect(window.transformGeometry.calls.mostRecent().args[0].coordinates).toEqual(multiCoords);
       expect(mapService.editLayer.getSource().addFeature).toHaveBeenCalled();
       expect(mapService.editLayer.getSource().addFeature.calls.count()).toBe(numCoords);
-      //expect(mapService.editLayer.getSource().getFeatures()).toBe(numCoords);
+    });
+
+    it('should clear the edit layer and split the geometry into separate features for editing, if the geometry is \'collection\' type', function() {
+      //clear the edit layer ourselves and add a new feature comprised of multiple geometry (3 points)
+      mapService.editLayer.getSource().featuresCollection_.clear();
+      var featureNew = new ol.Feature({
+        geometry: new ol.geom.GeometryCollection([new ol.geom.Point([90, 90]),new ol.geom.Point([66, 66]), new ol.geom.Point([45, 45])]),
+        labelPoint: new ol.geom.Point([90, 45]),
+        name: 'My Polygon'
+      });
+      mapService.editLayer.getSource().featuresCollection_.push(featureNew);
+
+
+      spyOn(window, 'transformGeometry');
+      spyOn(mapService.editLayer.getSource(), 'clear');
+      spyOn(mapService.editLayer.getSource(), 'addFeature');
+      featureMgrService.getSelectedItem().geometry = {coordinates:[55,55], type:'geometrycollection'};
+
+      //call the actual method
+      featureMgrService.startGeometryEditing();
+
+      expect(mapService.editLayer.getSource().clear).toHaveBeenCalled();
+      expect(window.transformGeometry.calls.mostRecent().args[0].type).toBe('Point');
+      expect(window.transformGeometry.calls.mostRecent().args[0].coordinates).toEqual([45, 45]);
+      expect(mapService.editLayer.getSource().addFeature).toHaveBeenCalled();
+      //expect the number of calls to be 3 because we are dealing with 3 points
+      expect(mapService.editLayer.getSource().addFeature.calls.count()).toBe(3);
+
     });
 
     it('should start the exclusive mode with \'editing_geometry\' as the main parameter', function() {
