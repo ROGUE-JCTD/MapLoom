@@ -365,21 +365,12 @@ describe('FeatureManagerService', function() {
 
       //fudge some data for the various calls so we can make it all the way through,
       mapService.editLayer.getSource().featuresCollection_ = new ol.Collection();
-
-      var feature1 = new ol.Feature({
+      var feature = new ol.Feature({
         geometry: new ol.geom.MultiPoint([[90, 45], [120,120]]),
         labelPoint: new ol.geom.Point([90, 45]),
         name: 'My Polygon'
       });
-      mapService.editLayer.getSource().featuresCollection_.push(feature1);
-
-      var feature = new ol.Feature({
-        geometry: new ol.geom.MultiPoint([[90, 45]]),
-        labelPoint: new ol.geom.Point([90, 45]),
-        name: 'My Polygon'
-
-      });
-      mapService.editLayer.getSource().addFeature(feature);
+      mapService.editLayer.getSource().featuresCollection_.push(feature);
     });
 
     it('should broadcast to other components that startGeometryEditing has been called', function() {
@@ -418,7 +409,6 @@ describe('FeatureManagerService', function() {
       });
       mapService.editLayer.getSource().featuresCollection_.push(featureNew);
 
-
       spyOn(window, 'transformGeometry');
       spyOn(mapService.editLayer.getSource(), 'clear');
       spyOn(mapService.editLayer.getSource(), 'addFeature');
@@ -431,9 +421,9 @@ describe('FeatureManagerService', function() {
       expect(window.transformGeometry.calls.mostRecent().args[0].type).toBe('Point');
       expect(window.transformGeometry.calls.mostRecent().args[0].coordinates).toEqual([45, 45]);
       expect(mapService.editLayer.getSource().addFeature).toHaveBeenCalled();
+
       //expect the number of calls to be 3 because we are dealing with 3 points
       expect(mapService.editLayer.getSource().addFeature.calls.count()).toBe(3);
-
     });
 
     it('should start the exclusive mode with \'editing_geometry\' as the main parameter', function() {
@@ -461,6 +451,162 @@ describe('FeatureManagerService', function() {
     });
   });
   describe('endGeometryEditing', function() {
+    beforeEach(function() {
+      spyOn(rootScope, '$broadcast');
+      spyOn(window,'transformGeometry').and.callThrough();
+      spyOn(mapService.editLayer.getSource(),'addFeature');
 
+      mapService.map.layers = null;
+      defer = q.defer();
+      defer.resolve();
+      mapService.loadLayers();
+      rootScope.$apply();
+
+      //fudge some data for the various calls so we can make it all the way through,
+      mapService.editLayer.getSource().featuresCollection_ = new ol.Collection();
+      var feature = new ol.Feature({
+        geometry: new ol.geom.MultiPoint([[90, 45], [120,120]]),
+        labelPoint: new ol.geom.Point([90, 45]),
+        name: 'My Polygon'
+      });
+      mapService.editLayer.getSource().featuresCollection_.push(feature);
+    });
+    describe('(save = true)', function() {
+      describe('selectedItem_ geoemtry is a \'multi\' type such as ol.geom.MultiPoint etc', function() {
+        beforeEach(function() {
+          //trick the selectedItem_ into thinking it is a 'multi' type
+          featureMgrService.getSelectedItem().geometry = {type:'MultiPoint'};
+
+          //add 3 separate features to the edit layer that will be merged together
+          mapService.editLayer.getSource().featuresCollection_ = new ol.Collection();
+          for(var i = 0; i < 3; i++)
+          {
+            var feature = new ol.Feature({
+              geometry: new ol.geom.MultiPoint([[i*10, i*10]]),
+              name: 'MyPoint'+i
+            });
+            mapService.editLayer.getSource().featuresCollection_.push(feature);
+          }
+          //call the actual method
+          featureMgrService.endGeometryEditing(true);
+        });
+
+        it('should merge the separate coordinates/features from mapService.editLayer into one feature/geometry', function() {
+          //make sure the merged coordinates match the separate ones we added earlier
+          var mergedCoords = mapService.editLayer.getSource().addFeature.calls.mostRecent().args[0].getGeometry().getCoordinates();
+          expect(mergedCoords[0]).toEqual([0,0]);
+          expect(mergedCoords[1]).toEqual([10,10]);
+          expect(mergedCoords[2]).toEqual([20,20]);
+        });
+
+        it('should call the global method transformGeometry with the separate coordinates to be merged', function() {
+           //ensure transformGeometry was called with the correct parameters matching the data we cooked up
+          var mergedCoords = mapService.editLayer.getSource().addFeature.calls.mostRecent().args[0].getGeometry().getCoordinates();
+          expect(window.transformGeometry.calls.mostRecent().args[0].type).toBe('MultiPoint');
+          expect(window.transformGeometry.calls.mostRecent().args[0].coordinates).toEqual(mergedCoords);
+        });
+
+        it('should issue a WFS post message with the \'update\' parameter and updated feature', function () {
+          var wfsData, wfsURL;
+          httpBackend.when('POST').respond(function(method, url, data, headers, params){
+            wfsData = data;
+            wfsURL = url;
+            return {'status': 200};
+          });
+          httpBackend.flush();
+
+          httpBackend.expectPOST();
+
+          //ensure all of our cooked up coordinates made it into the xml data
+          expect(wfsData.indexOf('0,0')).not.toBe(-1);
+          expect(wfsData.indexOf('10,10')).not.toBe(-1);
+          expect(wfsData.indexOf('20,20')).not.toBe(-1);
+
+          //ensure that the feature type makes it into the xml as well
+          expect(wfsData.indexOf('MultiPoint')).not.toBe(-1);
+        });
+      });
+
+      describe('selectedItem_ geoemtry is a \'collection\' type (ol.geom.GeometryCollection)', function() {
+        beforeEach(function() {
+          //trick the selectedItem_ into thinking it is a 'geometrycollection' type
+          featureMgrService.getSelectedItem().geometry = {type: 'GeometryCollection'};
+
+          //add 3 separate features to the edit layer that will be merged together
+          mapService.editLayer.getSource().featuresCollection_ = new ol.Collection();
+          for (var i = 0; i < 3; i++) {
+            var feature = new ol.Feature({
+              geometry: new ol.geom.Point([i * 10, i * 10]),
+              name: 'MyPoint' + i
+            });
+            mapService.editLayer.getSource().featuresCollection_.push(feature);
+          }
+          //call the actual method
+          featureMgrService.endGeometryEditing(true);
+        });
+
+        it('should merge the separate geometries into a single feature, if the selectedItem type is a geometry \'collection\'', function () {
+          //make sure the merged geometry coordinates match the coords from the separate features/geoms
+          var mergedGeoms = mapService.editLayer.getSource().addFeature.calls.mostRecent().args[0].getGeometry().getGeometries();
+          expect(mergedGeoms[0].getCoordinates()).toEqual([0, 0]);
+          expect(mergedGeoms[1].getCoordinates()).toEqual([10, 10]);
+          expect(mergedGeoms[2].getCoordinates()).toEqual([20, 20]);
+        });
+
+        it('should call the global method transformGeometry with the separate geometries passed in the \'coordinates\' property', function() {
+           //ensure transformGeometry was called with the correct parameters matching the data we cooked up
+          expect(window.transformGeometry.calls.mostRecent().args[0].type).toBe('multigeometry');
+
+          var mergedGeoms = mapService.editLayer.getSource().addFeature.calls.mostRecent().args[0].getGeometry().getGeometries();
+          //note that the coordinates property passed to the method is actually an ol.geometry object
+          expect(window.transformGeometry.calls.mostRecent().args[0].coordinates[0].getCoordinates()).toEqual(mergedGeoms[0].getCoordinates());
+          expect(window.transformGeometry.calls.mostRecent().args[0].coordinates[1].getCoordinates()).toEqual(mergedGeoms[1].getCoordinates());
+          expect(window.transformGeometry.calls.mostRecent().args[0].coordinates[2].getCoordinates()).toEqual(mergedGeoms[2].getCoordinates());
+        });
+
+        it('should issue a WFS post message with the \'update\' parameter and updated feature', function () {
+          var wfsData, wfsURL;
+          httpBackend.when('POST').respond(function(method, url, data, headers, params){
+            wfsData = data;
+            wfsURL = url;
+            return {'status': 200};
+          });
+          httpBackend.flush();
+
+          httpBackend.expectPOST();
+
+          //ensure all of our cooked up coordinates made it into the xml data
+          expect(wfsData.indexOf('0,0')).not.toBe(-1);
+          expect(wfsData.indexOf('10,10')).not.toBe(-1);
+          expect(wfsData.indexOf('20,20')).not.toBe(-1);
+
+          //ensure that the feature type makes it into the xml as well
+          expect(wfsData.indexOf('MultiGeometry')).not.toBe(-1);
+        });
+      });
+    });
+
+    describe('(save = false)', function() {
+      beforeEach(function() {
+        spyOn(mapService, 'clearEditLayer');
+        spyOn(mapService, 'addToEditLayer');
+
+        //call the actual method
+        featureMgrService.endGeometryEditing(false);
+      });
+
+      it('should clear mapService.editLayer', function() {
+        expect(mapService.clearEditLayer).toHaveBeenCalled();
+      });
+
+      it('should add the selectedItem_ geometry back to the mapService.editLayer', function() {
+        expect(mapService.addToEditLayer).toHaveBeenCalled();
+        expect(mapService.addToEditLayer.calls.mostRecent().args[0]).toBe(featureMgrService.getSelectedItem().geometry);
+      });
+
+      it('should NOT issue a WFS post message', function() {
+        httpBackend.verifyNoOutstandingRequest();
+      });
+    });
   });
 });

@@ -761,7 +761,10 @@
         var geometry;
         var index;
         var geometryType = selectedItem_.geometry.type;
+
         if (geometryType.search(/^Multi/g) > -1) {
+          //if the selectedItem_ is a 'Multi' type of geometry then take the separate features (created for editing)
+          //and extract their coordinates to merge into a single geometry/feature.
           feature = new ol.Feature();
           var coordinates = [];
           for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
@@ -773,11 +776,15 @@
           mapService_.editLayer.getSource().clear();
           mapService_.editLayer.getSource().addFeature(feature);
         } else if (geometryType.toLowerCase() == 'geometrycollection') {
+          //if the selectedItem_ is a 'collection' type of geometry then take the separate features/geom (created for editing)
+          //and merge into a single feature.
           feature = new ol.Feature();
           var geometries = [];
           for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
             geometries.push(mapService_.editLayer.getSource().getFeatures()[index].getGeometry());
           }
+          //note that we are not stashing coordinates but the actual separate geometries
+          //we are just using the coordinates property to pass in the geoms
           geometry = transformGeometry({type: 'multigeometry', coordinates: geometries});
           feature.setGeometry(geometry);
           mapService_.editLayer.getSource().clear();
