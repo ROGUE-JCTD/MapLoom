@@ -124,7 +124,7 @@
                 <div id="mainMenuTop">
                     <ng-include src="'sidebar/partials/mainMenuTop.tpl.html'"></ng-include>
                 </div>
-                <div ui-tree>
+                <div ui-tree="treeOptions">
                     <div ui-tree-nodes="" ng-model="mapstories.chapters">
                         <div ng-repeat="chapter in mapstories.chapters" ui-tree-node>
                             <div id="chaptersList" ng-show="menuSection=='mainMenu'">

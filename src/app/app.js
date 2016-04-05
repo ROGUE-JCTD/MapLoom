@@ -248,6 +248,19 @@
 
         $scope.addChapterToMenu(0);
 
+        $scope.treeOptions = {
+          accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return true;
+          },
+          dropped: function(event) {
+            function updateChaptersList(value, index) {
+              value.chapter = 'Chapter ' + (index + 1);
+            }
+            //storyService.reorder_chapter(event.source.index, event.dest.index);
+            $scope.mapstories.chapters.forEach(updateChaptersList);
+          }
+        };
+
       });
 
   module.provider('debugService', function() {
