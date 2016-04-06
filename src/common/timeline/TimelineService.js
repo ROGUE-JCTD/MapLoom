@@ -146,6 +146,7 @@
           mapService_.map.removeLayer(mapService_.pinLayer);
           mapService_.pinLayer.getSource().addFeatures(pinsForMap);
           mapService_.map.addLayer(mapService_.pinLayer);
+          $rootScope.$broadcast('layer-added');
         }
         service_.initialize();
       });
@@ -162,9 +163,12 @@
         pins_ = pinService_.getPins(chapter_index);
         mapService_.map.removeLayer(mapService_.pinLayer);
         var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
-        mapService_.pinLayer.getSource().clear(true);
-        mapService_.pinLayer.getSource().addFeatures(pinsForMap);
-        mapService_.map.addLayer(mapService_.pinLayer);
+        if (pinsForMap.length > 0) {
+          mapService_.pinLayer.getSource().clear(true);
+          mapService_.pinLayer.getSource().addFeatures(pinsForMap);
+          mapService_.map.addLayer(mapService_.pinLayer);
+          $rootScope.$broadcast('layer-added');
+        }
         service_.initialize();
       });
 
@@ -177,6 +181,7 @@
           mapService_.map.removeLayer(mapService_.pinLayer);
           mapService_.pinLayer.getSource().addFeatures(pinsForMap);
           mapService_.map.addLayer(mapService_.pinLayer);
+          $rootScope.$broadcast('layer-added');
         }
         else {
           mapService_.map.removeLayer(mapService_.pinLayer);
