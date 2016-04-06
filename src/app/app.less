@@ -313,50 +313,61 @@ textarea {
   }
 }
 
+
 #pushobj {
   float: right;
-  width: 75%;
+  width: 80% !important;
   height: 100%;
-  background: whitesmoke;
+  background: #333333;
 }
 
 .menu {
-  width: 25%;
+  width: 20%;
   height: 100%;
-  background: whitesmoke;
   overflow-y: scroll;
   font-family: 'Open Sans', sans-serif !important;
   font-size: 1em;
+  background: whitesmoke;
+  padding: 3px;
 }
 
 .menuHidden {
+  position: absolute;
+  top: 0;
+  left: -320px;
+  z-index: 1;
   width: 350px;
   min-height: 100%;
-  background-color: whitesmoke;
-  z-index: 1;
-  position: absolute;
-  top: 0px;
-  left: -320px;
   font-family: 'Open Sans', sans-serif !important;
+  background-color: whitesmoke;
+  color: #666;
 }
+
 
 .menu i {
   float: right;
-  padding-right: 4px;
+  color: #999;
+  padding-top: 3px;
+  padding-bottom: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 15px;
 }
 
 .menuHidden i {
   float: right;
-  padding-right: 4px;
+  font-size: 20px;
+  padding-right: 5px
 }
 
 .menu h2 {
-  font-size: 24px;
-  line-height: 26px;
-  font-weight: bold;
-  padding: 1px 1px 1px 10px;
-  margin: 20px 5px;
+  padding: 3px;
+  margin: 0;
   font-family: 'Open Sans', sans-serif !important;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #666;
 }
 
 .menuHidden h2 {
@@ -367,43 +378,59 @@ textarea {
 }
 .menu a {
   display: block;
-  outline: none;
+  padding: 6px;
   overflow: hidden;
-  font-size: 18px;
+  font-family: 'Open Sans', sans-serif !important;
+  font-size: 12px;
   line-height: 20px;
   text-decoration: none;
-  padding: 4px;
-  font-family: 'Open Sans', sans-serif !important;
+  outline: 0;
+  color: #666;
 }
 
 .menu a h2 {
-  font-size: 18px;
-  line-height: 20px;
-  margin: 0px;
+  margin: 0;
   font-family: 'Open Sans', sans-serif !important;
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #f59620 ;
 }
 
 .menu small {
-  font-size: 14px;
+  font-family: sans-serif !important;
+  font-size: 12px;
   line-height: 20px;
-  font-family: 'Open Sans', sans-serif !important;
+  font-weight: bold;
 }
 
 .menu label {
   display: inline-block;
   max-width: 100%;
   margin-bottom: 5px;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 20px;
   font-family: 'Open Sans', sans-serif !important;
+  font-size: 10px;
+  font-weight: normal;
+  line-height: 20px;
+  text-transform: uppercase;
+  padding-left: 5px;
+  color: #777;
 }
 
 .menuItem {
   display: block;
-  border-top: 1px solid darkgrey;
-  padding: 4px;
+  padding: 6px;
+  margin: 10px;
+  border-radius: 4px;
   font-family: 'Open Sans', sans-serif !important;
+  border-top: 1px solid whitesmoke;
+  background: #ddd;
+}
+
+#menuButtonGroup {
+  background: transparent;
+  margin: 0 5px;
 }
 
 style-editor button {
@@ -411,18 +438,54 @@ style-editor button {
   font-size: 14px !important;
 }
 
-#helpTextBox {
-  position: absolute;
-  left: 50%;
-  bottom: 50px;
-  z-index: 1;
-  background-color: darkgrey;
-  height: 100px;
-  width: 400px;
-  opacity: 0.5;
+
+.btn-composer{
   color: white;
+  background-color: #777;
+  border-color: #777;
+  font-weight: bold;
+  padding: 6px;
+  display: inline-block;
+  margin-bottom: 0;
+  font-size: 10px;
+  line-height: 1.428571429;
   text-align: center;
-  vertical-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none
+}
+
+.btn-composer:hover, .btn-composer:focus, .btn-composer:active, .btn-composer.active, .open .dropdown-toggle.btn-composer {
+  color: white;
+  background-color: #f59620;
+  border-color: #f59620;
+}
+
+.form-composer {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 6px;
+  font-size: 12px;
+  line-height: 1.428571429;
+  color: #666;
+  vertical-align: middle;
+  background-color: #ccc;
+  border-radius: 2px;
+  border: none;
+}
+
+.form-composer:focus {
+  outline: none;
+  background-color: #999;
+  color: white;
 }
 
 .hopscotch-icon {
@@ -434,4 +497,53 @@ style-editor button {
   position: relative;
   z-index: 1;
   border: none;
+}
+
+.modal .modal-header, .loom-dialog.dialog-warning .modal-header {
+  color: white;
+  background-color: #666;
+  border-bottom: 0
+}
+
+.loom-dialog.dialog-warning .modal-body, .modal .modal-body, .loom-dialog.dialog-warning .modal-footer {
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: #ddd;
+  padding: 30px;
+}
+
+.loom-dialog {
+  position: absolute;
+  top: 90%;
+  left: 10%;
+  width: 80%;
+}
+
+.modal .modal-footer {
+  margin-top: 0;
+  background-color: #fff;
+  border: none;
+  -webkit-box-shadow: none;
+  box-shadow: none
+}
+
+.cards {
+margin: 0;
+font-weight: normal;
+background: transparent;
+border: 0
+}
+
+.cards-body {
+padding: 20px;
+margin: 10px;
+background-color: #eee;
+border: transparent;
+height: 350px;
+overflow-y: scroll;
+}
+
+#mapstory-title {
+  color: #db7d0a;
+  font-size: 1em;
 }
