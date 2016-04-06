@@ -1,6 +1,4 @@
-<h2 ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id"><i class="fa fa-reorder"
-                                                                               ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i><i
-        class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
+<h2 ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
 </h2>
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('viewLayerHistory' + chapter.id + storyLayers.id)"></i>
 </h2>
@@ -8,14 +6,36 @@
 <h2>{{ storyService.active_layer.get('metadata').title }} History</h2>
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="historyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer
-        Test123</a>
+    <a href="#" ng-click="historyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
 </div>
-<div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}" ng-click="storyService.historyClicked(commit)">
-    <div id="menuItem">
-        <a href="#" ng-click="">
-            <h2>{{ getCommitAuthor(commit) }}</h2>
-            <small>{{ getCommitTime(commit) }}</small>
-        </a>
-    </div>
+<div>
+    <ul class="list-group">
+      <li class="list-group-item loom-history-popover" ng-repeat="commit in log = historyService.log | filter:{visible:'true'}" ng-click="storyService.historyClicked(commit)">
+        <div ng-if="storyService.historyLoading(commit)" class="diff-loading loom-loading" spinner-hidden="false"></div>
+        <div class="commit-summary progress">
+          <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
+            <span class="sr-only"></span>
+          </div>
+          <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">
+            <span class="sr-only"></span>
+          </div>
+          <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">
+            <span class="sr-only"></span>
+          </div>
+          <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
+            <span class="sr-only"></span>
+          </div>
+        </div>
+        <span ng-if="storyService.historyMerge(commit)" class="glyphicon glyphicon-random merged" tooltip-placement="top"
+              tooltip="{{'merge_commit' | translate}}" tooltip-append-to-body="true"></span>
+        <div class="author-name ellipsis">{{getCommitAuthor(commit)}}</div>
+        <div class="commit-time ellipsis">{{getCommitTime(commit)}}</div>
+
+      </li>
+      <li ng-if="historyService.nextPage" class="list-group-item">
+        <div class="history-loading loom-loading" spinner-hidden="false"></div>
+      </li>
+      <li class="history-last-list-item">
+      </li>
+    </ul>
 </div>
