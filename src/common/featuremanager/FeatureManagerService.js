@@ -938,8 +938,9 @@
             if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
               layerInfo.layer = layers[index];
               goog.array.insert(infoPerLayer, layerInfo);
-              getFeatureInfoCompleted();
+
             }
+            getFeatureInfoCompleted();
             //console.log('-- infoPerLayer: ', infoPerLayer);
           }, function(reject) {
             getFeatureInfoCompleted();
