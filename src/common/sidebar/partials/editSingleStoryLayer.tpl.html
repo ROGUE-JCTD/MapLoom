@@ -22,19 +22,19 @@
             <hr>
         </div>
         <div id="edit" class="tab-pane fade">
-            <button class="btn btn-default btn-lg btn-block"
+            <button class="btn-composer btn-block"
                     ng-click="storyService.startFeatureAdd(); toggleSidebar('editSingleStoryLayer')"
                     ng-disabled="storyService.isEditable()">Add a New Feature
-            </button>ß
-            <button class="btn btn-default btn-lg btn-block"
+            </button>
+            <button class="btn-composer btn-block"
                     ng-click="storyService.startFeatureEdit(); toggleSidebar('editSingleStoryLayer')"
                     ng-disabled="storyService.isEditable()">Edit an Existing Feature
             </button>
-            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn btn-default btn-lg btn-block">View StoryLayer Details</button></a>
-            <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
+            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn-composer btn-block">View StoryLayer Details</button></a>
+            <button class="btn-composer btn-block" ng-click="storyService.showTable()"
                     ng-disabled="storyService.isEditable()">View Attribute Table
             </button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="historyService.getHistory(storyService.active_layer);updateMenuSection('viewLayerHistory')">View History</button>
+            <button class="btn-composer btn-block" ng-click="historyService.getHistory(storyService.active_layer);updateMenuSection('viewLayerHistory')">View History</button>
         </div>
         <div id="infoboxß" class="tab-pane fade">
             <div class="form-group">
@@ -74,7 +74,7 @@
                 </table>
             </div>
             <hr>
-            <button class="btn btn-default btn-lg btn-block">Save Settings</button>
+            <button class="btn-composer btn-block">Save Settings</button>
         </div>
     </div>
 </div>

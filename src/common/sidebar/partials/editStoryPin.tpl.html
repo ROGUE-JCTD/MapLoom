@@ -27,7 +27,7 @@
     <div class="form-group">
         <label for="storyPinLocation">Pin Location</label>
         <p>Drop pin on the map to set pin location.</p>
-        <button class="btn btn-default btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(storyService.active_pin)">Save Pin
+        <button class="btn-composer btn-block" id="savePinLocation" ng-click="storyService.addPinLocation(storyService.active_pin)">Save Pin
             Location
         </button>
     </div>
@@ -70,8 +70,8 @@
 </div>
 
 <div class="menuItem">
-    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="pinService.updatePin(storyService.active_pin, chapter.id)">Update StoryPin</button>
+    <button class="btn-composer btn-block" id="saveStoryPin" ng-click="pinService.updatePin(storyService.active_pin, chapter.id)">Update StoryPin</button>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block btn-danger" ng-click="removeStoryPin(storyService.active_pin)">Delete StoryPin</button>
+    <button class="btn-composer btn-block" ng-click="removeStoryPin(storyService.active_pin)">Delete StoryPin</button>
 </div>
