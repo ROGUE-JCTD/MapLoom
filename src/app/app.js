@@ -31,6 +31,12 @@
           }
         });
 
+        $scope.$on('layer-added', function(event) {
+          if (goog.isDefAndNotNull($scope.mapService)) {
+            $scope.storyLayers = $scope.mapService.getStoryLayers();
+          }
+        });
+
         $('body').on('show.bs.modal', function(e) {
           var modals = $('.modal.in');
           var backdrops = $('.modal-backdrop');
@@ -121,6 +127,7 @@
         $scope.active_menu_chapter = null;
         $scope.prev_menu_section = null;
         $scope.menuSection = 'mainMenu';
+        $scope.storyLayers = mapService.getStoryLayers();
 
         $scope.updateMenuSection = function(updateMenuSection) {
           if (updateMenuSection == 'mainMenuHidden') {
@@ -259,6 +266,15 @@
             }
             storyService.reorder_chapter(event.source.index, event.dest.index);
             $scope.mapstories.chapters.forEach(updateChaptersList);
+          }
+        };
+
+        $scope.layerTree = {
+          accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return true;
+          },
+          dropped: function(event) {
+            $scope.reorderLayer(event.source.index, event.dest.index);
           }
         };
 
