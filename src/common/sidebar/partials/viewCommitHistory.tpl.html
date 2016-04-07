@@ -1,0 +1,15 @@
+<h2 ng-show="menuSection=='viewCommitHistory' + chapter.id + storyLayers.id + commit"><i class="fa fa-reorder" ng-click="toggleSidebar('viewCommitHistory' + chapter.id + storyLayers.id + commit)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
+</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('viewCommitHistory' + chapter.id + storyLayers.id + commit.id)"></i>
+</h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>Commit {{ commit.id }}</h2>
+<h2>{{ commit.author.name }}</h2>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">Back to Layer History</a>
+</div>
+<button class="btn-composer btn-block">View On Map</button>
+<button class="btn-composer btn-block">Show Details</button>
+<button class="btn-composer btn-block">View Author's Profile</button>
+<button class="btn-composer btn-block">Revert</button>

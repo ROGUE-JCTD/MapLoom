@@ -9,19 +9,19 @@
     <a href="#" ng-click="historyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
 </div>
 <div>
-    <ul class="list-group">
-      <li class="list-group-item loom-history-popover" ng-repeat="commit in log = historyService.log | filter:{visible:'true'}" ng-click="storyService.historyClicked(commit)">
-        {{ commit.author.name }}
-      </li>
-      <li ng-if="historyService.nextPage" class="list-group-item">
-        <div class="history-loading loom-loading" spinner-hidden="false"></div>
-      </li>
-      <li class="history-last-list-item">
-      </li>
-    </ul>
-    <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}" ng-click="storyService.historyClicked(commit)">
-        <div id="menuItem">
-          {{ commit.author.name }}
+    <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
+        <div class="menuItem" ng-click="updateMenuSection('viewCommit' + commit.id)">
+          <h2>{{ commit.author.name }}</h2>
+          <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
+        </div>
+        <div ng-show="menuSection=='viewCommit' + commit.id">
+            <h2>Commit {{ commit.id }}</h2>
+            <h2>{{ commit.author.name }}</h2>
+
+            <button class="btn-composer btn-block">View On Map</button>
+            <button class="btn-composer btn-block">Show Details</button>
+            <button class="btn-composer btn-block">View Author's Profile</button>
+            <button class="btn-composer btn-block">Revert</button>
         </div>
     </div>
 </div>
