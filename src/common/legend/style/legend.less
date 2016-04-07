@@ -1,18 +1,17 @@
 #legend-container {
   position: absolute;
+  top: 10px;
   right: 50px;
   left: auto;
-  top: 0;
-  .z-index(@mapLevel);
-  background-color: @legendColor !important;
-  color: @legendFontColor;
-  width: auto;
-  padding-left: 5px;
+  z-index: 250;
+  width: 200px;
+  max-height: 100%;
   padding-right: 5px;
   padding-bottom: 5px;
-  max-height: 100%;
-  /*overflow-y: auto;*/
-  visibility: hidden;
+  padding-left: 5px;
+  color: #666;
+  background-color: whitesmoke;
+  visibility: hidden
 }
 
 .legend-panel-body {
@@ -23,14 +22,17 @@
   padding-left: 20px;
   padding-right: 5px;
 }
+
 .legend-item-header {
-  background-color: @legendHeaderColor !important;
-  border-bottom-color: @legendColor;
-  padding-bottom: 0;
-  padding-top: 0;
-  margin-bottom: 5px;
-  margin-top: 5px;
   width: auto;
+  padding: 3px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  background: #ccc;
+  border-radius: 3px !important;
 }
 
 .stLegend{
@@ -65,9 +67,7 @@
 }
 
 #legend-title-heading {
-  padding-bottom: 20px;
-  background-color: @legendHeaderColor;
-
+  display: none;
 }
 
 #legend-title-text {
