@@ -25,10 +25,9 @@
                 <span class="sr-only"></span>
               </div>
             </div>
+            <!-- TODO: Display Anonymous if there is no name -->
           <h2>{{ commit.author.name }}</h2>
-          <h2>{{ commit.committer.name }}</h2>
           <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
-        </div>
         </div>
     </div>
 </div>
