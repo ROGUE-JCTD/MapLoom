@@ -10,24 +10,23 @@
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinTitle">StoryPin Title</label>
-        <input type="text" class="form-control" id="storyPinTitle" ng-model="pin.title"/>
+        <input type="text" class="form-composer" id="storyPinTitle" ng-model="pin.title"/>
     </div>
 </div>
 
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinContent">StoryPin Content</label>
-        <textarea class="form-control" id="storyPinContent" ng-model="pin.content"></textarea>
+        <textarea class="form-composer" id="storyPinContent" ng-model="pin.content"></textarea>
         <br>
-        <button class="btn btn-default btn-block" id="linkMedia">Link Media...</button>
+        <textarea class="form-composer" id="linkMedia" ng-model="pin.media" placeholder="Paste media embed here..."></textarea>
     </div>
 </div>
 
 <div class="menuItem">
     <div class="form-group">
         <label for="storyPinLocation">Pin Location</label>
-        <small><p>Drop pin on the map to set pin location.</p></small>
-        <button class="btn btn-default btn-block" id="savePinLocation">Save Pin Location</button>
+        <button class="btn-composer" id="savePinLocation" ng-click="storyService.addPinLocation(pin)" id="storyPinLocation">Add StoryPin to the Map</button>
     </div>
 </div>
 
@@ -35,7 +34,7 @@
     <div class="form-group">
         <label for="start_time">Start Time</label>
         <div>
-            <datetimepicker date-object="pin.start_time" default-date="inserting"></datetimepicker>
+            <datetimepicker date-object="pin.start_time" default-date="inserting" id="storyPinStartTime"></datetimepicker>
         </div>
     </div>
     <div class="form-group">
@@ -59,7 +58,13 @@
             <input id="in_timeline" type="checkbox" ng-init="pin.in_timeline = false" ng-model="pin.in_timeline"> In timeline</input>
         </div>
     </div>
+     <div class="form-group">
+        <label for="pause_playback">Pause playback of timeline</label>
+        <div>
+            <input id="pause_playback" type="checkbox" ng-init="pin.pause_playback = false" ng-model="pin.pause_playback"> Pause playback </input>
+        </div>
+    </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block" id="saveStoryPin" ng-click="addStoryPin(pin)">Save StoryPin</button>
+    <button class="btn-composer" id="saveStoryPin" ng-click="addStoryPin(pin); updateTourStep(23)">Save StoryPin</button>
 </div>

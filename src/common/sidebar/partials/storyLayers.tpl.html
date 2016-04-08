@@ -2,22 +2,37 @@
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('storyLayers' + chapter.id)"></i></h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>StoryLayers</h2>
-<a href="#" class="menuItem" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back to Selected Chapter</a>
-<a href="#add-layer-dialog" class="menuItem" data-toggle="modal">Add a New StoryLayer...
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(11)">Back to Selected Chapter</a>
+</div>
+<a href="#add-layer-dialog" class="menuItem" data-toggle="modal" id="addNewStoryLayerButton" ng-click="updateTourStep(6)">Add a New StoryLayer...
 </a>
 
-<div class="loom-arrangeable layer-container" arrangeable-handle="i.fa-navicon"
-     arrangeable-item-selector="div.menuItem" arrangeable-callback="reorderLayer"
-     arrangeable-placeholder='<div class="placeholder"></div>'>
-    <div ng-repeat="storyLayer in storyLayers = storyService.getLayers()">
-        <div class="menuItem">
-            <i class="fa fa-navicon"></i>
-            <i ng-click="storyService.toggleVisiblity(storyLayer)"
-               ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
-            <a href="#"
-               ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">
-                {{ layerService.getTitle(storyLayer) }}
-            </a>
+<div id="baseMaps" class="menuItem">
+    <label for="baseMapList">Choose Your Basemap</label>
+    <select class="form-control" name="baseMapList" id="baseMapList"
+            ng-init="baseMap = baseMaps[1]"
+            ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
+            ng-model="baseMap"
+            ng-change="mapService.selectedBaseMap(baseMap)"
+            ng-selected="baseMaps[1]"
+            value="1">
+    </select>
+</div>
+
+<div class="layer-container" ui-tree="layerTree">
+    <div ui-tree-nodes ng-model="storyLayers">
+        <div ng-repeat="storyLayer in storyLayers" ui-tree-node>
+            <div class="menuItem">
+                <i class="fa fa-navicon" ui-tree-handle></i>
+                <i ng-click="storyService.toggleVisiblity(storyLayer)"
+                   ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
+                <a href="#"
+                   ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id); updateTourStep(8)">
+                    {{ layerService.getTitle(storyLayer) }}
+                </a>
+            </div>
         </div>
     </div>
 </div>

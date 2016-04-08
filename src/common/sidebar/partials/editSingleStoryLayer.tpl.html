@@ -1,0 +1,80 @@
+<h2 ng-show="menuSection=='editSingleStoryLayer'"><i class="fa fa-reorder" ng-click="toggleSidebar('editSingleStoryLayer')"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>
+</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editSingleStoryLayer')"></i>
+</h2>
+<h2>{{ storyService.active_layer.get('metadata').title }}</h2>
+
+<div class="menuItem">
+    <ul class="nav nav-tabs" data-tabs="tabs">
+        <li class="active"><a data-toggle="tab" href="#style">Style</a>
+        <li><a data-toggle="tab" href="#edit">Edit</a></li>
+        <li><a data-toggle="tab" href="#infobox">Infobox</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="style" class="tab-pane fade in active">
+
+            <div>
+                <style-editor ng-if="menuSection=='editSingleStoryLayer'" class="minheight"
+                              control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true"
+                              on-change="styleChanged"></style-editor>
+            </div>
+
+            <hr>
+        </div>
+        <div id="edit" class="tab-pane fade">
+            <button class="btn-composer btn-block"
+                    ng-click="storyService.startFeatureAdd(); toggleSidebar('editSingleStoryLayer')"
+                    ng-disabled="storyService.isEditable()">Add a New Feature
+            </button>
+            <button class="btn-composer btn-block"
+                    ng-click="storyService.startFeatureEdit(); toggleSidebar('editSingleStoryLayer')"
+                    ng-disabled="storyService.isEditable()">Edit an Existing Feature
+            </button>
+            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn-composer btn-block">View StoryLayer Details</button></a>
+            <button class="btn-composer btn-block" ng-click="storyService.showTable()"
+                    ng-disabled="storyService.isEditable()">View Attribute Table
+            </button>
+            <button class="btn-composer btn-block" ng-click="historyService.getHistory(storyService.active_layer);updateMenuSection('viewLayerHistory')">View History</button>
+        </div>
+        <div id="infoboxß" class="tab-pane fade">
+            <div class="form-group">
+                <label for="layerAlias">Layer Alias</label>
+                <textarea class="form-control" id="layerAlias" rows="2"></textarea>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="customizeInfoBox">Customize Info Box</label>
+                <table class="table table-striped table-bordered"
+                       id="customizeInfoBox">
+                    <tr>
+                        <th class="text-center">Attr</th>
+                        <th class="text-center">Mask</th>
+                        <th class="text-center">Show?</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <hr>
+            <button class="btn-composer btn-block">Save Settings</button>
+        </div>
+    </div>
+</div>

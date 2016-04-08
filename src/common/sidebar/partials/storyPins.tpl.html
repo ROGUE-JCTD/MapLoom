@@ -5,10 +5,10 @@
 
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back to Selected Chapter</a>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(24)">Back to Selected Chapter</a>
 </div>
 
-<a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)">Add a New StoryPin...</a>
+<a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)" id="addNewStoryPinButton" onclick="updateTourStep(19)">Add a New StoryPin...</a>
 
 <div ng-repeat="storyPin in storyPins = pinService.getPins(chapter.id)">
     <a href="#" class="menuItem" ng-click="storyService.selectPin(storyPin);updateMenuSection('editStoryPin' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>

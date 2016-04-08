@@ -329,7 +329,9 @@
     'box_info': 'StoryBox Information',
     'sure_remove_box': 'Are you sure you want to remove this StoryBox?',
     'style_layer': 'Style StoryLayer',
-    'show_attributes': 'Show Attributes'
+    'show_attributes': 'Show Attributes',
+    'remove_pin': 'Remove StoryPin',
+    'sure_remove_pin': 'Are you sure you want to remove this StoryPin?'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

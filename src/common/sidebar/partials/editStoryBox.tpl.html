@@ -10,20 +10,20 @@
     <div class="form-group">
         <label for="title">Title</label>
         <div>
-            <input ng-model="storyService.active_box.title" ng-required class="form-control" id="title" placeholder="Title">
+            <input ng-model="storyService.active_box.title" ng-required class="form-composer" id="title" placeholder="Title">
         </div>
     </div>
     <div class="form-group">
         <label for="description">Description</label>
         <div>
-                <textarea ng-model="storyService.active_box.description" class="form-control" id="description"
+                <textarea ng-model="storyService.active_box.description" class="form-composer" id="description"
                           placeholder="Description"></textarea>
         </div>
     </div>
     <h2>Map Extents</h2>
     <div class="form-group">
         <label for="updateMapBounds">Pan and zoom on the map to set the map sounds.</label>
-        <button class="btn btn-default btn-block" id="updateMapBounds">Update Map Bounds</button>
+        <button class="btn-composer" id="updateMapBounds" ng-click="storyService.updateBoxExtent()">Update Map Bounds</button>
     </div>
     <h2>Time Frame</h2>
     <div class="form-group">
@@ -40,5 +40,8 @@
     </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block" ng-click="boxService.updateBox(storyService.active_box, chapter.id)">Save StoryBox</button>
+    <button class="btn-composer" ng-click="boxService.updateBox(storyService.active_box, chapter.id)">Save StoryBox</button>
+</div>
+<div class="menuItem">
+    <button class="btn-composer" ng-click="removeStoryBox(storyService.active_box)">Delete StoryBox</button>
 </div>

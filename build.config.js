@@ -66,17 +66,18 @@ module.exports = {
       'vendor/jquery-sortable/source/js/jquery-sortable-min.js',
       'vendor/angular/angular.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-      'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
       'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/moment/min/moment.min.js',
+      'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
       'vendor/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
       'vendor/bootstrap3-datetimepicker/src/js/locales/bootstrap-datetimepicker.es.js',
       'vendor/x2js/xml2json.min.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/angular-cookies/angular-cookies.js',
+      'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/closure-library/closure/goog/base.js',
       'vendor/closure-library/closure/goog/deps.js',
       'vendor/proj4js/proj4.js',
@@ -93,6 +94,9 @@ module.exports = {
       'vendor/story-tools/dist/story-tools-edit-ng.js',
       'vendor/story-tools/dist/story-tools-edit-tpls.js',
       'vendor/story-tools/dist/ows.js',
+      'vendor/toastr/toastr.js',
+      'vendor/hopscotch/dist/js/hopscotch.min.js',
+      'vendor/angular-ui-tree/dist/angular-ui-tree.min.js',
 
       //-- files for image gallery
       'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -102,7 +106,7 @@ module.exports = {
       'vendor/blueimp-gallery/js/jquery-blueimp-gallery.js',
       'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.js',
       'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js',
-      'vendor/angular-xeditable/dist/js/xeditable.min.js',
+      'vendor/angular-xeditable/dist/js/xeditable.min.js'
     ],
     css: [
       'vendor/ol3/ol.css',
@@ -111,7 +115,7 @@ module.exports = {
       'vendor/blueimp-gallery/css/blueimp-gallery.css',
       'vendor/blueimp-gallery/css/blueimp-gallery-indicator.css',
       'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
-
+      'vendor/angular-bootstrap-colorpicker/css/colorpicker.min.css',
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
       'vendor/angular-xeditable/dist/css/xeditable.css',
@@ -121,6 +125,12 @@ module.exports = {
       'vendor/nouislider/distribute/jquery.nouislider.min.css',
 
       'vendor/font-awesome/css/font-awesome.min.css',
+
+      'vendor/toastr/toastr.css',
+
+      'vendor/hopscotch/dist/css/hopscotch.min.css',
+
+      'vendor/angular-ui-tree/dist/angular-ui-tree.min.css'
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',

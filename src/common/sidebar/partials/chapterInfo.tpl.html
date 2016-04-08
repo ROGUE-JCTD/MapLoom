@@ -1,20 +1,20 @@
 <h2 ng-show="menuSection=='chapterInfo' + chapter.id"><i class="fa fa-reorder" ng-click="toggleSidebar('chapterInfo' + chapter.id)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}</h2>
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('chapterInfo' + chapter.id)"></i></h2>
-<h2>{{ storyService.active_chapter.about.title }} - Info</h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">Back to Selected Chapter</a>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(4)">Back to Selected Chapter</a>
 </div>
 
 <div class="menuItem">
     <label for="chapterTitle">Chapter Title</label>
-    <input ng-model="storyService.active_chapter.about.title" class="form-control" type="text" name="chapterTitle" id="chapterTitle"/>
+    <input ng-model="storyService.active_chapter.about.title" class="form-composer" type="text" name="chapterTitle" id="chapterTitle"/>
 </div>
 
 <div class="menuItem">
     <label for="chapterSummary">Chapter Summary</label>
-    <textarea ng-model="storyService.active_chapter.about.abstract" class="form-control" name="chapterSummary" id="chapterSummary"></textarea>
+    <textarea rows="20" ng-model="storyService.active_chapter.about.abstract" class="form-composer" name="chapterSummary" id="chapterSummary"></textarea>
 </div>
 <div class="menuItem">
-    <button ng-click="storyService.save()" type="button" class="btn btn-default center-block">Save Chapter Info</button>
+    <button ng-click="storyService.save()" type="button" class="btn-composer">Save Chapter Info</button>
 </div>

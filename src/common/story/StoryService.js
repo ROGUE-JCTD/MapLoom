@@ -10,12 +10,14 @@
   var featureManagerService_ = null;
   var rootScope_ = null;
   var q_ = null;
+  var historyService_ = null;
+  var diffService_ = null;
 
 
   module.provider('storyService', function() {
 
     this.$get = function($window, $http, $q, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
-                         configService, dialogService, tableViewService) {
+                         configService, dialogService, historyService, diffService, tableViewService) {
       service_ = this;
       q_ = $q;
       mapService_ = mapService;
@@ -26,6 +28,8 @@
       rootScope_ = $rootScope;
       tableViewService_ = tableViewService;
       featureManagerService_ = featureManagerService;
+      historyService_ = historyService;
+      diffService_ = diffService;
 
       //When initializing the story service the mapService should already be initialized
       this.title = 'New Mapstory';
@@ -54,9 +58,21 @@
       return this;
     };
 
+    this.hasNoHistory = function() {
+      if (this.active_layer === null) {
+        return true;
+      }
+      return !this.active_layer.get('metadata').isGeoGig;
+    };
+
+    this.getHistory = function() {
+      var pathFilter = this.active_layer.get('metadata').nativeName.split(':')[1];
+      historyService_.getHistory(this.active_layer, pathFilter);
+    };
 
     this.clearSelectedItems = function() {
       this.active_layer = null;
+      this.active_index = null;
       this.active_box = null;
       this.active_pin = null;
       this.active_chapter = null;
@@ -77,6 +93,55 @@
 
     this.toggleVisiblity = function(layer) {
       layer.set('visible', !layer.get('visible'));
+    };
+
+    this.historyLoading = function(commit) {
+      return goog.isDefAndNotNull(commit.loading) && commit.loading === true;
+    };
+
+    this.historyClicked = function(commit) {
+      commit.loading = true;
+      $('.loom-history-popover').popover('hide');
+      var lastCommitId = '0000000000000000000000000000000000000000';
+      if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
+        if (goog.isDefAndNotNull(commit.parents.id)) {
+          if (goog.isArray(commit.parents.id)) {
+            lastCommitId = commit.parents.id[0];
+          } else {
+            lastCommitId = commit.parents.id;
+          }
+        }
+      }
+      var diffOptions = new GeoGigDiffOptions();
+      diffOptions.oldRefSpec = lastCommitId;
+      diffOptions.newRefSpec = commit.id;
+      diffOptions.showGeometryChanges = true;
+      diffOptions.pathFilter = historyService_.pathFilter;
+      diffOptions.show = 1000;
+      diffService_.performDiff(historyService_.repoId, diffOptions).then(function(response) {
+        if (goog.isDefAndNotNull(response.Feature)) {
+          if (goog.isDefAndNotNull(response.nextPage) && response.nextPage === true) {
+            dialogService_.warn(translate_.instant('warning'),
+                translate_.instant('too_many_changes'), [translate_.instant('btn_ok')]);
+          } else {
+            diffService_.setTitle(translate_.instant('summary_of_changes'));
+          }
+        } else {
+          dialogService_.open(translate_.instant('history'),
+              translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
+        }
+        commit.loading = false;
+      }, function(reject) {
+        //failed to get diff
+        dialogService_.error(translate_.instant('error'),
+            translate_.instant('diff_unknown_error'), [translate_.instant('btn_ok')]);
+        commit.loading = false;
+      });
+    };
+
+    this.historyMerge = function(commit) {
+      return goog.isDefAndNotNull(commit.parents) && goog.isArray(commit.parents.id) &&
+          commit.parents.id.length > 1;
     };
 
     this.showTable = function() {
@@ -105,15 +170,6 @@
       return dialogResult;
     };
 
-    this.canEditStyle = function() {
-      if (this.active_layer == null) {
-        return false;
-      } else {
-        return (this.active_layer.get('metadata').editable && this.active_layer.get('metadata').active_btn == 'style_layer');
-      }
-
-    };
-
     this.isEditable = function() {
       if (this.active_layer == null) {
         return true;
@@ -129,6 +185,27 @@
       featureManagerService_.startFeatureInsert(this.active_layer);
     };
 
+    this.startFeatureEdit = function() {
+      toastr.success('To edit an existing feature, just click on a feature that you want to edit.');
+    };
+
+    this.addPinLocation = function(pin) {
+      featureManagerService_.startPinInsert(pin);
+    };
+
+    this.addBoxExtent = function(box) {
+      goog.object.extend(box, {'extent': mapService_.map.getView().calculateExtent(mapService_.map.getSize())});
+      toastr.success('Your StoryBox Bounds have been saved');
+    };
+
+    this.updateBoxExtent = function() {
+      if (this.active_box === null) {
+        return;
+      }
+      this.active_box.set('extent', mapService_.map.getView().calculateExtent(mapService_.map.getSize()));
+      toastr.success('Your StoryBox Bounds have been saved');
+    };
+
     //Save all chapter configuration objects
     this.saveMaps = function() {
       //Go through each chapter configuration and save accordingly through mapService
@@ -136,7 +213,7 @@
         //Chapter index is determined by order in configuration
         service_.configurations[iConfig]['chapter_index'] = iConfig;
         mapService_.updateActiveMap(iConfig);
-        mapService_.save(this.configurations[iConfig]);
+        mapService_.save(service_.configurations[iConfig]);
       }
       this.print_configurations();
     };
@@ -166,14 +243,18 @@
         service_.updateStoryID(data.id);
         service_.removedChapterIDs = [];
         service_.saveMaps();
-        service_.update_active_config(service_.active_index, true);
+        if (service_.active_index !== null) {
+          service_.update_active_config(service_.active_index, true);
+        }
         console.log('----[ mapstory.save success. ', data, status, headers, config);
+        toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
-          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
+          // dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));
+          toastr.error('You do not have permission to do that.', 'Permissions Error');
         } else {
-          dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed',
-              {value: status}));
+          // dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_failed', {value: status}));
+          toastr.error('Your MapStory has failed to save.', 'Save Failed');
         }
       });
 
@@ -209,10 +290,6 @@
       }
     };
 
-    this.get_chapter_config = function(index) {
-      return this.configurations[index];
-    };
-
     //Composer only allows you to edit one chapter at a time
     //This function should be called whenever we select a different chapter from the list.
     this.update_active_config = function(index, deleteOverride) {
@@ -228,34 +305,6 @@
       rootScope_.$broadcast('chapter-switch', this.active_index);
     };
 
-    //Updates the stored chapter_info information for the current chapter
-    //Does not invoke a map save
-    this.update_chapter_info = function(chapter_info) {
-
-      this.active_chapter.about.title = chapter_info.chapter_title;
-      this.active_chapter.about.abstract = chapter_info.abstract;
-    };
-
-    this.change_chapter = function(chapter_index) {
-      service_.update_active_config(chapter_index);
-    };
-
-    this.next_chapter = function() {
-      var nextChapter = this.active_index + 1;
-      if (nextChapter > this.configurations.length - 1) {
-        nextChapter = 0;
-      }
-      service_.update_active_config(nextChapter);
-    };
-
-    this.prev_chapter = function() {
-      var prevChapter = this.active_index - 1;
-      if (prevChapter < 0) {
-        prevChapter = 0;
-      }
-      service_.update_active_config(prevChapter);
-    };
-
     this.getLayers = function() {
       var layers = mapService_.map.getLayers().getArray();
 
@@ -265,7 +314,7 @@
             (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
             layer.get('metadata').vectorEditLayer)) {
           layers.splice(iLayer, 1);
-          console.log(layer);
+          console.log('Logging getLayers layer: ' + layer);
 
         }
       }
@@ -279,7 +328,7 @@
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';
-      new_chapter.about.summary = '';
+      new_chapter.about.abstract = 'This is the default summary';
       this.configurations.push(new_chapter);
       //This creates the new layergroup on the open layers map that is being displayed.
       //Parameter is currently unused, but may be changed if we decide map load should occur here.
@@ -295,6 +344,7 @@
     };
 
     this.reorder_chapter = function(from_index, to_index) {
+      // TODO: Update this function to work with the new Composer.
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
     };
 

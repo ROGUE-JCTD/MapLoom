@@ -1,5 +1,6 @@
 <div class="menuItem">
-    <a href="#" ng-click="storyService.update_active_config(chapter.id);updateMenuSection('selectedChapter' + chapter.id)">
+    <i class="fa fa-ellipsis-h" ui-tree-handle=""></i>
+    <a href="#" ng-click="storyService.update_active_config(chapter.id);updateMenuSection('selectedChapter' + chapter.id); updateTourStep(2)">
         <h2><i class="fa fa-angle-left pull-left"></i>{{ chapter.chapter }}</h2>
         <small>{{ storyService.configurations[chapter.id].about.title }}</small>
     </a>

@@ -29,7 +29,6 @@
     <script type="text/javascript" src="<%= file %>"></script>
     <% } %>
     <% }); %>
-
     <% if (!(typeof django === 'undefined') && (django)) { %>
     {% get_current_language as language %}
     <script type="text/javascript">
@@ -80,6 +79,11 @@
         };
     </script>
 
+    <script type="text/javascript">
+        $(window).load(function () {
+            $('#welcomeTour').modal('show');
+        });
+    </script>
 
 </head>
 <body class="maploom-body">
@@ -120,57 +124,67 @@
                 <div id="mainMenuTop">
                     <ng-include src="'sidebar/partials/mainMenuTop.tpl.html'"></ng-include>
                 </div>
+                <div ui-tree="treeOptions">
+                    <div ui-tree-nodes="" ng-model="mapstories.chapters">
+                        <div ng-repeat="chapter in mapstories.chapters" ui-tree-node>
+                            <div id="chaptersList" ng-show="menuSection=='mainMenu'">
+                                <ng-include src="'sidebar/partials/chaptersList.tpl.html'"></ng-include>
+                            </div>
 
-                <div ng-repeat="chapter in mapstories.chapters">
-                    <div id="chaptersList" ng-show="menuSection=='mainMenu'">
-                        <ng-include src="'sidebar/partials/chaptersList.tpl.html'"></ng-include>
-                    </div>
+                            <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
+                                <ng-include src="'sidebar/partials/selectedChapter.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="selectedChapter" ng-show="menuSection=='selectedChapter' + chapter.id">
-                        <ng-include src="'sidebar/partials/selectedChapter.tpl.html'"></ng-include>
-                    </div>
+                            <div id="chapterInfo" ng-show="menuSection=='chapterInfo' + chapter.id">
+                                <ng-include src="'sidebar/partials/chapterInfo.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="chapterInfo" ng-show="menuSection=='chapterInfo' + chapter.id">
-                        <ng-include src="'sidebar/partials/chapterInfo.tpl.html'"></ng-include>
-                    </div>
+                            <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
+                                <ng-include src="'sidebar/partials/storyLayers.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="storyLayers" ng-show="menuSection=='storyLayers' + chapter.id">
-                        <ng-include src="'sidebar/partials/storyLayers.tpl.html'"></ng-include>
-                    </div>
+                            <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
+                                <ng-include src="'sidebar/partials/editStoryLayer.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="editStoryLayer" ng-show="menuSection=='editStoryLayer' + chapter.id + storyLayers.id">
-                        <ng-include src="'sidebar/partials/editStoryLayer.tpl.html'"></ng-include>
-                    </div>
+                            <div id="editSingleStoryLayer" ng-show="menuSection=='editSingleStoryLayer'">
+                                <ng-include src="'sidebar/partials/editSingleStoryLayer.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="viewLayerHistory" ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id">
-                        <ng-include src="'sidebar/partials/viewLayerHistory.tpl.html'"></ng-include>
-                    </div>
+                            <div id="viewLayerHistory" ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id">
+                                <ng-include src="'sidebar/partials/viewLayerHistory.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
-                        <ng-include src="'sidebar/partials/storyBoxes.tpl.html'"></ng-include>
-                    </div>
+                            <div id="viewCommitHistory" ng-show="menuSection=='viewCommitHistory' + chapter.id + storyLayers.id + commit">
+                                <ng-include src="'sidebar/partials/viewCommitHistory.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
-                        <ng-include src="'sidebar/partials/addStoryBox.tpl.html'"></ng-include>
-                    </div>
+                            <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
+                                <ng-include src="'sidebar/partials/storyBoxes.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
-                        <ng-include src="'sidebar/partials/editStoryBox.tpl.html'"></ng-include>
-                    </div>
+                            <div id="addStoryBox" ng-show="menuSection=='addStoryBox' + chapter.id">
+                                <ng-include src="'sidebar/partials/addStoryBox.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
-                        <ng-include src="'sidebar/partials/storyPins.tpl.html'"></ng-include>
-                    </div>
+                            <div id="editStoryBox" ng-show="menuSection=='editStoryBox' + chapter.id + storyLayers.id">
+                                <ng-include src="'sidebar/partials/editStoryBox.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
-                        <ng-include src="'sidebar/partials/addStoryPin.tpl.html'"></ng-include>
-                    </div>
+                            <div id="storyPins" ng-show="menuSection=='storyPins' + chapter.id">
+                                <ng-include src="'sidebar/partials/storyPins.tpl.html'"></ng-include>
+                            </div>
 
-                    <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
-                        <ng-include src="'sidebar/partials/editStoryPin.tpl.html'"></ng-include>
+                            <div id="addStoryPin" ng-show="menuSection=='addStoryPin' + chapter.id + storyPins.id">
+                                <ng-include src="'sidebar/partials/addStoryPin.tpl.html'"></ng-include>
+                            </div>
+
+                            <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
+                                <ng-include src="'sidebar/partials/editStoryPin.tpl.html'"></ng-include>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
                 <div id="addChapter" ng-show="menuSection=='mainMenu'">
                     <ng-include src="'sidebar/partials/addChapter.tpl.html'"></ng-include>
                 </div>
@@ -265,6 +279,9 @@
     <div loom-modal id="chapterDelete" modal-title="Are you sure you want to delete this chapter?">
         <div loom-chapter-delete id="chapter-delete">
         </div>
+    </div>
+    <div loom-modal id="welcomeTour" modal-title="Welcome to the MapStory Composer">
+        <div loom-welcome-tour id="welcome-tour"></div>
     </div>
 
     <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->

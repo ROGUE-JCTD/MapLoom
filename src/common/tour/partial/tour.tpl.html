@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    $("#start-tour").on('click', function () {
+        hopscotch.startTour(tour);
+    });
+    $("#start-composing").on('click', function () {
+        // $.cookie('do_not_show_tour', 'do_not_show', {expires: 365});
+    });
+</script>
+<div id="tour-screen">
+    <div id="tour-content" style="padding-bottom:20px">
+        <div class="container">
+            <div class="row" id="tour-header">
+                <div class="col-sm-12">
+                    <h3>Share your story of change in the world in four steps:</h3>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-6">
+                    <a href="#" id="start-tour" data-dismiss="modal"><h3>Take a Tour</h3></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="#" id="start-composing" data-dismiss="modal"><h3>Compose Mapstory</h3></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

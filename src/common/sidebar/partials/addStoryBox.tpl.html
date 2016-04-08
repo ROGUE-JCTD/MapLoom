@@ -10,23 +10,23 @@
     <div class="form-group">
         <label for="title">Title</label>
         <div>
-            <input ng-model="box.title" ng-required class="form-control" id="title" placeholder="Title">
+            <input ng-model="box.title" ng-required class="form-composer" id="storyBoxTitle" placeholder="Title">
         </div>
     </div>
     <div class="form-group">
         <label for="description">Description</label>
         <div>
-                <textarea ng-model="box.description" class="form-control" id="description"
+                <textarea ng-model="box.description" class="form-composer" id="description"
                           placeholder="Description"></textarea>
         </div>
     </div>
     <h2>Map Extents</h2>
     <div class="form-group">
         <label for="updateMapBounds">Pan and zoom on the map to set the map sounds.</label>
-        <button class="btn btn-default btn-block" id="updateMapBounds">Update Map Bounds</button>
+        <button class="btn-composer" id="updateMapBoundsButton" ng-click="storyService.addBoxExtent(box)">Update Map Bounds</button>
     </div>
     <h2>Time Frame</h2>
-    <div class="form-group">
+    <div class="form-group" id="startTime">
         <label for="start_time">Start Time</label>
         <div>
             <datetimepicker date-object="box.start_time" default-date="inserting"></datetimepicker>
@@ -40,5 +40,5 @@
     </div>
 </div>
 <div class="menuItem">
-    <button class="btn btn-default btn-block" ng-click="addStoryBox(box)">Save StoryBox</button>
+    <button class="btn-composer" ng-click="addStoryBox(box); updateTourStep(16)">Save StoryBox</button>
 </div>

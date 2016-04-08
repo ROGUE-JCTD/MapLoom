@@ -179,11 +179,13 @@
         };
 
         var dateOptions = {
+          startDate: '01/01/1000',
           pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
           language: $translate.use()
         };
 
         var timeOptions = {
+          startDate: '01/01/1000',
           pickDate: false,
           language: $translate.use()
         };
@@ -215,6 +217,7 @@
             }
           } else {
             hasValidDate = false;
+            element.find('.form-control').val('');
           }
         };
         updateDate();

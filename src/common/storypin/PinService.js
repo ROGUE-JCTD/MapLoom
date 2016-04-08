@@ -7,16 +7,21 @@
   var httpService_ = null;
   //var exclusiveModeService_ = null;
   //var mapService_ = null;
-  //var translate_ = null;
-  //var dialogService_ = null;
+  var translate_ = null;
+  var dialogService_ = null;
   var Pin = function(data) {
+    var copyData = angular.copy(data);
+    delete data.geometry;
     ol.Feature.call(this, data);
+    this.properties = data;
+    this.setGeometry(new ol.geom.Point(copyData.geometry.coordinates));
     this.start_time = getTime(this.start_time);
     this.end_time = getTime(this.end_time);
+
   };
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;
-  var model_attributes = ['id', '_id', 'title', 'content', 'start_time', 'end_time', 'in_map', 'in_timeline'];
+  var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Pin.prototype, prop, {
@@ -31,10 +36,12 @@
   });
 
   module.provider('pinService', function() {
-    this.$get = function($rootScope, $http) {
+    this.$get = function($rootScope, $http, dialogService, $translate) {
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
+      dialogService_ = dialogService;
+      translate_ = $translate;
 
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Pin Service: chapter-added');
@@ -82,13 +89,24 @@
     };
 
     this.removePin = function(storyPin, chapter_index) {
-
-      for (var i = 0; i < pins_[chapter_index].length; i++) {
-        if (storyPin._id == pins_[chapter_index][i]._id) {
-          pins_[chapter_index].splice(i, 1);
-          break;
+      var response = dialogService_.warn(translate_.instant('remove_pin'), translate_.instant('sure_remove_pin'),
+          [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
+        switch (button) {
+          case 0:
+            for (var i = 0; i < pins_[chapter_index].length; i++) {
+              if (storyPin._id == pins_[chapter_index][i]._id) {
+                pins_[chapter_index].splice(i, 1);
+                rootScope_.$broadcast('pin-removed', chapter_index);
+                toastr.success('StoryPin has been removed', 'Delete StoryPin');
+                return storyPin.id;
+              }
+            }
+            break;
+          case 1:
+            return null;
         }
-      }
+      });
+      return response;
 
     };
 
@@ -101,8 +119,13 @@
 
 
     this.updatePin = function(pin, chapter_index) {
-      //TODO: more may need to be done here like updating the map extent
+      //Only set new geometry if location was saved on pin object
+      if (goog.isDefAndNotNull(pin.geometry)) {
+        var newGeom = new ol.geom.Point(pin.geometry.coordinates);
+        pin.setGeometry(newGeom);
+      }
       rootScope_.$broadcast('pin-added', chapter_index);
+      toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
     };
 
   });

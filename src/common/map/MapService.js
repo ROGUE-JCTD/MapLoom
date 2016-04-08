@@ -24,6 +24,40 @@
 
   var editableLayers_ = null;
 
+  var createStoryPinLayer = function() {
+    return new ol.layer.Vector({
+      metadata: {
+        StoryPinLayer: true,
+        title: 'Story Pins'
+      },
+      source: new ol.source.Vector({
+        parser: null
+      }),
+      style: function(feature, resolution) {
+        return [new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: [0, 0, 255, 0.25]
+          }),
+          stroke: new ol.style.Stroke({
+            color: [0, 0, 255, 1],
+            width: 4
+          }),
+          image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({
+              color: [0, 0, 255, 0.25]
+            }),
+            stroke: new ol.style.Stroke({
+              color: [0, 0, 255, 1],
+              width: 1.5
+            })
+          }),
+          zIndex: 2
+        })];
+      }
+    });
+  };
+
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
       metadata: {
@@ -162,6 +196,7 @@
       this.chapterLayers.push(this.map.getLayerGroup());
 
       this.editLayer = createVectorEditLayer();
+      this.pinLayer = createStoryPinLayer();
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
@@ -262,6 +297,7 @@
 
     this.updateStyle = function(layer) {
       var style = layer.get('style') || layer.get('metadata').style || '';
+      var styleName = this.configuration.username + '_' + layer.get('typeName');
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
         var layerSource = layer.getSource();
@@ -269,18 +305,46 @@
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
-            url: '/geoserver/rest/styles/' + layer.get('styleName') + '.xml',
-            method: 'PUT',
+            url: '/geoserver/rest/styles.xml?name=' + styleName,
+            method: 'POST',
             data: xml,
-            headers: {'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8'}
+            headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
           }).then(function(result) {
+            console.log('Style Create Response ', result);
+            layer.get('metadata').config.styles = styleName;
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
-              layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
+              layerSource.updateParams({
+                '_dc': new Date().getTime(),
+                '_olSalt': Math.random(),
+                'STYLES': styleName
+              });
             }
+          }, function errorCallback(response) {
+            console.log('Style Create Error Response ', response);
+            if (response.status === 403) {
+              httpService_({
+                url: '/geoserver/rest/styles/' + styleName + '.xml',
+                method: 'PUT',
+                data: xml,
+                headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
+              }).then(function(result) {
+                console.log('Style Update Response ', result);
+                layer.get('metadata').config.styles = styleName;
+                if (goog.isDefAndNotNull(layerSource.updateParams)) {
+                  layerSource.updateParams({
+                    '_dc': new Date().getTime(),
+                    '_olSalt': Math.random(),
+                    'STYLES': styleName
+                  });
+                }
+              });
+
+            }
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
           });
         }
       }
-
     };
 
     this.zoomToLayerFeatures = function(layer) {
@@ -386,12 +450,12 @@
         return newExtent;
       };
 
-      var extent900913 = shrinkExtent(layer.getSource().getExtent(), 0);
+      var extent900913 = shrinkExtent(layer.getExtent(), 0);
 
       if (goog.isDefAndNotNull(extent900913)) {
         for (var index = 0; index < extent900913.length; index++) {
           if (isNaN(parseFloat(extent900913[index])) || !isFinite(extent900913[index])) {
-            extent900913 = shrinkExtent(layer.getSource().getExtent(), 0.001);
+            extent900913 = shrinkExtent(layer.getExtent(), 0.001);
             break;
           }
         }
@@ -422,7 +486,8 @@
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer)) {
+            !(layer.get('metadata').internalLayer) &&
+            !(layer.get('metadata').StoryPinLayer)) {
 
           // if it is imagery
           if (service_.layerIsEditable(layer)) {
@@ -450,6 +515,43 @@
         }
       });
 
+      return layers;
+    };
+
+    this.getBaseMaps = function() {
+      var layers = this.getLayers(true, true);
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        if (layer.get('metadata').hasOwnProperty('config') && !goog.isDef(layer.get('metadata').config.group)) {
+          layers.splice(iLayer, 1);
+        }
+      }
+      return layers;
+    };
+
+    this.selectedBaseMap = function(selectedBaseMap) {
+      var layers = this.getBaseMaps();
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        layer.set('visible', false);
+      }
+      if (selectedBaseMap) {
+        var selectedLayer = selectedBaseMap;
+        selectedLayer.set('visible', true);
+      }
+    };
+
+    this.getStoryLayers = function() {
+      var layers = this.getLayers(true, true);
+      for (var iLayer = layers.length - 1; iLayer >= 0; iLayer -= 1) {
+        var layer = layers[iLayer];
+        if (layer.get('metadata').hasOwnProperty('config') && goog.isDef(layer.get('metadata').config.group)) {
+          layers.splice(iLayer, 1);
+        }
+      }
+      if (goog.isDefAndNotNull(this.pinLayer) && this.pinLayer.getSource().getFeatures().length > 0) {
+        layers.push(this.pinLayer);
+      }
       return layers;
     };
 
@@ -819,7 +921,9 @@
               service_.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
             }
 
-            service_.zoomToExtent(layer.getExtent(), true);
+            if (server.isLocal === true) {
+              service_.zoomToLayerFeatures(layer);
+            }
 
 
             if (goog.isDefAndNotNull(meta.projection)) {
@@ -832,9 +936,13 @@
             rootScope_.$broadcast('layer-added');
           } else {
             console.log('====[Error: could not load layer: ', minimalConfig);
+            toastr.clear();
+            toastr.error('Layer could not be loaded.', 'Loading Failed');
           }
 
           console.log('-- MapService.addLayer, added: ', layer);
+          toastr.clear();
+          toastr.success(layer.get('metadata').title + ' Layer has been successfully loaded', 'Layer Loaded');
           pulldownService_.showLayerPanel();
           return layer;
 

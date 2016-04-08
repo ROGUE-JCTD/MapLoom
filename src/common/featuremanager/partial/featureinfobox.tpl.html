@@ -5,6 +5,9 @@
     <div ng-if="featureManagerService.getState() == 'layer'" class="info-box-title ellipsis">{{featureManagerService.getSelectedItem().layer.get('metadata').title}}</div>
     <div ng-if="featureManagerService.getState() == 'feature'" class="info-box-title ellipsis">
       {{featureManagerService.getSelectedItemLayer().layer.get('metadata').title}}<br>{{featureManagerService.getSelectedItem().id}}</div>
+      <div ng-if="featureManagerService.getState() == 'pin'" class="info-box-title ellipsis">
+          {{featureManagerService.getSelectedItemLayer().layer.get('metadata').title}}<br>{{featureManagerService.getSelectedItem().title}}
+      </div>
     <div class="info-box-close"><i class="glyphicon glyphicon-remove" ng-click="featureManagerService.hide()"></i></div>
   </div>
   <div class="animate-switch-container">
@@ -20,11 +23,34 @@
       <ul class="list-group list-group-info-box">
         <li ng-repeat="feature in featureManagerService.getSelectedItem().features" class="list-group-item-info-box"
             ng-click="featureManagerService.show(feature)">
-          <div>{{feature.id}}</div>
+            <div ng-if="!feature.title">{{ feature.id }}</div>
+            <div ng-if="feature.title">{{ feature.title }}</div>
         </li>
       </ul>
     </div>
   </div>
+
+    <div ng-if="featureManagerService.getState() == 'pin'">
+        <div class="feature-info-box">
+            <span ng-bind="featureManagerService.getSelectedItemProperties()['title']"></span>
+            <div ng-if="featureManagerService.getSelectedItemProperties()['media']">
+                <br>
+                <div ng-if="isUrl(featureManagerService.getSelectedItemProperties()['media'])"  ng-init="determineLinkType(featureManagerService.getSelectedItemProperties()['media']) ">
+                    <div ng-switch on="linkType" >
+                        <img ng-switch-when="image" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}">
+                        <video ng-switch-when="video" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}"></video>
+                        <audio ng-switch-when="audio" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}"></audio>
+                        <p ng-switch-default >No valid media bound</p>
+                    </div>
+                </div>
+                <div ng-if="!isUrl(featureManagerService.getSelectedItemProperties()['media'])">
+                    <div ng-bind-html="sanitizeEmbed(featureManagerService.getSelectedItemProperties()['media'])"></div>
+                </div>
+            </div>
+            <br>
+            <span ng-bind="featureManagerService.getSelectedItemProperties()['content']"></span>
+        </div>
+    </div>
 
   <div ng-if="featureManagerService.getState() == 'feature'">
     <div id="pic-carousel-container" ng-if="featureManagerService.getSelectedItemPics() && isAttributeVisible(featureManagerService.getSelectedItemPics().name)">

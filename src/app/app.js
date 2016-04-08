@@ -3,10 +3,11 @@
     'templates-app',
     'templates-common',
     'storytools.edit.style',
-    'colorpicker.module',
     'loom',
+    'colorpicker.module',
     'ui.bootstrap',
     'ui.router',
+    'ui.tree',
     'pascalprecht.translate',
     'loom_translations_en',
     'loom_translations_es',
@@ -22,11 +23,17 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, storyService, boxService, pinService, $http, layerService) {
+                                                refreshService, dialogService, historyService, storyService, boxService, pinService, $http, layerService) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
             $scope.pageTitle = toState.data.pageTitle;
+          }
+        });
+
+        $scope.$on('layer-added', function(event) {
+          if (goog.isDefAndNotNull($scope.mapService)) {
+            $scope.storyLayers = $scope.mapService.getStoryLayers();
           }
         });
 
@@ -76,20 +83,32 @@
         $scope.refreshService = refreshService;
         $scope.boxService = boxService;
         $scope.pinService = pinService;
+        $scope.historyService = historyService;
         $scope.box = {};
         $scope.pin = {};
 
         $scope.addStoryBox = function(box) {
           var clone = angular.copy(box);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
-          goog.object.extend(clone, {'extent': mapService.map.getView().calculateExtent(mapService.map.getSize())});
           boxService.addBox(clone, $scope.active_menu_chapter.id);
           $scope.box = {};
           $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
         };
 
-        $scope.setPinLocation = function() {
+        $scope.removeStoryBox = function(box) {
+          boxService.removeBox(box, $scope.active_menu_chapter.id).then(function(removedID) {
+            if (removedID !== null) {
+              $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+            }
+          });
+        };
 
+        $scope.removeStoryPin = function(pin) {
+          pinService.removePin(pin, $scope.active_menu_chapter.id).then(function(removedID) {
+            if (removedID !== null) {
+              $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+            }
+          });
         };
 
         $scope.addStoryPin = function(pin) {
@@ -98,6 +117,7 @@
           pinService.addPin(clone, $scope.active_menu_chapter.id);
           $scope.pin = {};
           $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+          toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
         };
 
         $scope.mapstories = {
@@ -108,6 +128,7 @@
         $scope.active_menu_chapter = null;
         $scope.prev_menu_section = null;
         $scope.menuSection = 'mainMenu';
+        $scope.storyLayers = mapService.getStoryLayers();
 
         $scope.updateMenuSection = function(updateMenuSection) {
           if (updateMenuSection == 'mainMenuHidden') {
@@ -142,8 +163,7 @@
           $scope.isShown = !$scope.isShown;
           if ($scope.menuSection == 'mainMenuHidden') {
             $scope.updateMenuSection($scope.prev_menu_section);
-            $scope.helpBoxVisible = false;
-            document.getElementById('pushobj').style.width = '75%';
+            document.getElementById('pushobj').style.width = '80%';
           } else {
             $scope.updateMenuSection('mainMenuHidden');
             document.getElementById('pushobj').style.width = '100%';
@@ -151,19 +171,20 @@
           $scope.mapService.updateMapSize();
         };
 
-        $scope.helpBoxVisible = false;
-
-        $scope.showHelpBox = function(helpText) {
-          angular.element(document.querySelector('#helpTextBox')).html(helpText);
-          $scope.helpBoxVisible = true;
-        };
-
-
         $scope.styleChanged = function(layer) {
           layer.on('change:type', function(evt) {
             mapService.updateStyle(evt.target);
           });
           mapService.updateStyle(layer);
+        };
+
+        $scope.updateTourStep = function(step) {
+          if (hopscotch.getState()) {
+            hopscotch.showStep(step);
+            setTimeout(function() {
+              hopscotch.refreshBubblePosition();
+            }, 1);
+          }
         };
 
         $scope.removeChapter = function() {
@@ -212,6 +233,10 @@
           $scope.mapstories.chapters[chapter_index].storyLayers.push(new_layer);
 
         };
+
+        $scope.editSingleStoryLayer = function(layerName) {
+
+        };
         //front end initialization of new chapter on menu element
         $scope.addChapterToMenu = function(index) {
           var new_chapter_item = {
@@ -230,6 +255,29 @@
         };
 
         $scope.addChapterToMenu(0);
+
+        $scope.treeOptions = {
+          accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return true;
+          },
+          dropped: function(event) {
+            function updateChaptersList(value, index) {
+              value.chapter = 'Chapter ' + (index + 1);
+              value.id = index;
+            }
+            storyService.reorder_chapter(event.source.index, event.dest.index);
+            $scope.mapstories.chapters.forEach(updateChaptersList);
+          }
+        };
+
+        $scope.layerTree = {
+          accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return true;
+          },
+          dropped: function(event) {
+            $scope.reorderLayer(event.source.index, event.dest.index);
+          }
+        };
 
       });
 

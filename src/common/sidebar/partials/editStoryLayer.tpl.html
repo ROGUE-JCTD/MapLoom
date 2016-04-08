@@ -13,8 +13,8 @@
 <div class="menuItem">
     <ul class="nav nav-tabs" data-tabs="tabs">
         <li class="active"><a data-toggle="tab" href="#style{{ chapter.id }}{{ storyLayers.id }}">Style</a>
-        <li><a data-toggle="tab" href="#edit{{ chapter.id }}{{ storyLayers.id }}">Edit</a></li>
-        <li><a data-toggle="tab" href="#infobox{{ chapter.id }}{{ storyLayers.id }}">Infobox</a></li>
+        <li><a data-toggle="tab" href="#edit{{ chapter.id }}{{ storyLayers.id }}" ng-click="updateTourStep(9)">Edit</a></li>
+        <li><a data-toggle="tab" href="#infobox{{ chapter.id }}{{ storyLayers.id }}" ng-click="updateTourStep(10)">Infobox</a></li>
     </ul>
     <div class="tab-content">
         <div id="style{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade in active">
@@ -25,27 +25,27 @@
                               on-change="styleChanged"></style-editor>
             </div>
             <hr>
-            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
+            <button class="btn-composer btn-block" ng-click="removeLayer()">Delete this
                 StoryLayer
             </button>
 
             <hr>
         </div>
         <div id="edit{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade">
-            <button class="btn btn-default btn-lg btn-block"
+            <button class="btn-composer btn-block"
                     ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
                     ng-disabled="storyService.isEditable()">Add a New Feature
             </button>
-            <button class="btn btn-default btn-lg btn-block"
-                    ng-click="showHelpBox('To edit an existing feature, just click on a feature that you want to edit.'); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
+            <button class="btn-composer btn-block"
+                    ng-click="storyService.startFeatureEdit(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
                     ng-disabled="storyService.isEditable()">Edit an Existing Feature
             </button>
-            <button class="btn btn-default btn-lg btn-block" data-target="#layerInfoDialog" data-toggle="modal">View Layer Metadata</button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="storyService.showTable()"
+            <a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn-composer btn-block">View StoryLayer Details</button></a>
+            <button class="btn-composer btn-block" ng-click="storyService.showTable()"
                     ng-disabled="storyService.isEditable()">View Attribute Table
             </button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">View History</button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete This
+            <button class="btn-composer btn-block" ng-disabled="storyService.hasNoHistory()" ng-click="storyService.getHistory();updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">View History</button>
+            <button class="btn-composer btn-block" ng-click="removeLayer()">Delete This
                 StoryLayer
             </button>
         </div>
@@ -71,8 +71,8 @@
                 </table>
             </div>
             <hr>
-            <button class="btn btn-default btn-lg btn-block">Save Settings</button>
-            <button class="btn btn-default btn-lg btn-block" ng-click="removeLayer()">Delete this
+            <button class="btn-composer btn-block">Save Settings</button>
+            <button class="btn-composer btn-block" ng-click="removeLayer()">Delete this
                 StoryLayer
             </button>
         </div>
