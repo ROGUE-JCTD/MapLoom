@@ -261,8 +261,8 @@
 
         var getMaskingFor = function(key, layer) {
           var maskings = layer.get('metadata').config.maskings;
-          if (maskings[k]) {
-            return maskings[k];
+          if (maskings && maskings.hasOwnProperty(key)) {
+            return maskings[key];
           }
         };
 
@@ -293,8 +293,8 @@
               }
             } else {
               var masking = getMaskingFor(k, selectedLayer_);
-              var attributeName = masking.alias !== '' ? masking.alias : masking.name;
               if (masking) {
+                var attributeName = masking.alias !== '' ? masking.alias : masking.name;
                 if (masking.show) {
                   tempProps[k] = [attributeName, v];
                 }
