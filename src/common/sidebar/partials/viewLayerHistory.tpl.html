@@ -10,21 +10,24 @@
 </div>
 <div>
     <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
-        <div class="menuItem" ng-click="updateMenuSection('viewCommit' + commit.id)">
+        <div class="menuItem">
           <h2>{{ commit.author.name }}</h2>
           <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
         </div>
-<!--
-        <div ng-show="menuSection=='viewCommit' + commit.id">
-            <h2>Commit {{ commit.id }}</h2>
-            <h2>{{ commit.author.name }}</h2>
-
-
-            <button class="btn-composer btn-block">View On Map</button>
-            <button class="btn-composer btn-block">Show Details</button>
-            <button class="btn-composer btn-block">View Author's Profile</button>
-            <button class="btn-composer btn-block">Revert</button>
--->
+        <div class="commit-summary progress">
+          <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
+            <span class="sr-only"></span>
+          </div>
+          <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">
+            <span class="sr-only"></span>
+          </div>
+          <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">
+            <span class="sr-only"></span>
+          </div>
+          <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
+            <span class="sr-only"></span>
+          </div>
+        </div>
         </div>
     </div>
 </div>
