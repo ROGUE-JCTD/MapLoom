@@ -25,9 +25,18 @@
                 <span class="sr-only"></span>
               </div>
             </div>
-            <!-- TODO: Display Anonymous if there is no name -->
-          <h2>{{ commit.author.name }}</h2>
+          <div ng-if="commit.author.name.length == 0">
+              <h2>Anonymous</h2>
+          </div>
+          <div ng-if="commit.author.name != null">
+              <h2>{{ commit.author.name }}</h2>
+          </div>
+
           <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
+            <button class="btn-composer btn-block" ng-click="diffService.zoomToFeature(add)">View On Map</button>
+            <button class="btn-composer btn-block" ng-click="diffService.clickCallback(add, 'add')">Show Details</button>
+            <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
+            <button class="btn-composer btn-block">Revert</button>
         </div>
     </div>
 </div>
