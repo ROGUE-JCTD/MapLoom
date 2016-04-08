@@ -10,23 +10,23 @@
 </div>
 <div>
     <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
-        <div class="menuItem">
+        <div class="menuItem historyItem">
+            <div class="commit-summary progress">
+              <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
+                <span class="sr-only"></span>
+              </div>
+              <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">
+                <span class="sr-only"></span>
+              </div>
+              <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">
+                <span class="sr-only"></span>
+              </div>
+              <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
+                <span class="sr-only"></span>
+              </div>
+            </div>
           <h2>{{ commit.author.name }}</h2>
           <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
-        </div>
-        <div class="commit-summary progress">
-          <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
-            <span class="sr-only"></span>
-          </div>
-          <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">
-            <span class="sr-only"></span>
-          </div>
-          <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">
-            <span class="sr-only"></span>
-          </div>
-          <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
-            <span class="sr-only"></span>
-          </div>
         </div>
         </div>
     </div>
