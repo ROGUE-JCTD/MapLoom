@@ -59,29 +59,14 @@
                 <table class="table table-striped table-bordered"
                        id="customizeInfoBox">
                     <tr>
-                        <th class="text-center">Attr</th>
-                        <th class="text-center">Mask</th>
-                        <th class="text-center">Show?</th>
+                      <th class="text-center">Attr</th>
+                      <th class="text-center">Mask</th>
+                      <th class="text-center">Show?</th>
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr ng-repeat="attribute in layerService.getAttributes(storyService.active_layer)">
+                      <td></td>
+                      <td></td>
+                      <td></td>
                     </tr>
                 </table>
             </div>
