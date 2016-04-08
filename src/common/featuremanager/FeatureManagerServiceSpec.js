@@ -30,7 +30,7 @@ describe('featuremanager/FeatureManagerService', function() {
     beforeEach(function() {
       feature = { properties: { name: 'Ocean Beach' }};
       var layer = createLayer(1, {});
-      layerSpy = spyOn(featureManagerService, 'getSelectedItemLayer')
+      layerSpy = spyOn(featureManagerService, 'getSelectedItemLayer');
       layerSpy.andReturn({layer: layer});
     });
     it('returns the properties properties', function() {
