@@ -1076,6 +1076,13 @@
           config.source = serverIndex;
         }
         config.visibility = layer.get('visible');
+        if (goog.isDefAndNotNull(layer.get('metadata').dimensions)) {
+          var dimension = layer.get('metadata').dimensions[0];
+          config.capability = {};
+          config.capability.dimensions = {};
+          config.capability.dimensions.time = dimension;
+          config.capability.dimensions.time.values = dimension.values.split(',');
+        }
         if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
           config.schema = [];
           for (var i in layer.get('metadata').schema) {
