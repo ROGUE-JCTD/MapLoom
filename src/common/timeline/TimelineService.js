@@ -222,7 +222,7 @@
                 var id_ = i + ':' + j;
                 timelinePointsList.push({id: id_,
                   group: metadata.uniqueID,
-                  content: "<img src='" + metadata.styles[0].legendUrl + "&TRANSPARENT=true' />",
+                  content: '',
                   start: timeDimension[j],
                   type: 'box' });
               }
