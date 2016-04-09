@@ -12,12 +12,11 @@
 <div id="baseMaps" class="menuItem">
     <label for="baseMapList">Choose Your Basemap</label>
     <select class="form-control" name="baseMapList" id="baseMapList"
-            ng-init="baseMap = baseMaps[1]"
+            ng-init="baseMap = baseMap || baseMaps[1]"
             ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
             ng-model="baseMap"
-            ng-change="mapService.selectedBaseMap(baseMap)"
-            ng-selected="baseMaps[1]"
-            value="1">
+            ng-change="mapService.selectedBaseMap(baseMap)">
+        <option value="" ng-hide="baseMap">----</option>
     </select>
 </div>
 
