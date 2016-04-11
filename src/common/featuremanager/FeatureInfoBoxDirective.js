@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', ['ngSanitize']);
 
   module.directive('loomFeatureInfoBox',
-      function($translate, $http, $sce, featureManagerService, mapService, historyService, dialogService, tableViewService) {
+      function($translate, $http, $sce, featureManagerService, mapService, historyService, dialogService, tableViewService, layerService) {
         //console.log('---- loom_feature_info_box_directive');
 
         return {
@@ -13,6 +13,7 @@
           link: function(scope) {
             scope.featureManagerService = featureManagerService;
             scope.mapService = mapService;
+            scope.layerService = layerService;
             scope.loadingHistory = false;
             scope.deletingFeature = false;
             scope.linkType = 'None';
