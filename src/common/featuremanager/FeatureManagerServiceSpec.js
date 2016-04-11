@@ -31,7 +31,7 @@ describe('featuremanager/FeatureManagerService', function() {
       feature = { properties: { name: 'Ocean Beach' }};
       var layer = createLayer(1, {});
       layerSpy = spyOn(featureManagerService, 'getSelectedItemLayer');
-      layerSpy.andReturn({layer: layer});
+      layerSpy.and.returnValue({layer: layer});
     });
     it('returns the properties properties', function() {
       featureManagerService.show(feature);
@@ -40,7 +40,7 @@ describe('featuremanager/FeatureManagerService', function() {
     describe('has saved maskings', function() {
       beforeEach(function() {
         var layer = createLayer(1, { maskings: { name: { alias: 'Feature Name', show: true }}});
-        layerSpy.andReturn({layer: layer});
+        layerSpy.and.returnValue({layer: layer});
       });
       it('returns the properties properties', function() {
         featureManagerService.show(feature);
@@ -49,7 +49,7 @@ describe('featuremanager/FeatureManagerService', function() {
       describe('hides feature', function() {
         beforeEach(function() {
           var layer = createLayer(1, { maskings: { name: { alias: 'Feature Name', show: false }}});
-          layerSpy.andReturn({layer: layer});
+          layerSpy.and.returnValue({layer: layer});
         });
         it('does not return the feature', function() {
           featureManagerService.show(feature);
