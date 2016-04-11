@@ -3,7 +3,7 @@
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i>
 </h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>
-<h2>{{ storyService.active_layer.get('metadata').title }}</h2>
+<h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
 
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
@@ -51,8 +51,7 @@
         </div>
         <div id="infobox{{ chapter.id }}{{ storyLayers.id }}" class="tab-pane fade">
             <div class="form-group">
-                <label for="layerAlias">Layer Alias</label>
-                <textarea class="form-control" id="layerAlias" rows="2"></textarea>
+              <div class="loom-storylegend" layer="storyService.active_layer">
             </div>
             <hr>
             <div class="form-group">
@@ -60,29 +59,14 @@
                 <table class="table table-striped table-bordered"
                        id="customizeInfoBox">
                     <tr>
-                        <th class="text-center">Attr</th>
-                        <th class="text-center">Mask</th>
-                        <th class="text-center">Show?</th>
+                      <th class="text-center">Attr</th>
+                      <th class="text-center">Mask</th>
+                      <th class="text-center">Show?</th>
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr ng-repeat="attribute in layerService.getAttributes(storyService.active_layer)">
+                      <td></td>
+                      <td></td>
+                      <td></td>
                     </tr>
                 </table>
             </div>

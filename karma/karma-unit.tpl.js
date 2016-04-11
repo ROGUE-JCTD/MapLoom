@@ -12,15 +12,15 @@ module.exports = function ( karma ) {
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
       'src/**/*.js',
-      'src/**/*.coffee',
+      '**/*.html'
     ],
     exclude: [
       'src/assets/**/*.js'
     ],
-    frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-phantomjs-launcher', 'karma-coffee-preprocessor' ],
+    frameworks: ['jquery-1.8.3', 'jasmine' ],
+    plugins: ['karma-jquery', 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-ng-html2js-preprocessor' ],
     preprocessors: {
-      '**/*.coffee': 'coffee',
+      '**/*.html': ['ng-html2js']
     },
 
     /**

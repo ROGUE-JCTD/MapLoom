@@ -265,6 +265,13 @@
         var tempProps = {};
         var props = [];
 
+        var getMaskingFor = function(key, layer) {
+          var maskings = layer.get('metadata').config.maskings;
+          if (maskings && maskings.hasOwnProperty(key)) {
+            return maskings[key];
+          }
+        };
+
         if (getItemType(selectedItem_) === 'feature') {
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (k === 'fotos' || k === 'photos') {
@@ -291,7 +298,15 @@
                 tempProps[k] = [k, picsAttr];
               }
             } else {
-              tempProps[k] = [k, v];
+              var masking = getMaskingFor(k, selectedLayer_);
+              if (masking) {
+                var attributeName = masking.alias !== '' ? masking.alias : masking.name;
+                if (masking.show) {
+                  tempProps[k] = [attributeName, v];
+                }
+              } else {
+                tempProps[k] = [k, v];
+              }
             }
           });
         }
@@ -317,7 +332,7 @@
 
         }
         selectedItemProperties_ = props;
-        //console.log('---- selectedItemProperties_: ', selectedItemProperties_);
+        console.log('---- selectedItemProperties_: ', selectedItemProperties_);
       }
 
       if (goog.isDefAndNotNull(position)) {
