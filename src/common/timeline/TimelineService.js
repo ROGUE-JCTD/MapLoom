@@ -328,11 +328,10 @@
     this.setFilterByTime = function(filterByTime) {
       if (goog.isDefAndNotNull(filterByTime) && filterByTime === true) {
         filterByTime_ = true;
-        service_.updateLayersTimes(currentTickIndex_);
       } else {
         filterByTime_ = false;
-        service_.updateLayersTimes();
       }
+      service_.updateLayersTimes({ start: timelineTicks_[0], end: timelineTicks_[currentTickIndex_]});
     };
 
     this.getRepeat = function() {
@@ -525,7 +524,7 @@
         } else {
           currentTime_ = timelineTicks_[currentTickIndex_];
         }
-        service_.updateLayersTimes(currentTickIndex_);
+        service_.updateLayersTimes({ start: timelineTicks_[0], end: timelineTicks_[currentTickIndex_]});
       } else {
         currentTime_ = null;
         currentTickIndex_ = null;
@@ -574,7 +573,7 @@
 
     // only set layer time based on ticks to avoid generating a lot of requests for times that
     // do not have data associated with them
-    this.updateLayersTimes = function(tickIndex) {
+    this.updateLayersTimes = function(range) {
       // TODO: skipping hidden layers. listen for when a layer is made visible, to force a refresh
       var layers = mapService_.getLayers(false, true);
       for (var i = 0; i < layers.length; i++) {
@@ -584,17 +583,17 @@
           var source = layer.getSource();
           if (goog.isDefAndNotNull(source)) {
             if (goog.isDefAndNotNull(source.updateParams)) {
-              if (filterByTime_) {
-                if (goog.isDefAndNotNull(timelineTicks_) && tickIndex < timelineTicks_.length && tickIndex >= 0) {
-                  source.updateParams({
-                    TIME: new Date(timelineTicks_[tickIndex]).toISOString()
-                  });
+              var start = new Date(range.start).toISOString();
+              var end = new Date(range.end).toISOString();
+              var time = end;
+              if (!filterByTime_) {
+                if (start != end) {
+                  time = start + '/' + end;
                 }
-              } else {
-                source.updateParams({
-                  TIME: '-99999999999-01-01T00:00:00.0Z/99999999999-01-01T00:00:00.0Z'
-                });
               }
+              source.updateParams({
+                TIME: time
+              });
             }
           }
         }
