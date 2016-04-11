@@ -500,16 +500,19 @@ style-editor button {
 }
 
 .modal .modal-header, .loom-dialog.dialog-warning .modal-header {
-  color: white;
-  background-color: #666;
-  border-bottom: 0
+  color: #444;
+  background-color: #ccc;
+  border-bottom: 0;
+  text-align: center;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .loom-dialog.dialog-warning .modal-body, .modal .modal-body, .loom-dialog.dialog-warning .modal-footer {
   max-height: 80vh;
-  overflow-y: auto;
-  background-color: #ddd;
   padding: 30px;
+  overflow-y: auto;
+  background-color: whitesmoke;
 }
 
 .loom-dialog {
@@ -527,6 +530,12 @@ style-editor button {
   box-shadow: none
 }
 
+.modal-title {
+  margin: 0;
+  line-height: 1.6em;
+  font-size: 1.5em;
+}
+
 .cards {
   margin: 0;
   font-weight: normal;
@@ -535,12 +544,14 @@ style-editor button {
 }
 
 .cards-body {
-  padding: 10px;
-  margin: 10px 0px 0px 10px;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  height: 300px;
+  height: 350px;
+  padding: 15px;
+  margin: 15px;
+  margin-top: 25px;
   overflow-y: scroll;
+  background-color: #ddd;
+  border: transparent;
+  border-radius: 4px;
 }
 
 .cards-body.h5{
@@ -589,4 +600,85 @@ a.carousel-control {
 .search-btn {
   background-color: #666;
   border-color: #666;
+}
+
+.feature-info-box-popup {
+  position: absolute;
+  bottom: 12px;
+  left: -50px;
+  display: block;
+  width: 180px;
+  padding: 10px;
+  padding-top: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: whitesmoke;
+  border-radius: 4px;
+  color: #666;
+  font-size: 10px;
+}
+
+.feature-info-box-popup:after {
+  left: 48px;
+  margin-left: -10px;
+  border-top-color: whitesmoke;
+  border-width: 10px;
+}
+
+.info-box-title {
+  width: 75%;
+  display: inline-block;
+  font: bold 13px "Helvetica Neue", "Helvetica", Arial;
+  color: #666;
+  word-wrap: break-word;
+  text-transform: uppercase;
+  padding: 5px 0px;
+}
+
+
+.info-box-attribute {
+  display: block;
+  padding: 0;
+  margin: 0;
+  font: bold 10px "Helvetica Neue", "Helvetica", Arial;
+  text-transform: lowercase;
+  color: #666;
+  word-wrap: break-word;
+  border-bottom: 1px solid #999;
+}
+
+.info-box-attribute-value {
+  display: block;
+  padding: 0 0 7px;
+  margin: 0;
+  font: normal 12px "Helvetica", Arial;
+  word-wrap: break-word;
+  white-space: normal;
+  color: #bbb;
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.nav-tabs>li>a {
+  margin: 5px;
+  line-height: 1.428571429;
+  background: #bbb;
+  color: #666;
+  font-size: 0.8em;
+  border-radius: 4px;
+  border: 0;
+  padding: 6px 10px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+  color: whitesmoke;
+  cursor: default;
+  background-color: #666;
+  border: 0;
+}
+
+.nav>li>a:hover, .nav>li>a:focus {
+  text-decoration: none;
+  background-color: #999;
+  color: whitesmoke;
 }
