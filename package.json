@@ -13,7 +13,7 @@
     "url": "git@github.com:ROGUE-JCTD/MapLoom.git"
   },
   "scripts": {
-    "test": "grunt karma"
+    "test": "grunt karma:unit"
   },
   "dependencies": {},
   "devDependencies": {

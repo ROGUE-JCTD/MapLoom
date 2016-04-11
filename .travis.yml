@@ -10,5 +10,5 @@ before_script:
 
 script:
   - grunt
-  - grunt karmaconfig && grunt karma
+  - grunt karmaconfig && grunt karma:unit
 
