@@ -99,6 +99,52 @@
       return goog.isDefAndNotNull(commit.loading) && commit.loading === true;
     };
 
+    this.zoomToCommit = function(commit) {
+      if (!goog.isDefAndNotNull(commit.feature)) {
+        commit.loading = true;
+
+        var lastCommitId = '0000000000000000000000000000000000000000';
+        if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
+          if (goog.isDefAndNotNull(commit.parents.id)) {
+            if (goog.isArray(commit.parents.id)) {
+              lastCommitId = commit.parents.id[0];
+            } else {
+              lastCommitId = commit.parents.id;
+            }
+          }
+        }
+        var diffOptions = new GeoGigDiffOptions();
+        diffOptions.oldRefSpec = lastCommitId;
+        diffOptions.newRefSpec = commit.id;
+        diffOptions.showGeometryChanges = true;
+        diffOptions.pathFilter = historyService_.pathFilter;
+        diffOptions.show = 1000;
+        diffService_.performDiff(historyService_.repoId, diffOptions, true).then(function(response) {
+          if (goog.isDefAndNotNull(response.Feature)) {
+            if (goog.isDefAndNotNull(response.nextPage) && response.nextPage === true) {
+              dialogService_.warn(translate_.instant('warning'),
+                  translate_.instant('too_many_changes'), [translate_.instant('btn_ok')]);
+            } else {
+              diffService_.setTitle(translate_.instant('summary_of_changes'));
+            }
+          } else {
+            dialogService_.open(translate_.instant('history'),
+                translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
+          }
+          commit.loading = false;
+          commit.feature = response.Feature.feature;
+          mapService_.zoomToExtent(response.Feature.feature.extent, null, null, 0.5);
+        }, function(reject) {
+          //failed to get diff
+          dialogService_.error(translate_.instant('error'),
+              translate_.instant('diff_unknown_error'), [translate_.instant('btn_ok')]);
+          commit.loading = false;
+        });
+      } else {
+        mapService_.zoomToExtent(commit.feature.extent, null, null, 0.5);
+      }
+    };
+
     this.historyClicked = function(commit) {
       commit.loading = true;
       $('.loom-history-popover').popover('hide');
@@ -131,6 +177,7 @@
               translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
         }
         commit.loading = false;
+        commit.feature = response.Feature.feature;
       }, function(reject) {
         //failed to get diff
         dialogService_.error(translate_.instant('error'),

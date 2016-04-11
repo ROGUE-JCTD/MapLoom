@@ -121,7 +121,7 @@
       }
     };
 
-    this.populate = function(_changeList, _repo, oldName, newName) {
+    this.populate = function(_changeList, _repo, oldName, newName, bypassModal) {
       service_.adds = [];
       service_.modifies = [];
       service_.deletes = [];
@@ -144,7 +144,7 @@
             var metadata = layer.get('metadata');
             if (goog.isDefAndNotNull(metadata)) {
               if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === _repo) {
-                if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+                if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName.split()[1] === splitFeature[0]) {
                   layerFound = true;
                   if (goog.isDefAndNotNull(metadata.projection)) {
                     crs = metadata.projection;
@@ -190,6 +190,10 @@
               service_.merges.push(feature);
               break;
           }
+          change.feature = feature;
+          if (_changeList.length == 1 && !goog.isDefAndNotNull(bypassModal)) {
+            featureClicked(feature);
+          }
         });
 
         if (numOutside > 0) {
@@ -210,7 +214,7 @@
       rootScope.$broadcast('diff_performed', _repo);
     };
 
-    this.performDiff = function(repoId, options) {
+    this.performDiff = function(repoId, options, bypassModal) {
       var deferredResponse = q_.defer();
       geogigService_.command(repoId, 'diff', options).then(function(response) {
         service_.clearDiff();
@@ -222,10 +226,10 @@
           service_.repoId = repoId;
           if (goog.isArray(response.Feature)) {
             service_.populate(response.Feature, geogigService_.getRepoById(repoId).name,
-                translate_.instant('from'), translate_.instant('to'));
+                translate_.instant('from'), translate_.instant('to'), bypassModal);
           } else {
             service_.populate([response.Feature], geogigService_.getRepoById(repoId).name,
-                translate_.instant('from'), translate_.instant('to'));
+                translate_.instant('from'), translate_.instant('to'), bypassModal);
           }
         }
         deferredResponse.resolve(response);
