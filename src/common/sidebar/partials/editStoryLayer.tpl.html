@@ -53,25 +53,6 @@
             <div class="form-group">
               <div class="loom-storylegend" layer="storyService.active_layer">
             </div>
-            <hr>
-            <div class="form-group">
-                <label for="customizeInfoBox">Customize Info Box</label>
-                <table class="table table-striped table-bordered"
-                       id="customizeInfoBox">
-                    <tr>
-                      <th class="text-center">Attr</th>
-                      <th class="text-center">Mask</th>
-                      <th class="text-center">Show?</th>
-                    </tr>
-                    <tr ng-repeat="attribute in layerService.getAttributes(storyService.active_layer)">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                </table>
-            </div>
-            <hr>
-            <button class="btn-composer btn-block">Save Settings</button>
             <button class="btn-composer btn-block" ng-click="removeLayer()">Delete this
                 StoryLayer
             </button>
