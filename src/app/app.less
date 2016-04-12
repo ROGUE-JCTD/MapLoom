@@ -470,15 +470,16 @@ style-editor button {
 
 .btn-storylayer {
   display: inline-block;
-  width: 40%;
+  width: 42%;
   height: 75px;
-  border: 0;
-  border-radius: 8px;
-  color: whitesmoke;
-  font-size: 10px;
-  text-transform: uppercase;
   margin: 10px;
+  margin-right: 0px;
+  font-size: 10px;
+  color: whitesmoke;
+  text-transform: uppercase;
   background: #aaa;
+  border: 0;
+  border-radius: 8px
 }
 
 .btn-storylayer a {
@@ -489,10 +490,11 @@ style-editor button {
 }
 
 .btn-storylayer i {
-  color: white;
   width: 100%;
-  text-align: center;
   padding: 5px;
+  color: white;
+  text-align: center;
+  font-size: 2.5em;
 }
 
 .btn-storylayer:hover {
@@ -639,15 +641,15 @@ a.carousel-control {
   bottom: 12px;
   left: -50px;
   display: block;
-  width: 180px;
+  min-width: 180px;
   padding: 10px;
-  padding-top: 0px;
+  padding-top: 0;
+  font-size: 10px;
+  color: #666;
   text-overflow: ellipsis;
   white-space: nowrap;
   background-color: whitesmoke;
-  border-radius: 4px;
-  color: #666;
-  font-size: 10px;
+  border-radius: 4px
 }
 
 .feature-info-box-popup:after {
@@ -716,49 +718,143 @@ a.carousel-control {
 }
 
 .style-editor-item {
-    background-color: #ccc;
-margin-bottom: 5px;
-padding: 3px;
-border-radius: 3px;
+  background-color: #ccc;
+  margin-bottom: 5px;
+  padding: 3px;
+  border-radius: 3px;
 }
 
 .style-editor-item .title {
-    display: inline-block;
-max-width: 100%;
-padding-left: 5px;
-font-family: 'Open Sans', sans-serif !important;
-font-size: 10px;
-font-weight: normal;
-line-height: 12px;
-color: #777;
-text-transform: uppercase
+  display: inline-block;
+  max-width: 100%;
+  padding-left: 5px;
+  font-family: 'Open Sans', sans-serif !important;
+  font-size: 10px;
+  font-weight: normal;
+  line-height: 12px;
+  color: #777;
+  text-transform: uppercase
 }
 
 .style-editor-item .controls {
-    padding-bottom: 3px;
+  padding-bottom: 3px;
 }
 
 .style-editor-item .controls>* {
-    margin: 2px;
+  margin: 2px;
 }
 
 .style-editor-item button {
-    padding: 1px 5px
+  padding: 1px 5px;
 }
 
 .style-editor-item button, .style-editor-item .controls input {
-height: 30px;
-background: #eee;
-color: #666;
-padding: 2px 10px;
-font-size: 10px;
-line-height: 12px;
-border-radius: 4px;
-border: 0;
-display: inline-block;
-margin: 0;
-text-align: center;
-white-space: nowrap;
-vertical-align: middle;
-cursor: pointer;
+  height: 30px;
+  background: #eee;
+  color: #666;
+  padding: 2px 10px;
+  font-size: 10px;
+  line-height: 12px;
+  border-radius: 4px;
+  border: 0;
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.panelContainer .panelRow .loom-feature-panel {
+  position: relative;
+  display: table-cell;
+  width: 230px;
+  padding-top: 5px;
+  vertical-align: top;
+  background-color: whitesmoke;
+  border: 0;
+}
+
+.panelContainer .panelRow .loom-panel-separator {
+  display: table-cell;
+  width: 32px;
+  padding-top: 5px;
+  background-color: whitesmoke;
+  border: 0;
+}
+
+.panelContainer .panelRow .loom-feature-panel input.attr-none {
+  width: 98%;
+  cursor: auto;
+  background-color: #aaa;
+  border: 0;
+}
+
+.panelContainer .panelRow .loom-feature-panel .attr-none input {
+  width: 98%;
+  cursor: auto;
+  background-color: #aaa;
+  border: 0;
+}
+
+.panelContainer .panelRow .loom-feature-panel .info-box-attribute {
+  height: 15px !important;
+  color: #666;
+  text-transform: lowercase;
+  border: 0;
+}
+
+.panelContainer .panelRow .loom-panel-separator .attribute-arrow .attribute-arrow-inner {
+  top: 18px;
+  padding: 5px;
+  padding-bottom: 8px;
+  background-color: #aaa;
+  border: 0;
+  border-radius: 3px
+}
+
+.panelContainer .panelRow .loom-panel-separator .arrow-inactive {
+  color: #888;
+}
+
+.panelContainer .panelRow .loom-feature-panel .attr-added input {
+  background-color: #ccc;
+  border: 0;
+  color: seagreen;
+}
+
+.panelContainer .panelRow .loom-feature-panel input.attr-added {
+  background-color: #ccc;
+  border: 0;
+  color: seagreen;
+}
+
+.panelContainer .panelRow .loom-feature-panel .attr-removed input {
+  background-color: #ccc;
+  border: 0;
+  color: indianred;
+}
+
+.panelContainer .panelRow .loom-feature-panel input.attr-removed {
+  background-color: #ccc;
+  border: 0;
+  color: indianred;
+}
+
+.editorForm {
+  padding: 10px;
+}
+
+.carousel {
+  position: relative;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.style-editor-item {
+  padding: 3px;
+  margin-bottom: 5px;
+  background-color: #ccc;
+  border-radius: 3px;
+  border: 0 !important;
 }

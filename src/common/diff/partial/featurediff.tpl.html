@@ -19,16 +19,16 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-default pull-right" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
+  <button type="button" class="btn-composer pull-right" ng-click="cancel()">{{'cancel_btn' | translate}}</button>
   <button ng-if="editable" type="button" class="btn btn-primary pull-right" ng-click="save()">{{'save_btn' | translate}}</button>
   <div class="btn-group-wrap pull-left">
     <div class="btn-group feature-diff-btn-group">
       <button ng-if="featureDiffService.undoable && !readOnly" ng-disabled="!undoEnabled" type="button"
-              class="btn btn-default pull-left" ng-click="undoChanges()"
+              class="btn-composer pull-left" ng-click="undoChanges()"
               tooltip-placement="top" tooltip="{{'undo_changes' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-share-alt undo-button"></i>
       </button>
-      <button type="button" class="btn btn-default pull-left authors-button" ng-disabled="isLoading"
+      <button type="button" class="btn-composer pull-left authors-button" ng-disabled="isLoading"
               ng-class="{'authors-shown':authorsShown}" ng-click="onClick()" ng-controller="authors-tooltip-controller"
               tooltip-placement="top" tooltip="{{'show_authors' | translate}}" tooltip-append-to-body="true">
         <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoading"></div>

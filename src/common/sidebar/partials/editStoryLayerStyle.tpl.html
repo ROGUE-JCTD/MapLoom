@@ -10,7 +10,7 @@
     <a href="#" ng-click="updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to Editing Tools</a>
 </div>
 
-<div>
+<div class="editorForm">
     <style-editor ng-if="menuSection=='editStoryLayerStyle' + chapter.id + storyLayers.id" class="minheight"
                   control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true"
                   on-change="styleChanged"></style-editor>
