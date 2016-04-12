@@ -147,6 +147,14 @@
                                 <ng-include src="'sidebar/partials/editStoryLayer.tpl.html'"></ng-include>
                             </div>
 
+                            <div id="editStoryLayer" ng-show="menuSection=='editStoryLayerMasking' + chapter.id + storyLayers.id">
+                                <ng-include src="'sidebar/partials/editStoryLayerMasking.tpl.html'"></ng-include>
+                            </div>
+
+                            <div id="editStoryLayer" ng-show="menuSection=='editStoryLayerStyle' + chapter.id + storyLayers.id">
+                                <ng-include src="'sidebar/partials/editStoryLayerStyle.tpl.html'"></ng-include>
+                            </div>
+
                             <div id="editSingleStoryLayer" ng-show="menuSection=='editSingleStoryLayer'">
                                 <ng-include src="'sidebar/partials/editSingleStoryLayer.tpl.html'"></ng-include>
                             </div>

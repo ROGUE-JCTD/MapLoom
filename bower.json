@@ -31,7 +31,7 @@
     "w3c-schemas": "highsource/w3c-schemas#master",
     "story-tools": "https://github.com/MapStory/story-tools.git#wip/mapstory",
     "vis": "4.9.0",
-    "font-awesome": "fontawesome#^4.5.0",
+    "font-awesome": "fontawesome#^4.6.0",
     "angular-bootstrap-colorpicker": "~3.0.8",
     "toastr": "^2.1.2",
     "hopscotch": "^0.2.5",
