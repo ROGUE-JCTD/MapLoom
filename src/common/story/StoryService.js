@@ -294,7 +294,11 @@
           service_.update_active_config(service_.active_index, true);
         }
         console.log('----[ mapstory.save success. ', data, status, headers, config);
-        toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
+        if (config.data.is_published === true) {
+          toastr.success('Congratulations. Your MapStory has been published.', 'Publish Successful');
+        }else {
+          toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
+        }
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           // dialogService_.error(translate_.instant('save_failed'), translate_.instant('mapstory_save_permission'));

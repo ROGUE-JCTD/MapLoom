@@ -1,7 +1,7 @@
 <h2 ng-show="menuSection=='mainMenu'">
     <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
     <i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>
-    <a id="mapstory-title" href="{{ storyService.id > 0 && '/story/storyService.id' || '#'}}" target="_blank">{{ storyService.title }}</a>
+    <a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a>
 </h2>
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>{{ storyService.title }}</h2>
 <div id ="menuButtonGroup" class="menuItem" ng-show="menuSection=='mainMenu'">
