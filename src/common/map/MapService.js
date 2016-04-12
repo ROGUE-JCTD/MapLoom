@@ -28,7 +28,8 @@
     return new ol.layer.Vector({
       metadata: {
         StoryPinLayer: true,
-        title: 'Story Pins'
+        title: 'Story Pins',
+        config: {}
       },
       source: new ol.source.Vector({
         parser: null
