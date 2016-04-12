@@ -10,6 +10,15 @@
     <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">Back to StoryLayers List</a>
 </div>
 
+<button class="btn-storylayer" ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)" ng-disabled="storyService.isEditable()"><i class="fa fa-plus"></i>Add Feature</button>
+<button class="btn-storylayer" ng-click="storyService.startFeatureEdit(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)" ng-disabled="storyService.isEditable()"><i class="fa fa-edit"></i>Edit Feature</button>
+<button class="btn-storylayer"><i class="fa fa-paint-brush"></i>Style Layer</button>
+<a ng-href="/layers/{{ storyService.active_layer.get('metadata').name }}" target="_blank"><button class="btn-storylayer"><i class="fa fa-tags"></i>View Metadata</button></a>
+<button class="btn-storylayer" ng-click="storyService.showTable()" ng-disabled="storyService.isEditable()"><i class="fa fa-list-alt"></i>View Table</button>
+<button class="btn-storylayer" ng-disabled="storyService.hasNoHistory()" ng-click="storyService.getHistory();updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)"><i class="fa fa-hourglass"></i>View History</button>
+<button class="btn-storylayer"><i class="fa fa-low-vision"></i>Masking</button>
+<button class="btn-storylayer" ng-click="removeLayer()"><i class="fa fa-trash-o"></i>Delete Layer</button>
+
 <div class="menuItem">
     <ul class="nav nav-tabs" data-tabs="tabs">
         <li class="active"><a data-toggle="tab" href="#style{{ chapter.id }}{{ storyLayers.id }}">Style</a>
