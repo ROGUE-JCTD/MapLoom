@@ -2,11 +2,11 @@
   <div class="info-box-title-row row">
     <div class="info-box-back"><i ng-if="featureManagerService.getPreviousState() != ''" class="glyphicon glyphicon-chevron-left" ng-click="featureManagerService.showPreviousState()"></i></div>
     <div ng-if="featureManagerService.getState() == 'layers'" class="info-box-title ellipsis" translate="map_layers"></div>
-    <div ng-if="featureManagerService.getState() == 'layer'" class="info-box-title ellipsis">{{featureManagerService.getSelectedItem().layer.get('metadata').title}}</div>
+    <div ng-if="featureManagerService.getState() == 'layer'" class="info-box-title ellipsis">{{ layerService.getTitle(featureManagerService.getSelectedItemLayer().layer) }}</div>
     <div ng-if="featureManagerService.getState() == 'feature'" class="info-box-title ellipsis">
-      {{featureManagerService.getSelectedItemLayer().layer.get('metadata').title}}<br>{{featureManagerService.getSelectedItem().id}}</div>
+      {{ layerService.getTitle(featureManagerService.getSelectedItemLayer().layer) }}<br>{{featureManagerService.getSelectedItem().id}}</div>
       <div ng-if="featureManagerService.getState() == 'pin'" class="info-box-title ellipsis">
-          {{featureManagerService.getSelectedItemLayer().layer.get('metadata').title}}<br>{{featureManagerService.getSelectedItem().title}}
+          {{ layerService.getTitle(featureManagerService.getSelectedItemLayer().layer) }}<br>{{featureManagerService.getSelectedItem().title}}
       </div>
     <div class="info-box-close"><i class="glyphicon glyphicon-remove" ng-click="featureManagerService.hide()"></i></div>
   </div>
@@ -15,7 +15,7 @@
       <ul class="list-group list-group-info-box">
         <li ng-repeat="layerInfo in featureManagerService.getSelectedItem()" class="list-group-item-info-box"
             ng-click="featureManagerService.show(layerInfo)">
-          <div>{{layerInfo.layer.get('metadata').title}}</div>
+          <div>{{ layerService.getTitle(layerInfo.layer) }}</div>
         </li>
       </ul>
     </div>
