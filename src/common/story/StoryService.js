@@ -217,12 +217,11 @@
       return dialogResult;
     };
 
-    this.isEditable = function() {
+    this.isNotEditable = function() {
       if (this.active_layer == null) {
         return true;
       }
-      return (!this.active_layer.get('visible') || !this.active_layer.get('metadata').schema ||
-              this.active_layer.get('metadata').readOnly);
+      return (!this.active_layer.get('metadata').editable);
     };
 
     this.startFeatureAdd = function() {
