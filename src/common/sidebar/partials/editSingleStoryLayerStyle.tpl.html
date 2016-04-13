@@ -1,0 +1,17 @@
+<h2 ng-show="menuSection=='editSingleStoryLayerStyle' + chapter.id + storyLayers.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editSingleStoryLayerStyle' + chapter.id + storyLayers.id)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
+</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editSingleStoryLayerStyle' + chapter.id + storyLayers.id)"></i>
+</h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
+
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('editSingleStoryLayer' + chapter.id + storyLayers.id)">Back to Editing Tools</a>
+</div>
+
+<div class="editorForm">
+    <style-editor ng-if="menuSection=='editSingleStoryLayerStyle' + chapter.id + storyLayers.id" class="minheight"
+                  control="{carousel:true, default:false}" layer="storyService.active_layer" ng-show="true"
+                  on-change="styleChanged"></style-editor>
+</div>
