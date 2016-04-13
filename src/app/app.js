@@ -207,6 +207,7 @@
         $scope.removeLayer = function() {
           storyService.removeLayer().then(function(layer_removed) {
             if (layer_removed === true) {
+              $scope.storyLayers = $scope.mapService.getStoryLayers();
               $scope.updateMenuSection('storyLayers' + $scope.active_menu_chapter.id);
               storyService.active_layer = null;
             }
