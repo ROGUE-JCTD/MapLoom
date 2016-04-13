@@ -233,6 +233,7 @@
     };
 
     this.startFeatureEdit = function() {
+      rootScope_.$broadcast('begin-edit');
       toastr.success('To edit an existing feature, just click on a feature that you want to edit.');
     };
 
