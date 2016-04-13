@@ -23,7 +23,7 @@
   });
 
   module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
-                                                refreshService, dialogService, historyService, storyService, boxService, pinService, $http, layerService) {
+                                                refreshService, dialogService, historyService, storyService, boxService, pinService, $http, layerService, serverService) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -34,6 +34,9 @@
         $scope.$on('layer-added', function(event) {
           if (goog.isDefAndNotNull($scope.mapService)) {
             $scope.storyLayers = $scope.mapService.getStoryLayers();
+            if ($scope.storyLayers.length > 0 && goog.isDefAndNotNull($scope.layerName)) {
+              storyService.selectLayer($scope.storyLayers[0]);
+            }
           }
         });
 
@@ -84,6 +87,7 @@
         $scope.boxService = boxService;
         $scope.pinService = pinService;
         $scope.historyService = historyService;
+        $scope.serverService = serverService;
         $scope.box = {};
         $scope.pin = {};
 
@@ -256,7 +260,35 @@
 
         };
 
+        $scope.isEditModeActive = function() {
+          // Grab the URL in a variable.
+          var locationParameters = $location.search();
+          // Check to see if edit mode is in the URL.
+          if (locationParameters['mode'] === 'edit') {
+            // If edit mode is in the URL, get the value of the layer parameter.
+            $scope.layerName = locationParameters['layer'];
+          }
+        };
+
+        $scope.$on('server-added', function(event, id) {
+          // If a server is added, get that server's ID.
+          var server = serverService.getServerById(id);
+          // Check if the server that was added was the Local GeoServer and we have a layer name because edit mode is active.
+          if (server.name == 'Local Geoserver' && goog.isDefAndNotNull($scope.layerName)) {
+            // Create minimal config for the layerName passed in the URL.
+            var minimalConfig = {
+              name: $scope.layerName,
+              source: server.id
+            };
+            // Add the layer with the minimal config we just created, and then update our menu section so that the user is in edit mode.
+            mapService.addLayer(minimalConfig);
+            $scope.updateMenuSection('editSingleStoryLayer' + $scope.layerName);
+          }
+        });
+
         $scope.addChapterToMenu(0);
+
+        $scope.isEditModeActive();
 
         $scope.treeOptions = {
           accept: function(sourceNodeScope, destNodesScope, destIndex) {

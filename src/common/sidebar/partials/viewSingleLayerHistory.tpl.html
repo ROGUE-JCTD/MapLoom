@@ -1,0 +1,56 @@
+<h2 ng-show="menuSection=='viewLayerHistory' + layerName"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i><i
+        class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
+</h2>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>
+</h2>
+<h2>{{ storyService.active_chapter.about.title }}</h2>
+<h2>{{ storyService.active_layer.get('metadata').title }} History</h2>
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="historyService.clearHistory();updateMenuSection('editSingleStoryLayer' + layerName)">Back to Editing Tools</a>
+</div>
+<div>
+    <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
+        <div class="menuItem historyItem">
+            <div class="commit-summary progress">
+                <div class="progress-bar progress-bar-add" ng-style="commit.summary.added">
+                    <span class="sr-only"></span>
+                </div>
+                <div class="progress-bar progress-bar-modify" ng-style="commit.summary.modified">
+                    <span class="sr-only"></span>
+                </div>
+                <div class="progress-bar progress-bar-delete" ng-style="commit.summary.removed">
+                    <span class="sr-only"></span>
+                </div>
+                <div ng-if="commit.summary == null || commit.summary == undefined" class="progress-bar progress-bar-none">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
+            <div ng-if="commit.author.name.length == 0">
+                <h2>Anonymous</h2>
+            </div>
+            <div ng-if="commit.author.name != null">
+                <h2>{{ commit.author.name }}</h2>
+            </div>
+            <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
+            <div ng-if="commit.adds > 0">
+                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
+                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Details</button>
+                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
+                <button class="btn-composer btn-block">Revert</button>
+            </div>
+            <div ng-if="commit.modifies > 0">
+                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
+                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Difference</button>
+                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
+                <button class="btn-composer btn-block">Revert</button>
+            </div>
+            <div ng-if="commit.removes > 0">
+                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
+                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Details</button>
+                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
+                <button class="btn-composer btn-block">Revert</button>
+            </div>
+        </div>
+    </div>
+</div>
