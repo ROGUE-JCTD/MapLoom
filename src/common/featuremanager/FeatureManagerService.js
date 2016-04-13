@@ -997,7 +997,7 @@
     var type = '';
 
     if (goog.isDefAndNotNull(item)) {
-      if (item.content) {
+      if (item.content || item.in_map) {
         type = 'pin';
       } else if (item.properties) {
         type = 'feature';

@@ -22,6 +22,7 @@
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;
   var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback'];
+  var filterPropertiesFromValidation = ['id', '_id', 'content', 'media', 'in_map', 'in_timeline', 'pause_playback'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Pin.prototype, prop, {
@@ -110,7 +111,41 @@
 
     };
 
+    this.validatePinProperty = function(pin, propertyName) {
+      return (pin.hasOwnProperty(propertyName) && (goog.isDefAndNotNull(pin[propertyName]) && !goog.string.isEmptySafe(pin[propertyName])));
+    };
+
+    this.validateAllPinProperties = function(pin) {
+      var invalid_props = [];
+      var copy_attribs = angular.copy(model_attributes);
+      copy_attribs.push('geometry');
+      for (var iProp = 0; iProp < copy_attribs.length; iProp += 1) {
+        var property = copy_attribs[iProp];
+        if (!this.validatePinProperty(pin, property) && !goog.array.contains(filterPropertiesFromValidation, property)) {
+          invalid_props.push(property);
+        }
+      }
+      if (invalid_props.length > 0) {
+        return invalid_props;
+      }
+      return true;
+    };
+
     this.addPin = function(props, chapter_index) {
+      var pinValidated = this.validateAllPinProperties(props);
+      if (pinValidated !== true) {
+        translate_(pinValidated).then(function(translations) {
+          var invalid_string = 'These properties must be set before saving a StoryPin: ';
+          for (var iProp = 0; iProp < pinValidated.length; iProp += 1) {
+            var property = pinValidated[iProp];
+            var translatedProp = translations[property];
+            translatedProp = translatedProp.concat(', ');
+            invalid_string = invalid_string.concat(translatedProp);
+          }
+          toastr.error(invalid_string, 'Cannot save StoryPin');
+        });
+        return false;
+      }
       var storyPin = new Pin(props);
       pins_[chapter_index].push(storyPin);
       rootScope_.$broadcast('pin-added', chapter_index);

@@ -114,10 +114,11 @@
         $scope.addStoryPin = function(pin) {
           var clone = angular.copy(pin);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
-          pinService.addPin(clone, $scope.active_menu_chapter.id);
-          $scope.pin = {};
-          $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
-          toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
+          if (pinService.addPin(clone, $scope.active_menu_chapter.id)) {
+            $scope.pin = {};
+            $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+            toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
+          }
         };
 
         $scope.mapstories = {
