@@ -81,7 +81,7 @@
     };
 
     this.getBoxes = function(chapter_index) {
-      return boxes_[chapter_index];
+      return boxes_[chapter_index] || [];
     };
 
     this.removeBox = function(storyBox, chapter_index) {

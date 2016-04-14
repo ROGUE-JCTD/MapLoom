@@ -10,6 +10,6 @@
     <a href="#" ng-click="updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)">Back to Layer History</a>
 </div>
 <button class="btn-composer btn-block">View On Map</button>
-<button class="btn-composer btn-block">Show Details</button>
+<button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Details</button>
 <button class="btn-composer btn-block">View Author's Profile</button>
 <button class="btn-composer btn-block">Revert</button>

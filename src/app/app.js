@@ -33,7 +33,7 @@
 
         $scope.$on('layer-added', function(event) {
           if (goog.isDefAndNotNull($scope.mapService)) {
-            $scope.storyLayers = $scope.mapService.getStoryLayers();
+            $scope.storyLayers = $scope.mapService.getStoryLayers(true, true);
             if ($scope.storyLayers.length > 0 && goog.isDefAndNotNull($scope.layerName)) {
               storyService.selectLayer($scope.storyLayers[0]);
             }

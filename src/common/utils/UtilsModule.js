@@ -135,16 +135,17 @@
 
         var hasValidDate = false;
 
-        var updateDateTime = function() {
+        var updateDateTime = function()   {
           if (!hasValidDate) {
             scope.dateObject = '';
             return;
           }
 
           var newDate = new Date();
-          var date = element.find('.datepicker').data('DateTimePicker');
-          if (goog.isDefAndNotNull(date) && goog.isDefAndNotNull(date.getDate())) {
-            date = date.getDate();
+          var picker = element.find('.datepicker').data('DateTimePicker');
+          var date = null;
+          if (goog.isDefAndNotNull(picker) && goog.isDefAndNotNull(picker.getDate())) {
+            date = picker.getDate();
             newDate.setFullYear(date.year(), date.month(), date.date());
             newDate.setHours(date.hour(), date.minute(), date.second(), date.millisecond());
           }
@@ -179,13 +180,13 @@
         };
 
         var dateOptions = {
-          startDate: '01/01/1000',
+          startDate: '01/01/-1000',
           pickTime: (scope.time === 'true' && scope.seperateTime === 'false'),
           language: $translate.use()
         };
 
         var timeOptions = {
-          startDate: '01/01/1000',
+          startDate: '01/01/-1000',
           pickDate: false,
           language: $translate.use()
         };
@@ -200,7 +201,7 @@
           if (goog.isDefAndNotNull(scope.dateObject) && scope.dateObject !== '') {
             hasValidDate = true;
             if (scope.date === 'false') {
-              var testDate = new Date(scope.dateObject);
+              var testDate = new Utils.Date(scope.dateObject);
               if ('Invalid Date' == testDate) {
                 timeOptions.defaultDate = '2014-03-10T' + scope.dateObject;
               } else {

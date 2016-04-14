@@ -213,6 +213,14 @@
           }
         }
       });
+
+      $rootScope.$on('chapter-switch', function(event, active_index) {
+        service_.zoomToLargestStoryLayer();
+      });
+
+      $rootScope.$on('chapter-added', function(event) {
+        service_.zoomToExtent();
+      });
       return this;
     };
 
@@ -542,8 +550,8 @@
       }
     };
 
-    this.getStoryLayers = function() {
-      var layers = this.getLayers(true, true);
+    this.getStoryLayers = function(hidden, editable) {
+      var layers = this.getLayers(hidden, editable);
       for (var iLayer = layers.length - 1; iLayer >= 0; iLayer -= 1) {
         var layer = layers[iLayer];
         if (layer.get('metadata').hasOwnProperty('config') && goog.isDef(layer.get('metadata').config.group)) {
@@ -554,6 +562,28 @@
         layers.push(this.pinLayer);
       }
       return layers;
+    };
+
+    this.zoomToLargestStoryLayer = function() {
+      var layers = service_.getStoryLayers(false, true);
+      var largestExtentArea = 0;
+      var largestLayerIndex = -1;
+      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
+        var layer = layers[iLayer];
+        if (!goog.isDefAndNotNull(layer.get('metadata').StoryPinLayer)) {
+          var layerExtent = layer.get('metadata').bbox.extent;
+          var area = ol.extent.getHeight(layerExtent) * ol.extent.getWidth(layerExtent);
+          if (area > largestExtentArea) {
+            largestExtentArea = area;
+            largestLayerIndex = iLayer;
+          }
+        }
+      }
+      if (largestLayerIndex !== -1) {
+        service_.zoomToLayerFeatures(layers[largestLayerIndex]);
+      } else {
+        service_.zoomToExtent();
+      }
     };
 
     this.layerIsEditable = function(layer) {

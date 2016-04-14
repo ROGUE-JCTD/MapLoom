@@ -86,7 +86,7 @@
     };
 
     this.getPins = function(chapter_index) {
-      return pins_[chapter_index];
+      return pins_[chapter_index] || [];
     };
 
     this.removePin = function(storyPin, chapter_index) {
