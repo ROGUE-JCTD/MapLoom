@@ -10,7 +10,6 @@
     <i class="fa fa-angle-right"></i>
     <a href="#" ng-click="historyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
 </div>
-<div>
     <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
         <div class="menuItem historyItem">
             <div class="commit-summary progress">
@@ -27,31 +26,34 @@
                     <span class="sr-only"></span>
                 </div>
             </div>
-            <div ng-if="commit.author.name.length == 0">
-                <h2>Anonymous</h2>
+            <div>
+                <div ng-if="commit.author.name.length == 0" class="pull-left">
+                    <small>Anonymous</small>
+                </div>
+                <div ng-if="commit.author.name != null" class="pull-left">
+                    <small>{{ commit.author.name }}</small>
+                </div>
+                <small class="pull-left">{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
             </div>
-            <div ng-if="commit.author.name != null">
-                <h2>{{ commit.author.name }}</h2>
-            </div>
-            <small>{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
-            <div ng-if="commit.adds > 0">
-                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
-                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Details</button>
-                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
-                <button class="btn-composer btn-block">Revert</button>
-            </div>
-            <div ng-if="commit.modifies > 0">
-                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
-                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Difference</button>
-                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
-                <button class="btn-composer btn-block">Revert</button>
-            </div>
-            <div ng-if="commit.removes > 0">
-                <button class="btn-composer btn-block" ng-click="storyService.zoomToCommit(commit)">View On Map</button>
-                <button class="btn-composer btn-block" ng-click="storyService.historyClicked(commit)">Show Details</button>
-                <button class="btn-composer btn-block" ng-href="/storyteller/{{ commit.author.username }}">View Author's Profile</button>
-                <button class="btn-composer btn-block">Revert</button>
+            <div>
+                <div ng-if="commit.adds > 0">
+                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
+                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
+                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
+                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
+                </div>
+                <div ng-if="commit.modifies > 0">
+                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
+                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
+                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
+                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
+                </div>
+                <div ng-if="commit.removes > 0">
+                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
+                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
+                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
+                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
