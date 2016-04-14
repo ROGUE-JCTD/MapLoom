@@ -910,6 +910,7 @@
           if (completed >= layers.length || goog.isDefAndNotNull(fromPins)) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
+              rootScope_.$broadcast('begin-edit');
               service_.show(infoPerLayer, evt.coordinate);
             }
           } else {
