@@ -6,6 +6,11 @@
     </div>
     <hr>
     <div class="form-group">
+      <div ng-repeat="attribute in attributes">
+          {{ attribute.name }}
+          <input type="checkbox" ng-model="attribute.show"/>
+          <input type="text" class="form-composer" ng-model="attribute.alias"/>
+      </div>
       <label for="customizeInfoBox">Customize Info Box</label>
       <table class="table table-striped table-bordered"
              id="customizeInfoBox">
