@@ -118,7 +118,7 @@
         $scope.addStoryPin = function(pin) {
           var clone = angular.copy(pin);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
-          if (pinService.addPin(clone, $scope.active_menu_chapter.id)) {
+          if (pinService.addPin(clone, $scope.active_menu_chapter.id) === true) {
             $scope.pin = {};
             $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
             toastr.success('Your StoryPin has been saved', 'StoryPin Saved');

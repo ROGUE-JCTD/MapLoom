@@ -150,6 +150,7 @@
       pins_[chapter_index].push(storyPin);
       rootScope_.$broadcast('pin-added', chapter_index);
       console.log('-- pinService.addPin, added: ', storyPin);
+      return true;
     };
 
 
