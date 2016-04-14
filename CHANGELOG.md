@@ -2,6 +2,12 @@ Change Log
 ==========
 All notable changes to this project will be documented in this file.
 
+[1.5] - 2016-3-20
+------------------------
+- Added support for layers from TileJSON servers
+- Jasmine unit-test coverage added for major components
+- Layer attribute visibility is now editable through dialog box
+
 [1.2] - 2015-05-12
 ------------------------
 - Re-ordering of layers fix

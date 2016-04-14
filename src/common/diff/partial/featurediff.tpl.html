@@ -2,7 +2,7 @@
 
   <div class="panelContainer">
     <div class="panelRow">
-      <div ng-if="leftPanel" class="loom-feature-panel" mapid="0" panel="featureDiffService.left"
+      <div ng-show="leftPanel" class="loom-feature-panel" mapid="0" panel="featureDiffService.left"
            panel-title="leftTitle"></div>
       <div ng-if="leftSeparator" class="loom-panel-separator" icon="glyphicon-chevron-right"
            hover="editable" clickfunction="leftSeparatorClick"
@@ -12,7 +12,7 @@
       <div ng-if="rightSeparator" class="loom-panel-separator" icon="glyphicon-chevron-left"
            hover="editable" clickfunction="rightSeparatorClick"
            panel="featureDiffService.right"></div>
-      <div ng-if="rightPanel" class="loom-feature-panel" mapid="2" panel="featureDiffService.right"
+      <div ng-show="rightPanel" class="loom-feature-panel" mapid="2" panel="featureDiffService.right"
            panel-title="rightTitle"></div>
     </div>
   </div>

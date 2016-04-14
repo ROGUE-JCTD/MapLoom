@@ -391,11 +391,6 @@ module.exports = function ( grunt ) {
       options: {
         configFile: '<%= build_dir %>/karma-unit.js'
       },
-      unit: {
-        runnerPort: 9101,
-        background: true,
-        port: 9877
-      },
       continuous: {
         singleRun: true
       }
@@ -667,7 +662,9 @@ module.exports = function ( grunt ) {
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /\.js$/ );
+      if(!file.match( /\.spec.js$/ )) {
+        return file.match( /\.js$/ );
+      }
     });
   }
 

@@ -1,0 +1,16 @@
+<div class="modal-body">
+  <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="attribute in getAttrList(layer)">
+        <div class="attribute-value ellipsis">{{attribute._name}}</div>
+        <div class="layer-buttons">
+        <span ng-click="toggleAttributeVisibility(attribute)"
+              class="btn btn-xs btn-default layer-visible-button"
+              ng-class="{'layer-visible': attribute.visible}">
+          <i class="glyphicon" ng-class="{'glyphicon-eye-close': !attribute.visible, 'glyphicon-eye-open': attribute.visible}"></i>
+        </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
