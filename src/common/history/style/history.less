@@ -47,14 +47,14 @@
 }
 
 .commit-summary {
-  height: 50px;
   position: absolute;
-  width: 15px;
-  margin: 0;
-  padding: 0;
   left: 15px;
-  border: 1px solid @layerHeaderColor;
-  background-color: #8dabc8 !important;
+  width: 5px;
+  height: 50px;
+  padding: 0;
+  background-color: #8dabc8  !important;
+  border: 0;
+  border-radius: 0;
 
   .progress-bar-add {
     background-color: @addColor;
@@ -86,17 +86,26 @@
   }
 }
 
-.author-name {
-  position: absolute;
-  top: 0px;
-  width: 170px;
-  font-weight: 900;
+.commit-author {
+  margin-left: 5px !important;
+  font-size: 0.8em !important;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 15px !important;
 }
 
-.commit-time {
-  position: absolute;
-  top: 19px;
-  left: 14px;
-  width: 170px;
-  font-size: 13px;
+.commit-date {
+  margin-left: 5px !important;
+  font-size: 0.7em !important;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 15px !important;
+  font-weight: normal;
 }
+

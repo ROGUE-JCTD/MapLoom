@@ -27,32 +27,23 @@
                 </div>
             </div>
             <div>
-                <div ng-if="commit.author.name.length == 0" class="pull-left">
-                    <small>Anonymous</small>
+                <div ng-if="commit.author.name.length == 0">
+                    <h2 class="commit-author">Anonymous</h2>
                 </div>
-                <div ng-if="commit.author.name != null" class="pull-left">
-                    <small>{{ commit.author.name }}</small>
+                <div ng-if="commit.author.name != null">
+                    <h2 class="commit-author">{{ commit.author.name }}</h2>
                 </div>
-                <small class="pull-left">{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</small>
+                <h2 class="commit-date">{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</h2>
             </div>
             <div>
-                <div ng-if="commit.adds > 0">
-                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
-                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
-                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
-                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
-                </div>
-                <div ng-if="commit.modifies > 0">
-                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
-                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
-                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
-                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
-                </div>
-                <div ng-if="commit.removes > 0">
-                    <button class="btn-composer" ng-click="storyService.zoomToCommit(commit)"><i class="fa fa-globe"></i></button>
-                    <button class="btn-composer" ng-click="storyService.historyClicked(commit)"><i class="fa fa-user"></i></button>
-                    <button class="btn-composer" ng-href="/storyteller/{{ commit.author.username }}"><i class="fa fa-exchange"></i></button>
-                    <button class="btn-composer"><i class="fa fa-undo"></i></button>
+                <div>
+                    <i class="fa fa-undo"></i>
+                    <i class="fa fa-exchange" ng-href="/storyteller/{{ commit.author.username }}"></i>
+                    <i class="fa fa-user" ng-click="storyService.historyClicked(commit)"></i>
+                    <i class="fa fa-globe" ng-click="storyService.zoomToCommit(commit)"></i>
+
+
+
                 </div>
             </div>
         </div>
