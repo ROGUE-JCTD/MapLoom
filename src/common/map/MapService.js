@@ -1112,7 +1112,11 @@
           config.capability = {};
           config.capability.dimensions = {};
           config.capability.dimensions.time = dimension;
-          config.capability.dimensions.time.values = dimension.values.split(',');
+          if (dimension.values instanceof Array) {
+            config.capability.dimensions.time.values = dimension.values;
+          }else {
+            config.capability.dimensions.time.values = dimension.values.split(',');
+          }
         }
         if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
           config.schema = [];
