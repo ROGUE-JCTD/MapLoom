@@ -70,6 +70,11 @@
       historyService_.getHistory(this.active_layer, pathFilter);
     };
 
+    this.clearHistory = function() {
+      historyService_.clearHistory();
+      diffService_.clearDiff();
+    };
+
     this.clearSelectedItems = function() {
       this.active_layer = null;
       this.active_index = null;
