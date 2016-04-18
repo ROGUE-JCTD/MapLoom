@@ -40,6 +40,12 @@
           }
         });
 
+        $scope.$on('chapter-switch', function(event) {
+          if (goog.isDefAndNotNull($scope.mapService)) {
+            $scope.storyLayers = $scope.mapService.getStoryLayers(true, true);
+          }
+        });
+
         $('body').on('show.bs.modal', function(e) {
           var modals = $('.modal.in');
           var backdrops = $('.modal-backdrop');
