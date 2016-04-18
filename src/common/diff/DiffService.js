@@ -191,8 +191,8 @@
               break;
           }
           change.feature = feature;
-          if (_changeList.length == 1 && !goog.isDefAndNotNull(bypassModal)) {
-            featureClicked(feature);
+          if (_changeList.length == 1) {
+            featureClicked(feature, bypassModal);
           }
         });
 
@@ -268,7 +268,7 @@
   });
 
 
-  function featureClicked(feature) {
+  function featureClicked(feature, bypassModal) {
     var fid = feature.layer + '/' + feature.feature;
     for (var i = 0; i < service_.features.length; i++) {
       if (fid === service_.features[i].id) {
@@ -278,7 +278,9 @@
         featureDiffService_.setFeature(
             service_.features[i], service_.oldCommitId, service_.newCommitId,
             service_.oldCommitId, null, service_.repoId);
-        $('#feature-diff-dialog').modal('show');
+        if (!goog.isDefAndNotNull(bypassModal)) {
+          $('#feature-diff-dialog').modal('show');
+        }
         service_.currentFeature = service_.features[i];
         break;
       }

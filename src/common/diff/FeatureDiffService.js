@@ -335,7 +335,7 @@
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
           if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repoName) {
-            if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
+            if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName.split(':')[1] === splitFeature[0]) {
               service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
                 service_.schema = layer.get('metadata').schema;
@@ -584,7 +584,11 @@
   function assignAttributeTypes(properties, editable) {
     if (goog.isDefAndNotNull(service_.schema)) {
       for (var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++) {
-        properties[propertyIndex].type = service_.schema[properties[propertyIndex].attributename]._type;
+        var schema_property = service_.schema[properties[propertyIndex].attributename];
+        if (!goog.isDefAndNotNull(schema_property)) {
+          continue;
+        }
+        properties[propertyIndex].type = schema_property._type;
         if (properties[propertyIndex].type === 'simpleType') {
           properties[propertyIndex].enum =
               service_.schema[properties[propertyIndex].attributename].simpleType.restriction.enumeration;
