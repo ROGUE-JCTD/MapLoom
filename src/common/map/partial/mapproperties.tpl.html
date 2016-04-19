@@ -1,11 +1,11 @@
 <div class="modal-body">
-    <form class="form-horizontal col-md-12">
+    <form class="form-horizontal col-md-12" name="summaryForm">
         <div class="form-group">
             <div class="form-group">
-                <label for="mapTitle">{{ 'title' | translate }}</label> <input id="mapTitle" ng-model="storyService.title" type="text" class="form-control" value="{{storyService.title}}" placeholder="{{storyService.title || ('title' | translate)}}">
+                <label for="mapTitle">{{ 'title' | translate }} <span ng-if="summaryForm.$invalid">(Required)</span></label> <input id="mapTitle" ng-model="storyService.title" type="text" class="form-control" value="{{storyService.title}}" ng-required="true">
             </div>
             <div class="form-group">
-                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="storyService.abstract" class="form-control" rows="4" value="{{storyService.abstract}}" placeholder="Summary"></textarea>
+                <label for="mapAbstract">Summary</label><textarea id="mapAbstract" ng-model="storyService.abstract" class="form-control" rows="4" value="{{storyService.abstract}}"></textarea>
             </div>
             <div class="form-group">
                 <label for="id_category" class="control-label  ">
@@ -40,7 +40,7 @@
     </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" ng-click="storyService.save()" data-dismiss="modal">{{'save_btn' | translate}}</button>
+  <button type="button" class="btn btn-primary" ng-disabled="summaryForm.$invalid" ng-click="storyService.save()">{{'save_btn' | translate}}</button>
 </div>
 
 

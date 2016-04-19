@@ -32,8 +32,8 @@
       diffService_ = diffService;
 
       //When initializing the story service the mapService should already be initialized
-      this.title = 'New Mapstory';
-      this.abstract = 'This is the default summary';
+      this.title = '';
+      this.abstract = '';
       this.category = null;
       this.is_published = false;
       //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
@@ -47,8 +47,8 @@
       this.active_pin = null;
       this.active_chapter = this.configurations[this.active_index];
       this.active_chapter.map['id'] = 0;
-      this.active_chapter.about.title = 'Untitled Chapter';
-      this.active_chapter.about.abstract = 'This is the default summary';
+      this.active_chapter.about.title = '';
+      this.active_chapter.about.abstract = '';
       console.log('-----story_config:', this.active_chapter);
       this.id = this.active_chapter.id;
       this.category = null;
