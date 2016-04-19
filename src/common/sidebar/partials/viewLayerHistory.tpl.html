@@ -38,12 +38,9 @@
             <div>
                 <div>
                     <!--<i class="fa fa-undo"></i>-->
-                    <i class="fa fa-exchange" ng-href="/storyteller/{{ commit.author.username }}"></i>
-                    <i class="fa fa-user" ng-click="storyService.historyClicked(commit)"></i>
+                    <!--<i class="fa fa-user" ng-href="/storyteller/{{ commit.author.username }}"></i>-->
+                    <i class="fa fa-exchange" ng-click="storyService.historyClicked(commit)"></i>
                     <i class="fa fa-globe" ng-click="storyService.zoomToCommit(commit)"></i>
-
-
-
                 </div>
             </div>
         </div>
