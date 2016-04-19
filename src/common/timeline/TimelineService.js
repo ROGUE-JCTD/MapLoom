@@ -416,15 +416,14 @@
       if (!goog.isDefAndNotNull(timelineTicks_) || timelineTicks_.length === 0 || !goog.isDefAndNotNull(time)) {
         return null;
       }
-      var timeStr = (new Date(time)).toISOString();
       var index = null;
 
       //TODO: use binary search and consider caching time objects on timeline.initialize instead of string compare
-      if (timelineTicks_[timelineTicks_.length - 1] === timeStr) {
+      if (timelineTicks_[timelineTicks_.length - 1] === time) {
         index = timelineTicks_.length - 1;
       } else {
         for (var j = 1; j < timelineTicks_.length; j++) {
-          if (timeStr < timelineTicks_[j]) {
+          if (time < timelineTicks_[j]) {
             index = j - 1;
             break;
           }
@@ -432,7 +431,7 @@
       }
 
       if (!goog.isDefAndNotNull(index)) {
-        console.log('====[ ERROR: timeToTick could not find tick for the provided time: ', timeStr, ', min: ', timelineTicks_[0], ', max: ', timelineTicks_[timelineTicks_.length - 1]);
+        console.log('====[ ERROR: timeToTick could not find tick for the provided time: ', time, ', min: ', timelineTicks_[0], ', max: ', timelineTicks_[timelineTicks_.length - 1]);
       }
 
       return index;
