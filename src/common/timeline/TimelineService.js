@@ -249,33 +249,6 @@
 
       var ticks = computeTicks(layersWithTimeList);
       timelineTicks_ = ticks;
-      var r;
-      var options = { 'data': ticks };
-      // make a default box if none provided
-      if (typeof boxes == 'undefined' || boxes.length === 0) {
-        var interval = 0, data = null;
-        if (Array.isArray(options.data)) {
-          data = options.data;
-          r = stutils.computeRange(options.data);
-          range_ = r;
-          interval = stutils.pickInterval(r);
-        } else {
-          interval = options.data.interval || stutils.pickInterval(options.data);
-          r = options.data;
-        }
-
-        box_ = [{
-          data: data,
-          range: r,
-          speed: {
-            interval: interval,
-            seconds: 3
-          }
-        }];
-      }
-
-
-      var boxes_as_layers = [];
 
       if (boxes_.length > 0) {
         for (var c = 0; c < boxes_.length; c++) {
@@ -290,11 +263,6 @@
             end: (new Date(boxes_[c].end_time)).toISOString(),
             type: 'background'
           });
-
-          boxes_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
-                              (new Date(boxes_[c].start_time)).toISOString(),
-                              (new Date(boxes_[c].end_time)).toISOString()
-                            ]}]}});
         }
       }
 
@@ -468,6 +436,20 @@
       }
 
       return index;
+    };
+
+    this.setZoomCurrent = function(time) {
+      if (!goog.isDefAndNotNull(time)) {
+        return;
+      }
+
+      for (var c = 0; c < boxes_.length; c++) {
+        if (time >= boxes_[c].get('start_time') && time <= boxes_[c].get('end_time')) {
+          mapService_.zoomToExtent(boxes_[c].get('extent'));
+          break;
+        }
+      }
+
     };
 
     this.setTimeCurrent = function(time) {

@@ -138,7 +138,7 @@
                   timelineService.setTimeCurrent(time);
                 }
               }
-
+              timelineService.setZoomCurrent(time);
             });
 
             scope.onPlay = function() {
