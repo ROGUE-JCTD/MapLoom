@@ -462,7 +462,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       for (var index = 0; index < layersConfig.length; index += 1) {
         if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
             layersConfig[index].Name === layerName.split(':')[1]) ||
-            (typeof layersConfig[index].Name.split != 'undefined' && layerConfig[index].Name.split(':')[1] === layerName)) {
+            (typeof layersConfig[index].Name.split != 'undefined' && layerConfigs[index].Name.split(':')[1] === layerName)) {
           layerConfig = layersConfig[index];
           //TODO: Update with handling multiple projections per layer if needed.
           console.log('getting layer config, crs', layerConfig.CRS);
