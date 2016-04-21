@@ -262,6 +262,8 @@
             type: 'background'
           });
         }
+      } else {
+        range_ = stutils.createRange(timelineTicks_[0], timelineTicks_[timelineTicks_.length - 1]);
       }
 
       var pinsForTimeline = filter_('filter')(pins_, { values_: {in_timeline: true} });
