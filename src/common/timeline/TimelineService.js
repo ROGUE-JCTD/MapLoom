@@ -246,9 +246,7 @@
         }
       }
 
-
-      var ticks = computeTicks(layersWithTimeList);
-      timelineTicks_ = ticks;
+      timelineTicks_ = computeTicks(layersWithTimeList);
 
       if (boxes_.length > 0) {
         for (var c = 0; c < boxes_.length; c++) {
@@ -266,7 +264,6 @@
         }
       }
 
-      var pins_as_layers = [];
       var pinsForTimeline = filter_('filter')(pins_, { values_: {in_timeline: true} });
 
       if (pinsForTimeline.length > 0) {
@@ -282,11 +279,6 @@
             end: (new Date(pinsForTimeline[iPin].end_time)).toISOString(),
             type: 'background'
           });
-
-          pins_as_layers.push({ 'metadata': { 'dimensions': [{'name': 'time', 'values': [
-                              (new Date(pinsForTimeline[iPin].start_time)).toISOString(),
-                              (new Date(pinsForTimeline[iPin].end_time)).toISOString()
-                            ]}]}});
         }
       }
 
@@ -443,9 +435,10 @@
         return;
       }
 
-      for (var c = 0; c < boxes_.length; c++) {
-        if (time >= boxes_[c].get('start_time') && time <= boxes_[c].get('end_time')) {
-          mapService_.zoomToExtent(boxes_[c].get('extent'));
+      for (var i = 0; i < boxes_.length; i++) {
+        var range = stutils.createRange(boxes_[i].get('start_time'), boxes_[i].get('end_time'));
+        if (range.intersects(time)) {
+          mapService_.zoomToExtent(boxes_[i].get('extent'));
           break;
         }
       }
