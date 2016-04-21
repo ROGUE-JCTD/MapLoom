@@ -1,6 +1,20 @@
-<h2 ng-show="menuSection=='mainMenu'">
+<div id="composerTopNav">
+    <img src="ms_logo_white.png" />
+    <button>Publish</button>
     <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
+</div>
+<div id="composerIconNav">
+    <i class="fa fa-user" ng-href="" target="_blank" id="userProfile"></i>
+    <i class="fa fa-cloud-upload" data-target="" data-toggle="modal" id="uploadLayer"></i>
+    <i class="fa fa-tags" data-target="#mapProperties" data-toggle="modal"></i>
+    <i class="fa fa-play-circle" id="previewMapStory"></i>
     <i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>
+
+
+
+
+</div>
+<h2 ng-show="menuSection=='mainMenu'">
     <a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a>
 </h2>
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>{{ storyService.title }}</h2>
