@@ -91,7 +91,7 @@
         switch (button) {
           case 0:
             for (var i = 0; i < boxes_[chapter_index].length; i++) {
-              if (storyBox._id == boxes_[chapter_index][i]._id) {
+              if (storyBox.id == boxes_[chapter_index][i].id) {
                 boxes_[chapter_index].splice(i, 1);
                 rootScope_.$broadcast('box-removed', chapter_index);
                 toastr.success('Storybox has been removed', 'Delete Storybox');
