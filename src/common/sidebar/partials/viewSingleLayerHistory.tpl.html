@@ -1,14 +1,13 @@
-<h2 ng-show="menuSection=='ViewSingleLayerHistory' + chapter.id + storyLayers.id"><i class="fa fa-reorder"
-                                                                               ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i><i
+<h2 ng-show="menuSection=='ViewSingleLayerHistory' + chapter.id + storyLayers.id"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i><i
         class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
 </h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('ViewSingleLayerHistory' + chapter.id + storyLayers.id)"></i>
+<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>
 </h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>{{ storyService.active_layer.get('metadata').title }} History</h2>
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="storyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
+    <a href="#" ng-click="storyService.clearHistory();updateMenuSection('editSingleStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
 </div>
     <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">
         <div class="menuItem historyItem">
