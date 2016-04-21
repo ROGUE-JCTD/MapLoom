@@ -1,5 +1,5 @@
-<div>
-    <div class="modal-body explorer-mini" id="exploreStoryLayers">
+<div id="exploreStoryLayers">
+    <div class="modal-body explorer-mini">
         <div class="row">
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
@@ -26,7 +26,7 @@
                                           <img class = "img-responsive" src = "{{layer.thumbnail_url}}" height="150" width="200">
                                             <h5>{{ layer.Title }}</h5>
                                             <i class = "icon-user"></i><h5>{{ layer.author }}</h5>
-                                            <button class = "btn btn-default center-block" ng-click = "addLayers(layer)" data-dismiss="modal" onclick="updateTourStep(7)">Use</button>
+                                            <button class = "btn btn-default center-block" ng-click = "updateTourStep(7); addLayers(layer)" data-dismiss="modal">Use</button>
                                             <a ng-href="{{ layer.detail_url }}" target = "_blank"><button class = "btn btn-default center-block">View</button></a>
                                         </div>
                                     </div>

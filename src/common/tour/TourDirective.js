@@ -48,7 +48,7 @@
                 },
                 {
                   target: 'exploreStoryLayers',
-                  placement: 'right',
+                  placement: 'bottom',
                   content: '7. This is the StoryLayer Explorer.  You can search using keywords, use your own uploaded StoryLayers or your favorite content.  Choose one StoryLayer and click Use.'
                 },
                 {
