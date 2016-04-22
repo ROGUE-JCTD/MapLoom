@@ -299,7 +299,7 @@
           service_.update_active_config(service_.active_index, true);
         }
         console.log('----[ mapstory.save success. ', data, status, headers, config);
-        if (config.data.is_published === true) {
+        if (cfg.is_published === true) {
           toastr.success('Congratulations. Your MapStory has been published.', 'Publish Successful');
         }else {
           toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
