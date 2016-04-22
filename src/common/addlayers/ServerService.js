@@ -270,7 +270,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             .then(function(response) {
               // set the id. it should always resolve to the length
               if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded &&
-                  server.lazy !== true) {
+                  server.lazy !== true && (server.isVirtualService !== true && server.isLocal !== true)) {
                 dialogService_.warn(translate_.instant('add_server'), translate_.instant('server_connect_failed'),
                     [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
                   switch (button) {
