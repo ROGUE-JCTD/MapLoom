@@ -1,7 +1,5 @@
-<h2 ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id"><i class="fa fa-reorder"
-                                                                               ng-click="toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"></i><i
-        class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
-</h2>
+<h2 ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id">{{ chapter.chapter }}</h2>
+
 <h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('viewLayerHistory' + chapter.id + storyLayers.id)"></i>
 </h2>
 <h2>{{ storyService.active_chapter.about.title }}</h2>

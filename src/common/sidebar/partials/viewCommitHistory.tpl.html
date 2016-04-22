@@ -1,7 +1,5 @@
-<h2 ng-show="menuSection=='viewCommitHistory' + chapter.id + storyLayers.id + commit"><i class="fa fa-reorder" ng-click="toggleSidebar('viewCommitHistory' + chapter.id + storyLayers.id + commit)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}
-</h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('viewCommitHistory' + chapter.id + storyLayers.id + commit.id)"></i>
-</h2>
+<h2 ng-show="menuSection=='viewCommitHistory' + chapter.id + storyLayers.id + commit">{{ chapter.chapter }}</h2>
+
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>Commit {{ commit.id }}</h2>
 <h2>{{ commit.author.name }}</h2>

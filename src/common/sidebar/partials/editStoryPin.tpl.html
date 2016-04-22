@@ -1,5 +1,5 @@
-<h2 ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryPin' + chapter.id + storyPins.id)"></i><i class="fa fa-save" data-target="#mapSave" data-toggle="modal"></i>{{ chapter.chapter }}</h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editStoryPin' + chapter.id + storyPins.id)"></i></h2>
+<h2 ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">{{ chapter.chapter }}</h2>
+
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>Edit StoryPin</h2>
 <div class="menuItem">

@@ -1,8 +1,3 @@
-<h2 ng-show="menuSection=='editSingleStoryLayer' + layerName"><i class="fa fa-reorder" ng-click="toggleSidebar()"></i>
-</h2>
-<h2 ng-show="menuSection=='mainMenuHidden'"><i class="fa fa-reorder" ng-click="toggleSidebar('editSingleStoryLayer' + layerName)"></i>
-</h2>
-
 <h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
 
 <button class="btn-storylayer" ng-click="storyService.startFeatureAdd(); toggleSidebar('editSingleStoryLayer' + layerName)" ng-disabled="storyService.isNotEditable()"><i class="fa fa-plus"></i>Add Feature</button>
