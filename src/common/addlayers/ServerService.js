@@ -423,7 +423,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       var result = q_.defer();
       var layerConfig = null;
       var server = service_.getServerLocalGeoserver();
-      if (server.id != serverId) {
+      var sourceServer = service_.getServerById(serverId);
+
+      //If the server ID from the source doesn't match the local geoserver and it isn't a other local server like WMS
+      if (server.id != serverId && (!goog.isDefAndNotNull(sourceServer.isLocal) || sourceServer.isLocal !== true)) {
         result.resolve(service_.getLayerConfig(serverId, layerName));
         return result.promise;
       }
@@ -431,8 +434,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       var url = server.url;
       var namespace = layerName.split(':')[0];
       var name = layerName.split(':')[1];
-      url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
-      url += '/' + name + '/wms?request=GetCapabilities';
+      if (sourceServer.isVirtualService === true) {
+        url = sourceServer.virtualServiceUrl;
+        url += '?request=GetCapabilities';
+      } else {
+        url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
+        url += '/' + name + '/wms?request=GetCapabilities';
+      }
       console.log('WMS url: ', url);
       server.populatingLayersConfig = true;
       var config = {};

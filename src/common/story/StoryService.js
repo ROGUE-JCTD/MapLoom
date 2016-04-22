@@ -381,6 +381,12 @@
     this.add_chapter = function() {
       //The config service is the entrypoint and contains the initial configuration for a chapter
       var new_chapter = angular.copy(configService_.initial_config);
+      //If the initial config included a layer at load remove that from chapters after 1
+      if (goog.isDefAndNotNull(new_chapter.fromLayer)) {
+        delete new_chapter.fromLayer;
+        new_chapter.map.layers.splice(new_chapter.map.layers.length - 1, 1);
+        goog.object.remove(new_chapter.sources, goog.object.getCount(new_chapter.sources) - 1);
+      }
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = 'Untitled Chapter';

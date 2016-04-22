@@ -121,8 +121,12 @@
                 if (goog.isDefAndNotNull(layer.get('metadata')) &&
                     goog.isDefAndNotNull(layer.get('metadata').config)) {
                   var conf = layer.get('metadata').config;
-                  if (conf.source === scope.currentServerId) {
-                    if (conf.name === layerConfig.Name) {
+                  var sourceServer = serverService.getServerById(conf.source);
+                  if (conf.source === scope.currentServerId || (goog.isDefAndNotNull(sourceServer.isVirtualService))) {
+                    if (conf.name === layerConfig.Name ||
+                        (typeof conf.name.split != 'undefined' &&
+                        layerConfig.Name === conf.name.split(':')[1]) ||
+                        (typeof layerConfig.Name.split != 'undefined' && layerConfig.Name.split(':')[1] === conf.name)) {
                       show = false;
                       break;
                     }
