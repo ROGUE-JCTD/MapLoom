@@ -1,7 +1,5 @@
-<h2 ng-show="menuSection=='editStoryLayerStyle' + chapter.id + storyLayers.id">{{ chapter.chapter }}</h2>
-
-<h2>{{ storyService.active_chapter.about.title }}</h2>
-<h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
+<div class="topText">MapStory > {{ chapter.chapter }} > StoryLayers</div>
+<div class="bottomText">{{ layerService.getTitle(storyService.active_layer) }}</div>
 
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>

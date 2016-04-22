@@ -12,5 +12,6 @@
 
 </div>
 <h2 ng-show="menuSection=='mainMenu'">
-    <a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a>
+    <div class="topText">MapStory > Chapters</div>
+    <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a></div>
 </h2>

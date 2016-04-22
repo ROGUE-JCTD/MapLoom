@@ -1,5 +1,6 @@
-<h2 ng-show="menuSection=='chapterInfo' + chapter.id">{{ chapter.chapter }}</h2>
-<h2>{{ storyService.active_chapter.about.title }}</h2>
+<div class="topText">Mapstory > {{ chapter.chapter }}</div>
+<div class="bottomText">{{ storyService.active_chapter.about.title }}</div>
+
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
     <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(4)">Back to Selected Chapter</a>
