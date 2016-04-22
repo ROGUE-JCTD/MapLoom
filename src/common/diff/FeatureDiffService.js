@@ -335,7 +335,7 @@
         var metadata = layer.get('metadata');
         if (goog.isDefAndNotNull(metadata)) {
           if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repoName) {
-            if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName.split(':')[1] === splitFeature[0]) {
+            if (goog.isDefAndNotNull(metadata.nativeName) && (metadata.nativeName == splitFeature[0] || metadata.nativeName.split(':')[1] === splitFeature[0])) {
               service_.layer = layer;
               if (goog.isDefAndNotNull(layer.get('metadata').schema)) {
                 service_.schema = layer.get('metadata').schema;
