@@ -389,8 +389,8 @@
       }
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
-      new_chapter.about.title = 'Untitled Chapter';
-      new_chapter.about.abstract = 'This is the default summary';
+      new_chapter.about.title = '';
+      new_chapter.about.abstract = '';
       this.configurations.push(new_chapter);
       //This creates the new layergroup on the open layers map that is being displayed.
       //Parameter is currently unused, but may be changed if we decide map load should occur here.
