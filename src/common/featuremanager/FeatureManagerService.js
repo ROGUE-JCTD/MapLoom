@@ -434,9 +434,6 @@
             } else {
               exclusiveModeService_.addMode = false;
               exclusiveModeService_.endExclusiveMode();
-              mapService_.removeDraw();
-              mapService_.removeSelect();
-              mapService_.removeModify();
               var feature = mapService_.editLayer.getSource().getFeatures()[0];
               selectedItem_.geometry.type = feature.getGeometry().getType();
               selectedItem_.geometry.coordinates = feature.getGeometry().getCoordinates();
@@ -475,7 +472,7 @@
         service_.hide();
       }
       enabled_ = true;
-      mapService_.map.removeLayer(mapService_.editLayer);
+      //mapService_.map.removeLayer(mapService_.editLayer);
       rootScope_.$broadcast('endFeatureInsert', addPin);
     };
 

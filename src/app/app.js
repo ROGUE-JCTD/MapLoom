@@ -129,6 +129,10 @@
             $scope.pin = {};
             $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
             toastr.success('Your StoryPin has been saved', 'StoryPin Saved');
+            $scope.mapService.removeDraw();
+            $scope.mapService.removeSelect();
+            $scope.mapService.removeModify();
+            $scope.mapService.map.removeLayer($scope.mapService.editLayer);
           }
         };
 
