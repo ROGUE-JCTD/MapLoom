@@ -335,7 +335,8 @@
     'start_time': 'Start Time',
     'end_time': 'End Time',
     'content': 'Content',
-    'geometry': 'Pin Location'
+    'geometry': 'Pin Location',
+    'extent': 'Extent'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

@@ -4,7 +4,7 @@
   var service_ = null;
   var rootScope_ = null;
   //var pulldownService_ = null;
-  var q_ = null;
+  //var q_ = null;
   var httpService_ = null;
   var dialogService_ = null;
   var translate_ = null;
@@ -16,6 +16,7 @@
   Box.prototype = Object.create(ol.Feature.prototype);
   Box.prototype.constructor = Box;
   var model_attributes = ['id', '_id', 'title', 'description', 'start_time', 'end_time', 'extent'];
+  var filterPropertiesFromValidation = ['id', '_id', 'description'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Box.prototype, prop, {
@@ -37,7 +38,7 @@
       dialogService_ = dialogService;
       translate_ = $translate;
       //pulldownService_ = pulldownService;
-      q_ = $q;
+      //q_ = $q;
 
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Box Service: chapter-added');
@@ -111,15 +112,49 @@
       rootScope_.$broadcast('box-added', chapter_index);
     };
 
+    this.validateBoxProperty = function(box, propertyName) {
+      return (box.hasOwnProperty(propertyName) && (goog.isDefAndNotNull(box[propertyName]) && !goog.string.isEmptySafe(box[propertyName])));
+    };
+
+    this.validateAllBoxProperties = function(box) {
+      var invalid_props = [];
+      for (var iProp = 0; iProp < model_attributes.length; iProp += 1) {
+        var property = model_attributes[iProp];
+        if (!this.validateBoxProperty(box, property) && !goog.array.contains(filterPropertiesFromValidation, property)) {
+          invalid_props.push(property);
+        }
+      }
+      if (invalid_props.length > 0) {
+        return invalid_props;
+      }
+      return true;
+    };
+
     this.addBox = function(props, chapter_index) {
-      var deferredResponse = q_.defer();
+      var boxValidated = this.validateAllBoxProperties(props);
+      if (boxValidated !== true) {
+        translate_(boxValidated).then(function(translations) {
+          var invalid_string = 'These properties must be set before saving a StoryBox: ';
+          for (var iProp = 0; iProp < boxValidated.length; iProp += 1) {
+            var property = boxValidated[iProp];
+            var translatedProp = translations[property];
+            translatedProp = translatedProp.concat(', ');
+            invalid_string = invalid_string.concat(translatedProp);
+          }
+          toastr.error(invalid_string, 'Cannot save StoryBox');
+        });
+        return false;
+      }
+      if (getTime(props.start_time) > getTime(props.end_time)) {
+        toastr.error('Start Time must be before End Time', 'Invalid Time');
+        return false;
+      }
       var storyBox = new Box(props);
       boxes_[chapter_index].push(storyBox);
       rootScope_.$broadcast('box-added', chapter_index);
       console.log('-- BoxService.addBox, added: ', storyBox);
-      //pulldownService_.showStoryboxPanel();
 
-      return deferredResponse.promise;
+      return true;
     };
 
   });

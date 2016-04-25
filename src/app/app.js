@@ -100,9 +100,10 @@
         $scope.addStoryBox = function(box) {
           var clone = angular.copy(box);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
-          boxService.addBox(clone, $scope.active_menu_chapter.id);
-          $scope.box = {};
-          $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+          if (boxService.addBox(clone, $scope.active_menu_chapter.id)) {
+            $scope.box = {};
+            $scope.updateMenuSection('storyBoxes' + $scope.active_menu_chapter.id);
+          }
         };
 
         $scope.removeStoryBox = function(box) {

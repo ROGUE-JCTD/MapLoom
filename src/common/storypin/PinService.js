@@ -146,6 +146,10 @@
         });
         return false;
       }
+      if (getTime(props.start_time) > getTime(props.end_time)) {
+        toastr.error('Start Time must be before End Time', 'Invalid Time');
+        return false;
+      }
       var storyPin = new Pin(props);
       pins_[chapter_index].push(storyPin);
       rootScope_.$broadcast('pin-added', chapter_index);
