@@ -1,7 +1,18 @@
 <div id="composerTopNav">
-    <!--<img src="ms_logo_white.png" />-->
+    <div class="dropdown">
+        <img src="http://res.cloudinary.com/dw1zyrzc5/image/upload/v1461606100/ms_logo_white_pot8b9.png" id="sidebarDropdown" data-toggle="dropdown" aria-haspopup="true"aria-expanded="true" width="35px" height="35px"/>
+        <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
+            <li><a href="/" target="_blank">Home</a></li>
+            <li><a href="/search/" target="_blank">Explore</a></li>
+            <li><a href="/getstarted" target="_blank">Get Started</a></li>
+            <li><a href="/getskills" target="_blank">Get Involved</a></li>
+            <li><a href="/getinvolved" target="_blank">Get Skills</a></li>
+            <li><a href="/journal" target="_blank">Journal</a></li>
+        </ul>
+    </div>
     <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 </div>
+
 <div id="composerIconNav">
     <i class="fa fa-save" ng-click="storyService.save()"></i>
     <i class="fa fa-share-square-o" data-target="#mapSave" data-toggle="modal"></i>
@@ -9,9 +20,10 @@
     <i class="fa fa-tags" data-target="#mapProperties" data-toggle="modal"></i>
     <!--<i class="fa fa-cloud-upload" data-target="" data-toggle="modal" id="uploadLayer"></i>-->
     <!--<i class="fa fa-user" ng-href="" target="_blank" id="userProfile"></i>-->
-
 </div>
+
 <h2 ng-show="menuSection=='mainMenu'">
     <div class="topText">MapStory > Chapters</div>
-    <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a></div>
+    <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}"
+                               target="_blank">{{ storyService.title }}</a></div>
 </h2>
