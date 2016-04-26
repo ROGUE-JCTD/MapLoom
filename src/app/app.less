@@ -364,13 +364,13 @@ textarea {
 }
 
 .menu h2 {
-  padding: 3px;
+  padding: 0;
   margin: 0;
   font-family: 'Open Sans', sans-serif !important;
   font-size: 15px;
   font-weight: bold;
   line-height: 20px;
-  color: #666;
+  color: #666
 }
 
 .menuHidden h2 {
@@ -379,6 +379,11 @@ textarea {
   font-weight: bold;
   font-family: 'Open Sans', sans-serif !important;
 }
+
+.menuHidden #composerIconNav {
+    display: none;
+}
+
 .menu a {
   display: block;
   padding: 6px;
@@ -396,18 +401,17 @@ textarea {
   margin: 0;
   font-family: 'Open Sans', sans-serif !important;
   font-size: 10px;
-  line-height: 16px;
   font-weight: normal;
-  text-transform: uppercase;
-  color: #f59620 ;
+  line-height: 16px;
+  color: #666;
 }
 
 .menu small {
-  padding-left: 18%;
-  font-family: 'Open Sans' !important;
+  padding-left: 0;
+  font-family: 'Open Sans'!important;
   font-size: 13px;
   font-weight: 700;
-  line-height: 20px;
+  line-height: 20px
 }
 
 .menu label {
@@ -491,10 +495,11 @@ style-editor button {
 }
 
 .btn-storylayer a {
-  border: 0;
-  color: whitesmoke;
   font-size: 10px;
+  color: whitesmoke;
   text-transform: uppercase;
+  border: 0;
+  font-weight: normal;
 }
 
 .btn-storylayer i {
@@ -601,8 +606,9 @@ style-editor button {
 }
 
 #mapstory-title {
-  color: #db7d0a;
   font-size: 1em;
+  color: #666 !important;
+  padding: 0 0 5px !important;
 }
 
 .angular-ui-tree-node, .angular-ui-tree-placeholder {
