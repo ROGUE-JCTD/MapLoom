@@ -18,6 +18,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-gjslint');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   /**
    * Load in our build configuration file.
@@ -34,6 +35,15 @@ module.exports = function ( grunt ) {
      * version. It's already there, so we don't repeat ourselves here.
      */
     pkg: grunt.file.readJSON("package.json"),
+
+    connect: {
+      server: {
+        options: {
+          port: 9001,
+          base: 'build'
+        }
+      }
+    },
 
     /**
      * The banner is the comment that is placed at the top of our compiled
@@ -560,6 +570,7 @@ module.exports = function ( grunt ) {
    */
   grunt.renameTask( 'watch', 'delta' );
   grunt.registerTask( 'watch', [ 'build', 'delta' ] );
+  grunt.registerTask('serve', [ 'connect:server', 'watch' ]);
 
   /**
    * The default task is to build and compile.
