@@ -32,7 +32,7 @@ html, body {
 }
 
 .panel-body {
-	padding: 0 15px;
+	padding: 10px 10px;
 }
 
 .map-title-text {
@@ -90,6 +90,18 @@ html, body {
   width: 414px;
 }
 
+@media (min-width: 960px){
+  #add-layer-dialog .modal-dialog {
+    width: 95%;
+	}
+}
+
+@media (max-width: 600px) and (min-width: 959px){
+  #add-layer-dialog .modal-dialog {
+    width: 98% !important;
+  }
+}
+
 #layerInfoDialog .modal-dialog {
   width: 450px;
 }
@@ -126,6 +138,7 @@ html, body {
 	font-weight: normal;
 	/*overflow: visible;*/
 	background-color:@mainPanelColor;
+	padding-top: 15px;
 }
 
 .panel-group .panel-heading + .panel-collapse .panel-body{
