@@ -477,7 +477,7 @@
      *        is added when later another layer with layerOrder 3 is added, it will be inserted below the previous one.
      *        Similarly a 3rd layer with order 4 will be inserted between 3 and 5.
      */
-    this.addLayer = function(minimalConfig, opt_layerOrder) {
+    this.createLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
       if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
@@ -777,7 +777,11 @@
               {type: 'gxp_olsource'}));
         }
       }
+      return layer;
+    };
 
+    this.addLayer = function(minimalConfig, opt_layerOrder) {
+      var layer = service_.createLayer(minimalConfig, opt_layerOrder);
       if (goog.isDefAndNotNull(layer)) {
         // convert source id to a number. even though geonode gives it as a string, it wants it back as number
         minimalConfig.source = parseInt(minimalConfig.source, 10);
