@@ -91,13 +91,13 @@ describe('StoryLegendDirective', function() {
     });
     it('previewLayers includes the created layer', function() {
       var createdLayer = { name: 'Test' };
-      var spy = spyOn(mapService, 'createLayer').andReturn(createdLayer);
+      spyOn(mapService, 'createLayer').andReturn(createdLayer);
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(compiledElement.scope().previewLayers).toContain(createdLayer);
     });
     it('resets the CRS to an array', function() {
-      var spy = spyOn(mapService, 'createLayer');
+      spyOn(mapService, 'createLayer');
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(layerConfig.CRS).toEqual(['EPSG:4326']);
