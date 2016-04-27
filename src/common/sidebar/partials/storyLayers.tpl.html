@@ -20,7 +20,7 @@
 
 <div class="layer-container" ui-tree="layerTree" id="storyLayersList">
     <div ui-tree-nodes ng-model="storyLayers">
-        <div ng-repeat="storyLayer in storyLayers | orderBy : reverse" ui-tree-node>
+        <div ng-repeat="storyLayer in storyLayers" ui-tree-node>
             <div class="menuItem">
                 <i class="fa fa-navicon" ui-tree-handle></i>
                 <i ng-click="storyService.toggleVisiblity(storyLayer)"

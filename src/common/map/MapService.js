@@ -561,7 +561,7 @@
       if (goog.isDefAndNotNull(this.pinLayer) && this.pinLayer.getSource().getFeatures().length > 0) {
         layers.push(this.pinLayer);
       }
-      return layers;
+      return layers.reverse();
     };
 
     this.zoomToLargestStoryLayer = function() {
