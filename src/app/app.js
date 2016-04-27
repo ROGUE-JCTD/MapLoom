@@ -279,6 +279,10 @@
             // If edit mode is in the URL, get the value of the layer parameter.
             $scope.layerName = locationParameters['layer'];
             $scope.updateMenuSection('editSingleStoryLayer' + $scope.layerName);
+            toastr.success('Layer is Loading...', '', {
+              'timeOut': '0',
+              'extendedTimeOut': '0'
+            });
           }
         };
         $scope.addChapterToMenu(0);
