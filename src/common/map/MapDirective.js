@@ -28,14 +28,13 @@
                 })
               });
             };
-            createMap();
             $('#add-layer-dialog').on('shown.bs.modal', function() {
               if (map === undefined) {
                 createMap();
               }
             });
             scope.$watch('layers', function(layers) {
-              if (layers) {
+              if (layers && map) {
                 for (var i = 0; i < map.getLayers().getLength(); i++) {
                   map.removeLayer(map.getLayers().getArray()[i]);
                 }
