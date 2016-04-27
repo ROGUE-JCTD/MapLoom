@@ -493,12 +493,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       return thumbnailUrl;
     };
 
+    var domain = function(layerInfo) {
+      if (layerInfo.hasOwnProperty('DomainName')) {
+        return layerInfo.DomainName;
+      }
+      return '';
+    };
     var author = function(layerInfo) {
       if (layerInfo.owner__first_name) {
         return layerInfo.owner__first_name + ' ' + layerInfo.owner__last_name;
       }
       if (layerInfo.owner__username) {
         return layerInfo.owner__username;
+      }
+      if (layerInfo.LayerUsername) {
+        return layerInfo.LayerUsername;
       }
       return 'No owner name available';
     };
@@ -525,7 +534,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         CRS: ['EPSG:4326'],
         detail_url: 'http://52.38.116.143/layer/' + layerInfo.LayerId,
         thumbnail_url: layerInfo.ThumbnailURL ? ('http://52.38.116.143' + layerInfo.ThumbnailURL) : null,
-        author: '',
+        author: author(layerInfo),
+        domain: domain(layerInfo),
         type: 'mapproxy_tms'
       };
     };

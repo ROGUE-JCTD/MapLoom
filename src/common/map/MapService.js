@@ -470,6 +470,15 @@
       return deferredResponse.promise;
     };
 
+    this.createLayerWithFullConfig = function(fullConfig, serverId) {
+      var server = serverService_.getServerById(serverId);
+      var minimalConfig = {
+        name: fullConfig.Name,
+        source: serverId
+      };
+      return service_.createLayerFull(minimalConfig, fullConfig, server);
+    };
+
     /**
      *  {Object} minimalConfig
      *  {Number} opt_layerOrder is optional and indicates the spot in the layers array it should try to go to.
@@ -477,7 +486,7 @@
      *        is added when later another layer with layerOrder 3 is added, it will be inserted below the previous one.
      *        Similarly a 3rd layer with order 4 will be inserted between 3 and 5.
      */
-    this.addLayer = function(minimalConfig, opt_layerOrder) {
+    this.createLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
       if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
@@ -487,7 +496,10 @@
       if (goog.isDefAndNotNull(server)) {
         fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
       }
+      return service_.createLayerFull(minimalConfig, fullConfig, server, opt_layerOrder);
+    };
 
+    this.createLayerFull = function(minimalConfig, fullConfig, server, opt_layerOrder) {
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
           server, ', opt_layerOrder: ', opt_layerOrder);
 
@@ -777,7 +789,11 @@
               {type: 'gxp_olsource'}));
         }
       }
+      return layer;
+    };
 
+    this.addLayer = function(minimalConfig, opt_layerOrder) {
+      var layer = service_.createLayer(minimalConfig, opt_layerOrder);
       if (goog.isDefAndNotNull(layer)) {
         // convert source id to a number. even though geonode gives it as a string, it wants it back as number
         minimalConfig.source = parseInt(minimalConfig.source, 10);

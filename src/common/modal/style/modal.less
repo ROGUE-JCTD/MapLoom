@@ -7,7 +7,7 @@
   width: auto;
   background-color: transparent;
   margin-left: 0;
-  overflow: hidden;
+  // overflow: hidden;
   .z-index(@dialogLevel,1);
   .modal-header {
     color: @modalHeaderFontColor;
@@ -24,6 +24,11 @@
     background-color:@defaultModalPanelColor;
     max-height: 100%;
     overflow-y: visible;
+
+    .search-grid {
+        max-height: 80px;
+        max-width: 80px;
+    }
   }
 }
 

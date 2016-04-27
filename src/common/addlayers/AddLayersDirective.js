@@ -17,6 +17,13 @@
               owner: null,
               text: null
             };
+            scope.previewCenter = [40, 30];
+            scope.previewZoom = 1;
+            scope.previewLayers = [
+              new ol.layer.Tile({
+                source: new ol.source.OSM()
+              })
+            ];
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -114,6 +121,17 @@
                 };
                 mapService.addLayer(minimalConfig);
               }
+            };
+
+            scope.previewLayer = function(layerConfig) {
+              layerConfig.CRS = ['EPSG:4326'];
+              var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
+              scope.previewLayers = [
+                new ol.layer.Tile({
+                  source: new ol.source.OSM()
+                }),
+                layer
+              ];
             };
 
             scope.changeCredentials = function() {
