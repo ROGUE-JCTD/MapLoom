@@ -2,44 +2,71 @@
     <div class="modal-body explorer">
         <div class="row">
             <div class="col-md-12">
-              <div zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
             </div>
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
                     <li><a data-toggle="tab" ng-click="searchHyper();">Search</a></li>
                 </ul>
             </div>
-            <div class="tab-content col-md-12" style="min-height:270px;">
+            <div class="tab-content col-md-5" style="min-height:270px;">
                 <div class="tab-pane active" id="Explore">
                     <div>
                         <div>
-                            <nav class="filter">
-                                <div class="input-group search-bar" > <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
+                            <nav class="filter panel panel-default">
+                                <div class="panel-body">
+                                <div class="input-group search-bar" >
+                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" ng-click="search()" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
                                     </span>
                                 </div>
+                                </div>
                             </nav>
-                            <div class="clearfix search-results">
-                              <table class="list-results">
-                                <tr>
-                                  <th>Title</th>
-                                  <th>Region</th>
-                                  <th>Owner</th>
-                                </tr>
-                                <tr class="result" ng-mouseover="previewLayer(layer);" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
-                                  <td>{{ layer.Title }}</td>
-                                  <td>{{ layer.domain }}</td>
-                                  <td>{{ layer.author }}</td>
-                                </tr>
-                              </table>
-
-                            </div>
-                            <div class="search-pagination">
-                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="filter panel panel-default">
+                    <div class="panel-body">
+                        <h3>Title 3</h3>
+                        <h4>Abstract</h4>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus blanditiis obcaecati quaerat at, dicta, numquam neque laboriosam suscipit error repellat eos voluptatum minima unde itaque voluptates vel in ratione laborum.
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis quibusdam totam velit eius alias sed, tempora debitis perspiciatis. Porro, ipsa veritatis tenetur velit perspiciatis aliquid, placeat ab iusto omnis quas.
+                        </p>
+                    </div>
+                </div>
+                <div class="whiteframe-2dp" id="mapreview" style="margin-top: 20px;">
+                    <div class="alert alert-warning-mp" style="margin-bottom: 0;">
+                        Refine Search Limit the search to data that includes features in the displayed area.
+                    </div>
+                    <div zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                </div>
+                <div class="search-pagination">
+                </div>
+            </div>
+            <div class="col-md-7 clearfix search-results">
+                <div class="row">
+                  <div class="col-lg-4 col-md-6 col-sm-6 clearfix search-results">
+                    <table class="list-results">
+                      <tr>
+                        <th>Title</th>
+                        <th>Region</th>
+                        <th>Owner</th>
+                      </tr>
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
+                        <td>{{ layer.Title }}</td>
+                        <td>{{ layer.domain }}</td>
+                        <td>{{ layer.author }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="row" style="text-align: right;margin-right: 20px;">
+                    <button type="button" class="btn btn-default btn-lg">CLEAR</button>
+                    <button type="button" class="btn btn-default btn-lg">ADD MAP</button>
+                </div>
+
             </div>
         </div>
     </div>
