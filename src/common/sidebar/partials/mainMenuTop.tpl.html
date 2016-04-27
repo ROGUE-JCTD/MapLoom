@@ -13,7 +13,7 @@
     <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 </div>
 
-<div id="composerIconNav">
+<div id="composerIconNav"  ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
     <i class="fa fa-save" ng-click="storyService.save()"></i>
     <i class="fa fa-share-square-o" data-target="#mapSave" data-toggle="modal"></i>
     <!--<i class="fa fa-play-circle" id="previewMapStory"></i>-->
