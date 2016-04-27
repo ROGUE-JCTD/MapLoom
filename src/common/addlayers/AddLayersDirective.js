@@ -17,6 +17,8 @@
               owner: null,
               text: null
             };
+            scope.previewCenter = [30, 30];
+            scope.previewZoom = 3;
             scope.previewLayers = [
               new ol.layer.Tile({
                 source: new ol.source.OSM()

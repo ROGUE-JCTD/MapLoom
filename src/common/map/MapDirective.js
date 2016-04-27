@@ -8,7 +8,9 @@
           template: '<div id="{{mapId}}"></div>',
           scope: {
             mapId: '@',
-            layers: '='
+            layers: '=',
+            center: '=',
+            zoom: '='
           },
           link: function(scope, element) {
             var map;
@@ -21,10 +23,8 @@
                 ],
                 target: scope.mapId,
                 view: new ol.View({
-                  center: [50, 4],
-                  zoom: 10,
-                  maxZoom: 17,
-                  maxResolution: 40075016.68557849 / 2048
+                  center: scope.center,
+                  zoom: scope.zoom
                 })
               });
             };
