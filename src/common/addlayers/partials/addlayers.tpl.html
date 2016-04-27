@@ -2,6 +2,9 @@
     <div class="modal-body explorer">
         <div class="row">
             <div class="col-md-12">
+              <div loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+            </div>
+            <div class="col-md-12">
                 <ul class="nav nav-tabs">
                     <li><a data-toggle="tab" ng-click="searchHyper();">Search</a></li>
                 </ul>
@@ -24,7 +27,7 @@
                                   <th>Region</th>
                                   <th>Owner</th>
                                 </tr>
-                                <tr class="result" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
+                                <tr class="result" ng-mouseover="previewLayer(layer);" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
                                   <td>{{ layer.Title }}</td>
                                   <td>{{ layer.domain }}</td>
                                   <td>{{ layer.author }}</td>
