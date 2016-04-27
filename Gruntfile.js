@@ -19,6 +19,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-gjslint');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-gh-pages');
 
   /**
    * Load in our build configuration file.
@@ -43,6 +44,14 @@ module.exports = function ( grunt ) {
           base: 'build'
         }
       }
+    },
+
+    'gh-pages': {
+      options: {
+        base: 'build',
+        only: ['**/**', '!CNAME']
+      },
+      src: ['**']
     },
 
     /**
