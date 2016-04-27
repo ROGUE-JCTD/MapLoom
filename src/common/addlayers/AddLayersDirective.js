@@ -24,7 +24,7 @@
                 source: new ol.source.OSM()
               })
             ];
-            scope.layerConfig = {};
+            scope.layerConfig = {Title: 'Title'};
 
             var resetText = function() {
               scope.filterOptions.text = null;

@@ -27,12 +27,12 @@
                 </div>
 
                 <div class="filter panel panel-default">
+                  <div class="alert alert-title alert-warning-mp">
+                    <h3 style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{{layerConfig.Title}}</h3>
+                  </div>
                     <div class="panel-body">
-                        <h3>{{layerConfig.Title}}</h3>
                         <h4>Abstract</h4>
-                        <p>
-                          {{layerConfig.Abstract}}
-                        </p>
+                        <p style="height: 200px;overflow-y: auto;">{{layerConfig.Abstract}}</p>
                     </div>
                 </div>
                 <div class="whiteframe-2dp" id="mapreview" style="margin-top: 20px;">
@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-7 clearfix search-results">
                 <div class="row" style="padding-right: 15px;">
-                  <div class="clearfix search-results panel">
+                  <div class="clearfix search-results panel" style="height: 75vh;overflow-y: auto;">
                     <table class="table table-hover list-results panel-body">
                       <tr>
                         <th>Title</th>
@@ -61,7 +61,7 @@
                     </table>
                   </div>
                 </div>
-                <div class="row" style="text-align: right;margin-right: 20px;">
+                <div class="row" style="text-align: right;margin: 20px 0 0px 0px;">
                     <button type="button" class="btn btn-default btn-lg">CLEAR</button>
                     <button type="button" class="btn btn-default btn-lg">ADD</button>
                 </div>
