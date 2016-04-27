@@ -470,6 +470,15 @@
       return deferredResponse.promise;
     };
 
+    this.createLayerWithFullConfig = function(fullConfig, serverId) {
+      var server = serverService_.getServerById(serverId);
+      var minimalConfig = {
+        name: fullConfig.Name,
+        source: serverId
+      };
+      return service_.createLayerFull(minimalConfig, fullConfig, server);
+    };
+
     /**
      *  {Object} minimalConfig
      *  {Number} opt_layerOrder is optional and indicates the spot in the layers array it should try to go to.
@@ -487,7 +496,10 @@
       if (goog.isDefAndNotNull(server)) {
         fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
       }
+      return service_.createLayerFull(minimalConfig, fullConfig, server, opt_layerOrder);
+    };
 
+    this.createLayerFull = function(minimalConfig, fullConfig, server, opt_layerOrder) {
       console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
           server, ', opt_layerOrder: ', opt_layerOrder);
 
