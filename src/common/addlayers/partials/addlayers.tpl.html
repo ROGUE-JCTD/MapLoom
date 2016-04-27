@@ -28,11 +28,10 @@
 
                 <div class="filter panel panel-default">
                     <div class="panel-body">
-                        <h3>Title 3</h3>
+                        <h3>{{layerConfig.Title}}</h3>
                         <h4>Abstract</h4>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus blanditiis obcaecati quaerat at, dicta, numquam neque laboriosam suscipit error repellat eos voluptatum minima unde itaque voluptates vel in ratione laborum.
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis quibusdam totam velit eius alias sed, tempora debitis perspiciatis. Porro, ipsa veritatis tenetur velit perspiciatis aliquid, placeat ab iusto omnis quas.
+                          {{layerConfig.Abstract}}
                         </p>
                     </div>
                 </div>
@@ -46,9 +45,9 @@
                 </div>
             </div>
             <div class="col-md-7 clearfix search-results">
-                <div class="row">
-                  <div class="col-lg-4 col-md-6 col-sm-6 clearfix search-results">
-                    <table class="list-results">
+                <div class="row" style="padding-right: 15px;">
+                  <div class="clearfix search-results panel">
+                    <table class="table table-hover list-results panel-body">
                       <tr>
                         <th>Title</th>
                         <th>Region</th>
@@ -64,7 +63,7 @@
                 </div>
                 <div class="row" style="text-align: right;margin-right: 20px;">
                     <button type="button" class="btn btn-default btn-lg">CLEAR</button>
-                    <button type="button" class="btn btn-default btn-lg">ADD MAP</button>
+                    <button type="button" class="btn btn-default btn-lg">ADD</button>
                 </div>
 
             </div>

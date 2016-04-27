@@ -24,6 +24,7 @@
                 source: new ol.source.OSM()
               })
             ];
+            scope.layerConfig = {};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -124,7 +125,9 @@
             };
 
             scope.previewLayer = function(layerConfig) {
+
               layerConfig.CRS = ['EPSG:4326'];
+              scope.layerConfig = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
               scope.previewLayers = [
                 new ol.layer.Tile({
