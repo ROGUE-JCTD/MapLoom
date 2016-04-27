@@ -20,6 +20,7 @@
   var timelineGroupsList_ = [];
   var range_ = new stutils.Range(null, null);
   var filter_ = null;
+  var pinsForMap_ = [];
 
   function computeTicks(layersWithTime) {
 
@@ -152,16 +153,9 @@
         console.log('----[ timelineService, chapter switch. initializing', chapter_index);
         boxes_ = boxService_.getBoxes(chapter_index);
         pins_ = pinService_.getPins(chapter_index);
-        var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
+        pinsForMap_ = $filter('filter')(pins_, { values_: {in_map: true} });
         if (service_.isPlaying()) {
           service_.stop();
-        }
-        mapService_.pinLayer.getSource().clear(true);
-        if (pinsForMap.length > 0) {
-          mapService_.map.removeLayer(mapService_.pinLayer);
-          mapService_.pinLayer.getSource().addFeatures(pinsForMap);
-          mapService_.map.addLayer(mapService_.pinLayer);
-          $rootScope.$broadcast('layer-added');
         }
         service_.initialize();
       });
@@ -177,30 +171,14 @@
         console.log('----[ timelineService, pin added. initializing');
         pins_ = pinService_.getPins(chapter_index);
         mapService_.map.removeLayer(mapService_.pinLayer);
-        var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
-        if (pinsForMap.length > 0) {
-          mapService_.pinLayer.getSource().clear(true);
-          mapService_.pinLayer.getSource().addFeatures(pinsForMap);
-          mapService_.map.addLayer(mapService_.pinLayer);
-          $rootScope.$broadcast('layer-added');
-        }
+        pinsForMap_ = $filter('filter')(pins_, { values_: {in_map: true} });
         service_.initialize();
       });
 
       $rootScope.$on('pin-removed', function(event, chapter_index) {
         console.log('----[ timelineService, pin removed. initializing');
         pins_ = pinService_.getPins(chapter_index);
-        var pinsForMap = $filter('filter')(pins_, { values_: {in_map: true} });
-        mapService_.pinLayer.getSource().clear(true);
-        if (pinsForMap.length > 0) {
-          mapService_.map.removeLayer(mapService_.pinLayer);
-          mapService_.pinLayer.getSource().addFeatures(pinsForMap);
-          mapService_.map.addLayer(mapService_.pinLayer);
-          $rootScope.$broadcast('layer-added');
-        }
-        else {
-          mapService_.map.removeLayer(mapService_.pinLayer);
-        }
+        pinsForMap_ = $filter('filter')(pins_, { values_: {in_map: true} });
         service_.initialize();
       });
 
@@ -272,7 +250,6 @@
         for (var iPin = 0; iPin < pinsForTimeline.length; iPin++) {
           var pin_range = stutils.createRange(pinsForTimeline[iPin].start_time, pinsForTimeline[iPin].end_time);
           console.log('----[ Info: Pin Range ', pin_range.toString());
-          range_.extend(pin_range);
           console.log('----[ Info: Total Range ', range_.toString());
           timelinePointsList.push({
             id: 'sp' + iPin,
@@ -588,6 +565,41 @@
             }
           }
         }
+      }
+
+      if (pinsForMap_.length > 0) {
+        this.updatePinsTimes(range);
+      }
+
+
+    };
+
+    this.updatePinsTimes = function(range) {
+      var features = [];
+
+      if (this.getFilterByTime()) {
+        //Instant playback the range should just be the end (current time)
+        var instant_range = stutils.createRange(range.end, range.end + 1);
+        range = instant_range;
+      }
+
+      for (var iPin = 0; iPin < pinsForMap_.length; iPin += 1) {
+        var pin = pinsForMap_[iPin];
+        var pinRange = stutils.createRange(pin.start_time, pin.end_time);
+        if (pinRange.intersects(range)) {
+          features.push(pin);
+        }
+      }
+
+      if (features.length > 0) {
+        mapService_.map.removeLayer(mapService_.pinLayer);
+        mapService_.pinLayer.getSource().clear(true);
+        mapService_.pinLayer.getSource().addFeatures(features);
+        mapService_.map.addLayer(mapService_.pinLayer);
+
+      } else {
+        mapService_.map.removeLayer(mapService_.pinLayer);
+        mapService_.pinLayer.getSource().clear(true);
       }
     };
 

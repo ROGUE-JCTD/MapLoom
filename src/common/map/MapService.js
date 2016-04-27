@@ -558,9 +558,6 @@
           layers.splice(iLayer, 1);
         }
       }
-      if (goog.isDefAndNotNull(this.pinLayer) && this.pinLayer.getSource().getFeatures().length > 0) {
-        layers.push(this.pinLayer);
-      }
       return layers.reverse();
     };
 
