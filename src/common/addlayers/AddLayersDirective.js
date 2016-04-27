@@ -125,11 +125,7 @@
 
             scope.previewLayer = function(layerConfig) {
               layerConfig.CRS = ['EPSG:4326'];
-              var minimalConfig = {
-                name: layerConfig.Name,
-                source: scope.currentServerId
-              };
-              var layer = mapService.createLayer(minimalConfig);
+              var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
               scope.previewLayers = [
                 new ol.layer.Tile({
                   source: new ol.source.OSM()
