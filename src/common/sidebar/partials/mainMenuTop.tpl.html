@@ -1,6 +1,8 @@
+<i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 <div id="composerTopNav">
     <div class="dropdown">
-        <img src="http://res.cloudinary.com/dw1zyrzc5/image/upload/v1461606100/ms_logo_white_pot8b9.png" id="sidebarDropdown" data-toggle="dropdown" aria-haspopup="true"aria-expanded="true" width="35px" height="35px"/>
+        <img src="http://res.cloudinary.com/dw1zyrzc5/image/upload/v1461606100/ms_logo_white_pot8b9.png" id="sidebarDropdown" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="true" width="35px" height="35px"/>
         <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
             <li><a href="/" target="_blank">Home</a></li>
             <li><a href="/search/" target="_blank">Explore</a></li>
@@ -10,14 +12,16 @@
             <li><a href="/journal" target="_blank">Journal</a></li>
         </ul>
     </div>
-    <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 </div>
 
-<div id="composerIconNav"  ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
-    <i class="fa fa-save" ng-click="storyService.save()" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'composer_save_draft_tooltip' | translate }}"></i>
-    <i class="fa fa-share-square-o" data-target="#mapSave" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'composer_publish_tooltip' | translate }}"></i>
+<div id="composerIconNav" ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
+    <i class="fa fa-save" ng-click="storyService.save()" tooltip-append-to-body="true" tooltip-placement="right"
+       tooltip="{{ 'composer_save_draft_tooltip' | translate }}"></i>
+    <i class="fa fa-share-square-o" data-target="#mapSave" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right"
+       tooltip="{{ 'composer_publish_tooltip' | translate }}"></i>
     <!--<i class="fa fa-play-circle" id="previewMapStory" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'composer_preview_tooltip' | translate }}"></i>-->
-    <i class="fa fa-tags" data-target="#mapProperties" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'composer_properties_tooltip' | translate }}"></i>
+    <i class="fa fa-tags" data-target="#mapProperties" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right"
+       tooltip="{{ 'composer_properties_tooltip' | translate }}"></i>
     <!--<i class="fa fa-cloud-upload" data-target="" data-toggle="modal" id="uploadLayer"></i>-->
     <!--<i class="fa fa-user" ng-href="" target="_blank" id="userProfile"></i>-->
 </div>

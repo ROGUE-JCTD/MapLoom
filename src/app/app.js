@@ -187,6 +187,10 @@
           $scope.mapService.updateMapSize();
         };
 
+        $scope.openLink = function(url, target) {
+          $window.open(url, target);
+        };
+
         $scope.styleChanged = function(layer) {
           layer.on('change:type', function(evt) {
             mapService.updateStyle(evt.target);
