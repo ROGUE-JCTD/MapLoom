@@ -11,3 +11,5 @@
 <div ng-repeat="storyPin in storyPins = pinService.getPins(chapter.id)">
     <a href="#" class="menuItem" ng-click="storyService.selectPin(storyPin);updateMenuSection('editStoryPin' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>
 </div>
+
+<h5 class="text-right"><a href="http://wiki.mapstory.org/wiki/MapStory_Composer#Adding_StoryPins" target="_blank">StoryPins Help</a></h5>
