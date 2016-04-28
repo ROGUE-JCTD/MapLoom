@@ -1,6 +1,5 @@
-<i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 <div id="composerTopNav">
-    <div class="dropdown">
+    <span class="dropdown">
         <img src="http://res.cloudinary.com/dw1zyrzc5/image/upload/v1461606100/ms_logo_white_pot8b9.png" id="sidebarDropdown" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="true" width="35px" height="35px"/>
         <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
@@ -11,7 +10,8 @@
             <li><a href="/getinvolved" target="_blank">Get Skills</a></li>
             <li><a href="/journal" target="_blank">Journal</a></li>
         </ul>
-    </div>
+    </span>
+    <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
 </div>
 
 <div id="composerIconNav" ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
