@@ -32,10 +32,9 @@
             </div>
             <div>
                 <div>
-                    <!--<i class="fa fa-undo"></i>-->
-                    <!--<i class="fa fa-user" ng-href="/storyteller/{{ commit.author.username }}"></i>-->
-                    <i class="fa fa-exchange" ng-click="storyService.historyClicked(commit)"></i>
-                    <i class="fa fa-globe" ng-click="storyService.zoomToCommit(commit)"></i>
+                    <!--<i class="fa fa-user" ng-href="/storyteller/{{ commit.author.username }}" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_view_author_tooltip' | translate }}"></i>-->
+                    <i class="fa fa-exchange" ng-click="storyService.historyClicked(commit)" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_show_difference_tooltip' | translate }}"></i>
+                    <i class="fa fa-globe" ng-click="storyService.zoomToCommit(commit)" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_view_feature_tooltip' | translate }}"></i>
                 </div>
             </div>
         </div>

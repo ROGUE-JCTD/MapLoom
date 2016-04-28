@@ -7,14 +7,15 @@
 </div>
 <div class="menuItem">
     <div class="form-group">
-        <label for="storyPinTitle">StoryPin Title</label>
+        <label for="storyPinTitle">StoryPin Title</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypin_title_tooltip' | translate }}"></i>
+
         <input type="text" class="form-composer" id="storyPinTitle" ng-model="pin.title"/>
     </div>
 </div>
 
 <div class="menuItem">
     <div class="form-group">
-        <label for="storyPinContent">StoryPin Content</label>
+        <label for="storyPinContent">StoryPin Content</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypin_content_tooltip' | translate }}"></i>
         <textarea class="form-composer" id="storyPinContent" ng-model="pin.content"></textarea>
         <br>
         <textarea class="form-composer" id="linkMedia" ng-model="pin.media" placeholder="Paste media embed here..."></textarea>
@@ -30,7 +31,7 @@
 
 <div class="menuItem">
     <div class="form-group">
-        <label for="start_time">Start Time</label>
+        <label for="start_time">Start Time</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypin_time_frame_tooltip' | translate }}"></i>
         <div>
             <datetimepicker date-object="pin.start_time" default-date="inserting" id="storyPinStartTime"></datetimepicker>
         </div>
@@ -45,7 +46,7 @@
 
 <div class="menuItem">
     <div class="form-group">
-        <label for="in_map">Show pin on map</label>
+        <label for="in_map">Show pin on map</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypin_options_tooltip' | translate }}"></i>
         <div>
             <input id="in_map" type="checkbox" ng-init="pin.in_map = true" ng-model="pin.in_map"> In map</input>
         </div>

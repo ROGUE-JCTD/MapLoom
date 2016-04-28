@@ -7,7 +7,7 @@
 </div>
 <div class="menuItem">
     <div class="form-group">
-        <label for="title">Title</label>
+        <label for="title">Title</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storybox_title_tooltip' | translate }}"></i>
         <div>
             <input ng-model="box.title" ng-required class="form-composer" id="storyBoxTitle" placeholder="Title">
         </div>
@@ -19,12 +19,12 @@
                           placeholder="Description"></textarea>
         </div>
     </div>
-    <h2>Map Extents</h2>
+    <h2>Map Extents</h2><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storybox_map_extents_tooltip' | translate }}"></i>
     <div class="form-group">
         <label for="updateMapBounds">Pan and zoom on the map to set the map sounds.</label>
         <button class="btn-composer" id="updateMapBoundsButton" ng-click="storyService.addBoxExtent(box)">Update Map Bounds</button>
     </div>
-    <h2>Time Frame</h2>
+    <h2>Time Frame</h2><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storybox_time_frame_tooltip' | translate }}"></i>
     <div class="form-group" id="startTime">
         <label for="start_time">Start Time</label>
         <div>

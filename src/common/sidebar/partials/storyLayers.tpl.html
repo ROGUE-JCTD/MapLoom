@@ -9,7 +9,8 @@
 </a>
 
 <div id="baseMaps" class="menuItem">
-    <label for="baseMapList">Choose Your Basemap</label>
+    <label for="baseMapList">Choose Your Basemap</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'choose_your_basemap_tooltip' | translate }}"></i>
+
     <select class="form-control" name="baseMapList" id="baseMapList"
             ng-init="baseMap=mapService.getBaseMaps()[4]"
             ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
@@ -24,7 +25,7 @@
             <div class="menuItem">
                 <i class="fa fa-navicon" ui-tree-handle></i>
                 <i ng-click="storyService.toggleVisiblity(storyLayer)"
-                   ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}"></i>
+                   ng-class="{'fa fa-eye': storyLayer.get('visible'), 'fa fa-eye-slash': !storyLayer.get('visible')}" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_visibility_tooltip' | translate }}"></i>
                 <a href="#"
                    ng-click="storyService.selectLayer(storyLayer);updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id); updateTourStep(8)">
                     {{ layerService.getTitle(storyLayer) }}
@@ -33,3 +34,4 @@
         </div>
     </div>
 </div>
+
