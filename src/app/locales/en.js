@@ -1,5 +1,6 @@
 (function() {
   var translations = {
+    'brand_name': 'MapStory',
     'new_map': 'New MapStory',
     'remove_chapter': 'Remove Chapter',
     'sure_remove_chapter': 'Are you sure that you want to remove this chapter?',
