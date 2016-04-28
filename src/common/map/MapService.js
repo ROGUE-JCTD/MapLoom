@@ -1026,7 +1026,6 @@
       var activeLayers = this.chapterLayers[chapter_index];
       this.map.setLayerGroup(activeLayers);
 
-      //service_.loadMap(chapter_config);
     };
 
     this.remove_chapter = function(removed_index) {
@@ -1035,11 +1034,12 @@
     //Create the new layergroup for the  new chapter
     //Parameter currently unused
     this.create_chapter = function(new_config) {
-
-      //TODO: May have to remove layers from existing layer group instead of creating new one.
       this.chapterLayers.push(new ol.layer.Group());
 
-      //this.updateActiveMap(new_index,new_config);
+    };
+
+    this.reorderLayerGroup = function(from_index, to_index) {
+      this.chapterLayers.splice(to_index, 0, this.chapterLayers.splice(from_index, 1)[0]);
     };
 
     this.save = function(map_config) {

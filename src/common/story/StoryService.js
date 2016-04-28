@@ -412,8 +412,8 @@
     };
 
     this.reorder_chapter = function(from_index, to_index) {
-      // TODO: Update this function to work with the new Composer.
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
+      mapService_.reorderLayerGroup(from_index, to_index);
     };
 
     this.canRemoveChapter = function() {
