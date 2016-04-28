@@ -25,7 +25,7 @@
               })
             ];
             scope.layerConfig = {Title: 'Title'};
-            scope.selLayerConfig = {};
+            scope.selectedLayer = {};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -108,13 +108,13 @@
             };
 
             scope.selectRow = function(layerConfig) {
-              scope.selLayerConfig = layerConfig;
+              scope.selectedLayer = layerConfig;
             };
 
             scope.addLayers = function(layerConfig) {
               console.log(layerConfig);
 
-              scope.selLayerConfig = {};
+              scope.selectedLayer = {};
               $('#add-layer-dialog').modal('hide');
               if (layerConfig.add) {
                 // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
@@ -134,7 +134,7 @@
 
             scope.previewLayer = function(layerConfig) {
               layerConfig.CRS = ['EPSG:4326'];
-              scope.layerConfig = layerConfig;
+              scope.currentLayer = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
               scope.previewLayers = [
                 new ol.layer.Tile({

@@ -12,7 +12,7 @@ describe('MapDirective', function() {
   }));
   describe('creates a openlayers map', function() {
     it('includes the OL3 classes', function() {
-      //expect(compiledElement.find('#preview')).to.beTrue;
+      expect(compiledElement.find('div#preview').length).toEqual(1);
     });
   });
 });
