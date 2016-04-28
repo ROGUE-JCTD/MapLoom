@@ -24,6 +24,8 @@
                 source: new ol.source.OSM()
               })
             ];
+            scope.layerConfig = {Title: 'Title'};
+            scope.selectedLayer = {};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -105,8 +107,15 @@
               return '';
             };
 
+            scope.selectRow = function(layerConfig) {
+              scope.selectedLayer = layerConfig;
+            };
+
             scope.addLayers = function(layerConfig) {
               console.log(layerConfig);
+
+              scope.selectedLayer = {};
+              $('#add-layer-dialog').modal('hide');
               if (layerConfig.add) {
                 // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
                 //       maploom such as geonode. At this point, only source (server id), and name are used. If you
@@ -125,6 +134,7 @@
 
             scope.previewLayer = function(layerConfig) {
               layerConfig.CRS = ['EPSG:4326'];
+              scope.currentLayer = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
               scope.previewLayers = [
                 new ol.layer.Tile({

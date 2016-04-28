@@ -8,8 +8,8 @@
                     <li><a data-toggle="tab" ng-click="searchHyper();">Search</a></li>
                 </ul>
             </div>
-            <div class="tab-content col-md-5" style="min-height:270px;">
-                <div class="tab-pane active" id="Explore">
+            <div class="tab-content col-md-5 explorer-content">
+                <div class="tab-pane active" id="explore">
                     <div>
                         <div>
                             <nav class="filter panel panel-default">
@@ -27,17 +27,16 @@
                 </div>
 
                 <div class="filter panel panel-default">
+                  <div class="alert alert-title alert-warning-mp">
+                    <h3>{{currentLayer.Title}}</h3>
+                  </div>
                     <div class="panel-body">
-                        <h3>Title 3</h3>
                         <h4>Abstract</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus blanditiis obcaecati quaerat at, dicta, numquam neque laboriosam suscipit error repellat eos voluptatum minima unde itaque voluptates vel in ratione laborum.
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis quibusdam totam velit eius alias sed, tempora debitis perspiciatis. Porro, ipsa veritatis tenetur velit perspiciatis aliquid, placeat ab iusto omnis quas.
-                        </p>
+                        <p class="abstract">{{currentLayer.Abstract}}</p>
                     </div>
                 </div>
-                <div class="whiteframe-2dp" id="mapreview" style="margin-top: 20px;">
-                    <div class="alert alert-warning-mp" style="margin-bottom: 0;">
+                <div class="whiteframe-2dp" id="mapreview">
+                    <div class="alert alert-warning-mp">
                         Refine Search Limit the search to data that includes features in the displayed area.
                     </div>
                     <div zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
@@ -45,16 +44,17 @@
                 <div class="search-pagination">
                 </div>
             </div>
-            <div class="col-md-7 clearfix search-results">
-                <div class="row">
-                  <div class="col-lg-4 col-md-6 col-sm-6 clearfix search-results">
-                    <table class="list-results">
+            <div class="col-md-7 clearfix result-panel">
+                <div class="row result-table">
+                  <div class="clearfix search-results panel">
+                    <table class="table table-hover list-results panel-body">
                       <tr>
                         <th>Title</th>
                         <th>Region</th>
                         <th>Owner</th>
                       </tr>
-                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': selectedLayer.Name === layer.Name}"
+                        ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
                         <td>{{ layer.Title }}</td>
                         <td>{{ layer.domain }}</td>
                         <td>{{ layer.author }}</td>
@@ -62,9 +62,9 @@
                     </table>
                   </div>
                 </div>
-                <div class="row" style="text-align: right;margin-right: 20px;">
+                <div class="row actions" style="">
                     <button type="button" class="btn btn-default btn-lg">CLEAR</button>
-                    <button type="button" class="btn btn-default btn-lg">ADD MAP</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!selectedLayer.add" class="btn btn-default btn-lg">ADD</button>
                 </div>
 
             </div>
