@@ -316,6 +316,12 @@
 
     };
 
+    this.saveChapterView = function() {
+      this.active_chapter.zoom = mapService_.getZoom();
+      this.active_chapter.center = mapService_.getCenter();
+      toastr.success(translate_.instant('saveChapterView'), translate_.instant('saveViewTitle'));
+    };
+
     this.updateStoryID = function(id) {
       this.id = id;
       for (var iConfig = 0; iConfig < this.configurations.length; iConfig += 1) {

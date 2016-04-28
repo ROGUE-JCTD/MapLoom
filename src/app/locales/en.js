@@ -337,6 +337,8 @@
     'content': 'Content',
     'geometry': 'Pin Location',
     'extent': 'Extent',
+    'saveChapterView': 'Chapter View has been saved',
+    'saveViewTitle': 'Chapter View Saved',
     'composer_save_draft_tooltip': 'Save Draft',
     'composer_publish_tooltip': 'Publish MapStory',
     'composer_properties_tooltip': 'MapStory Properties',

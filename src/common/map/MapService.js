@@ -1044,11 +1044,6 @@
 
     this.save = function(map_config) {
 
-      //if (goog.isDefAndNotNull(copy) && copy) {
-      // remove current map id so that it is saved as a new map.
-      //service_.configuration.map.id = null;
-      //}
-
       console.log('------ map_config:', map_config);
       var cfg = {
         about: {
@@ -1057,8 +1052,8 @@
         },
         map: {
           id: map_config.map.id || 0,
-          center: service_.getCenter(),
-          zoom: service_.getZoom(),
+          center: map_config.center || service_.getCenter(),
+          zoom: map_config.zoom || service_.getZoom(),
           projection: service_.getProjection(),
           layers: [],
           keywords: map_config.map.keywords
