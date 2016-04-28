@@ -25,6 +25,7 @@
               })
             ];
             scope.layerConfig = {Title: 'Title'};
+            scope.selLayerConfig = {};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -106,6 +107,10 @@
               return '';
             };
 
+            scope.selectRow = function(layerConfig) {
+              scope.selLayerConfig = layerConfig;
+            };
+
             scope.addLayers = function(layerConfig) {
               console.log(layerConfig);
               if (layerConfig.add) {
@@ -125,7 +130,6 @@
             };
 
             scope.previewLayer = function(layerConfig) {
-
               layerConfig.CRS = ['EPSG:4326'];
               scope.layerConfig = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
