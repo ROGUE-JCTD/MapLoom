@@ -46,6 +46,10 @@
           }
         });
 
+        $scope.$on('chapter-add-config', function(event, data) {
+          $scope.addChapterToMenu(chapter_index);
+        });
+
         $('body').on('show.bs.modal', function(e) {
           var modals = $('.modal.in');
           var backdrops = $('.modal-backdrop');
@@ -289,7 +293,9 @@
             });
           }
         };
-        $scope.addChapterToMenu(0);
+        for (var iChapter = 0; iChapter < $scope.storyService.configurations.length; iChapter += 1) {
+          $scope.addChapterToMenu(iChapter);
+        }
 
         $scope.isEditModeActive();
 

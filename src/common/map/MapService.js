@@ -190,11 +190,32 @@
 
       this.map = this.createMap();
 
-      // now that we have a map, lets try to add layers and servers
-      service_.loadLayers(this.configuration);
-
       this.chapterLayers = [];
+
+      //Set initial layer group from map.
       this.chapterLayers.push(this.map.getLayerGroup());
+
+      if (goog.isDefAndNotNull(this.configuration.chapters)) {
+        var num_chapters = this.configuration.chapters.length;
+        for (var iConfig = 0; iConfig < num_chapters; iConfig += 1) {
+          //This will create a layer group for each chapter config in configuration
+          if (!goog.isDefAndNotNull(this.chapterLayers[iConfig])) {
+            service_.create_chapter();
+          }
+          service_.updateActiveMap(iConfig);
+          //$rootScope.$broadcast('chapter-add-config', iConfig, this.configuration.chapters[iConfig]);
+
+          service_.loadLayers(this.configuration.chapters[iConfig]);
+
+        }
+      } else {
+        //If there is no chapter array then we are loading from new view of composer
+        // now that we have a map, lets try to add layers and servers
+        service_.loadLayers(this.configuration);
+        //$rootScope.$broadcast('chapter-add-config', 0, this.configuration);
+      }
+
+
 
       this.editLayer = createVectorEditLayer();
       this.pinLayer = createStoryPinLayer();

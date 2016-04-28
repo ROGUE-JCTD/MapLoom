@@ -32,28 +32,40 @@
       diffService_ = diffService;
 
       //When initializing the story service the mapService should already be initialized
-      this.title = '';
-      this.abstract = '';
+      this.copy_config = angular.copy(mapService_.configuration);
+      this.title = this.copy_config.about.title || '';
+      this.abstract = this.copy_config.about.abstract || '';
       this.category = null;
       this.is_published = false;
       //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
       this.configurations = [];
       this.removedChapterIDs = [];
-      this.configurations.push(angular.copy(mapService_.configuration));
-      this.active_index = 0;
+      this.active_index = null;
       //All mapstories have one default chapter added
       this.active_layer = null;
       this.active_box = null;
       this.active_pin = null;
-      this.active_chapter = this.configurations[this.active_index];
-      this.active_chapter.map['id'] = 0;
-      this.active_chapter.about.title = '';
-      this.active_chapter.about.abstract = '';
-      console.log('-----story_config:', this.active_chapter);
-      this.id = this.active_chapter.id;
-      this.category = null;
-      this.is_published = false;
+      this.active_chapter = null;
+      console.log('-----story_config:', this.copy_config);
+      this.id = this.copy_config.id || 0;
       this.keywords = [];
+
+      if (goog.isDefAndNotNull(this.copy_config.chapters)) {
+        var num_chapters = this.copy_config.chapters.length;
+        for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
+          this.configurations.push(angular.copy(this.copy_config.chapters[iChapter]));
+        }
+      } else {
+        this.configurations.push(this.copy_config);
+      }
+
+      rootScope_.$on('chapter-add-config', function(event, data) {
+        if (chapter_index >= service_.configurations.length) {
+          service_.configurations.push(chapter_config);
+        } else {
+          service_.configurations[chapter_index] = chapter_config;
+        }
+      });
 
       return this;
     };
