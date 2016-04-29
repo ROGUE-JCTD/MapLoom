@@ -134,7 +134,8 @@ module.exports = {
     ],
     assets: [
       'vendor/blueimp-gallery/img/*',
-      'vendor/blueimp-bootstrap-image-gallery/img/*'
+      'vendor/blueimp-bootstrap-image-gallery/img/*',
+      'vendor/hopscotch/dist/img/*'
     ],
     fonts: [
       'vendor/bootstrap/fonts/*',
