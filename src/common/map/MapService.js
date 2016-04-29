@@ -215,6 +215,12 @@
       });
     };
 
+    this.zoomToExtentForProjection = function(extent, projection) {
+      var transform = ol.proj.getTransformFromProjections(projection,
+          this.map.getView().getProjection());
+      service_.zoomToExtent(ol.extent.applyTransform(extent, transform));
+    };
+
     this.zoomToExtent = function(extent, animate, map, scale) {
       if (!goog.isDefAndNotNull(animate)) {
         animate = true;

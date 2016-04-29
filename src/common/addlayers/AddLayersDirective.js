@@ -129,6 +129,7 @@
                   source: scope.currentServerId
                 };
                 mapService.addLayer(minimalConfig);
+                mapService.zoomToExtentForProjection(layerConfig.extent, ol.proj.get(layerConfig.CRS));
               }
             };
 

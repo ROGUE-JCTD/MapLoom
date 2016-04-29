@@ -525,6 +525,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
     };
 
+    var createExtentFromHyper = function(layerInfo) {
+      return [layerInfo.MinX, layerInfo.MinY, layerInfo.MaxX, layerInfo.MaxY];
+    };
+
     var createHyperSearchLayerObject = function(layerInfo, serverUrl) {
       return {
         add: true,
@@ -536,7 +540,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         thumbnail_url: layerInfo.ThumbnailURL ? ('http://52.38.116.143' + layerInfo.ThumbnailURL) : null,
         author: author(layerInfo),
         domain: domain(layerInfo),
-        type: 'mapproxy_tms'
+        type: 'mapproxy_tms',
+        extent: createExtentFromHyper(layerInfo)
       };
     };
 
