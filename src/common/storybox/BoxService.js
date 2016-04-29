@@ -41,12 +41,24 @@
       //q_ = $q;
 
       if (goog.isDefAndNotNull(configService.configuration.chapters)) {
-        var num_chapters = configService.configuration.chapters.length;
-        for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
-          if (!goog.isDefAndNotNull(boxes_[iChapter])) {
+        angular.forEach(configService.configuration.chapters, function(config, index) {
+          if (!goog.isDefAndNotNull(boxes_[index])) {
             boxes_.push([]);
           }
-        }
+          httpService_({
+            url: '/maps/' + config.id + '/boxes',
+            method: 'GET'
+          }).then(function(result) {
+            console.log(result);
+            var geojson = result.data;
+            geojson.features.map(function(f) {
+              var props = f.properties;
+              props.id = f.id;
+              var storyBox = new Box(props);
+              boxes_[index].push(storyBox);
+            });
+          });
+        });
       }
 
       $rootScope.$on('chapter-added', function(event, config) {
@@ -61,7 +73,10 @@
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ boxService, notified that the map was saved', config);
-        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_[config.chapter_index], {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
+        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_[config.chapter_index], {
+          dataProjection: 'EPSG:4326',
+          featureProjection: 'EPSG:3857'
+        })).success(function(data) {
           console.log('----[ boxService, saved. ', data);
           return 'success';
         });

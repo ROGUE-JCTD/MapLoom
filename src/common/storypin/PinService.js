@@ -44,12 +44,25 @@
       dialogService_ = dialogService;
       translate_ = $translate;
       if (goog.isDefAndNotNull(configService.configuration.chapters)) {
-        var num_chapters = configService.configuration.chapters.length;
-        for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
-          if (!goog.isDefAndNotNull(pins_[iChapter])) {
+        angular.forEach(configService.configuration.chapters, function(config, index) {
+          if (!goog.isDefAndNotNull(pins_[index])) {
             pins_.push([]);
           }
-        }
+          httpService_({
+            url: '/maps/' + config.id + '/annotations',
+            method: 'GET'
+          }).then(function(result) {
+            console.log(result);
+            var geojson = result.data;
+            geojson.features.map(function(f) {
+              var props = f.properties;
+              props.geometry = $.parseJSON(f.geometry);
+              props.id = f.id;
+              var storyPin = new Pin(props);
+              pins_[index].push(storyPin);
+            });
+          });
+        });
       }
 
       $rootScope.$on('chapter-added', function(event, config) {
