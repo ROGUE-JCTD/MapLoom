@@ -203,11 +203,11 @@
             service_.create_chapter();
           }
           service_.updateActiveMap(iConfig);
-          //$rootScope.$broadcast('chapter-add-config', iConfig, this.configuration.chapters[iConfig]);
 
-          service_.loadLayers(this.configuration.chapters[iConfig]);
+          service_.loadLayers(this.configuration.chapters[iConfig], iConfig);
 
         }
+        service_.updateActiveMap(0);
       } else {
         //If there is no chapter array then we are loading from new view of composer
         // now that we have a map, lets try to add layers and servers
@@ -242,6 +242,8 @@
       $rootScope.$on('chapter-added', function(event) {
         service_.zoomToExtent();
       });
+
+
       return this;
     };
 
@@ -655,7 +657,7 @@
      *        is added when later another layer with layerOrder 3 is added, it will be inserted below the previous one.
      *        Similarly a 3rd layer with order 4 will be inserted between 3 and 5.
      */
-    this.addLayer = function(minimalConfig, opt_layerOrder) {
+    this.addLayer = function(minimalConfig, opt_layerOrder, chapter_index) {
       var server = serverService_.getServerById(minimalConfig.source);
       if (goog.isDefAndNotNull(server) && server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
@@ -964,10 +966,14 @@
               }
             }
 
+            var layerGroupToInsert = service_.map.getLayerGroup();
+            if (goog.isDef(chapter_index)) {
+              layerGroupToInsert = service_.chapterLayers[chapter_index];
+            }
             if (insertIndex === -1) {
-              service_.map.addLayer(layer);
+              layerGroupToInsert.getLayers().push(layer);
             } else {
-              service_.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
+              layerGroupToInsert.getLayers().insertAt(insertIndex, layer);
             }
 
             if (server.isLocal === true) {
@@ -1177,7 +1183,7 @@
       service_.loadLayers(config);
     };
 
-    this.loadLayers = function(config) {
+    this.loadLayers = function(config, chapter_index) {
       console.log('=======[[ using parameter config: ', config);
 
       if (goog.isDefAndNotNull(config) &&
@@ -1301,7 +1307,7 @@
               if (goog.isDefAndNotNull(server)) {
                 layerInfoClone.source = server.id;
               }
-              service_.addLayer(layerInfoClone, layerOrder);
+              service_.addLayer(layerInfoClone, layerOrder, chapter_index);
             } else {
               console.log('====[ Warning: could not add layer because it does not have a name: ', layerInfo);
             }

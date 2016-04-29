@@ -37,12 +37,20 @@
   });
 
   module.provider('pinService', function() {
-    this.$get = function($rootScope, $http, dialogService, $translate) {
+    this.$get = function($rootScope, $http, dialogService, $translate, configService) {
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
       dialogService_ = dialogService;
       translate_ = $translate;
+      if (goog.isDefAndNotNull(configService.configuration.chapters)) {
+        var num_chapters = configService.configuration.chapters.length;
+        for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
+          if (!goog.isDefAndNotNull(pins_[iChapter])) {
+            pins_.push([]);
+          }
+        }
+      }
 
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Pin Service: chapter-added');

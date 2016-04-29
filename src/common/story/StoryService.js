@@ -53,7 +53,10 @@
       if (goog.isDefAndNotNull(this.copy_config.chapters)) {
         var num_chapters = this.copy_config.chapters.length;
         for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
-          this.configurations.push(angular.copy(this.copy_config.chapters[iChapter]));
+          var map_config = angular.copy(this.copy_config.chapters[iChapter]);
+          map_config.map.id = map_config.id;
+          map_config.id = this.id;
+          this.configurations.push(map_config);
         }
       } else {
         this.configurations.push(this.copy_config);

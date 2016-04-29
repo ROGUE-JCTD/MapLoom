@@ -40,6 +40,15 @@
       //pulldownService_ = pulldownService;
       //q_ = $q;
 
+      if (goog.isDefAndNotNull(configService.configuration.chapters)) {
+        var num_chapters = configService.configuration.chapters.length;
+        for (var iChapter = 0; iChapter < num_chapters; iChapter += 1) {
+          if (!goog.isDefAndNotNull(boxes_[iChapter])) {
+            boxes_.push([]);
+          }
+        }
+      }
+
       $rootScope.$on('chapter-added', function(event, config) {
         console.log('---Box Service: chapter-added');
         boxes_.push([]);
