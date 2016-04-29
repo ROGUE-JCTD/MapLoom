@@ -125,7 +125,13 @@ describe('addLayers/ServerService', function() {
               LayerId: '60',
               LayerName: 'geonode:oceanbeach',
               LayerUrl: '/layers/OceanBeach',
-              ThumbnailURL: '/test.jpg'
+              ThumbnailURL: '/test.jpg',
+              DomainName: 'harvard.org',
+              LayerUsername: 'Admin',
+              MaxX: 1,
+              MaxY: 1,
+              MinX: 0,
+              MinY: 0
             }
           }
         ];
@@ -141,6 +147,26 @@ describe('addLayers/ServerService', function() {
       it('has a Title', function() {
         expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
           Title: 'Ocean Beach'
+        }));
+      });
+      it('has a Domain', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          domain: 'harvard.org'
+        }));
+      });
+      it('has a author', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          author: 'Admin'
+        }));
+      });
+      it('has an extent', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          extent: [0, 0, 1, 1]
+        }));
+      });
+      it('has a CRS', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          CRS: ['EPSG:4326']
         }));
       });
     });
