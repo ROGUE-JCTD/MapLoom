@@ -92,7 +92,7 @@ describe('StoryLegendDirective', function() {
     it('previewLayers includes the created layer', function() {
       var createdLayer = { name: 'Test' };
       compiledElement.scope().currentServerId = 0;
-      spyOn(mapService, 'createLayerWithFullConfig').and.returnValue(createdLayer);
+      spyOn(mapService, 'createLayerWithFullConfig').andReturn(createdLayer);
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(compiledElement.scope().previewLayers).toContain(createdLayer);
