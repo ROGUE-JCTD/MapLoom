@@ -91,7 +91,8 @@ describe('StoryLegendDirective', function() {
     });
     it('previewLayers includes the created layer', function() {
       var createdLayer = { name: 'Test' };
-      spyOn(mapService, 'createLayerWithFullConfig').andReturn(createdLayer);
+      compiledElement.scope().currentServerId = 0;
+      spyOn(mapService, 'createLayerWithFullConfig').and.returnValue(createdLayer);
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(compiledElement.scope().previewLayers).toContain(createdLayer);
@@ -101,6 +102,30 @@ describe('StoryLegendDirective', function() {
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(layerConfig.CRS).toEqual(['EPSG:4326']);
+    });
+  });
+  describe('#addLayers', function() {
+    var layerConfig;
+    beforeEach(function() {
+      layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+    });
+    it('adds the layer via mapSerice addLayer', function() {
+      var spy = spyOn(mapService, 'addLayer');
+      spyOn(mapService, 'zoomToExtentForProjection');
+      compiledElement.scope().addLayers(layerConfig);
+      expect(spy).toHaveBeenCalled();
+    });
+    it('zooms to extent via mapService zoomToExtentForProjection', function() {
+      spyOn(mapService, 'addLayer');
+      var spy = spyOn(mapService, 'zoomToExtentForProjection');
+      compiledElement.scope().addLayers(layerConfig);
+      expect(spy).toHaveBeenCalled();
+    });
+    it('layer should have extent and CRS', function() {
+      spyOn(mapService, 'addLayer');
+      var spy = spyOn(mapService, 'zoomToExtentForProjection');
+      compiledElement.scope().addLayers(layerConfig);
+      expect(spy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
     });
   });
 });
