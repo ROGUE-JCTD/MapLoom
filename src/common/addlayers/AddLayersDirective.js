@@ -137,12 +137,14 @@
               layerConfig.CRS = ['EPSG:4326'];
               scope.currentLayer = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
+              layer.extent = layerConfig.extent;
               scope.previewLayers = [
                 new ol.layer.Tile({
                   source: new ol.source.OSM()
                 }),
                 layer
               ];
+
             };
 
             scope.changeCredentials = function() {
