@@ -262,6 +262,7 @@
 
     this.addBoxExtent = function(box) {
       goog.object.extend(box, {'extent': mapService_.map.getView().calculateExtent(mapService_.map.getSize())});
+      goog.object.extend(box, {'center': mapService_.map.getView().getCenter()});
       toastr.success('Your StoryBox Bounds have been saved');
     };
 
