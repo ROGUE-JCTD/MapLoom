@@ -15,8 +15,8 @@
   };
   Box.prototype = Object.create(ol.Feature.prototype);
   Box.prototype.constructor = Box;
-  var model_attributes = ['id', '_id', 'title', 'description', 'start_time', 'end_time', 'extent', 'center'];
-  var filterPropertiesFromValidation = ['id', '_id', 'description', 'center'];
+  var model_attributes = ['id', '_id', 'title', 'description', 'start_time', 'end_time', 'extent', 'center', 'zoom'];
+  var filterPropertiesFromValidation = ['id', '_id', 'description', 'center', 'zoom'];
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Box.prototype, prop, {
