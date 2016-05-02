@@ -110,6 +110,10 @@
       return pins_[chapter_index] || [];
     };
 
+    this.reorderPins = function(from_index, to_index) {
+      pins_.splice(to_index, 0, pins_.splice(from_index, 1)[0]);
+    };
+
     this.removePin = function(storyPin, chapter_index) {
       var response = dialogService_.warn(translate_.instant('remove_pin'), translate_.instant('sure_remove_pin'),
           [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {

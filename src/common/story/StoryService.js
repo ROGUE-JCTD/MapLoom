@@ -12,12 +12,14 @@
   var q_ = null;
   var historyService_ = null;
   var diffService_ = null;
+  var boxService_ = null;
+  var pinService_ = null;
 
 
   module.provider('storyService', function() {
 
     this.$get = function($window, $http, $q, $cookies, $location, $translate, $rootScope, mapService, featureManagerService,
-                         configService, dialogService, historyService, diffService, tableViewService) {
+                         configService, dialogService, historyService, diffService, tableViewService, pinService, boxService) {
       service_ = this;
       q_ = $q;
       mapService_ = mapService;
@@ -30,6 +32,8 @@
       featureManagerService_ = featureManagerService;
       historyService_ = historyService;
       diffService_ = diffService;
+      boxService_ = boxService;
+      pinService_ = pinService;
 
       //When initializing the story service the mapService should already be initialized
       this.copy_config = angular.copy(mapService_.configuration);
@@ -431,6 +435,8 @@
     this.reorder_chapter = function(from_index, to_index) {
       this.configurations.splice(to_index, 0, this.configurations.splice(from_index, 1)[0]);
       mapService_.reorderLayerGroup(from_index, to_index);
+      boxService_.reorderBoxes(from_index, to_index);
+      pinService_.reorderPins(from_index, to_index);
     };
 
     this.canRemoveChapter = function() {

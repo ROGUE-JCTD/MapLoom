@@ -109,6 +109,10 @@
       return boxes_[chapter_index] || [];
     };
 
+    this.reorderBoxes = function(from_index, to_index) {
+      boxes_.splice(to_index, 0, boxes_.splice(from_index, 1)[0]);
+    };
+
     this.removeBox = function(storyBox, chapter_index) {
 
       var response = dialogService_.warn(translate_.instant('remove_box'), translate_.instant('sure_remove_box'),
