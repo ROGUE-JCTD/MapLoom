@@ -419,12 +419,10 @@ textarea {
   max-width: 100%;
   margin-bottom: 5px;
   font-family: 'Open Sans', sans-serif !important;
-  font-size: 10px;
-  font-weight: normal;
+  font-size: 12px;
+  font-weight: 700;
   line-height: 20px;
-  text-transform: uppercase;
-  padding-left: 5px;
-  color: #777;
+  color: #666;
 }
 
 .menuItem {
@@ -988,4 +986,39 @@ a#start-tour, a#start-composing {
 
 div.hopscotch-bubble .hopscotch-bubble-close {
   background: transparent url(http://res.cloudinary.com/dw1zyrzc5/image/upload/v1461961248/sprite-green_tzixrt.png) -192px -92px no-repeat;
+}
+
+#table-view-window .panel {
+  height: 100%;
+  max-width: 100%;
+  overflow: auto;
+  background-color: whitesmoke;
+}
+
+.table-striped>thead>tr>th {
+  border-bottom: 2px solid #ddd;
+  padding: 10px;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.table-striped>tbody>tr>td, .table-striped>thead>tr>th {
+  max-width: 200px;
+  padding: 3px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 1px dotted #ddd;
+  font-size: 0.7em;
+}
+
+.table-striped>tbody>tr>td {
+  border-top: 1px solid #ddd;
+  color: #666;
+  font-size: 0.8em;
+}
+
+.selectedRow > td {
+  background-color: #f59620 !important;
+  color: whitesmoke;
 }
