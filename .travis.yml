@@ -1,8 +1,7 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "0.10"
-
+  - '0.12'
+  - '0.10'
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
@@ -10,5 +9,11 @@ before_script:
   - bower install
   - grunt
   - grunt karmaconfig
-
 script: grunt test
+env:
+  matrix:
+    - DEPLOY_BRANCH=hypermap
+  global:
+    secure: HppnhZMk+tZvDsuPelDnjfnKTH4hhHepElR8fNpOscEy5cpWQKb4BWmayw6rsfIvF5E36P5uL7sGyDsc0QVf0XvarX3CrHBZ0oZC/1rS5P9EXVJAPSsKpsNuN55JDtPL1eq7AC5NvP1kfWPQNVqWjmbQt5c6FBgm3dfvLUCD7YYthIEUoFwErmnLrWRXzdB4rFNF3BZa8sJ8/u6/meNPoqKjcWVLcbHLBOmc1pG51bSD+PYFjhYZLOqQfuI6Ix23isClhIGcWeENt/4jPHjQlVX6aivwmvIZ4ioK6iQQopEbq/VV9ACkgY1Q80zCcRwsTFPS6fAjAy4PVcFytSfF3wBoBjJmUM4qv9YJn9axx8rGeIVkORyU3RNT/sbZpeQfiB6hd1WpWeI4G8iXNHwgUjjF0FteXMHqrQOzy8UhG+eLIIpOhZe7mvNxlx0PvSQaIPoVtgU6dlJrAmZ3mLPtqomF9if/my1/zN5XaiJo2JGvwcNKHN8A25XBM1S1xaovra8L5eH3SSAOPTN/MvxJWlJqlOyRxbi9lCJdGw6Dacem3iqvCED/1QZYPbfSINV/f7WM4JUDOSAttHvt1mf4m8uhGM0sWXTZok/AIOx7Xe8Qh55TYyLr+Nx9F/vNDEQbN+vWpbrRg+SPosW8B1hWI1Q2rJRfLwS5GU2EwfY0BV8=
+after_success:
+  - grunt deploy
