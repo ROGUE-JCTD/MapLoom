@@ -3,7 +3,7 @@
 
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id)">Back to StoryLayers List</a>
+    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep()">Back to StoryLayers List</a>
 </div>
 
 <button class="btn-storylayer" id="addFeatureButton" ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)" ng-disabled="storyService.isNotEditable()"><i class="fa fa-plus"></i>Add Feature</button>

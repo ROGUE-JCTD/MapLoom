@@ -98,7 +98,7 @@
                   // UpdateTourStep(12)
                   target: 'editStoryLayerMaskingButton',
                   placement: 'right',
-                  content: 'Finally, with Masking you can customize the name of the StoryLayer to make it more appropriate for your MapStory. The name you choose is what will appear in your Legend. Also, you can customize the features in your StoryLayer that you want to appear win a viewer clicks on your features, and how you want those features to be named. When you’re done, click Back to StoryLayers List.'
+                  content: 'Finally, with Masking you can customize the name of the StoryLayer to make it more appropriate for your MapStory. The name you choose is what will appear in your Legend. Also, you can customize the features in your StoryLayer that you want to appear win a viewer clicks on your features, and how you want those features to be named. When you’re done, click Back to StoryLayers List and then click Back to Chapters List.'
                 },
                 {
                   // UpdateTourStep(13)
