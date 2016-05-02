@@ -120,6 +120,50 @@
     };
   })();
 
+  function bboxTransfom(coordinates, oldProjection, projection) {
+    return [[
+      ol.proj.transform([coordinates[0], coordinates[1]], oldProjection, projection),
+      ol.proj.transform([coordinates[0], coordinates[3]], oldProjection, projection),
+      ol.proj.transform([coordinates[2], coordinates[3]], oldProjection, projection),
+      ol.proj.transform([coordinates[2], coordinates[1]], oldProjection, projection)
+    ]];
+  }
+
+  function createBboxVector(coordinates, projection) {
+    var geojsonObject = {
+      'type': 'FeatureCollection',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': projection
+        }
+      },
+      'features': [{
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Polygon',
+          'coordinates': bboxTransfom(coordinates, 'EPSG:4326', projection)
+        }
+      }]
+    };
+    var style = new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'blue',
+        width: 2
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 0, 255, 0.05)'
+      })
+    });
+    var vectorSource = new ol.source.Vector({
+      features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+    });
+    return new ol.layer.Vector({
+      source: vectorSource,
+      style: style
+    });
+  }
+
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
@@ -159,6 +203,8 @@
       service_.loadLayers();
 
       this.editLayer = createVectorEditLayer();
+
+      this.createBboxVector = createBboxVector;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
