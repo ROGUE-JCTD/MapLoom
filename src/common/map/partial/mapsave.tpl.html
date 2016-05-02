@@ -1,10 +1,8 @@
-
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate }}</button>
-    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
-          ng-click="storyService.save()">Save as Draft</button>
+    <p class="text-center">Great! But, make sure its exactly how you want it. You can delete it later from your Profile, but you can't make changes once its published.</p>
+    <button type="button" class="btn btn-default center-block" data-dismiss="modal">{{'close_btn' | translate }}</button>
     <!-- If they pick publish, set the published model to true? -->
-  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+  <button type="button" class="btn btn-primary center-block" data-dismiss="modal" ng-disabled="!configService.username"
           ng-click="storyService.is_published = true; storyService.save();">Publish</button>
 </div>
 
