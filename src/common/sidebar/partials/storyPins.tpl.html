@@ -3,13 +3,15 @@
 
 <div class="menuItem">
     <i class="fa fa-angle-right"></i>
-    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(24)">Back to Selected Chapter</a>
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(26)">Back to Selected Chapter</a>
 </div>
 
-<a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id)" id="addNewStoryPinButton" onclick="updateTourStep(19)">Add a New StoryPin...</a>
+<a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id); updateTourStep(21)" id="addNewStoryPinButton">Add a New StoryPin...</a>
 
-<div ng-repeat="storyPin in storyPins = pinService.getPins(chapter.id)">
-    <a href="#" class="menuItem" ng-click="storyService.selectPin(storyPin);updateMenuSection('editStoryPin' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>
+<div id="storyPinsList">
+    <div ng-repeat="storyPin in storyPins = pinService.getPins(chapter.id)">
+        <a href="#" class="menuItem" ng-click="storyService.selectPin(storyPin);updateMenuSection('editStoryPin' + chapter.id + storyPins.id)">{{ storyPin.title }}</a>
+    </div>
 </div>
 
 <h5 class="text-right"><a href="http://wiki.mapstory.org/wiki/MapStory_Composer#Adding_StoryPins" target="_blank">StoryPins Help</a></h5>

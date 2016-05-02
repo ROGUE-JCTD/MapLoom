@@ -81,10 +81,10 @@
 
     <script type="text/javascript">
         $(window).load(function () {
-            if (window.location.href.indexOf('edit') < 0) {
+            if (window.location.href.indexOf('edit') < 0 || window.location.href.indexOf('draft') < 0) {
                 $('#welcomeTour').modal('show');
-            }
-        });
+        }
+});
     </script>
 
 </head>
