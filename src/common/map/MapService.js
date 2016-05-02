@@ -121,6 +121,9 @@
   })();
 
   function bboxTransfom(coordinates, oldProjection, projection) {
+    if (!coordinates) {
+      return [[]];
+    }
     return [[
       ol.proj.transform([coordinates[0], coordinates[1]], oldProjection, projection),
       ol.proj.transform([coordinates[0], coordinates[3]], oldProjection, projection),
