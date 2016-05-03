@@ -51,7 +51,19 @@ module.exports = function ( grunt ) {
         base: 'build',
         only: ['**/**', '!CNAME']
       },
-      src: ['**']
+      src: ['**'],
+      deploy: {
+        options: {
+          user: {
+            name: 'Mila Frerichs',
+            email: 'mila.frerichs@gmail.com'
+          },
+          repo: 'https://' + process.env.GH_TOKEN + '@github.com/terranodo/maploom.git',
+          message: 'publish gh-pages (auto)' + getDeployMessage(),
+          silent: true
+        },
+        src: ['**/*']
+      }
     },
 
     /**
@@ -734,5 +746,41 @@ module.exports = function ( grunt ) {
       }
     });
   });
+  // get a formatted commit message to review changes from the commit log
+  // github will turn some of these into clickable links
+  function getDeployMessage() {
+    var ret = '\n\n';
+    if (process.env.TRAVIS !== 'true') {
+      ret += 'missing env vars for travis-ci';
+      return ret;
+    }
+    ret += 'branch:       ' + process.env.TRAVIS_BRANCH + '\n';
+    ret += 'SHA:          ' + process.env.TRAVIS_COMMIT + '\n';
+    ret += 'range SHA:    ' + process.env.TRAVIS_COMMIT_RANGE + '\n';
+    ret += 'build id:     ' + process.env.TRAVIS_BUILD_ID  + '\n';
+    ret += 'build number: ' + process.env.TRAVIS_BUILD_NUMBER + '\n';
+    return ret;
+  }
+
+  grunt.registerTask('check-deploy', function() {
+    // need this
+    this.requires(['build']);
+
+    // only deploy under these conditions
+    if (process.env.TRAVIS === 'true' && process.env.TRAVIS_SECURE_ENV_VARS === 'true' && process.env.TRAVIS_PULL_REQUEST === 'false' && process.env.TRAVIS_BRANCH == process.env.DEPLOY_BRANCH) {
+      grunt.log.writeln('executing deployment');
+      // queue deploy
+      grunt.task.run('gh-pages:deploy');
+    }
+    else {
+      grunt.log.writeln('skipped deployment');
+    }
+  });
+
+  grunt.registerTask('deploy', 'Publish from Travis', [
+    'build',
+    'check-deploy'
+  ]);
+
 
 };
