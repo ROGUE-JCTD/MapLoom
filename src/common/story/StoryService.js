@@ -284,6 +284,8 @@
         return;
       }
       this.active_box.set('extent', mapService_.map.getView().calculateExtent(mapService_.map.getSize()));
+      this.active_box.set('center', mapService_.map.getView().getCenter());
+      this.active_box.set('zoom', mapService_.map.getView().getZoom());
       toastr.success('Your StoryBox Bounds have been saved');
     };
 

@@ -371,7 +371,9 @@
     'storypin_time_frame_tooltip': 'Giving your StoryPin a start and end time will ensure it only appears during that time frame. If you don’t provide a start and end time, it will appear for the duration of your chapter.',
     'storypin_options_tooltip': 'Decide if you want your StoryPin to appear on the map the timeline, or both.',
     'layer_load_failed': 'Layer failed to load',
-    'load_failed': 'Load Failed'
+    'load_failed': 'Load Failed',
+    'update_storybox': 'StoryBox has been updated.',
+    'update_box_title': 'StoryBox Updated'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

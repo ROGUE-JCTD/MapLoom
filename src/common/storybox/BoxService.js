@@ -137,6 +137,7 @@
 
     this.updateBox = function(box, chapter_index) {
       //TODO: more may need to be done here like updating the map extent
+      toastr.success(translate_.instant('update_storybox'), translate_.instant('update_box_title'));
       rootScope_.$broadcast('box-added', chapter_index);
     };
 
