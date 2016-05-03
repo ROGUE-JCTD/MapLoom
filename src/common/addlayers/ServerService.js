@@ -450,14 +450,17 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         config.headers['Authorization'] = '';
       }
-      http_.get(url, config).then(function(xhr) {
-        if (xhr.status === 200) {
-          var response = parser.read(xhr.data);
+      http_.get(url, config).success(function(data, status, headers, config) {
+        if (status === 200) {
+          var response = parser.read(data);
           if (goog.isDefAndNotNull(response.Capability) && goog.isDefAndNotNull(response.Capability.Layer)) {
             layerConfig = response.Capability.Layer.Layer[0];
             result.resolve(layerConfig);
           }
         }
+      }).error(function(data, status, headers, config) {
+        toastr.error(translate_.instant('layer_load_failed'), translate_.instant('load_failed'));
+        result.reject();
       });
 
       return result.promise;
