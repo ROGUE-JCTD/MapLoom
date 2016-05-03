@@ -62,6 +62,14 @@
           map_config.id = this.id;
           this.configurations.push(map_config);
         }
+        this.copy_config = angular.copy(this.copy_config.chapters[0]);
+        var numLayers = this.copy_config.map.layers.length;
+        for (var iLayer = numLayers - 1; iLayer >= 0; iLayer -= 1) {
+          var layer = this.copy_config.map.layers[iLayer];
+          if (!goog.isDefAndNotNull(layer.group) || layer.group !== 'background') {
+            this.copy_config.map.layers.splice(iLayer, 1);
+          }
+        }
       } else {
         this.configurations.push(this.copy_config);
       }
@@ -407,7 +415,7 @@
 
     this.add_chapter = function() {
       //The config service is the entrypoint and contains the initial configuration for a chapter
-      var new_chapter = angular.copy(configService_.initial_config);
+      var new_chapter = angular.copy(this.copy_config);
       //If the initial config included a layer at load remove that from chapters after 1
       if (goog.isDefAndNotNull(new_chapter.fromLayer)) {
         delete new_chapter.fromLayer;
