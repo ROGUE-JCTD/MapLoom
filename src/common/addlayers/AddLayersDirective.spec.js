@@ -108,12 +108,14 @@ describe('StoryLegendDirective', function() {
     var layerConfig;
     beforeEach(function() {
       layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+      compiledElement.scope().cart = [layerConfig];
+      scope.$digest();
     });
     it('adds the layer via mapSerice addLayer', function() {
       var spy = spyOn(mapService, 'addLayer');
       spyOn(mapService, 'zoomToExtentForProjection');
-      compiledElement.scope().addLayers(layerConfig);
-      expect(spy).toHaveBeenCalled();
+      compiledElement.scope().addLayers();
+      expect(spy).toHaveBeenCalledWith(layerConfig);
     });
     it('zooms to extent via mapService zoomToExtentForProjection', function() {
       spyOn(mapService, 'addLayer');
@@ -126,6 +128,27 @@ describe('StoryLegendDirective', function() {
       var spy = spyOn(mapService, 'zoomToExtentForProjection');
       compiledElement.scope().addLayers(layerConfig);
       expect(spy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
+    });
+  });
+  describe('#addToCart', function() {
+    it('cart is empty by default', function() {
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+    it('add an item to the cart', function() {
+      var layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+      compiledElement.scope().addToCart(layerConfig);
+      expect(compiledElement.scope().cart.length).toEqual(1);
+    });
+    describe('with results', function() {
+      beforeEach(function() {
+        var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
+        spyOn(serverService, 'getLayersConfigByName').and.returnValue([layerConfig]);
+        scope.$digest();
+      });
+      it('click on a result adds it to cart', function() {
+        compiledElement.find('tr.result').click();
+        expect(compiledElement.scope().cart.length).toEqual(1);
+      });
     });
   });
 });
