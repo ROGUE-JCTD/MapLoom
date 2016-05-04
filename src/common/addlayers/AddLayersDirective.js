@@ -133,12 +133,24 @@
               }
             };
 
+            var bboxStyle = function() {
+              return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                  color: 'blue',
+                  width: 2
+                }),
+                fill: new ol.style.Fill({
+                  color: 'rgba(0, 0, 255, 0.05)'
+                })
+              });
+            };
+
             scope.previewLayer = function(layerConfig) {
               layerConfig.CRS = ['EPSG:4326'];
               scope.currentLayer = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
-              mapService.getProjection();
               var bboxLayer = mapService.createBboxVector(layerConfig.extent, mapService.getProjection());
+              bboxLayer.setStyle(bboxStyle());
               scope.previewLayers = [
                 new ol.layer.Tile({
                   source: new ol.source.OSM()

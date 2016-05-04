@@ -120,50 +120,36 @@
     };
   })();
 
-  function bboxTransfom(coordinates, oldProjection, projection) {
+  function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, fromProjection, toProjection) {
     if (!coordinates) {
       return [[]];
     }
     return [[
-      ol.proj.transform([coordinates[0], coordinates[1]], oldProjection, projection),
-      ol.proj.transform([coordinates[0], coordinates[3]], oldProjection, projection),
-      ol.proj.transform([coordinates[2], coordinates[3]], oldProjection, projection),
-      ol.proj.transform([coordinates[2], coordinates[1]], oldProjection, projection)
+      ol.proj.transform([coordinates[0], coordinates[1]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[0], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[1]], fromProjection, toProjection)
     ]];
   }
 
   function createBboxVector(coordinates, projection) {
     var geojsonObject = {
-      'type': 'FeatureCollection',
+      'type': 'Feature',
       'crs': {
         'type': 'name',
         'properties': {
           'name': projection
         }
       },
-      'features': [{
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Polygon',
-          'coordinates': bboxTransfom(coordinates, 'EPSG:4326', projection)
-        }
-      }]
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': createGeoJSONLayerFromCoordinatesWithProjection(coordinates, 'EPSG:4326', projection)
+      }
     };
-    var style = new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: 'blue',
-        width: 2
-      }),
-      fill: new ol.style.Fill({
-        color: 'rgba(0, 0, 255, 0.05)'
-      })
-    });
-    var vectorSource = new ol.source.Vector({
-      features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
-    });
     return new ol.layer.Vector({
-      source: vectorSource,
-      style: style
+      source: new ol.source.GeoJSON({
+        object: geojsonObject
+      })
     });
   }
 
