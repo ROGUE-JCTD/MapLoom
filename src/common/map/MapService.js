@@ -120,7 +120,7 @@
     };
   })();
 
-  function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, fromProjection, toProjection) {
+  function createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, fromProjection, toProjection) {
     if (!coordinates) {
       return [[]];
     }
@@ -132,7 +132,7 @@
     ]];
   }
 
-  function createBboxVector(coordinates, projection) {
+  function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, projection) {
     var geojsonObject = {
       'type': 'Feature',
       'crs': {
@@ -143,7 +143,7 @@
       },
       'geometry': {
         'type': 'Polygon',
-        'coordinates': createGeoJSONLayerFromCoordinatesWithProjection(coordinates, 'EPSG:4326', projection)
+        'coordinates': createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, 'EPSG:4326', projection)
       }
     };
     return new ol.layer.Vector({
@@ -193,7 +193,7 @@
 
       this.editLayer = createVectorEditLayer();
 
-      this.createBboxVector = createBboxVector;
+      this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);

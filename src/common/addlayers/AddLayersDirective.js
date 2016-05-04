@@ -149,7 +149,7 @@
               layerConfig.CRS = ['EPSG:4326'];
               scope.currentLayer = layerConfig;
               var layer = mapService.createLayerWithFullConfig(layerConfig, scope.currentServerId);
-              var bboxLayer = mapService.createBboxVector(layerConfig.extent, mapService.getProjection());
+              var bboxLayer = mapService.createGeoJSONLayerFromCoordinatesWithProjection(layerConfig.extent, mapService.getProjection());
               bboxLayer.setStyle(bboxStyle());
               scope.previewLayers = [
                 new ol.layer.Tile({
