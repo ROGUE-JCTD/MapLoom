@@ -62,11 +62,13 @@
                         <p class="abstract">{{currentLayer.Abstract}}</p>
                     </div>
                 </div>
-                <div class="whiteframe-2dp" id="mapreview">
-                    <div class="alert alert-warning-mp">
-                        Refine Search Limit the search to data that includes features in the displayed area.
-                    </div>
+                <div class="panel panel-default" id="mapreview">
+                  <div class="alert alert-title alert-warning-mp">
+                      Refine Search Limit the search to data that includes features in the displayed area.
+                  </div>
+                  <div class="panel-body">
                     <div zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                  </div>
                 </div>
                 <div class="search-pagination">
                 </div>
