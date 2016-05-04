@@ -120,6 +120,39 @@
     };
   })();
 
+  function createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, fromProjection, toProjection) {
+    if (!coordinates) {
+      return [[]];
+    }
+    return [[
+      ol.proj.transform([coordinates[0], coordinates[1]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[0], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[1]], fromProjection, toProjection)
+    ]];
+  }
+
+  function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, projection) {
+    var geojsonObject = {
+      'type': 'Feature',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': projection
+        }
+      },
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, 'EPSG:4326', projection)
+      }
+    };
+    return new ol.layer.Vector({
+      source: new ol.source.GeoJSON({
+        object: geojsonObject
+      })
+    });
+  }
+
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
@@ -159,6 +192,8 @@
       service_.loadLayers();
 
       this.editLayer = createVectorEditLayer();
+
+      this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
