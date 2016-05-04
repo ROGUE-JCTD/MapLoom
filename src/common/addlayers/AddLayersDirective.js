@@ -1,6 +1,8 @@
 (function() {
 
-  var module = angular.module('loom_addlayers_directive', []);
+  var module = angular.module('loom_addlayers_directive', [
+    'loom_addlayersfilter_directive'
+  ]);
 
   module.directive('loomAddlayers',
       function($rootScope, serverService, mapService, geogigService, $translate, dialogService) {
