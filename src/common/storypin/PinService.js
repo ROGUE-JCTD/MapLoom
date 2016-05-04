@@ -78,7 +78,12 @@
         console.log('----[ pinService, notified that the map was saved', config);
         httpService_.post('/maps/' + config.map.id + '/annotations', new ol.format.GeoJSON().writeFeatures(pins_[config.chapter_index], {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
           console.log('----[ pinService, saved. ', data);
-          var current_pins = pins_[config.chapter_index];
+
+          function noId(pin) {
+            return !goog.isDefAndNotNull(pin.getId());
+          }
+
+          var current_pins = pins_[config.chapter_index].filter(onoId);
           if (goog.isDefAndNotNull(data.ids)) {
             for (var i = 0; i < current_pins.length; i++) {
               if (!goog.isDefAndNotNull(current_pins[i].getId())) {
