@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
-                    <li><a data-toggle="tab" ng-click="defaultSearch();">Search</a></li>
-                    <li><a data-toggle="tab" ng-click="searchMyUploads();">My StoryLayers</a></li>
-                    <li><a data-toggle="tab" ng-click="searchMyFavorites();">My Favorites</a></li>
+                    <li><a data-toggle="tab" ng-click="defaultSearch();"><i class="fa fa-th-large"></i> All StoryLayers</a></li>
+                    <li><a data-toggle="tab" ng-click="searchMyUploads();"><i class="fa fa-upload"></i> My StoryLayers</a></li>
+                    <li><a data-toggle="tab" ng-click="searchMyFavorites();"><i class="fa fa-heart"></i> My Favorites</a></li>
                 </ul>
             </div>
             <div class="tab-content col-md-12" style="min-height:270px;">
@@ -17,8 +17,8 @@
                                     <div class="input-group search-bar" >
                                         <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
                                         <span class="input-group-btn">
-                                            <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i>Search</button>
-                                            <button class="btn btn-primary search-btn" ng-click="defaultSearch();">Clear</button>
+                                            <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i></button>
+                                            <button class="btn btn-primary search-btn" ng-click="defaultSearch();">Reset Search</button>
                                         </span>
                                     </div>
                                 </form>
@@ -27,8 +27,10 @@
                                     <div class = "col-sm-3 cards" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
                                         <div class = "cards-body">
                                           <img class = "img-responsive" src = "{{layer.thumbnail_url}}" height="150" width="200">
-                                            <h5>{{ layer.Title }}</h5>
-                                            <i class = "icon-user"></i><h5>{{ layer.author }}</h5>
+                                            <h4>{{ layer.Title }}</h4>
+                                            <h5><i class="fa fa-user"></i> {{ layer.author }}</h5>
+                                            <!-- <h5><i class="fa fa-flag"></i> {{ layer.category }}</h5> -->
+                                            <!-- <h5><i class="fa fa-calendar"></i> Uploaded on {{ layer.date }}</h5> -->
                                             <button class = "btn btn-default center-block" ng-click = "updateTourStep(7); addLayers(layer)" data-dismiss="modal">Use</button>
                                             <a ng-href="{{ layer.detail_url }}" target = "_blank"><button class = "btn btn-default center-block">View</button></a>
                                         </div>
