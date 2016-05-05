@@ -514,10 +514,12 @@ var SERVER_SERVICE_USE_PROXY = true;
         Abstract: layerInfo.abstract,
         Name: layerInfo.typename,
         Title: layerInfo.title,
+        Category: layerInfo.category,
         CRS: layerInfo.srid,
         thumbnail_url: thumbnail(layerInfo.thumbnail_url, layerName(layerInfo.detail_url), serverUrl),
         author: author(layerInfo),
-        detail_url: layerInfo.detail_url
+        detail_url: layerInfo.detail_url,
+        date: layerInfo.date
       };
     };
 
