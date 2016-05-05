@@ -13,12 +13,15 @@
                     <div>
                         <div>
                             <nav class="filter">
-                                <div class="input-group search-bar" >
-                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" ng-click="search()" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
-                                    </span>
-                                </div>
+                                <form ng-submit="search()">
+                                    <div class="input-group search-bar" >
+                                        <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i>Search</button>
+                                            <button class="btn btn-primary search-btn" ng-click="defaultSearch();">Clear</button>
+                                        </span>
+                                    </div>
+                                </form>
                             </nav>
                             <div class="clearfix search-results">
                                     <div class = "col-sm-3 cards" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
