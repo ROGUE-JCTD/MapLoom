@@ -3,8 +3,6 @@
   var boxes_ = [[]];
   var service_ = null;
   var rootScope_ = null;
-  //var pulldownService_ = null;
-  //var q_ = null;
   var httpService_ = null;
   var dialogService_ = null;
   var translate_ = null;
@@ -37,8 +35,6 @@
       httpService_ = $http;
       dialogService_ = dialogService;
       translate_ = $translate;
-      //pulldownService_ = pulldownService;
-      //q_ = $q;
 
       if (goog.isDefAndNotNull(configService.configuration.chapters)) {
         angular.forEach(configService.configuration.chapters, function(config, index) {
@@ -73,11 +69,34 @@
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ boxService, notified that the map was saved', config);
-        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(boxes_[config.chapter_index], {
+        var boxes = boxes_[config.chapter_index];
+        var clones = [];
+        boxes.forEach(function(a) {
+          var clone = a.clone();
+          if (a.get('start_time') !== undefined) {
+            clone.set('start_time', a.get('start_time') / 1000);
+          }
+          if (a.get('end_time') !== undefined) {
+            clone.set('end_time', a.get('end_time') / 1000);
+          }
+          clones.push(clone);
+        });
+        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(clones, {
           dataProjection: 'EPSG:4326',
           featureProjection: 'EPSG:3857'
         })).success(function(data) {
           console.log('----[ boxService, saved. ', data);
+          function noId(box) {
+            return !goog.isDefAndNotNull(box.getId());
+          }
+          var current_boxes = boxes_[config.chapter_index].filter(noId);
+          if (goog.isDefAndNotNull(data.ids)) {
+            for (var i = 0; i < current_boxes.length; i++) {
+              if (!goog.isDefAndNotNull(current_boxes[i].getId())) {
+                current_boxes[i].setId(data.ids[i]);
+              }
+            }
+          }
           return 'success';
         });
       });

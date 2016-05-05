@@ -76,7 +76,19 @@
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ pinService, notified that the map was saved', config);
-        httpService_.post('/maps/' + config.map.id + '/annotations', new ol.format.GeoJSON().writeFeatures(pins_[config.chapter_index], {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
+        var annotations = pins_[config.chapter_index];
+        var clones = [];
+        annotations.forEach(function(a) {
+          var clone = a.clone();
+          if (a.get('start_time') !== undefined) {
+            clone.set('start_time', a.get('start_time') / 1000);
+          }
+          if (a.get('end_time') !== undefined) {
+            clone.set('end_time', a.get('end_time') / 1000);
+          }
+          clones.push(clone);
+        });
+        httpService_.post('/maps/' + config.map.id + '/annotations', new ol.format.GeoJSON().writeFeatures(clones, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
           console.log('----[ pinService, saved. ', data);
           function noId(pin) {
             return !goog.isDefAndNotNull(pin.getId());
