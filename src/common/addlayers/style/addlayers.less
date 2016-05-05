@@ -9,7 +9,7 @@
   overflow: hidden;
   overflow-y: auto;
   min-height: 200px;
-  background-color: #b1b1b1;
+  background-color: #dbdbdb;
 }
 
 .add-layers-loading.loom-loading {
@@ -86,14 +86,47 @@
   min-height: 270px;
 }
 
+.filter.panel .panel-body{
+  padding: 20px 20px 20px 20px !important;
+}
+
 .filter .alert-title h3 {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 .filter .abstract {
-  height: 200px;
+  height: 150px;
   overflow-y: auto;
+}
+
+.layer-info-left {
+  margin-top: 20px;
+  div {
+    background: rgba(255, 173, 47, 0.25);
+    padding: 8px;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+}
+
+.layer-info-right {
+  margin-top: 20px;
+  div {
+    padding: 8px;
+  }
+}
+
+.alert-warning-mp {
+    color: #42351E;
+    background-color: #FFAD2F;
+    border-color: #FFAD2F;
+}
+
+.alert-layer-mp {
+    color: white;
+    background-color: #54bcbc;
+    border-color: #54bcbc;
 }
 
 .explorer #mappreview {
@@ -117,6 +150,22 @@
   margin: 20px 0 0px 0px;
 }
 
+.table.list-results tbody > tr > td {
+  padding: 15px;
+	cursor: pointer;
+}
+
+.table.list-results tr > th {
+  background-color: #54bcbc;
+  color: white;padding: 12px;
+  font-size:24px;
+  font-weight: normal;
+}
+
+.list-results.table-hover > tbody > tr:hover > th {
+	background-color: #54bcbc;
+}
+
 .preview-hover {
   background-color: orange;
 }
@@ -124,12 +173,23 @@
 .btn-search {
     color: #ffffff;
     background-color: #2e9c9c;
-    border: 2px solid #168c8c;
+    border: 1px solid #168c8c;
 }
 .btn-search:hover, .btn-search:focus, .btn-search:active, .btn-search.active, .open .dropdown-toggle.btn-search {
     color: #ffffff;
     background-color: #168c8c;
     border-color: #168c8c;
+}
+
+.btn-cart {
+  color: white;
+  background-color: #fe7652;
+  border: 1px solid: #FE5252;
+}
+.btn-cart:hover, .btn-cart:focus, .btn-cart:active, .btn-cart.active, .open .dropdown-toggle.btn-cart {
+    color: #ffffff;
+    background-color: #FE5252;
+    border-color: #FE5252;
 }
 
 .search-input{
@@ -139,7 +199,7 @@
 .select-search{
   background-color: #4ebaba;
   color: white;
-  border: 2px solid #168c8c;
+  border: 1px solid #168c8c;
 }
 .select-search option {
    margin:40px;
