@@ -460,7 +460,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }).error(function(data, status, headers, config) {
         toastr.clear();
-        toastr.error(translate_.instant('layer_load_failed'), translate_.instant('load_failed'));
+        var displayName = name;
+        if (!goog.isDefAndNotNull(displayName)) {
+          displayName = layerName;
+        }
+        toastr.error(displayName + translate_.instant('layer_load_failed'), translate_.instant('load_failed'));
         result.reject();
       });
 
