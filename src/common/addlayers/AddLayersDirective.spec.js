@@ -105,17 +105,18 @@ describe('StoryLegendDirective', function() {
     });
   });
   describe('#addLayers', function() {
-    var layerConfig;
+    var layerConfig, minimalConfig;
     beforeEach(function() {
-      layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+      layerConfig = { add: true, Name: 'Test', extent: [], CRS: 'EPSG:4326' };
       compiledElement.scope().cart = [layerConfig];
       scope.$digest();
+      minimalConfig = { source: 0, name: layerConfig.Name };
     });
     it('adds the layer via mapSerice addLayer', function() {
       var spy = spyOn(mapService, 'addLayer');
       spyOn(mapService, 'zoomToExtentForProjection');
       compiledElement.scope().addLayers();
-      expect(spy).toHaveBeenCalledWith(layerConfig);
+      expect(spy).toHaveBeenCalledWith(minimalConfig);
     });
     it('zooms to extent via mapService zoomToExtentForProjection', function() {
       spyOn(mapService, 'addLayer');
@@ -142,7 +143,7 @@ describe('StoryLegendDirective', function() {
     describe('with results', function() {
       beforeEach(function() {
         var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
-        spyOn(serverService, 'getLayersConfigByName').and.returnValue([layerConfig]);
+        spyOn(serverService, 'getLayersConfigByName').andReturn([layerConfig]);
         scope.$digest();
       });
       it('click on a result adds it to cart', function() {
