@@ -81,9 +81,11 @@
         annotations.forEach(function(a) {
           var clone = a.clone();
           if (a.get('start_time') !== undefined) {
+            a.set('start_time', getTime(a.get('start_time')));
             clone.set('start_time', a.get('start_time') / 1000);
           }
           if (a.get('end_time') !== undefined) {
+            a.set('end_time', getTime(a.get('end_time')));
             clone.set('end_time', a.get('end_time') / 1000);
           }
           clones.push(clone);
@@ -210,6 +212,11 @@
       if (goog.isDefAndNotNull(pin.geometry)) {
         var newGeom = new ol.geom.Point(pin.geometry.coordinates);
         pin.setGeometry(newGeom);
+      }
+      for (var iPin = 0; iPin < pins_.length; iPin += 1) {
+        if (pin.id === pins_[iPin].id) {
+          pins_[iPin] = pin;
+        }
       }
       rootScope_.$broadcast('pin-added', chapter_index);
       toastr.success('Your StoryPin has been saved', 'StoryPin Saved');

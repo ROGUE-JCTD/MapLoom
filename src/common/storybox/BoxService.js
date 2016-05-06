@@ -74,9 +74,11 @@
         boxes.forEach(function(a) {
           var clone = a.clone();
           if (a.get('start_time') !== undefined) {
+            a.set('start_time', getTime(a.get('start_time')));
             clone.set('start_time', a.get('start_time') / 1000);
           }
           if (a.get('end_time') !== undefined) {
+            a.set('end_time', getTime(a.get('end_time')));
             clone.set('end_time', a.get('end_time') / 1000);
           }
           clones.push(clone);
@@ -155,7 +157,6 @@
     };
 
     this.updateBox = function(box, chapter_index) {
-      //TODO: more may need to be done here like updating the map extent
       toastr.success(translate_.instant('update_storybox'), translate_.instant('update_box_title'));
       rootScope_.$broadcast('box-added', chapter_index);
     };

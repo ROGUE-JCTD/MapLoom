@@ -127,7 +127,8 @@
         if (timelineService_.isPlaying()) {
           timelineService_.stop();
         }
-        timelineService_.setTimeCurrent(this.active_pin.start_time);
+        var time = getTime(this.active_pin.start_time);
+        timelineService_.setTimeCurrent(time);
         timelineService_.setTimeNextTick();
       }
     };
