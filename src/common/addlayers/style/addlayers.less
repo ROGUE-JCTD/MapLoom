@@ -245,3 +245,30 @@
 .range-search rzslider{
   margin-top: 20px;
 }
+
+rzslider .rz-pointer {
+  top: -6px;
+  width: 20px;
+  height: 20px;
+  background-color: #2e9c9c;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+rzslider .rz-pointer:focus {
+    outline: none;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+    background-color: #268282;
+}
+
+rzslider .rz-bar {
+  height: 10px;
+}
+rzslider .rz-pointer:after {
+    position: static;
+}
+rzslider .rz-pointer:hover:after {
+  background-color: rgba(255, 255, 255, 0);
+}
+rzslider .rz-pointer.rz-active:after {
+  background-color: rgba(255, 255, 255, 0);
+}

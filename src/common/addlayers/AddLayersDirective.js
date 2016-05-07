@@ -41,9 +41,6 @@
                 getSelectionBarColor: function() {
                   return '#77d5d5';
                 },
-                getPointerColor: function() {
-                  return '#2e9c9c';
-                },
                 translate: function() {
                   return '';
                 }
