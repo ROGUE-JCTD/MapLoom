@@ -60,10 +60,10 @@
                             <div>CATEGORY</div>
                           </div>
                           <div class="col-sm-7 col-xs-7 layer-info-left">
-                            <div>Raster</div>
+                            <div class="ellipsis">{{currentLayer.Name || 'Raster'}}</div>
                             <div>dd/mm/yy</div>
-                            <div>admin</div>
-                            <div>Society</div>
+                            <div>{{currentLayer.author || 'admin'}}</div>
+                            <div>{{currentLayer.type || 'Society'}}</div>
                           </div>
                         </div>
                       </div>
