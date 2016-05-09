@@ -92,7 +92,7 @@ describe('StoryLegendDirective', function() {
     it('previewLayers includes the created layer', function() {
       var createdLayer = { name: 'Test' };
       compiledElement.scope().currentServerId = 0;
-      spyOn(mapService, 'createLayerWithFullConfig').andReturn(createdLayer);
+      spyOn(mapService, 'createLayerWithFullConfig').and.returnValue(createdLayer);
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(compiledElement.scope().previewLayers).toContain(createdLayer);
@@ -149,7 +149,7 @@ describe('StoryLegendDirective', function() {
     describe('with results', function() {
       beforeEach(function() {
         var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
-        spyOn(serverService, 'getLayersConfigByName').andReturn([layerConfig]);
+        spyOn(serverService, 'getLayersConfigByName').and.returnValue([layerConfig]);
         scope.$digest();
       });
       it('click on a result adds it to cart', function() {
