@@ -153,6 +153,10 @@
               scope.cart.push(layerConfig);
             };
 
+            scope.clearCart = function() {
+              scope.cart = [];
+            };
+
             scope.changeCredentials = function() {
               serverService.changeCredentials(scope.currentServer);
             };

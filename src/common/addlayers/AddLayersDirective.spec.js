@@ -152,4 +152,11 @@ describe('StoryLegendDirective', function() {
       });
     });
   });
+  describe('#clearCart', function() {
+    it('clears the cart', function() {
+      compiledElement.scope().cart = [1];
+      compiledElement.scope().clearCart();
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+  });
 });
