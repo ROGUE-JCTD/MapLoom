@@ -135,6 +135,7 @@
               scope.selectedLayer = {};
               $('#add-layer-dialog').modal('hide');
               scope.cart.forEach(addLayer);
+              scope.clearCart();
             };
 
             scope.previewLayer = function(layerConfig) {
@@ -150,7 +151,16 @@
             };
 
             scope.addToCart = function(layerConfig) {
-              scope.cart.push(layerConfig);
+              var configIndex = scope.cart.indexOf(layerConfig);
+              if (configIndex == -1) {
+                scope.cart.push(layerConfig);
+              } else {
+                scope.cart.splice(configIndex, 1);
+              }
+            };
+
+            scope.isInCart = function(layerConfig) {
+              return scope.cart.indexOf(layerConfig) !== -1 ? true : false;
             };
 
             scope.clearCart = function() {
