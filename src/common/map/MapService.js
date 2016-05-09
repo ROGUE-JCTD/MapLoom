@@ -1172,6 +1172,7 @@
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_failed',
               {value: status}));
         }
+        rootScope_.$broadcast('map-save-failed', map_config);
       });
     };
 

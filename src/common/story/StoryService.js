@@ -76,11 +76,29 @@
         this.configurations.push(this.copy_config);
       }
 
+      this.chaptersToSave = 0;
+
       rootScope_.$on('chapter-add-config', function(event, data) {
         if (chapter_index >= service_.configurations.length) {
           service_.configurations.push(chapter_config);
         } else {
           service_.configurations[chapter_index] = chapter_config;
+        }
+      });
+
+      rootScope_.$on('map-saved', function(event, map_config) {
+        if (service_.chaptersToSave > 0) {
+          service_.chaptersToSave -= 1;
+        } else {
+          service_.chaptersToSave = 0;
+        }
+      });
+
+      rootScope_.$on('map-save-failed', function(event, map_config) {
+        if (service_.chaptersToSave > 0) {
+          service_.chaptersToSave -= 1;
+        } else {
+          service_.chaptersToSave = 0;
         }
       });
 
@@ -313,6 +331,15 @@
 
     //Method saves mapstory and underlying chapters
     this.save = function() {
+
+      if (this.chaptersToSave !== 0) {
+        toastr.error('You must wait for previous save to complete before saving again.', 'Save in progress');
+        return;
+      }
+
+      //Set number of chapters to save that gets decremented on save completion to prevent double saving chapters.
+      this.chaptersToSave = this.configurations.length;
+
       var cfg = {
         id: this.id || 0,
         title: this.title,
