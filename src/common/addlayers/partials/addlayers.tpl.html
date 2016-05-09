@@ -52,7 +52,7 @@
                         <th>Title</th>
                         <th>Domain</th>
                       </tr>
-                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': selectedLayer.Name === layer.Name}"
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
                         ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
                         <td>{{ layer.Title }}</td>
                         <td>{{ layer.domain }}</td>
@@ -61,7 +61,7 @@
                   </div>
                 </div>
                 <div class="row actions" style="">
-                    <button type="button" class="btn btn-default btn-lg">CLEAR</button>
+                    <button type="button" ng-clik="clearCart();" class="btn btn-default btn-lg">CLEAR</button>
                     <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!selectedLayer.add" class="btn btn-default btn-lg">ADD</button>
                 </div>
 
