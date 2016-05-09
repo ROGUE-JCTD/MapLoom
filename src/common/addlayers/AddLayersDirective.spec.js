@@ -128,7 +128,7 @@ describe('StoryLegendDirective', function() {
     });
     it('clears the cart', function() {
       compiledElement.scope().addLayers();
-      expect(compiledElement.scope().cart).toEqual(0);
+      expect(compiledElement.scope().cart.length).toEqual(0);
     });
   });
   describe('#addToCart', function() {
