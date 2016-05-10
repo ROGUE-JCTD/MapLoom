@@ -76,14 +76,8 @@
                   </div>
                   <div class="panel-body">
                     <table class="table table-hover list-results">
-                      <tr class="result">
-                        <td>Title 2</td>
-                      </tr>
-                      <tr class="result">
-                        <td>Title 8</td>
-                      </tr>
-                      <tr class="result">
-                        <td>Title 12</td>
+                      <tr class="result" ng-repeat="layer in cart">
+                        <td>{{layer.Title}}</td>
                       </tr>
                     </table>
                   </div>
