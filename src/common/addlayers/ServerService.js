@@ -636,6 +636,12 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filter_options.text !== null) {
         url = url + '&q=' + filter_options.text;
       }
+      if (filter_options.size !== null) {
+        url = url + '&size=' + filter_options.size;
+      }
+      if (filter_options.from !== null) {
+        url = url + '&from=' + filter_options.from;
+      }
       return url;
     };
     var applyFavoritesFilter = function(url, filterOptions) {
