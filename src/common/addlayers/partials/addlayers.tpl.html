@@ -10,42 +10,10 @@
             </div>
             <div class="tab-content col-md-5 explorer-content">
                 <div class="tab-pane active" id="explore">
-                    <div>
-                        <div>
-                            <nav class="filter panel panel-default">
-                                <div class="panel-body">
-                                <div class="input-group search-bar" >
-                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" ng-click="search()" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
-                                    </span>
-                                </div>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
+                  <div loom-addlayersfilter></div>
                 </div>
 
-                <div class="filter panel panel-default">
-                  <div class="alert alert-title alert-warning-mp">
-                    <h3>{{currentLayer.Title}}</h3>
-                  </div>
-                    <div class="panel-body">
-                        <h4>Abstract</h4>
-                        <p class="abstract">{{currentLayer.Abstract}}</p>
-                    </div>
-                </div>
-                <div class="whiteframe-2dp" id="mapreview">
-                    <div class="alert alert-warning-mp">
-                        Refine Search Limit the search to data that includes features in the displayed area.
-                    </div>
-                    <div zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
-                </div>
-                <div class="search-pagination">
-                </div>
-            </div>
-            <div class="col-md-7 clearfix result-panel">
-                <div class="row result-table">
+                <div class="result-table">
                   <div class="clearfix search-results panel">
                     <table class="table table-hover list-results panel-body">
                       <tr>
@@ -60,9 +28,64 @@
                     </table>
                   </div>
                 </div>
+
+                <div class="search-pagination">
+                </div>
+            </div>
+            <div class="col-md-7 clearfix result-panel">
+                <div class="panel panel-default" id="mapreview" name="loom-map-panel">
+                  <div class="alert alert-title alert-layer-mp">
+                      Refine Search Limit the search to data that includes features in the displayed area.
+                  </div>
+                  <div class="panel-body">
+                    <div class="loom-map" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                  </div>
+                </div>
+
+                <div class="filter panel panel-default" name="layer-information-panel">
+                  <div class="alert alert-title alert-warning-mp">
+                    <h3>{{currentLayer.Title}}</h3>
+                  </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                          <h4>Abstract</h4>
+                          <p class="abstract">{{currentLayer.Abstract}}</p>
+                        </div>
+                        <div class="col-md-6 col-sm-6 row">
+                          <div class="col-sm-5 col-xs-5 text-right layer-info-right">
+                            <div>DATA</div>
+                            <div>DATE</div>
+                            <div>OWNER</div>
+                            <div>CATEGORY</div>
+                          </div>
+                          <div class="col-sm-7 col-xs-7 layer-info-left">
+                            <div class="ellipsis">{{currentLayer.Name || 'Raster'}}</div>
+                            <div>dd/mm/yy</div>
+                            <div>{{currentLayer.author || 'admin'}}</div>
+                            <div>{{currentLayer.type || 'Society'}}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-cart">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Cart</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-hover list-results">
+                      <tr class="result" ng-repeat="layer in cart">
+                        <td>{{layer.Title}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
                 <div class="row actions" style="">
-                    <button type="button" ng-clik="clearCart();" class="btn btn-default btn-lg">CLEAR</button>
-                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!selectedLayer.add" class="btn btn-default btn-lg">ADD</button>
+                    <button type="button" ng-click="clearCart();" class="btn btn-cart btn-lg">CLEAR</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!selectedLayer.add" class="btn btn-cart btn-lg">ADD</button>
                 </div>
 
             </div>

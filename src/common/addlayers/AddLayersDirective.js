@@ -1,9 +1,12 @@
 (function() {
 
-  var module = angular.module('loom_addlayers_directive', []);
+  var module = angular.module('loom_addlayers_directive', [
+    'rzModule',
+    'loom_addlayersfilter_directive'
+  ]);
 
   module.directive('loomAddlayers',
-      function($rootScope, serverService, mapService, geogigService, $translate, dialogService) {
+      function($rootScope, serverService, mapService, geogigService, $translate, dialogService, $timeout) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
@@ -27,6 +30,29 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
             scope.cart = [];
+
+            scope.slider = {
+              minValue: 1900,
+              maxValue: 2014,
+              options: {
+                floor: 1500,
+                ceil: 2016,
+                step: 1,
+                noSwitching: true, hideLimitLabels: true,
+                getSelectionBarColor: function() {
+                  return '#77d5d5';
+                },
+                translate: function() {
+                  return '';
+                }
+              }
+            };
+
+            $('#add-layer-dialog').on('shown.bs.modal', function() {
+              $timeout(function() {
+                scope.$broadcast('rzSliderForceRender');
+              });
+            });
 
             var resetText = function() {
               scope.filterOptions.text = null;
