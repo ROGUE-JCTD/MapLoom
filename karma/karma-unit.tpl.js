@@ -19,7 +19,7 @@ module.exports = function ( karma ) {
     frameworks: [ 'jasmine' ],
     plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage' ],
     preprocessors: {
-      'src/**/*.js': ['coverage']
+      'src/**/!(*spec).js': ['coverage']
     },
 
     /**

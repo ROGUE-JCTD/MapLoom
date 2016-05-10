@@ -1,4 +1,4 @@
-MapLoom
+MapLoom [![Build Status](https://travis-ci.org/terranodo/MapLoom.svg?branch=hypermap)](https://travis-ci.org/terranodo/MapLoom) [![Code Climate](https://codeclimate.com/github/terranodo/MapLoom/badges/gpa.svg)](https://codeclimate.com/github/terranodo/MapLoom) [![Test Coverage](https://codeclimate.com/github/terranodo/MapLoom/badges/coverage.svg)](https://codeclimate.com/github/terranodo/MapLoom/coverage)
 ============
 
 MapLoom is a web client that leverages GeoGig to allow users to edit geographic information, view history, and sync layers with other GeoGig repositories.  The goal is to put the power of distributed versioned editing into the hands of users.  It's been developed to sit inside of [GeoNode](http://geonode.org) as an alternative to the default GeoNode map client but it can also be set up to stand alone. The best way to see MapLoom in action is to create a GeoSHAPE virtual machine. Please visit [How To Get GeoSHAPE](https://docs.google.com/document/d/1KMpk6dXuqvwfEi0pfRpaGY62j6ikoYtpYUPU0sJQAmk) document for instructions.
