@@ -56,6 +56,86 @@ describe('StoryLegendDirective', function() {
         expect(searchSpy).toHaveBeenCalled();
       });
     });
+    describe('#next page', function() {
+      it('sets from', function() {
+        compiledElement.scope().nextPage();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null,
+          from: 10,
+          size: 10
+        }));
+      });
+      it('next page if from is set', function() {
+        compiledElement.scope().filterOptions.from = 10;
+        compiledElement.scope().nextPage();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null,
+          from: 20,
+          size: 10
+        }));
+      });
+      it('calls search', function() {
+        compiledElement.scope().nextPage();
+        expect(searchSpy).toHaveBeenCalled();
+      });
+    });
+    describe('#hasNext', function() {
+      it('returns true if has next', function() {
+        spyOn(compiledElement.scope(), 'getResults').and.returnValue([1,1,1,1,1,1,1,1,1,1]);
+        expect(compiledElement.scope().hasNext()).toEqual(true);
+      });
+      it('returns false if result size is less than the search size', function() {
+        spyOn(compiledElement.scope(), 'getResults').and.returnValue([1]);
+        expect(compiledElement.scope().hasNext()).toEqual(false);
+      });
+    });
+    describe('#hasPrevious', function() {
+      it('returns true if has previous', function() {
+        compiledElement.scope().filterOptions.from = 10;
+        expect(compiledElement.scope().hasPrevious()).toEqual(true);
+      });
+      it('returns false if result is first page', function() {
+        compiledElement.scope().filterOptions.from = null;
+        expect(compiledElement.scope().hasPrevious()).toEqual(false);
+      });
+    });
+    describe('#previous page', function() {
+      it('sets from', function() {
+        compiledElement.scope().previousPage();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null,
+          from: null,
+          size: 10
+        }));
+      });
+      it('previous page if from is set', function() {
+        compiledElement.scope().filterOptions.from = 20;
+        compiledElement.scope().previousPage();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null,
+          from: 10,
+          size: 10
+        }));
+      });
+      it('previous is first page set to null', function() {
+        compiledElement.scope().filterOptions.from = 10;
+        compiledElement.scope().previousPage();
+        expect(compiledElement.scope().filterOptions).toEqual(jasmine.objectContaining({
+          text: null,
+          owner: null,
+          from: null,
+          size: 10
+        }));
+      });
+      it('calls search', function() {
+        compiledElement.scope().previousPage();
+        expect(searchSpy).toHaveBeenCalled();
+      });
+    });
   });
   describe('#search', function() {
     describe('#searchMyFavorites', function() {

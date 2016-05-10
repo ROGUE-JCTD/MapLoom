@@ -1,7 +1,7 @@
 describe('addLayers/ServerService', function() {
   var serverService, $httpBackend;
   var configService = {};
-  var filterOptions = { owner: null, text: null };
+  var filterOptions = { owner: null, text: null, from: null, size: null };
   beforeEach(module('MapLoom'));
   beforeEach(module('loom_addlayers'));
 
@@ -212,7 +212,9 @@ describe('addLayers/ServerService', function() {
       it('returns the url', function() {
         var filterOptions = {
           owner: null,
-          text: null
+          text: null,
+          from: null,
+          size: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory');
       });
@@ -221,7 +223,9 @@ describe('addLayers/ServerService', function() {
       it('returns the url with q', function() {
         var filterOptions = {
           owner: null,
-          text: 'Ocean'
+          text: 'Ocean',
+          from: null,
+          size: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
       });
@@ -233,9 +237,31 @@ describe('addLayers/ServerService', function() {
       it('returns the url with q', function() {
         var filterOptions = {
           owner: true,
-          text: null
+          text: null,
+          from: null,
+          size: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
+      });
+    });
+    describe('pagination', function() {
+      it('first page has no from', function() {
+        var filterOptions = {
+          owner: null,
+          text: null,
+          from: null,
+          size: 10
+        };
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10');
+      });
+      it('pagination with from', function() {
+        var filterOptions = {
+          owner: null,
+          text: null,
+          from: 10,
+          size: 10
+        };
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10&from=10');
       });
     });
   });
@@ -305,7 +331,9 @@ describe('addLayers/ServerService', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
         var filterOptions = {
           owner: null,
-          text: 'Dijkstra'
+          text: 'Dijkstra',
+          from: null,
+          size: null
         };
         serverService.addSearchResultsForFavorites({}, filterOptions);
         $httpBackend.flush();
