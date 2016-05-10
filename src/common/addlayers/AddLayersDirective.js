@@ -29,6 +29,7 @@
             ];
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
+            scope.cart = [];
 
             scope.slider = {
               minValue: 1900,
@@ -135,13 +136,10 @@
 
             scope.selectRow = function(layerConfig) {
               scope.selectedLayer = layerConfig;
+              scope.addToCart(layerConfig);
             };
 
-            scope.addLayers = function(layerConfig) {
-              console.log(layerConfig);
-
-              scope.selectedLayer = {};
-              $('#add-layer-dialog').modal('hide');
+            var addLayer = function(layerConfig) {
               if (layerConfig.add) {
                 // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
                 //       maploom such as geonode. At this point, only source (server id), and name are used. If you
@@ -157,6 +155,13 @@
                 mapService.addLayer(minimalConfig);
                 mapService.zoomToExtentForProjection(layerConfig.extent, ol.proj.get(layerConfig.CRS));
               }
+            };
+            scope.addLayers = function() {
+
+              scope.selectedLayer = {};
+              $('#add-layer-dialog').modal('hide');
+              scope.cart.forEach(addLayer);
+              scope.clearCart();
             };
 
             var bboxStyle = function() {
@@ -184,6 +189,23 @@
                 layer,
                 bboxLayer
               ];
+            };
+
+            scope.addToCart = function(layerConfig) {
+              var configIndex = scope.cart.indexOf(layerConfig);
+              if (configIndex == -1) {
+                scope.cart.push(layerConfig);
+              } else {
+                scope.cart.splice(configIndex, 1);
+              }
+            };
+
+            scope.isInCart = function(layerConfig) {
+              return scope.cart.indexOf(layerConfig) !== -1 ? true : false;
+            };
+
+            scope.clearCart = function() {
+              scope.cart = [];
             };
 
             scope.changeCredentials = function() {

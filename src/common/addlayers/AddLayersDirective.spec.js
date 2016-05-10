@@ -92,7 +92,7 @@ describe('StoryLegendDirective', function() {
     it('previewLayers includes the created layer', function() {
       var createdLayer = { name: 'Test' };
       compiledElement.scope().currentServerId = 0;
-      spyOn(mapService, 'createLayerWithFullConfig').andReturn(createdLayer);
+      spyOn(mapService, 'createLayerWithFullConfig').and.returnValue(createdLayer);
       var layerConfig = { CRS: 'Test', Name: 'Test' };
       compiledElement.scope().previewLayer(layerConfig);
       expect(compiledElement.scope().previewLayers).toContain(createdLayer);
@@ -105,27 +105,78 @@ describe('StoryLegendDirective', function() {
     });
   });
   describe('#addLayers', function() {
-    var layerConfig;
+    var layerConfig, minimalConfig, addLayerSpy, zoomToExtentForProjectionSpy;
     beforeEach(function() {
-      layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+      layerConfig = { add: true, Name: 'Test', extent: [], CRS: 'EPSG:4326' };
+      compiledElement.scope().cart = [layerConfig];
+      scope.$digest();
+      minimalConfig = { source: 0, name: layerConfig.Name };
+      addLayerSpy = spyOn(mapService, 'addLayer');
+      zoomToExtentForProjectionSpy = spyOn(mapService, 'zoomToExtentForProjection');
     });
     it('adds the layer via mapSerice addLayer', function() {
-      var spy = spyOn(mapService, 'addLayer');
-      spyOn(mapService, 'zoomToExtentForProjection');
-      compiledElement.scope().addLayers(layerConfig);
-      expect(spy).toHaveBeenCalled();
+      compiledElement.scope().addLayers();
+      expect(addLayerSpy).toHaveBeenCalledWith(minimalConfig);
     });
     it('zooms to extent via mapService zoomToExtentForProjection', function() {
-      spyOn(mapService, 'addLayer');
-      var spy = spyOn(mapService, 'zoomToExtentForProjection');
-      compiledElement.scope().addLayers(layerConfig);
-      expect(spy).toHaveBeenCalled();
+      compiledElement.scope().addLayers();
+      expect(zoomToExtentForProjectionSpy).toHaveBeenCalled();
     });
     it('layer should have extent and CRS', function() {
-      spyOn(mapService, 'addLayer');
-      var spy = spyOn(mapService, 'zoomToExtentForProjection');
       compiledElement.scope().addLayers(layerConfig);
-      expect(spy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
+      expect(zoomToExtentForProjectionSpy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
+    });
+    it('clears the cart', function() {
+      compiledElement.scope().addLayers();
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+  });
+  describe('#addToCart', function() {
+    it('cart is empty by default', function() {
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+    it('add an item to the cart', function() {
+      var layerConfig = { add: true, extent: [], CRS: 'EPSG:4326' };
+      compiledElement.scope().addToCart(layerConfig);
+      expect(compiledElement.scope().cart.length).toEqual(1);
+    });
+    it('adding again removes the cart', function() {
+      var layerConfig = { add: true, Title: 'Test', extent: [], CRS: 'EPSG:4326' };
+      compiledElement.scope().addToCart(layerConfig);
+      compiledElement.scope().addToCart(layerConfig);
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+    describe('with results', function() {
+      beforeEach(function() {
+        var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
+        spyOn(serverService, 'getLayersConfigByName').and.returnValue([layerConfig]);
+        scope.$digest();
+      });
+      it('click on a result adds it to cart', function() {
+        compiledElement.find('tr.result').click();
+        expect(compiledElement.scope().cart.length).toEqual(1);
+      });
+      it('click on a result adds it to cart', function() {
+        compiledElement.find('tr.result').click();
+        expect(compiledElement.scope().cart.length).toEqual(1);
+      });
+    });
+  });
+  describe('#clearCart', function() {
+    it('clears the cart', function() {
+      compiledElement.scope().cart = [1];
+      compiledElement.scope().clearCart();
+      expect(compiledElement.scope().cart.length).toEqual(0);
+    });
+  });
+  describe('#isInCart', function() {
+    it('returns true if in cart', function() {
+      compiledElement.scope().cart = [1];
+      expect(compiledElement.scope().isInCart(1)).toEqual(true);
+    });
+    it('returns false if not in cart', function() {
+      compiledElement.scope().cart = [1];
+      expect(compiledElement.scope().isInCart(2)).toEqual(false);
     });
   });
 });
