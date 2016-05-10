@@ -53,11 +53,15 @@
                         <th>Domain</th>
                       </tr>
                       <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
-                        ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
+                        ng-repeat="layer in layersConfig = getResults() | filter:filterLayers | filter:filterAddedLayers">
                         <td>{{ layer.Title }}</td>
                         <td>{{ layer.domain }}</td>
                       </tr>
                     </table>
+                    <div class="actions">
+                      <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default btn-lg">Previous</button>
+                      <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default btn-lg">Next</button>
+                    </div>
                   </div>
                 </div>
                 <div class="row actions" style="">
