@@ -1,5 +1,6 @@
 (function() {
   var module = angular.module('loom_box_service', []);
+  var stutils = storytools.core.time.utils;
   var boxes_ = [[]];
   var service_ = null;
   var rootScope_ = null;
@@ -197,6 +198,17 @@
       if (getTime(props.start_time) > getTime(props.end_time)) {
         toastr.error('Start Time must be before End Time', 'Invalid Time');
         return false;
+      }
+
+      var boxRange = stutils.createRange(props.start_time, props.end_time);
+      for (var iBox = 0; iBox < boxes_[chapter_index].length; iBox += 1) {
+        var testBox = boxes_[chapter_index][iBox];
+        var testBoxRange = stutils.createRange(testBox.start_time, testBox.end_time);
+        if (boxRange.intersects(testBoxRange)) {
+          var overlapDates = 'StoryBox dates overlap with another storyBox: ' + testBox.title;
+          toastr.error(overlapDates, 'Overlapping Dates');
+          return false;
+        }
       }
       var storyBox = new Box(props);
       boxes_[chapter_index].push(storyBox);
