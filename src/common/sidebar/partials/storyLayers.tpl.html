@@ -12,7 +12,7 @@
     <label for="baseMapList">Choose Your Basemap</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'choose_your_basemap_tooltip' | translate }}"></i>
 
     <select class="form-control" name="baseMapList" id="baseMapList"
-            ng-init="baseMap=mapService.getBaseMaps()[4]"
+            ng-init="baseMap=initBasemap()"
             ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
             ng-model="baseMap"
             ng-change="mapService.selectedBaseMap(baseMap)">

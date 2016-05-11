@@ -101,6 +101,16 @@
         $scope.box = {};
         $scope.pin = {};
 
+        $scope.initBasemap = function() {
+          var baseMaps = mapService.getBaseMaps();
+          for (var iMap = 0; iMap < baseMaps.length; iMap += 1) {
+            var config = baseMaps[iMap].get('metadata').config;
+            if (goog.isDefAndNotNull(config.visibility) && config.visibility === true) {
+              return baseMaps[iMap];
+            }
+          }
+        };
+
         $scope.addStoryBox = function(box) {
           var clone = angular.copy(box);
           goog.object.extend(clone, {'id': new Date().getUTCMilliseconds()});
