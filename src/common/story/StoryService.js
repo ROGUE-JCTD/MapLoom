@@ -102,6 +102,18 @@
         }
       });
 
+      rootScope_.$on('chapter-switch', function(event, active_index) {
+        if (goog.isDefAndNotNull(service_.configurations[active_index].zoom) && goog.isDefAndNotNull(service_.configurations[active_index].center)) {
+          var pan = ol.animation.pan({source: mapService_.map.getView().getCenter()});
+          var zoom = ol.animation.zoom({resolution: mapService_.map.getView().getResolution()});
+          mapService_.map.beforeRender(pan, zoom);
+          mapService_.map.getView().setCenter(service_.configurations[active_index].center);
+          mapService_.map.getView().setZoom(service_.configurations[active_index].zoom);
+        } else {
+          mapService_.zoomToLargestStoryLayer();
+        }
+      });
+
       return this;
     };
 
@@ -462,6 +474,8 @@
         new_chapter.map.layers.splice(new_chapter.map.layers.length - 1, 1);
         goog.object.remove(new_chapter.sources, goog.object.getCount(new_chapter.sources) - 1);
       }
+      delete new_chapter.center;
+      delete new_chapter.zoom;
       new_chapter['id'] = this.id;
       new_chapter.map['id'] = 0;
       new_chapter.about.title = '';

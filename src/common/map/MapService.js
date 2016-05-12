@@ -235,10 +235,6 @@
         }
       });
 
-      $rootScope.$on('chapter-switch', function(event, active_index) {
-        service_.zoomToLargestStoryLayer();
-      });
-
       $rootScope.$on('chapter-added', function(event) {
         service_.zoomToExtent();
       });
