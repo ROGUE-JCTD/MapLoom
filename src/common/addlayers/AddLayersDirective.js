@@ -170,7 +170,7 @@
 
             scope.selectRow = function(layerConfig) {
               scope.selectedLayer = layerConfig;
-              scope.addOrRemoveToCart(layerConfig);
+              scope.addToCart(layerConfig);
             };
 
             var addLayer = function(layerConfig) {
@@ -225,7 +225,7 @@
               ];
             };
 
-            scope.addOrRemoveToCart = function(layerConfig) {
+            scope.addToCart = function(layerConfig) {
               var configIndex = scope.cart.indexOf(layerConfig);
               if (configIndex === -1) {
                 scope.cart.push(layerConfig);
