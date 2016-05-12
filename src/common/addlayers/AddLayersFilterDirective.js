@@ -37,7 +37,6 @@
           inputId = inputId || 'inputMaxValue';
           var inputValue = element.find('#' + inputId).val();
           inputValue = isNaN(Number(inputValue)) ? inputValue : Number(inputValue);
-
           var keySlider = sliderValues.indexOf(inputValue);
           if (keySlider !== -1) {
             if (inputId === 'inputMaxValue') {
