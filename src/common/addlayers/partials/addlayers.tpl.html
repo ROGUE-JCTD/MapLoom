@@ -17,7 +17,7 @@
                       </tr>
                       <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
                         ng-repeat="layer in layersConfig = getResults() | filter:filterLayers | filter:filterAddedLayers">
-                        <td>{{ layer.Title }}</td>
+                        <td class="ellipsis">{{ layer.Title }}</td>
                         <td>{{ layer.domain }}</td>
                       </tr>
                     </table>
