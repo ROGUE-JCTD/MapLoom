@@ -33,29 +33,6 @@
             scope.selectedLayer = {};
             scope.cart = [];
 
-            scope.slider = {
-              minValue: 1900,
-              maxValue: 2014,
-              options: {
-                floor: 1500,
-                ceil: 2016,
-                step: 1,
-                noSwitching: true, hideLimitLabels: true,
-                getSelectionBarColor: function() {
-                  return '#77d5d5';
-                },
-                translate: function() {
-                  return '';
-                }
-              }
-            };
-
-            $('#add-layer-dialog').on('shown.bs.modal', function() {
-              $timeout(function() {
-                scope.$broadcast('rzSliderForceRender');
-              });
-            });
-
             var resetText = function() {
               scope.filterOptions.text = null;
             };
