@@ -170,7 +170,7 @@
 
             scope.selectRow = function(layerConfig) {
               scope.selectedLayer = layerConfig;
-              scope.addToCart(layerConfig);
+              scope.addOrRemoveToCart(layerConfig);
             };
 
             var addLayer = function(layerConfig) {
@@ -225,9 +225,9 @@
               ];
             };
 
-            scope.addToCart = function(layerConfig) {
+            scope.addOrRemoveToCart = function(layerConfig) {
               var configIndex = scope.cart.indexOf(layerConfig);
-              if (configIndex == -1) {
+              if (configIndex === -1) {
                 scope.cart.push(layerConfig);
               } else {
                 scope.cart.splice(configIndex, 1);
@@ -240,6 +240,13 @@
 
             scope.clearCart = function() {
               scope.cart = [];
+            };
+
+            scope.clearLayerFromCart = function(layerConfig) {
+              var configIndex = scope.cart.indexOf(layerConfig);
+              if (configIndex !== -1) {
+                scope.cart.splice(configIndex, 1);
+              }
             };
 
             scope.changeCredentials = function() {
