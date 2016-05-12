@@ -369,6 +369,7 @@
         console.log('----[ mapstory.save success. ', data, status, headers, config);
         if (cfg.is_published === true) {
           toastr.success('Congratulations. Your MapStory has been published.', 'Publish Successful');
+          $('#mapPublish').modal();
         }else {
           toastr.success('Your MapStory has successfully been saved.', 'Save Successful');
         }

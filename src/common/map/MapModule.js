@@ -7,6 +7,7 @@
     'loom_chapter_delete',
     'loom_addlayers',
     'loom_storybox',
-    'loom_chapter_title'
+    'loom_chapter_title',
+    'loom_map_publish'
   ]);
 }());
