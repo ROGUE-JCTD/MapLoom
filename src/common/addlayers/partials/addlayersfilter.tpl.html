@@ -15,12 +15,14 @@
         </div>
         <div class="row range-search">
           <div class="col-lg-2 col-lg-offset-1  col-sm-3  col-xs-3 text-right range-search-label">FROM</div>
-          <div class="col-lg-3 col-sm-3 col-xs-7"><input type="text" name="name" ng-model="slider.minValue" class="form-control search-input input-sm"></div>
-          <div class="col-lg-1 col-sm-3 col-xs-3 text-right range-search-label">TO</div>
-          <div class="col-lg-3 col-sm-3 col-xs-7"><input type="text" name="name" ng-model="slider.maxValue" class="form-control search-input input-sm"></div>
-          <div class="col-md-12">
-            <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
+          <div class="col-lg-3 col-sm-3 col-xs-7">
+            <input type="text" name="name" id="inputMinValue" ng-change="setRange('inputMinValue')" ng-model="sliderValues[slider.minValue]" class="form-control search-input input-sm">
           </div>
+          <div class="col-lg-1 col-sm-3 col-xs-3 text-right range-search-label">TO</div>
+          <div class="col-lg-3 col-sm-3 col-xs-7">
+            <input type="text" name="name" id="inputMaxValue" ng-change="setRange('inputMaxValue')" ng-model="sliderValues[slider.maxValue]" class="form-control search-input input-sm">
+          </div>
+          <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
         </div>
 
         <div class="row">
