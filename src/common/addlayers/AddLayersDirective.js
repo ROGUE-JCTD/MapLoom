@@ -242,13 +242,6 @@
               scope.cart = [];
             };
 
-            scope.clearLayerFromCart = function(layerConfig) {
-              var configIndex = scope.cart.indexOf(layerConfig);
-              if (configIndex !== -1) {
-                scope.cart.splice(configIndex, 1);
-              }
-            };
-
             scope.changeCredentials = function() {
               serverService.changeCredentials(scope.currentServer);
             };
