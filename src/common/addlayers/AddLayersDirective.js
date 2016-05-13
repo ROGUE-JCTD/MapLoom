@@ -204,7 +204,7 @@
 
             scope.addToCart = function(layerConfig) {
               var configIndex = scope.cart.indexOf(layerConfig);
-              if (configIndex == -1) {
+              if (configIndex === -1) {
                 scope.cart.push(layerConfig);
               } else {
                 scope.cart.splice(configIndex, 1);

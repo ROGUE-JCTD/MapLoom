@@ -71,7 +71,10 @@
                   <div class="panel-body">
                     <table class="table table-hover list-results">
                       <tr class="result" ng-repeat="layer in cart">
-                        <td>{{layer.Title}}</td>
+                        <td class="remove-button">
+                          {{layer.Title}}
+                          <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
+                        </td>
                       </tr>
                     </table>
                   </div>
@@ -79,7 +82,7 @@
 
                 <div class="row actions" style="">
                     <button type="button" ng-click="clearCart();" class="btn btn-cart btn-lg">CLEAR</button>
-                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!selectedLayer.add" class="btn btn-cart btn-lg">ADD</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!cart.length" class="btn btn-cart btn-lg">ADD</button>
                 </div>
 
             </div>
