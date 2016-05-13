@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
             </div>
-            <div class="tab-content col-md-5 explorer-content">
+            <div class="tab-content col-md-7 explorer-content">
                 <div class="tab-pane active" id="explore">
                   <div loom-addlayersfilter></div>
                 </div>
@@ -31,7 +31,7 @@
                 <div class="search-pagination">
                 </div>
             </div>
-            <div class="col-md-7 clearfix result-panel">
+            <div class="col-md-5 clearfix result-panel">
                 <div class="panel panel-default" id="mapreview" name="loom-map-panel">
                   <div class="alert alert-title alert-layer-mp">
                       Refine Search Limit the search to data that includes features in the displayed area.
@@ -48,20 +48,15 @@
                     <div class="panel-body">
                       <div class="row">
                         <div class="col-md-6 col-sm-6">
-                          <h4>Abstract</h4>
                           <p class="abstract">{{currentLayer.Abstract}}</p>
                         </div>
                         <div class="col-md-6 col-sm-6 row">
-                          <div class="col-sm-5 col-xs-5 text-right layer-info-right">
-                            <div>DATA</div>
+                          <div class="col-sm-5 col-xs-5 layer-info-right">
                             <div>DATE</div>
-                            <div>OWNER</div>
                             <div>CATEGORY</div>
                           </div>
                           <div class="col-sm-7 col-xs-7 layer-info-left">
-                            <div class="ellipsis">{{currentLayer.Name || 'Raster'}}</div>
                             <div>dd/mm/yy</div>
-                            <div>{{currentLayer.author || 'admin'}}</div>
                             <div>{{currentLayer.type || 'Society'}}</div>
                           </div>
                         </div>
