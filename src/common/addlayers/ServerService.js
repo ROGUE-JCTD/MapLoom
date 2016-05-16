@@ -651,6 +651,20 @@ var SERVER_SERVICE_USE_PROXY = true;
       return url;
     };
 
+    this.getNumberOfDocsForHyper = function(server, layerDocsCallback) {
+      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_stats/docs';
+      var config = createAuthorizationConfigForServer(server);
+      http_.get(searchUrl, config).then(function(xhr) {
+        if (xhr.status === 200) {
+          return layerDocsCallback(xhr.data);
+        } else {
+          return layerDocsCallback(false);
+        }
+      }, function(xhr) {
+        return layerDocsCallback(false);
+      });
+    };
+
     this.populateLayersConfigElastic = function(server, filterOptions) {
       //var searchUrl = 'http://beta.mapstory.org/api/layers/search/?is_published=true&limit=100';
       var searchUrl = '/api/layers/search/?is_published=true&limit=100';
