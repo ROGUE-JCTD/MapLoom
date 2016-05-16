@@ -18,9 +18,9 @@
                 {
                   // UpdateTourStep(0)
                   target: 'mainMenu',
-                  placement: 'right',
+                  placement: 'bottom',
                   showNextButton: true,
-                  content: 'This is the sidebar where you will work to compose your MapStory.'
+                  content: 'This is the sidebar where you will work to compose your MapStory.  Give your MapStory a title and click Save to begin.'
                 },
                 {
                   // UpdateTourStep(1)
