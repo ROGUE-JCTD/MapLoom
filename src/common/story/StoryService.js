@@ -40,6 +40,7 @@
       //When initializing the story service the mapService should already be initialized
       this.copy_config = angular.copy(mapService_.configuration);
       this.title = this.copy_config.about.title || '';
+      this.username = this.copy_config.username;
       this.abstract = this.copy_config.about.abstract || '';
       this.category = null;
       this.is_published = false;

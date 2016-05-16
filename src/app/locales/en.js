@@ -374,7 +374,16 @@
     'load_failed': 'Load Failed',
     'layer_loading' : ' is Loading...',
     'update_storybox': 'StoryBox has been updated.',
-    'update_box_title': 'StoryBox Updated'
+    'update_box_title': 'StoryBox Updated',
+    'your_data': 'Your Data',
+    'profile': 'Profile',
+    'recent_activity': 'Recent Activity',
+    'inbox': 'Inbox',
+    'help': 'Help',
+    'help_url': 'http://help.mapstory.org',
+    'log_out': 'Log Out',
+    'exit_composer': 'Exit Composer'
+
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

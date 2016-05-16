@@ -11,7 +11,22 @@
             <li><a href="/journal" target="_blank">Journal</a></li>
         </ul>
     </span>
-    <i class="fa fa-reorder" ng-click="toggleSidebar('mainMenu')"></i>
+    <i class="fa fa-reorder pull-right" ng-click="toggleSidebar('mainMenu')"></i>
+    <span class="dropdown">
+        <button class="btn btn-profile pull-right" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-author"></i>{{ storyService.username }}</button>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+            <li><a ng-href="/storyteller/{{ storyService.username}}" target="_blank">{{ 'your_data' | translate }}</a></li>
+            <li class="modal-divider"></li>
+            <li><a ng-href="/storyteller/{{ storyService.username}}" target="_blank">{{ 'profile' | translate }}</a></li>
+            <li><a ng-href="/social/recent-activity" target="_blank">{{ 'recent_activity' | translate }}</a></li>
+            <li><a ng-href="/messages/inbox" target="_blank">{{ 'inbox' | translate }}</a></li>
+            <li class="modal-divider"></li>
+            <!--<li><a ng-href="{{ 'help_url' | translate }}" target="_blank">{{ 'help' | translate }}</a></li>-->
+            <li class="modal-divider"></li>
+            <li><a ng-href="/" target="_blank">{{ 'exit_composer' | translate }}</a></li>
+        </ul>
+    </span>
+
 </div>
 
 <div id="composerIconNav" ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
