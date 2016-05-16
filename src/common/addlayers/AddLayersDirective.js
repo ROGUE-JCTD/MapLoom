@@ -20,7 +20,8 @@
               owner: null,
               text: null,
               from: null,
-              size: 10
+              size: 10,
+              catalogKey: 0
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;

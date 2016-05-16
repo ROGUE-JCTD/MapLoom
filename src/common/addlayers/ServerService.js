@@ -32,6 +32,11 @@ var SERVER_SERVICE_USE_PROXY = true;
       return this;
     };
 
+    this.catalogList = [
+      {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},
+      {name: 'hypersearch catalog 2', url: 'http://geoshape.geointservices.io/search/hypermap/'}
+    ];
+
     this.getServers = function() {
       return servers;
     };
@@ -661,9 +666,12 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_search?';
-      if (filterOptions !== null) {
+      var searchUrl;
+      if (goog.isDefAndNotNull(filterOptions)) {
+        searchUrl = service_.catalogList[filterOptions.catalogKey].url + '_search?';
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+      }else {
+        searchUrl = service_.catalogList[0].url + '_search?';
       }
       return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
     };
