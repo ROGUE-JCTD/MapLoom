@@ -23,6 +23,8 @@
   Pin.prototype.constructor = Pin;
   var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback'];
   var filterPropertiesFromValidation = ['id', '_id', 'content', 'media', 'in_map', 'in_timeline', 'pause_playback'];
+  var embed_width = '"250"';
+  var embed_height = '"250"';
 
   model_attributes.forEach(function(prop) {
     Object.defineProperty(Pin.prototype, prop, {
@@ -185,6 +187,13 @@
       return true;
     };
 
+    this.isUrl = function(str) {
+      if (!/^(f|ht)tps?:\/\//i.test(str)) {
+        return false;
+      }
+      return true;
+    };
+
     this.addPin = function(props, chapter_index) {
       var pinValidated = this.validateAllPinProperties(props);
       if (pinValidated !== true) {
@@ -203,6 +212,12 @@
       if (getTime(props.start_time) > getTime(props.end_time)) {
         toastr.error('Start Time must be before End Time', 'Invalid Time');
         return false;
+      }
+      //TODO: Check media whitelist and sanitize embed size.
+      if (goog.isDefAndNotNull(props.media) && !this.isUrl(props.media)) {
+        props.media = props.media.replace(/width="\d+"/i, 'width=' + embed_width);
+        props.media = props.media.replace(/height="\d+"/i, 'height=' + embed_height);
+
       }
       var storyPin = new Pin(props);
       pins_[chapter_index].push(storyPin);

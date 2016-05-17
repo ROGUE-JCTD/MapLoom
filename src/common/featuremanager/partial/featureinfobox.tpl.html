@@ -37,7 +37,7 @@
                 <br>
                 <div ng-if="isUrl(featureManagerService.getSelectedItemProperties()['media'])"  ng-init="determineLinkType(featureManagerService.getSelectedItemProperties()['media']) ">
                     <div ng-switch on="linkType" >
-                        <img ng-switch-when="image" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}">
+                        <img class="img-responsive" ng-switch-when="image" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}">
                         <video ng-switch-when="video" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}"></video>
                         <audio ng-switch-when="audio" ng-src="{{featureManagerService.getSelectedItemProperties()['media']}}"></audio>
                         <p ng-switch-default >No valid media bound</p>
