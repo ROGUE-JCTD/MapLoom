@@ -668,11 +668,15 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.addSearchResultsForHyper = function(server, filterOptions) {
       var searchUrl = service_.catalogList[0].url + '_search?';
       if (filterOptions !== null) {
-        searchUrl = service_.catalogList[filterOptions.catalogKey].url + '_search?';
+        var catalogKey = filterOptions.catalogKey;
+        if (!isNaN(Number(catalogKey))) {
+          searchUrl = service_.catalogList[catalogKey].url + '_search?';
+        }
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
       return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
     };
+
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
       if (filterOptions !== null) {
