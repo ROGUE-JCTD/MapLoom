@@ -666,12 +666,10 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl;
-      if (goog.isDefAndNotNull(filterOptions)) {
+      var searchUrl = service_.catalogList[0].url + '_search?';
+      if (filterOptions !== null) {
         searchUrl = service_.catalogList[filterOptions.catalogKey].url + '_search?';
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
-      }else {
-        searchUrl = service_.catalogList[0].url + '_search?';
       }
       return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
     };
