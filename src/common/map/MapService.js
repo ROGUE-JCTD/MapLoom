@@ -1490,6 +1490,13 @@
       this.map.addLayer(this.editLayer);
     };
 
+    this.clearAllInteractions = function() {
+      this.removeDraw();
+      this.removeModify();
+      this.removeSelect();
+      this.clearEditLayer();
+    };
+
     this.clearEditLayer = function() {
       this.editLayer.getSource().clear();
       this.map.removeLayer(this.editLayer);

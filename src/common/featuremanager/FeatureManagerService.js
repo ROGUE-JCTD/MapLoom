@@ -450,6 +450,7 @@
             mapService_.removeDraw();
             mapService_.removeSelect();
             mapService_.removeModify();
+            mapService_.clearEditLayer();
             service_.endPinInsert(false);
           }), geometryType);
       exclusiveModeService_.addMode = true;

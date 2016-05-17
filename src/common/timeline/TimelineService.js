@@ -180,6 +180,9 @@
         pins_ = pinService_.getPins(chapter_index);
         pinsForMap_ = $filter('filter')(pins_, { values_: {in_map: true} });
         service_.initialize();
+        if (pinsForMap_.length === 0) {
+          mapService_.map.removeLayer(mapService_.pinLayer);
+        }
       });
 
       return service_;

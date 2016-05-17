@@ -9,6 +9,7 @@
   //var mapService_ = null;
   var translate_ = null;
   var dialogService_ = null;
+  var mapService_ = null;
   var Pin = function(data) {
     var copyData = angular.copy(data);
     delete data.geometry;
@@ -36,12 +37,13 @@
   });
 
   module.provider('pinService', function() {
-    this.$get = function($rootScope, $http, dialogService, $translate, configService) {
+    this.$get = function($rootScope, $http, dialogService, $translate, mapService, configService) {
       service_ = this;
       rootScope_ = $rootScope;
       httpService_ = $http;
       dialogService_ = dialogService;
       translate_ = $translate;
+      mapService_ = mapService;
       if (goog.isDefAndNotNull(configService.configuration.chapters)) {
         angular.forEach(configService.configuration.chapters, function(config, index) {
           if (!goog.isDefAndNotNull(pins_[index])) {
@@ -210,6 +212,10 @@
     this.updatePin = function(pin, chapter_index) {
       //Only set new geometry if location was saved on pin object
       if (goog.isDefAndNotNull(pin.geometry)) {
+        mapService_.removeDraw();
+        mapService_.removeSelect();
+        mapService_.removeModify();
+        mapService_.map.removeLayer(mapService_.editLayer);
         var newGeom = new ol.geom.Point(pin.geometry.coordinates);
         pin.setGeometry(newGeom);
       }
