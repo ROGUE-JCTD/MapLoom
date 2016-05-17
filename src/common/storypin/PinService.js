@@ -58,7 +58,10 @@
             geojson.features.map(function(f) {
               var props = f.properties;
               props.geometry = $.parseJSON(f.geometry);
+              props.geometry.coordinates = ol.proj.transform(props.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
               props.id = f.id;
+              props.start_time = props.start_time * 1000;
+              props.end_time = props.end_time * 1000;
               var storyPin = new Pin(props);
               pins_[index].push(storyPin);
             });

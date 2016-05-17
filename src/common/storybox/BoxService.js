@@ -51,6 +51,8 @@
             geojson.features.map(function(f) {
               var props = f.properties;
               props.id = f.id;
+              props.start_time = props.start_time * 1000;
+              props.end_time = props.end_time * 1000;
               var storyBox = new Box(props);
               boxes_[index].push(storyBox);
             });
