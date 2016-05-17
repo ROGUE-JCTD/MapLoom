@@ -28,7 +28,7 @@
                                         <div class = "cards-body">
                                           <img class = "img-responsive" src = "{{layer.thumbnail_url}}" height="150" width="200">
                                             <h4>{{ layer.Title }}</h4>
-                                            <h5><i class="fa fa-user"></i> {{ layer.author }}</h5>
+                                            <h5><i class="fa fa-user"></i> {{ layer }}</h5>
                                             <h5 ng-if="layer.Category != null"><i class="fa fa-flag"></i> {{ layer.Category }}</h5>
                                             <h5><i class="fa fa-calendar"></i> Uploaded on {{ layer.date | date:'fullDate' }}</h5>
                                             <button class = "btn btn-default center-block" ng-click = "updateTourStep(7); addLayers(layer)" data-dismiss="modal">Use</button>

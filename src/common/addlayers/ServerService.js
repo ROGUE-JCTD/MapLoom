@@ -523,7 +523,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         thumbnail_url: thumbnail(layerInfo.thumbnail_url, layerName(layerInfo.detail_url), serverUrl),
         author: author(layerInfo),
         detail_url: layerInfo.detail_url,
-        date: layerInfo.date
+        date: layerInfo.date,
+        is_published: layerInfo.is_published
       };
     };
 
@@ -601,6 +602,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filter_options.text !== null) {
         url = url + '&q=' + filter_options.text;
       }
+      if (filter_options.is_published !== null) {
+        url = url + '&is_published=' + filter_options.is_published;
+      }
       return url;
     };
     var applyFavoritesFilter = function(url, filterOptions) {
@@ -611,7 +615,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.populateLayersConfigElastic = function(server, filterOptions) {
-      var searchUrl = '/api/layers/search/?is_published=true&limit=100';
+      var searchUrl = '/api/layers/search/?limit=100';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
@@ -719,7 +723,12 @@ var SERVER_SERVICE_USE_PROXY = true;
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
           } else {
-            service_.populateLayersConfigElastic(server, null);
+            var defaultFilterOptions = {
+              owner: null,
+              text: null,
+              is_published: true
+            };
+            service_.populateLayersConfigElastic(server, defaultFilterOptions);
             deferredResponse.resolve(server);
 
           }

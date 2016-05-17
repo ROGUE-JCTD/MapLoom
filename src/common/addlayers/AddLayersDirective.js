@@ -14,7 +14,8 @@
             scope.filterLayers = null;
             scope.filterOptions = {
               owner: null,
-              text: null
+              text: null,
+              is_published: true
             };
 
             var resetText = function() {
@@ -22,6 +23,9 @@
             };
             var resetOwner = function() {
               scope.filterOptions.owner = null;
+            };
+            var resetPublished = function() {
+              scope.filterOptions.is_published = true;
             };
             //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
@@ -47,17 +51,20 @@
             var clearFilters = function() {
               resetText();
               resetOwner();
+              resetPublished();
               searchFavorites = false;
             };
 
             scope.defaultSearch = function() {
               clearFilters();
+              scope.filterOptions.is_published = true;
               scope.search();
             };
 
             scope.searchMyUploads = function() {
               clearFilters();
               scope.filterOptions.owner = true;
+              scope.filterOptions.is_published = null;
               scope.search();
             };
 
