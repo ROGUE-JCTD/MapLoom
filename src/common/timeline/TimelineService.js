@@ -21,6 +21,7 @@
   var range_ = new stutils.Range(null, null);
   var filter_ = null;
   var pinsForMap_ = [];
+  var showingPin = false;
 
   function computeTicks(layersWithTime) {
 
@@ -501,7 +502,9 @@
         currentTickIndex_ = null;
       }
 
-      featureManagerService_.hide();
+      if (showingPin === false) {
+        featureManagerService_.hide();
+      }
 
       console.log('---- timelineService.time updated: ', (new Date(currentTime_)).toISOString());
       rootScope_.$broadcast('timeline-timeupdated', currentTime_);
@@ -599,8 +602,22 @@
         mapService_.pinLayer.getSource().clear(true);
         mapService_.pinLayer.getSource().addFeatures(features);
         mapService_.map.addLayer(mapService_.pinLayer);
-
+        var layerInfo = {};
+        var pinsToDisplay = [];
+        for (var iFinal = 0; iFinal < features.length; iFinal += 1) {
+          if (features[iFinal].auto_show === true) {
+            pinsToDisplay.push(features[iFinal]);
+          }
+        }
+        if (pinsToDisplay.length > 0) {
+          showingPin = true;
+          layerInfo.features = pinsToDisplay;
+          layerInfo.layer = mapService_.pinLayer;
+          var position = pinsToDisplay[0].values_.geometry.flatCoordinates;
+          featureManagerService_.show(layerInfo, position);
+        }
       } else {
+        showingPin = false;
         mapService_.map.removeLayer(mapService_.pinLayer);
         mapService_.pinLayer.getSource().clear(true);
       }

@@ -21,8 +21,8 @@
   };
   Pin.prototype = Object.create(ol.Feature.prototype);
   Pin.prototype.constructor = Pin;
-  var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback'];
-  var filterPropertiesFromValidation = ['id', '_id', 'content', 'media', 'in_map', 'in_timeline', 'pause_playback'];
+  var model_attributes = ['title', 'id', '_id', 'content', 'media', 'start_time', 'end_time', 'in_map', 'in_timeline', 'pause_playback', 'auto_show'];
+  var filterPropertiesFromValidation = ['id', '_id', 'content', 'media', 'in_map', 'in_timeline', 'pause_playback', 'auto_show'];
   var embed_width = '"250"';
   var embed_height = '"250"';
 

@@ -63,6 +63,12 @@
             <input id="pause_playback" type="checkbox" ng-init="pin.pause_playback = false" ng-model="pin.pause_playback"> Pause playback </input>
         </div>
     </div>
+    <div class="form-group">
+        <label for="auto_show">Automatically Show Content</label>
+        <div>
+            <input id="auto_show" type="checkbox" ng-init="pin.auto_show = false" ng-model="pin.auto_show"> Show Content </input>
+        </div>
+    </div>
 </div>
 <div class="menuItem">
     <button class="btn-composer" id="saveStoryPin" ng-click="addStoryPin(pin); updateTourStep(25)">Save StoryPin</button>
