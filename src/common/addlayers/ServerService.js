@@ -656,8 +656,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       return url;
     };
 
-    this.getNumberOfDocsForHyper = function(server, layerDocsCallback) {
-      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_stats/docs';
+    this.validateCatalogKey = function(catalogKey) {
+      catalogKey = Number(catalogKey);
+      if (!isNaN(catalogKey) && service_.catalogList.length >= catalogKey + 1) {
+        return catalogKey;
+      }else {
+        return false;
+      }
+    };
+
+    this.getNumberOfDocsForHyper = function(server, catalogKey, layerDocsCallback) {
+      catalogKey = service_.validateCatalogKey(catalogKey);
+      if (catalogKey === false) {
+        return layerDocsCallback(false);
+      }
+      var searchUrl = service_.catalogList[catalogKey].url + '_stats/docs?';
       var config = createAuthorizationConfigForServer(server);
       http_.get(searchUrl, config).then(function(xhr) {
         if (xhr.status === 200) {
@@ -681,12 +694,11 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
       var searchUrl;
-      catalogKey = Number(catalogKey);
-      if (!isNaN(catalogKey) && service_.catalogList.length >= catalogKey + 1) {
-        searchUrl = service_.catalogList[catalogKey].url + '_search?';
-      }else {
+      catalogKey = service_.validateCatalogKey(catalogKey);
+      if (catalogKey === false) {
         return false;
       }
+      searchUrl = service_.catalogList[catalogKey].url + '_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }

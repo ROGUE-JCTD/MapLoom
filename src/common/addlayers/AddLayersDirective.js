@@ -139,7 +139,7 @@
             };
 
             function getSizedocuments() {
-              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), function(docsStats) {
+              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), scope.catalogKey, function(docsStats) {
                 if (docsStats) {
                   scope.pagination.sizeDocuments = docsStats.indices.hypermap.total.docs.count || scope.sizeDocuments;
                   scope.pagination.pages = Math.floor(scope.pagination.sizeDocuments / scope.filterOptions.size);
