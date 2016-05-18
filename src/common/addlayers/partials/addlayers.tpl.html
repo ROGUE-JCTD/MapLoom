@@ -24,6 +24,9 @@
                     <div class="actions">
                       <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default btn-lg">Previous</button>
                       <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default btn-lg">Next</button>
+                      <span class="text-muted">
+                        Showing {{filterOptions.size}} of {{pagination.sizeDocuments}} (Page {{filterOptions.from/filterOptions.size + 1}} / {{pagination.pages}})
+                      </span>
                     </div>
                   </div>
                 </div>
