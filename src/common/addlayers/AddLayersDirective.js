@@ -33,6 +33,7 @@
             scope.selectedLayer = {};
             scope.cart = [];
             scope.catalogKey = 0;
+            scope.pagination = {sizeDocuments: 1, pages: 1};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -131,10 +132,20 @@
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else if (searchHyper) {
                 serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions, scope.catalogKey);
+                getSizedocuments();
               } else {
                 serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
               }
             };
+
+            function getSizedocuments() {
+              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), function(docsStats) {
+                if (docsStats) {
+                  scope.pagination.sizeDocuments = docsStats.indices.hypermap.total.docs.count || scope.sizeDocuments;
+                  scope.pagination.pages = Math.floor(scope.pagination.sizeDocuments / scope.filterOptions.size);
+                }
+              });
+            }
 
             scope.search();
             scope.getCurrentServerName = function() {
