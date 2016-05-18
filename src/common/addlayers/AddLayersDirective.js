@@ -15,7 +15,8 @@
             scope.filterOptions = {
               owner: null,
               text: null,
-              is_published: true
+              is_published: true,
+              offset: 0
             };
 
             var resetText = function() {
@@ -26,6 +27,9 @@
             };
             var resetPublished = function() {
               scope.filterOptions.is_published = true;
+            };
+            var resetOffset = function() {
+              scope.filterOptions.offset = 0;
             };
             //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
@@ -52,6 +56,7 @@
               resetText();
               resetOwner();
               resetPublished();
+              resetOffset();
               searchFavorites = false;
             };
 
@@ -67,6 +72,13 @@
               scope.filterOptions.is_published = null;
               scope.search();
             };
+
+            scope.loadMoreLayers = function() {
+              scope.filterOptions.offset = scope.filterOptions.offset + 100;
+              scope.search();
+            };
+
+            scope.layerCount = 0;
 
             scope.searchMyFavorites = function() {
               clearFilters();

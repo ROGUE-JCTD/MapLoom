@@ -605,6 +605,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filter_options.is_published !== null) {
         url = url + '&is_published=' + filter_options.is_published;
       }
+      if (filter_options.offset !== null) {
+        url = url + '&offset=' + filter_options.offset;
+      }
       return url;
     };
     var applyFavoritesFilter = function(url, filterOptions) {
@@ -726,7 +729,8 @@ var SERVER_SERVICE_USE_PROXY = true;
             var defaultFilterOptions = {
               owner: null,
               text: null,
-              is_published: true
+              is_published: true,
+              offset: 0
             };
             service_.populateLayersConfigElastic(server, defaultFilterOptions);
             deferredResponse.resolve(server);
