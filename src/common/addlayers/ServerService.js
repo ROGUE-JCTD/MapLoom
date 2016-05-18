@@ -665,13 +665,15 @@ var SERVER_SERVICE_USE_PROXY = true;
       return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
     };
 
-    this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = service_.catalogList[0].url + '_search?';
+    this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
+      var searchUrl;
+      catalogKey = Number(catalogKey);
+      if (!isNaN(catalogKey) && service_.catalogList.length >= catalogKey + 1) {
+        searchUrl = service_.catalogList[catalogKey].url + '_search?';
+      }else {
+        return false;
+      }
       if (filterOptions !== null) {
-        var catalogKey = filterOptions.catalogKey;
-        if (!isNaN(Number(catalogKey))) {
-          searchUrl = service_.catalogList[catalogKey].url + '_search?';
-        }
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
       return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);

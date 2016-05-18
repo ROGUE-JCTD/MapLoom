@@ -20,8 +20,7 @@
               owner: null,
               text: null,
               from: null,
-              size: 10,
-              catalogKey: 0
+              size: 10
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
@@ -33,6 +32,7 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
             scope.cart = [];
+            scope.catalogKey = 0;
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -130,7 +130,7 @@
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else if (searchHyper) {
-                serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions);
+                serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions, scope.catalogKey);
               } else {
                 serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
               }

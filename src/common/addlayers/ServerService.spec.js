@@ -347,19 +347,24 @@ describe('addLayers/ServerService', function() {
         expect(serverService.addSearchResultsForHyper('', filterOptions)).toEqual(false);
       });
     });
+    describe('catalogKey is not a number', function() {
+      it('returns an empty array', function() {
+        expect(serverService.addSearchResultsForHyper({}, filterOptions, NaN)).toEqual(false);
+      });
+    });
     describe('server is available and returns results', function() {
       beforeEach(function() {
         $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions);
+        serverService.addSearchResultsForHyper({}, filterOptions, 0);
         $httpBackend.flush();
         expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions);
+        serverService.addSearchResultsForHyper({}, filterOptions, 0);
         $httpBackend.flush();
         expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://geoshape.geointservices.io/geoserver/wms');
       });
