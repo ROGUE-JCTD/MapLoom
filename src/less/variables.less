@@ -11,27 +11,25 @@
  * Typography-related.
  */
 
-@sansFontFamily: 'Roboto', sans-serif;
 @mainFont: normal 16px 'Open Sans', sans-serif;
+@mainFontFamily: 'Open San's, sans-serif;
 @mainFontColor: @brownish;
 @featureInfoBoxLabelFont: bold 11px 'Open Sans', sans-serif;
 @featureInfoBoxLabelFontColor: dimgray;
 @featureInfoBoxValueFont: normal 12px 'Open Sans', sans-serif;
 @featureInfoBoxValueFontColor: @mainFontColor;
-@addLayerListFontColor: white;
-@legendFontColor: white;
+@addLayerListFontColor: @baseWhite;
+@legendFontColor: @baseWhite;
 @mainHeaderFontColor: @brownish;
-@badgeFontColor: white;
 @modalHeaderFontColor: @brownish;
-@layerHeaderFontColor: black;
-@removeLayerFontColor: white;
-@syncListFontColor: white;
-@syncListButtonFontColor: white;
-@formControlFontColor: black;
-@controlLabelFontColor: black;
+@layerHeaderFontColor: @baseBlack;
+@removeLayerFontColor: @baseWhite;
+@syncListFontColor: @baseWhite;
+@syncListButtonFontColor: @baseWhite;
+@formControlFontColor: @baseBlack;
+@controlLabelFontColor: @baseBlack;
 @editFeatureHeaderFontColor: @modalHeaderFontColor;
-@exclusiveModeFontColor: @legendFontColor;
-@attributeListFontColor: white;
+@attributeListFontColor: @baseWhite;
 @placeholderLayerFontColor: lightgray;
 
 /**
@@ -44,17 +42,26 @@
 /**
  * Colors
  */
-@mainHeaderColor: white;
-@mainPanelColor: white;
-@layerHeaderColor: white;
-@layerAltHeaderColor: white;
+
+@baseBlack: #000000;
+@baseGray: #666666;
+@lightGray: #AAAAAA;
+@baseWhite: #FFFFFF;
+@accentWhite: #F5F5F5;
+@background: #DDDDDD;
+@baseOrange: #f59620;
+@tableBorder: @background;
+@mainHeaderColor: @baseWhite;
+@mainPanelColor: @baseWhite;
+@layerHeaderColor: @baseWhite;
+@layerAltHeaderColor: @baseWhite;
 @badgeColor: #aa5a12;
 @legendColor: rgba(0,0,0,0.75);
 @legendHeaderColor: grey;
 @zoomToExtentColor: rgba(0, 0, 0, 0.5);
 @loadingBackgroundColor: rgba(151, 175, 201, 0.75);
 @legendButtonColor: @zoomToExtentColor;
-@zoomToExtentImageColor: white;
+@zoomToExtentImageColor: @baseWhite;
 @legendButtonImageColor: @zoomToExtentImageColor;
 @addColor: #008800;
 @deleteColor: #880000;
@@ -81,16 +88,16 @@
 @defaultModalPanelColor: @mainPanelColor;
 @addLayerListColor: @layerHeaderColor;
 @checkButtonColor: @mainHeaderColor;
-@featureInfoBoxColor: white;
+@featureInfoBoxColor: @baseWhite;
 @featureInfoBoxListItemColor: rgba(251, 247, 255, 0.32);
 @featureInfoBoxListItemHoverColor: lightgrey;
-@closeImageColor: white;
+@closeImageColor: @baseWhite;
 @layerVisibleImageColor: black;
-@syncOnImageColor: white;
+@syncOnImageColor: @baseWhite;
 @saveIconColor: darken(@mainHeaderColor, 10%);
-@refreshIconColor: white;
-@buttonColor: white;
-@formControlColor: white;
+@refreshIconColor: @baseWhite;
+@buttonColor: @baseWhite;
+@formControlColor: @baseWhite;
 @editFeatureHeaderColor: @defaultModalHeaderColor;
 @editFeaturePanelColor: darken(aliceblue, 2%);
 @exclusiveModePanelColor: @legendColor;
@@ -101,4 +108,6 @@
 @addedAttributeColor: mix(@featurePanelColor, @addColor, 80%);
 @selectedTableRowColor: #F7D386;
 @placeholderLayerColor: #678BAD;
+@attributeAdded: #2E8B57;
+@attributeRemoved: #CD5C5C;
 

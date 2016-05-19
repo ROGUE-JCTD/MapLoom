@@ -11,8 +11,8 @@ html, body {
 }
 
 h2 {
-  color: #666;
-  font-family: 'Open Sans', sans-serif !important;
+  color: @baseGray;
+  font-family: @mainFontFamily;
   font-size: 15px;
   font-weight: 700;
   line-height: 20px;
@@ -115,7 +115,7 @@ ul {
 /* Menu Styles */
 
 .menu {
-  background: #F5F5F5;
+  background: @accentWhite;
   font-size: 1em;
   height: 100%;
   overflow-y: scroll;
@@ -123,8 +123,8 @@ ul {
 }
 
 .menuHidden {
-  background: #F5F5F5;
-  color: #666;
+  background: @accentWhite;
+  color: @baseGray;
   left: -320px;
   min-height: 100%;
   position: absolute;
@@ -134,14 +134,14 @@ ul {
 }
 
 .menu i {
-  color: #999;
+  color: @baseGray;
   float: right;
   font-size: 15px;
   padding: 3px 10px 0;
 }
 
 .menu i:hover {
-  color: #666;
+  color: @baseGray;
 }
 
 .menuHidden i {
@@ -151,7 +151,7 @@ ul {
 }
 
 .menu a {
-  color: #666;
+  color: @baseGray;
   display: block;
   font-size: 12px;
   font-weight: 700;
@@ -170,7 +170,7 @@ ul {
 }
 
 .menu label {
-  color: #666;
+  color: @baseGray;
   display: inline-block;
   font-size: 12px;
   font-weight: 700;
@@ -180,7 +180,7 @@ ul {
 }
 
 .menu .topText {
-  color: #666;
+  color: @baseGray;
   display: block;
   font-size: 10px;
   font-weight: 700;
@@ -190,7 +190,7 @@ ul {
 }
 
 .menu .bottomText {
-  color: #666;
+  color: @baseGray;
   display: block;
   font-size: 18px;
   font-weight: 700;
@@ -202,9 +202,9 @@ ul {
 /* Menu Item Styles */
 
 .menuItem {
-  background: #ddd;
+  background: @background;
   border-radius: 4px;
-  border-top: 1px solid #F5F5F5;
+  border-top: 1px solid @accentWhite;
   display: block;
   margin: 10px;
   padding: 6px;
@@ -224,10 +224,10 @@ ul {
   -moz-user-select: none;
   -ms-user-select: none;
   -webkit-user-select: none;
-  background: #777;
+  background:@baseGray;
   border: 0;
   border-radius: 3px;
-  color: #FFF;
+  color: @baseWhite;
   cursor: pointer;
   display: inline-block;
   font-size: 10px;
@@ -245,9 +245,9 @@ ul {
   -moz-user-select: none;
   -ms-user-select: none;
   -webkit-user-select: none;
-  background: #f59620;
+  background: @baseOrange;
   border: none;
-  color: #FFF;
+  color: @baseWhite;
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
@@ -262,16 +262,16 @@ ul {
 }
 
 .btn-composer:hover, .btn-composer:focus, .btn-composer:active, .btn-composer.active, .open .dropdown-toggle.btn-composer {
-  background: #f59620;
-  border-color: #f59620;
-  color: #FFF;
+  background: @baseOrange;
+  border-color: @baseOrange;
+  color: @baseWhite;
 }
 
 .btn-storylayer {
-  background: #aaa;
+  background:@lightGray;
   border: 0;
   border-radius: 8px;
-  color: #F5F5F5;
+  color: @accentWhite;
   display: inline-block;
   font-size: 10px;
   height: 75px;
@@ -282,14 +282,14 @@ ul {
 
 .btn-storylayer a {
   border: 0;
-  color: #F5F5F5;
+  color: @accentWhite;
   font-size: 10px;
   font-weight: 400;
   text-transform: uppercase;
 }
 
 .btn-storylayer i {
-  color: #FFF;
+  color: @baseWhite;
   font-size: 2.5em;
   padding: 5px;
   text-align: center;
@@ -297,17 +297,17 @@ ul {
 }
 
 .btn-storylayer:hover, .btn-storylayer i:hover {
-  background: #777;
-  color: #F5F5F5;
+  background:@baseGray;
+  color: @accentWhite;
 }
 
 /* Composer Forms */
 
 .form-composer {
-  background: #ccc;
+  background:@background;
   border: none;
   border-radius: 2px;
-  color: #666;
+  color: @baseGray;
   display: block;
   font-size: 12px;
   height: 34px;
@@ -318,8 +318,8 @@ ul {
 }
 
 .form-composer:focus {
-  background: #999;
-  color: #FFF;
+  background: @baseGray;
+  color: @baseWhite;
   outline: none;
 }
 
@@ -343,7 +343,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 /* Modal Styles */
 
 .modal .modal-header, .loom-dialog.dialog-warning .modal-header {
-  background: #eee;
+  background: @background;
   border-bottom: 0;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -353,7 +353,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 }
 
 .loom-dialog.dialog-warning .modal-body, .modal .modal-body, .loom-dialog.dialog-warning .modal-footer {
-  background: #fff;
+  background: @baseWhite;
   max-height: 60vh;
   overflow-y: auto;
   padding: 20px 30px;
@@ -368,7 +368,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 
 .modal .modal-footer {
   -webkit-box-shadow: none;
-  background: #fff;
+  background: @baseWhite;
   border: none;
   box-shadow: none;
   margin-top: 0;
@@ -398,7 +398,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 }
 
 .cards-body {
-  background: #ddd;
+  background: @background;
   border: transparent;
   border-radius: 4px;
   height: 350px;
@@ -412,7 +412,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 }
 
 #mapstory-title {
-  color: #666;
+  color: @baseGray;
   font-size: 1em;
   padding: 0 0 5px;
 }
@@ -430,7 +430,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
 /* Welcome Tour Styles */
 
 a#start-tour, a#start-composing, a#resume-draft {
-  color: #666;
+  color: @baseGray;
   font-size: 18px;
   font-weight: 700;
   padding: 20px;
@@ -438,7 +438,7 @@ a#start-tour, a#start-composing, a#resume-draft {
 }
 
 a#start-tour:hover, a#start-composing:hover, a#resume-draft:hover {
-  color: #f59620;
+  color: @baseOrange;
   font-weight: 700;
   text-decoration: none;
 }
@@ -448,8 +448,8 @@ a.carousel-control {
 }
 
 .search-btn {
-  background: #666;
-  border-color: #666;
+  background: @baseGray;
+  border-color: @baseGray;
 }
 
 #welcomeTour .modal-dialog {
@@ -463,10 +463,10 @@ a.carousel-control {
 /* Feature Info Box StoryPin Styles */
 
 .feature-info-box-popup {
-  background: #F5F5F5;
+  background: @accentWhite;
   border-radius: 4px;
   bottom: 12px;
-  color: #666;
+  color: @baseGray;
   display: block;
   font-size: 10px;
   left: -50px;
@@ -478,14 +478,14 @@ a.carousel-control {
 }
 
 .feature-info-box-popup:after {
-  border-top-color: #F5F5F5;
+  border-top-color: @accentWhite;
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
 }
 
 .info-box-title {
-  color: #666;
+  color: @baseGray;
   display: inline-block;
   font: bold 13px 'Open Sans', sans-serif;
   padding: 5px 0;
@@ -495,8 +495,8 @@ a.carousel-control {
 }
 
 .info-box-attribute {
-  border-bottom: 1px solid #999;
-  color: #666;
+  border-bottom: 1px solid @baseGray;
+  color: @baseGray;
   display: block;
   font: bold 10px 'Open Sans', sans-serif;
   margin: 0;
@@ -523,7 +523,7 @@ style-editor button {
 }
 
 .style-editor-item {
-  background: #ccc;
+  background:@background;
   border: 0;
   border-radius: 3px;
   margin-bottom: 5px;
@@ -531,7 +531,7 @@ style-editor button {
 }
 
 .style-editor-item .title {
-  color: #777;
+  color:@baseGray;
   display: inline-block;
   font-family: 'Open Sans', sans-serif;
   font-size: 10px;
@@ -555,10 +555,10 @@ style-editor button {
 }
 
 .style-editor-item button, .style-editor-item .controls input {
-  background: #eee;
+  background: @background;
   border: 0;
   border-radius: 4px;
-  color: #666;
+  color: @baseGray;
   cursor: pointer;
   display: inline-block;
   font-size: 10px;
@@ -572,7 +572,7 @@ style-editor button {
 }
 
 .panelContainer .panelRow .loom-feature-panel {
-  background: #F5F5F5;
+  background: @accentWhite;
   border: 0;
   display: table-cell;
   padding-top: 5px;
@@ -582,7 +582,7 @@ style-editor button {
 }
 
 .panelContainer .panelRow .loom-panel-separator {
-  background: #F5F5F5;
+  background: @accentWhite;
   border: 0;
   display: table-cell;
   padding-top: 5px;
@@ -591,13 +591,13 @@ style-editor button {
 
 .panelContainer .panelRow .loom-feature-panel .info-box-attribute {
   border: 0;
-  color: #666;
+  color: @baseGray;
   height: 15px;
   text-transform: lowercase;
 }
 
 .panelContainer .panelRow .loom-panel-separator .attribute-arrow .attribute-arrow-inner {
-  background: #aaa;
+  background:@lightGray;
   border: 0;
   border-radius: 3px;
   padding: 5px 5px 8px;
@@ -618,9 +618,9 @@ style-editor button {
 }
 
 .attribute-cell {
-  background: #ddd;
+  background: @background;
   border-radius: 4px;
-  color: #666;
+  color: @baseGray;
   font-size: .8em;
   margin-bottom: 10px;
   padding: 5px;
@@ -628,13 +628,13 @@ style-editor button {
 }
 
 #composerTopNav {
-  background: #777;
+  background:@baseGray;
   height: 40px;
   padding: 3px 5px;
 }
 
 #composerIconNav {
-  background: #ccc;
+  background:@background;
   display: block;
   height: 40px;
   padding: 5px;
@@ -650,13 +650,13 @@ style-editor button {
 }
 
 #composerIconNav i:hover {
-  background: #ddd;
+  background: @background;
   border-radius: 4px;
   color: #333;
 }
 
 .help-block {
-  color: #737373;
+  color: @baseGray;
   display: block;
   font-size: .6em;
   margin-bottom: 10px;
@@ -671,14 +671,14 @@ style-editor button {
 /* Table Styles */
 
 #table-view-window .panel {
-  background: #F5F5F5;
+  background: @accentWhite;
   height: 100%;
   max-width: 100%;
   overflow: auto;
 }
 
 .table-striped > thead > tr > th {
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid @tableBorder;
   font-size: .8em;
   font-weight: 600;
   padding: 10px;
@@ -686,7 +686,7 @@ style-editor button {
 }
 
 .table-striped > tbody > tr > td, .table-striped > thead > tr > th {
-  border-left: 1px dotted #ddd;
+  border-left: 1px dotted @tableBorder;
   font-size: .7em;
   max-width: 200px;
   overflow: hidden;
@@ -695,14 +695,14 @@ style-editor button {
 }
 
 .table-striped > tbody > tr > td {
-  border-top: 1px solid #ddd;
-  color: #666;
+  border-top: 1px solid @tableBorder;
+  color: @baseGray;
   font-size: .8em;
 }
 
 .selectedRow > td {
-  background: #f59620 !important;
-  color: #F5F5F5;
+  background: @baseOrange !important;
+  color: @accentWhite;
 }
 
 #add-box-dialog .modal-dialog, #add-pin-dialog .modal-dialog {
@@ -730,20 +730,20 @@ style-editor button {
 }
 
 .panelContainer .panelRow .loom-feature-panel input.attr-none, .panelContainer .panelRow .loom-feature-panel .attr-none input {
-  background: #aaa;
+  background:@lightGray;
   border: 0;
   cursor: auto;
   width: 98%;
 }
 
 .panelContainer .panelRow .loom-feature-panel .attr-added input, .panelContainer .panelRow .loom-feature-panel input.attr-added {
-  background: #ccc;
+  background:@background;
   border: 0;
-  color: #2E8B57;
+  color: @attributeAdded;
 }
 
 .panelContainer .panelRow .loom-feature-panel .attr-removed input, .panelContainer .panelRow .loom-feature-panel input.attr-removed {
-  background: #ccc;
+  background:@background;
   border: 0;
-  color: #CD5C5C;
+  color: @attributeRemoved;
 }
