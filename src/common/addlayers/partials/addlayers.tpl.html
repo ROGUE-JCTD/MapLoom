@@ -29,7 +29,7 @@
                                 <div class="col-sm-3 cards"
                                      ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
                                     <div class="cards-body">
-                                        <img class="img-responsive" src="{{layer.thumbnail_url}}" height="150" width="200">
+                                        <img class="img-responsive" ng-src="{{layer.thumbnail_url}}" height="150" width="200">
                                         <h4>{{ layer.Title }}</h4>
                                         <h5><i class="fa fa-user"></i> {{ layer.author }}</h5>
                                         <h5 ng-if="layer.Category != null"><i class="fa fa-flag"></i> {{ layer.Category }}</h5>
