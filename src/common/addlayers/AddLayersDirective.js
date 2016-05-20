@@ -32,6 +32,7 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
             scope.cart = [];
+            cart = [];
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
             var resetText = function() {
@@ -214,20 +215,24 @@
             };
 
             scope.addToCart = function(layerConfig) {
-              var configIndex = scope.cart.indexOf(layerConfig);
+              var layerCopi = layerConfig.Name;
+              var configIndex = cart.indexOf(layerCopi);
               if (configIndex === -1) {
+                cart.push(layerCopi);
                 scope.cart.push(layerConfig);
               } else {
+                cart.splice(configIndex, 1);
                 scope.cart.splice(configIndex, 1);
               }
             };
 
             scope.isInCart = function(layerConfig) {
-              return scope.cart.indexOf(layerConfig) !== -1 ? true : false;
+              return cart.indexOf(layerConfig.Name) !== -1 ? true : false;
             };
 
             scope.clearCart = function() {
               scope.cart = [];
+              cart = [];
             };
 
             scope.changeCredentials = function() {

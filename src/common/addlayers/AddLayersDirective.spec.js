@@ -250,13 +250,14 @@ describe('StoryLegendDirective', function() {
     });
   });
   describe('#isInCart', function() {
+    beforeEach(function() {
+      cart = [1];
+    });
     it('returns true if in cart', function() {
-      compiledElement.scope().cart = [1];
-      expect(compiledElement.scope().isInCart(1)).toEqual(true);
+      expect(compiledElement.scope().isInCart({'Name':1})).toEqual(true);
     });
     it('returns false if not in cart', function() {
-      compiledElement.scope().cart = [1];
-      expect(compiledElement.scope().isInCart(2)).toEqual(false);
+      expect(compiledElement.scope().isInCart({'Name':2})).toEqual(false);
     });
   });
 });
