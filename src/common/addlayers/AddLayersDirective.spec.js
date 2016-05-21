@@ -251,7 +251,7 @@ describe('StoryLegendDirective', function() {
   });
   describe('#isInCart', function() {
     beforeEach(function() {
-      cart = [1];
+      cartLayerName = [1];
     });
     it('returns true if in cart', function() {
       expect(compiledElement.scope().isInCart({'Name':1})).toEqual(true);
