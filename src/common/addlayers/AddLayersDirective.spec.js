@@ -187,7 +187,7 @@ describe('StoryLegendDirective', function() {
   describe('#addLayers', function() {
     var layerConfig, minimalConfig, addLayerSpy, zoomToExtentForProjectionSpy;
     beforeEach(function() {
-      layerConfig = { add: true, Name: 'Test', extent: [], CRS: 'EPSG:4326' };
+      layerConfig = { add: true, Name: 'Test', extent: [], CRS: ['EPSG:4326'] };
       compiledElement.scope().cart = [layerConfig];
       scope.$digest();
       minimalConfig = { source: 0, name: layerConfig.Name };
