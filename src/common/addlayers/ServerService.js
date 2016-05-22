@@ -32,6 +32,11 @@ var SERVER_SERVICE_USE_PROXY = true;
       return this;
     };
 
+    this.catalogList = [
+      {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},
+      {name: 'hypersearch catalog 2', url: 'http://geoshape.geointservices.io/search/hypermap/'}
+    ];
+
     this.getServers = function() {
       return servers;
     };
@@ -651,8 +656,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       return url;
     };
 
-    this.getNumberOfDocsForHyper = function(server, layerDocsCallback) {
-      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_stats/docs';
+    this.validateCatalogKey = function(catalogKey) {
+      catalogKey = Number(catalogKey);
+      if (!isNaN(catalogKey) && service_.catalogList.length >= catalogKey + 1) {
+        return catalogKey;
+      }else {
+        return false;
+      }
+    };
+
+    this.getNumberOfDocsForHyper = function(server, catalogKey, layerDocsCallback) {
+      catalogKey = service_.validateCatalogKey(catalogKey);
+      if (catalogKey === false) {
+        return layerDocsCallback(false);
+      }
+      var searchUrl = service_.catalogList[catalogKey].url + '_stats/docs?';
       var config = createAuthorizationConfigForServer(server);
       http_.get(searchUrl, config).then(function(xhr) {
         if (xhr.status === 200) {
@@ -674,13 +692,19 @@ var SERVER_SERVICE_USE_PROXY = true;
       return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
     };
 
-    this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = 'http://geoshape.geointservices.io/search/hypermap/_search?';
+    this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
+      var searchUrl;
+      catalogKey = service_.validateCatalogKey(catalogKey);
+      if (catalogKey === false) {
+        return false;
+      }
+      searchUrl = service_.catalogList[catalogKey].url + '_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
       return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
     };
+
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
       if (filterOptions !== null) {

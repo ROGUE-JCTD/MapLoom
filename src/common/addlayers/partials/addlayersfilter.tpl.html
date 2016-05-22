@@ -7,9 +7,8 @@
               ng-model="filterOptions.text" type="text" class="form-control search-input input-lg">
           </div>
           <div class="form-group col-md-6 col-xs-6">
-            <select class="form-control input-lg search-input select-search">
-              <option>Catalog 1</option>
-              <option>Catalog 2</option>
+            <select class="form-control input-lg search-input select-search" ng-model="catalogKey" ng-change="searchHyper()">
+              <option ng-repeat="(catalogKey, catalog) in serverService.catalogList" value="{{catalogKey}}">{{catalog.name}}</option>
             </select>
           </div>
         </div>

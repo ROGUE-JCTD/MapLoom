@@ -33,6 +33,7 @@
             scope.selectedLayer = {};
             scope.cart = [];
             cartLayerName = [];
+            scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
             var resetText = function() {
@@ -131,7 +132,7 @@
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else if (searchHyper) {
-                serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions);
+                serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions, scope.catalogKey);
                 getSizedocuments();
               } else {
                 serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
@@ -139,7 +140,7 @@
             };
 
             function getSizedocuments() {
-              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), function(docsStats) {
+              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), scope.catalogKey, function(docsStats) {
                 if (docsStats) {
                   scope.pagination.sizeDocuments = docsStats.indices.hypermap.total.docs.count || scope.sizeDocuments;
                   scope.pagination.pages = Math.floor(scope.pagination.sizeDocuments / scope.filterOptions.size);
