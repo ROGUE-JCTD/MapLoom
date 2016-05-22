@@ -176,7 +176,7 @@
                   source: scope.currentServerId
                 };
                 mapService.addLayer(minimalConfig);
-                mapService.zoomToExtentForProjection(layerConfig.extent, ol.proj.get(layerConfig.CRS));
+                mapService.zoomToExtentForProjection(layerConfig.extent, ol.proj.get(layerConfig.CRS[0]));
               }
             };
             scope.addLayers = function() {

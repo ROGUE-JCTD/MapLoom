@@ -468,11 +468,10 @@ var SERVER_SERVICE_USE_PROXY = true;
         if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
             layersConfig[index].Name === layerName.split(':')[1])) {
           layerConfig = layersConfig[index];
-
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
             for (var code in layerConfig.CRS) {
               if (layerConfig.CRS[code] !== 'CRS:84') {
-                layerConfig.CRS = layerConfig.CRS[code];
+                layerConfig.CRS = [layerConfig.CRS[code]];
                 break;
               }
             }
