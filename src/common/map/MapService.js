@@ -765,7 +765,8 @@
               var parms = {
                 url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
                 crossOrigin: true,
-                jsonp: true
+                jsonp: true,
+                wrapX: false
               };
               var mbsource = new ol.source.TileJSON(parms);
 
@@ -1454,7 +1455,9 @@
           projection: service_.configuration.map.projection,
           center: service_.configuration.map.center,
           zoom: service_.configuration.map.zoom,
-          maxZoom: 17
+          minZoom: 3,
+          maxZoom: 17,
+          extent: [-26318797.579151887, -20057076.22203025, 30858545.563065078, 18491645.882749837]
         })
       });
 
