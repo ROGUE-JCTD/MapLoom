@@ -596,13 +596,15 @@ var SERVER_SERVICE_USE_PROXY = true;
       return '/geoserver/wms';
     };
 
-    var addSearchResults = function(searchUrl, server, layerConfigCallback) {
+    var addSearchResults = function(searchUrl, body, server, layerConfigCallback) {
+      body = body || {};
       var layers_loaded = false;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
       console.log('---searchUrl: ', searchUrl);
-      http_.get(searchUrl, config).then(function(xhr) {
+
+      http_.post(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
           console.log('---- populateLayersConfig.populateLayersConfig server', server);
@@ -648,6 +650,27 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
       return url;
     };
+    this.applyBodyFilter = function(filter_options) {
+      var body = {};
+      if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+        body = {
+          'query': {
+            'filtered': {
+              'filter': {
+                'range' : {
+                  'LayerDate' : {
+                    'gte': filter_options.minYear + '-01-01T00:00:00',
+                    'lte': filter_options.maxYear + '-01-01T00:00:00'
+                  }
+                }
+              }
+            }
+          }
+        };
+      }
+      return body;
+    };
+
     var applyFavoritesFilter = function(url, filterOptions) {
       if (filterOptions.text !== null) {
         url += '&title__contains=' + filterOptions.text;
@@ -688,11 +711,12 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, {}, server, service_.reformatLayerConfigs);
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
       var searchUrl;
+      var bodySearch = {};
       catalogKey = service_.validateCatalogKey(catalogKey);
       if (catalogKey === false) {
         return false;
@@ -700,8 +724,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       searchUrl = service_.catalogList[catalogKey].url + '_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+        bodySearch = service_.applyBodyFilter(filterOptions);
+        console.log(bodySearch);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
+      return addSearchResults(searchUrl, bodySearch, server, service_.reformatLayerHyperConfigs);
     };
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
@@ -709,7 +735,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions !== null) {
         searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
+      return addSearchResults(searchUrl, {}, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {

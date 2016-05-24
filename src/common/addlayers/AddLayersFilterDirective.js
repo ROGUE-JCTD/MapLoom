@@ -14,15 +14,15 @@
         scope.sliderValues.getValue = function(key) {
           return scope.sliderValue(key);
         };
-        scope.minValue = scope.sliderValues[0];
-        scope.maxValue = scope.sliderValues[scope.sliderValues.length - 1];
+        scope.minValue = scope.sliderValues[10];
+        scope.maxValue = scope.sliderValues[scope.sliderValues.length - 2];
 
         scope.slider = {
-          minValue: 0,
-          maxValue: sliderValues.length - 1,
+          minValue: 10,
+          maxValue: sliderValues.length - 2,
           options: {
-            floor: 0,
-            ceil: sliderValues.length - 1,
+            floor: 10,
+            ceil: sliderValues.length - 2,
             step: 1,
             noSwitching: true, hideLimitLabels: true,
             getSelectionBarColor: function() {
