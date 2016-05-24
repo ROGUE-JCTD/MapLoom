@@ -722,7 +722,8 @@
               },
               visible: minimalConfig.visibility,
               source: new ol.source.Vector({
-                parser: null
+                parser: null,
+                wrapX: false
               })
             });
           } else {
@@ -734,13 +735,16 @@
                   title: fullConfig.Title
                 },
                 visible: minimalConfig.visibility,
-                source: new ol.source.OSM()
+                source: new ol.source.OSM({
+                  wrapX: false
+                })
               });
             } else if (server.ptype === 'gxp_bingsource') {
 
               var sourceParams = {
                 key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
-                imagerySet: 'Aerial'
+                imagerySet: 'Aerial',
+                wrapX: false
               };
 
               if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
@@ -856,7 +860,8 @@
                   url: mostSpecificUrlWms,
                   params: {
                     'LAYERS': minimalConfig.name,
-                    'tiled': 'true'
+                    'tiled': 'true',
+                    wrapX: false
                   }
                 })
               });
@@ -928,7 +933,8 @@
                     var x = coordinate[1];
                     var y = (1 << z) - coordinate[2] - 1;
                     return '/proxy/?url=' + url + minimalConfig.name + '/' + z + '/' + x + '/' + y + '.png';
-                  }
+                  },
+                  wrapX: false
                 })
               });
 
