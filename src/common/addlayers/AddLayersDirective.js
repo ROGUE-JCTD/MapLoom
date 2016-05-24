@@ -163,6 +163,9 @@
             scope.$on('slideEnded', function() {
               scope.search();
             });
+            scope.$on('changeSliderValues', function() {
+              scope.search();
+            });
 
             function searchRangeValues() {
               if (goog.isDefAndNotNull(scope.sliderValues)) {
