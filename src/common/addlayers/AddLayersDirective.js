@@ -32,6 +32,7 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
             scope.cart = [];
+            cartLayerName = [];
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
@@ -215,20 +216,24 @@
             };
 
             scope.addToCart = function(layerConfig) {
-              var configIndex = scope.cart.indexOf(layerConfig);
+              var layerCopi = layerConfig.Name;
+              var configIndex = cartLayerName.indexOf(layerCopi);
               if (configIndex === -1) {
+                cartLayerName.push(layerCopi);
                 scope.cart.push(layerConfig);
               } else {
+                cartLayerName.splice(configIndex, 1);
                 scope.cart.splice(configIndex, 1);
               }
             };
 
             scope.isInCart = function(layerConfig) {
-              return scope.cart.indexOf(layerConfig) !== -1 ? true : false;
+              return cartLayerName.indexOf(layerConfig.Name) !== -1 ? true : false;
             };
 
             scope.clearCart = function() {
               scope.cart = [];
+              cartLayerName = [];
             };
 
             scope.changeCredentials = function() {
