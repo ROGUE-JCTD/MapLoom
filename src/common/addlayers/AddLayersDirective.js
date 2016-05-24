@@ -20,7 +20,9 @@
               owner: null,
               text: null,
               from: null,
-              size: 10
+              size: 10,
+              minYear: null,
+              maxYear: null
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
@@ -128,6 +130,7 @@
             };
 
             scope.search = function() {
+              searchRangeValues();
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else if (searchHyper) {
@@ -156,6 +159,17 @@
 
               return '';
             };
+
+            scope.$on('slideEnded', function() {
+              scope.search();
+            });
+
+            function searchRangeValues() {
+              if (goog.isDefAndNotNull(scope.sliderValues)) {
+                scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue];
+                scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue];
+              }
+            }
 
             scope.selectRow = function(layerConfig) {
               scope.selectedLayer = layerConfig;

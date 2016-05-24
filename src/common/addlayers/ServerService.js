@@ -650,21 +650,24 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
       return url;
     };
-    this.applyBodyFilter = function functionName(filter_options) {
-      body = {
-        'query': {
-          'filtered': {
-            'filter': {
-              'range' : {
-                'LayerDate' : {
-                  'gte': '1900-01-01T00:00:00',
-                  'lte': '1901-01-01T00:00:00'
+    this.applyBodyFilter = function(filter_options) {
+      var body = {};
+      if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+        body = {
+          'query': {
+            'filtered': {
+              'filter': {
+                'range' : {
+                  'LayerDate' : {
+                    'gte': filter_options.minYear + '-01-01T00:00:00',
+                    'lte': filter_options.maxYear + '-01-01T00:00:00'
+                  }
                 }
               }
             }
           }
-        }
-      };
+        };
+      }
       return body;
     };
 
@@ -722,6 +725,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
         bodySearch = service_.applyBodyFilter(filterOptions);
+        console.log(bodySearch);
       }
       return addSearchResults(searchUrl, bodySearch, server, service_.reformatLayerHyperConfigs);
     };
