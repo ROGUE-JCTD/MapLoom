@@ -547,25 +547,25 @@
     };
 
     this.getBaseMaps = function() {
-      var layers = this.getLayers(true, true);
-      for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
-        var layer = layers[iLayer];
+      var baseMaps = this.getLayers(true, true);
+      for (var iLayer = baseMaps.length - 1; iLayer >= 0; iLayer--) {
+        var layer = baseMaps[iLayer];
         if (layer.get('metadata').hasOwnProperty('config') && !goog.isDef(layer.get('metadata').config.group)) {
-          layers.splice(iLayer, 1);
+          baseMaps.splice(iLayer, 1);
         }
       }
-      return layers;
+      return baseMaps;
     };
 
     this.selectedBaseMap = function(selectedBaseMap) {
       var layers = this.getBaseMaps();
+      console.dir(layers);
       for (var iLayer = 0; iLayer < layers.length; iLayer += 1) {
         var layer = layers[iLayer];
         layer.set('visible', false);
       }
       if (selectedBaseMap) {
-        var selectedLayer = selectedBaseMap;
-        selectedLayer.set('visible', true);
+        selectedBaseMap.set('visible', true);
       }
     };
 
