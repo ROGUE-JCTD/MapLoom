@@ -22,8 +22,8 @@
                       </tr>
                     </table>
                     <div class="actions">
-                      <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default btn-lg">Previous</button>
-                      <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default btn-lg">Next</button>
+                      <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default">Previous</button>
+                      <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default">Next</button>
                       <span class="text-muted">
                         Showing {{filterOptions.size}} of {{pagination.sizeDocuments}} - Page {{filterOptions.from/filterOptions.size + 1}} / {{pagination.pages}}
                       </span>
@@ -37,7 +37,7 @@
             <div class="col-md-5 clearfix result-panel">
                 <div class="panel panel-default" id="mapreview" name="loom-map-panel">
                   <div class="alert alert-title alert-layer-mp">
-                      Refine Search Limit the search to data that includes features in the displayed area.
+                      Limit the search to data that includes features in the displayed area.
                   </div>
                   <div class="panel-body">
                     <div class="loom-map" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
@@ -50,15 +50,11 @@
                   </div>
                     <div class="panel-body">
                       <div class="row">
-                        <div class="col-md-6 col-sm-6">
+                        <div class="col-md-8 col-sm-8">
                           <p class="abstract">{{currentLayer.Abstract}}</p>
                         </div>
-                        <div class="col-md-6 col-sm-6 row">
-                          <div class="col-sm-5 col-xs-5 layer-info-right">
-                            <div>DATE</div>
-                            <div>CATEGORY</div>
-                          </div>
-                          <div class="col-sm-7 col-xs-7 layer-info-left">
+                        <div class="col-md-4 col-sm-4 row">
+                          <div class="layer-info-left">
                             <div>dd/mm/yy</div>
                             <div>{{currentLayer.type || 'Society'}}</div>
                           </div>
@@ -84,8 +80,8 @@
                 </div>
 
                 <div class="row actions" style="">
-                    <button type="button" ng-click="clearCart();" class="btn btn-cart btn-lg">CLEAR</button>
-                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!cart.length" class="btn btn-cart btn-lg">ADD</button>
+                    <button type="button" ng-click="clearCart();" class="btn btn-cart">CLEAR</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!cart.length" class="btn btn-cart">ADD</button>
                 </div>
 
             </div>
