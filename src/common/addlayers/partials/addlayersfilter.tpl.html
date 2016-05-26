@@ -4,10 +4,10 @@
         <div class="row">
           <div class="search-bar col-md-6 col-xs-6">
             <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for ..."
-              ng-model="filterOptions.text" type="text" class="form-control search-input input-lg">
+              ng-model="filterOptions.text" type="text" class="form-control search-input">
           </div>
           <div class="form-group col-md-6 col-xs-6">
-            <select class="form-control input-lg search-input select-search" ng-model="catalogKey" ng-change="searchHyper()">
+            <select class="form-control search-input select-search" ng-model="catalogKey" ng-change="searchHyper()">
               <option ng-repeat="(catalogKey, catalog) in serverService.catalogList" value="{{catalogKey}}">{{catalog.name}}</option>
             </select>
           </div>
@@ -27,12 +27,12 @@
         <div class="row">
             <div class="col-md-6 col-xs-6">
               <div class="pull-right">
-                <button type="button" name="button" class="btn btn-search btn-lg">RESET</button>
+                <button type="button" name="button" class="btn btn-search">RESET</button>
               </div>
             </div>
             <div class="col-md-6 col-xs-6">
               <div class="pull-left">
-                <button class="btn btn-search btn-lg" ng-disabled="!filterOptions.text" ng-click="search()"
+                <button class="btn btn-search" ng-disabled="!filterOptions.text" ng-click="search()"
                   type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> SEARCH</button>
               </div>
             </div>
