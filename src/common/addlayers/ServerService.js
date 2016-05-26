@@ -539,6 +539,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         Abstract: layerInfo.Abstract,
         Name: layerInfo.LayerName,
         Title: layerInfo.LayerTitle,
+        LayerDate: layerInfo.LayerDate,
+        LayerCategory: layerInfo.LayerCategory,
         CRS: ['EPSG:4326'],
         detail_url: 'http://52.38.116.143/layer/' + layerInfo.LayerId,
         thumbnail_url: layerInfo.ThumbnailURL ? ('http://52.38.116.143' + layerInfo.ThumbnailURL) : null,
@@ -596,13 +598,15 @@ var SERVER_SERVICE_USE_PROXY = true;
       return '/geoserver/wms';
     };
 
-    var addSearchResults = function(searchUrl, server, layerConfigCallback) {
+    var addSearchResults = function(searchUrl, body, server, layerConfigCallback) {
+      body = body || {};
       var layers_loaded = false;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
       console.log('---searchUrl: ', searchUrl);
-      http_.get(searchUrl, config).then(function(xhr) {
+
+      http_.post(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
           console.log('---- populateLayersConfig.populateLayersConfig server', server);
@@ -621,6 +625,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.reformatLayerHyperConfigs = function(elasticResponse, serverUrl) {
+      rootScope_.$broadcast('totalOfDocs', elasticResponse.hits.total);
       return createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl);
     };
 
@@ -648,6 +653,27 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
       return url;
     };
+    this.applyBodyFilter = function(filter_options) {
+      var body = {};
+      if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+        body = {
+          'query': {
+            'filtered': {
+              'filter': {
+                'range' : {
+                  'LayerDate' : {
+                    'gte': filter_options.minYear + '-01-01T00:00:00',
+                    'lte': filter_options.maxYear + '-01-01T00:00:00'
+                  }
+                }
+              }
+            }
+          }
+        };
+      }
+      return body;
+    };
+
     var applyFavoritesFilter = function(url, filterOptions) {
       if (filterOptions.text !== null) {
         url += '&title__contains=' + filterOptions.text;
@@ -664,35 +690,18 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
-    this.getNumberOfDocsForHyper = function(server, catalogKey, layerDocsCallback) {
-      catalogKey = service_.validateCatalogKey(catalogKey);
-      if (catalogKey === false) {
-        return layerDocsCallback(false);
-      }
-      var searchUrl = service_.catalogList[catalogKey].url + '_stats/docs?';
-      var config = createAuthorizationConfigForServer(server);
-      http_.get(searchUrl, config).then(function(xhr) {
-        if (xhr.status === 200) {
-          return layerDocsCallback(xhr.data);
-        } else {
-          return layerDocsCallback(false);
-        }
-      }, function(xhr) {
-        return layerDocsCallback(false);
-      });
-    };
-
     this.populateLayersConfigElastic = function(server, filterOptions) {
       //var searchUrl = 'http://beta.mapstory.org/api/layers/search/?is_published=true&limit=100';
       var searchUrl = '/api/layers/search/?is_published=true&limit=100';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, {}, server, service_.reformatLayerConfigs);
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
       var searchUrl;
+      var bodySearch = {};
       catalogKey = service_.validateCatalogKey(catalogKey);
       if (catalogKey === false) {
         return false;
@@ -700,8 +709,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       searchUrl = service_.catalogList[catalogKey].url + '_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+        bodySearch = service_.applyBodyFilter(filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
+      return addSearchResults(searchUrl, bodySearch, server, service_.reformatLayerHyperConfigs);
     };
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
@@ -709,7 +719,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions !== null) {
         searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
+      return addSearchResults(searchUrl, {}, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {

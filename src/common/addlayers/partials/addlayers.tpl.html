@@ -7,7 +7,6 @@
                 <div class="tab-pane active" id="explore">
                   <div loom-addlayersfilter></div>
                 </div>
-
                 <div class="result-table">
                   <div class="clearfix search-results panel">
                     <table class="table table-hover list-results panel-body">
@@ -53,10 +52,11 @@
                         <div class="col-md-8 col-sm-8">
                           <p class="abstract">{{currentLayer.Abstract}}</p>
                         </div>
+
                         <div class="col-md-4 col-sm-4 row">
                           <div class="layer-info-left">
-                            <div>dd/mm/yy</div>
-                            <div>{{currentLayer.type || 'Society'}}</div>
+                            <div>{{currentLayer.LayerDate || 'Date' | date : 'd/MM/y'}}</div>
+                            <div>{{currentLayer.LayerCategory || 'Category'}}</div>
                           </div>
                         </div>
                       </div>

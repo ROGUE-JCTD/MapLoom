@@ -180,7 +180,7 @@ describe('addLayers/ServerService', function() {
     describe('server is available and returns results', function() {
       beforeEach(function() {
         $httpBackend.resetExpectations();
-        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
+        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -197,7 +197,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
+        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -299,7 +299,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100').respond(200, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -316,7 +316,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100').respond(501, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(501, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -327,7 +327,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('filter for title', function() {
       it('returns the url with title__contains', function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
         spyOn(serverService, 'reformatConfigForFavorites');
         var filterOptions = {
           owner: null,
@@ -354,7 +354,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
+        $httpBackend.expect('POST', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
