@@ -136,20 +136,15 @@
                 serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
               } else if (searchHyper) {
                 serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions, scope.catalogKey);
-                getSizedocuments();
               } else {
                 serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
               }
             };
 
-            function getSizedocuments() {
-              serverService.getNumberOfDocsForHyper(serverService.getServerLocalGeoserver(), scope.catalogKey, function(docsStats) {
-                if (docsStats) {
-                  scope.pagination.sizeDocuments = docsStats.indices.hypermap.total.docs.count || scope.sizeDocuments;
-                  scope.pagination.pages = Math.floor(scope.pagination.sizeDocuments / scope.filterOptions.size);
-                }
-              });
-            }
+            scope.$on('totalOfDocs', function(event, totalDocsCount) {
+              scope.pagination.sizeDocuments = totalDocsCount || scope.sizeDocuments;
+              scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
+            });
 
             scope.search();
             scope.getCurrentServerName = function() {
@@ -157,11 +152,15 @@
               if (goog.isDefAndNotNull(server)) {
                 return server.name;
               }
-
               return '';
             };
 
             scope.$on('slideEnded', function() {
+              resetFrom();
+              scope.search();
+            });
+            scope.$on('changeSliderValues', function() {
+              resetFrom();
               scope.search();
             });
 

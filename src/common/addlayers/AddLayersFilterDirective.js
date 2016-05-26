@@ -46,6 +46,7 @@
             }
             scope.sliderValues = sliderValues.slice();
             changeSliderValues = false;
+            scope.$broadcast('changeSliderValues');
           }else {
             changeSliderValues = true;
           }
