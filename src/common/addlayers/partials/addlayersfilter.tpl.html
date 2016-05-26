@@ -1,6 +1,6 @@
 <nav class="filter panel panel-default">
     <div class="panel-body">
-      <div class="col-md-12">
+      <form class="col-md-12" ng-submit="search()">
         <div class="row">
           <div class="search-bar col-md-6 col-xs-6">
             <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for ..."
@@ -32,11 +32,12 @@
             </div>
             <div class="col-md-6 col-xs-6">
               <div class="pull-left">
-                <button class="btn btn-search" ng-disabled="!filterOptions.text" ng-click="search()"
-                  type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> SEARCH</button>
+                <button class="btn btn-search" ng-disabled="!filterOptions.text" type="submit" id="text_search_btn">
+                  <i class="glyphicon glyphicon-search"></i> SEARCH
+                </button>
               </div>
             </div>
         </div>
-      </div>
+      </form>
     </div>
 </nav>
