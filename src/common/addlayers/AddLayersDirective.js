@@ -89,6 +89,7 @@
 
             scope.searchHyper = function() {
               clearFilters();
+              scope.slider = scope.defaultSliderValue();
               searchHyper = true;
               scope.search();
             };
