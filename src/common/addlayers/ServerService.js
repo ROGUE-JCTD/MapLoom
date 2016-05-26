@@ -539,6 +539,8 @@ var SERVER_SERVICE_USE_PROXY = true;
         Abstract: layerInfo.Abstract,
         Name: layerInfo.LayerName,
         Title: layerInfo.LayerTitle,
+        LayerDate: layerInfo.LayerDate,
+        LayerCategory: layerInfo.LayerCategory,
         CRS: ['EPSG:4326'],
         detail_url: 'http://52.38.116.143/layer/' + layerInfo.LayerId,
         thumbnail_url: layerInfo.ThumbnailURL ? ('http://52.38.116.143' + layerInfo.ThumbnailURL) : null,

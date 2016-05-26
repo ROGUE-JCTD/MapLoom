@@ -58,8 +58,8 @@
                             <div>CATEGORY</div>
                           </div>
                           <div class="col-sm-7 col-xs-7 layer-info-left">
-                            <div>dd/mm/yy</div>
-                            <div>{{currentLayer.type || 'Society'}}</div>
+                            <div>{{currentLayer.LayerDate || 'dd/mm/yy' | date : 'd/MM/y'}}</div>
+                            <div>{{currentLayer.LayerCategory || 'Unknown'}}</div>
                           </div>
                         </div>
                       </div>
