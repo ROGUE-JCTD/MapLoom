@@ -220,9 +220,6 @@
               var bboxLayer = mapService.createGeoJSONLayerFromCoordinatesWithProjection(layerConfig.extent, mapService.getProjection());
               bboxLayer.setStyle(bboxStyle());
               scope.previewLayers = [
-                new ol.layer.Tile({
-                  source: new ol.source.OSM()
-                }),
                 layer,
                 bboxLayer
               ];
