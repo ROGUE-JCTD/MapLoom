@@ -11,28 +11,34 @@
         var sliderValues = scope.sliderValues.slice();
         var changeSliderValues = false;
 
-        scope.sliderValues.getValue = function(key) {
-          return scope.sliderValue(key);
-        };
         scope.minValue = scope.sliderValues[10];
         scope.maxValue = scope.sliderValues[scope.sliderValues.length - 2];
 
-        scope.slider = {
-          minValue: 10,
-          maxValue: sliderValues.length - 2,
-          options: {
-            floor: 10,
-            ceil: sliderValues.length - 2,
-            step: 1,
-            noSwitching: true, hideLimitLabels: true,
-            getSelectionBarColor: function() {
-              return '#77d5d5';
-            },
-            translate: function() {
-              return '';
-            }
-          }
+        scope.sliderValues.getValue = function(key) {
+          return scope.sliderValue(key);
         };
+
+        scope.defaultSliderValue = function() {
+          return {
+            minValue: 10,
+            maxValue: sliderValues.length - 2,
+            options: {
+              floor: 10,
+              ceil: sliderValues.length - 2,
+              step: 1,
+              noSwitching: true, hideLimitLabels: true,
+              getSelectionBarColor: function() {
+                return '#77d5d5';
+              },
+              translate: function() {
+                return '';
+              }
+            }
+          };
+        };
+
+        scope.slider = scope.defaultSliderValue();
+
         scope.setRange = function(inputId) {
           inputId = inputId || 'inputMaxValue';
           var inputValue = element.find('#' + inputId).val();
