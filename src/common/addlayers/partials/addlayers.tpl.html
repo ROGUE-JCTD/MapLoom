@@ -69,7 +69,7 @@
                   </div>
                   <div class="panel-body">
                     <table class="table table-hover list-results">
-                      <tr class="result" ng-repeat="layer in cart">
+                      <tr class="result" ng-repeat="layer in cart.slice().reverse()">
                         <td class="remove-button">
                           {{layer.Title}}
                           <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
