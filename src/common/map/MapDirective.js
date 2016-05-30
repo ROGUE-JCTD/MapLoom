@@ -14,11 +14,15 @@
           },
           link: function(scope, element) {
             var map;
+
             var createMap = function() {
               map = new ol.Map({
                 layers: [
                   new ol.layer.Tile({
-                    source: new ol.source.OSM()
+                    source: new ol.source.TileJSON({
+                      url: 'http://api.tiles.mapbox.com/v3/mapbox.world-light.jsonp',
+                      crossOrigin: true
+                    })
                   })
                 ],
                 target: scope.mapId,
@@ -35,7 +39,7 @@
             });
             scope.$watch('layers', function(layers) {
               if (layers && map) {
-                for (var i = 0; i < map.getLayers().getLength(); i++) {
+                for (var i = 1; i < map.getLayers().getLength(); i++) {
                   map.removeLayer(map.getLayers().getArray()[i]);
                 }
                 for (var j = 0; j < layers.length; j++) {
