@@ -767,7 +767,7 @@
                   {type: 'gxp_googlesource'}));
             } else if (server.ptype === 'gxp_mapboxsource') {
               var parms = {
-                url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
+                url: 'https://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
                 crossOrigin: true,
                 jsonp: true,
                 wrapX: false
