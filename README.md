@@ -49,3 +49,14 @@ The recommended way to develop maploom is to:
 - you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. 
 
 Note that linter used by `grunt watch` is very paticular about the js programing style and guildlines. Be sure to fix all compile issues. 
+
+## Deployment
+
+Deployment to `gh-pages` is very easy.
+You can use it by yourself. By using the following command on you console:
+
+```
+grunt gh-pages:src
+```
+
+or you set up the `deploy` task in the `Gruntfile` with your credentials and add your `GH_TOKEN` to the env section of the `.travis.yml`
