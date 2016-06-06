@@ -883,9 +883,9 @@
   //-- Private functions
 
   function registerOnMapClick($rootScope, $compile) {
-    mapService_.map.on('singleclick', function(evt) {
+    mapService_.map.on('pointermove', function(evt) {
       if (enabled_) {
-        //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
+        // console.log('loomFeatureInfoBox.map.onhover. event ', evt);
 
         // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it
         if (!goog.isDefAndNotNull(containerInstance_)) {
