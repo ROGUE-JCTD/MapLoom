@@ -33,8 +33,12 @@ textarea {
 }
 
 i {
-  color: #46443b;
+  color: @baseWhite;
   cursor: pointer;
+}
+
+i:hover {
+  color: @baseOrange;
 }
 
 ul {
@@ -134,14 +138,14 @@ ul {
 }
 
 .menu i {
-  color: @baseGray;
+  color: @baseWhite;
   float: right;
   font-size: 15px;
   padding: 3px 10px 0;
 }
 
 .menu i:hover {
-  color: @baseGray;
+  color: @baseOrange;
 }
 
 .menuHidden i {
