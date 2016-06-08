@@ -1508,7 +1508,7 @@
     };
 
     this.clearEditLayer = function() {
-      this.editLayer.getSource().clear();
+      this.editLayer.getSource().clear(true);
       this.map.removeLayer(this.editLayer);
     };
 
