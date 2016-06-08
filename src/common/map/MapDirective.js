@@ -39,8 +39,9 @@
             });
             scope.$watch('layers', function(layers) {
               if (layers && map) {
-                for (var i = 1; i < map.getLayers().getLength(); i++) {
-                  map.removeLayer(map.getLayers().getArray()[i]);
+                var layerLength = map.getLayers().getLength();
+                for (var i = 1; i < layerLength; i++) {
+                  map.removeLayer(map.getLayers().getArray()[1]);
                 }
                 for (var j = 0; j < layers.length; j++) {
                   map.addLayer(layers[j]);
