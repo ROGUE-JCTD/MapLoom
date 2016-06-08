@@ -13,7 +13,7 @@
     </span>
     <i class="fa fa-reorder pull-right" ng-click="toggleSidebar('mainMenu')"></i>
     <span class="dropdown">
-        <button class="btn btn-profile pull-right" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-author"></i>{{ storyService.username }}</button>
+        <button class="btn btn-profile pull-right" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-user icon-profile"></i>{{ storyService.username }}</button>
         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
             <li><a ng-href="/storyteller/{{ storyService.username}}" target="_blank">{{ 'your_data' | translate }}</a></li>
             <li class="modal-divider"></li>
