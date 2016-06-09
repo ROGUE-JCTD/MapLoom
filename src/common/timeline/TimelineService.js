@@ -84,6 +84,13 @@
         start = smallest.offset(start);
       }
     }
+
+    for (var iPin = 0; iPin < pinsForMap_.length; iPin += 1) {
+      var pin = pinsForMap_[iPin];
+      addTick(pin.start_time);
+      addTick(pin.end_time);
+    }
+
     ticks = Object.getOwnPropertyNames(ticks).map(function(t) {
       return parseInt(t, 10);
     });
