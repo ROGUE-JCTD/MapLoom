@@ -149,7 +149,14 @@
               scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
             });
 
-            scope.search();
+            scope.$on('dateRangeHistogram', function(even, histogram) {
+              scope.histogram = histogram;
+            });
+
+            $('#add-layer-dialog').on('shown.bs.modal', function() {
+              scope.search();
+            });
+
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
               if (goog.isDefAndNotNull(server)) {
@@ -171,6 +178,7 @@
               if (goog.isDefAndNotNull(scope.sliderValues)) {
                 scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue];
                 scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue];
+                scope.filterOptions.sliderValues = scope.sliderValues;
               }
             }
 

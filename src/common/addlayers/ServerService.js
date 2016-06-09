@@ -626,6 +626,9 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.reformatLayerHyperConfigs = function(elasticResponse, serverUrl) {
       rootScope_.$broadcast('totalOfDocs', elasticResponse.hits.total);
+      if (elasticResponse.aggregations) {
+        rootScope_.$broadcast('dateRangeHistogram', elasticResponse.aggregations.range);
+      }
       return createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl);
     };
 
@@ -655,6 +658,12 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
     this.applyBodyFilter = function(filter_options) {
       var body = {};
+      var ranges = [];
+      if (filter_options.sliderValues) {
+        for (var i = 10; i < filter_options.sliderValues.length - 2; i++) {
+          ranges.push({ 'from': filter_options.sliderValues[i].toString(), 'to': filter_options.sliderValues[i + 1].toString()});
+        }
+      }
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
         body = {
           'query': {
@@ -670,6 +679,17 @@ var SERVER_SERVICE_USE_PROXY = true;
             }
           }
         };
+        if (ranges.length > 0) {
+          body.aggs = {
+            'range': {
+              'date_range': {
+                'field': 'LayerDate',
+                'format': 'yyyy',
+                'ranges': ranges
+              }
+            }
+          };
+        }
       }
       return body;
     };
