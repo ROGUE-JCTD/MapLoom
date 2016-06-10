@@ -324,10 +324,10 @@
     };
 
     this.updateStyle = function(layer) {
-      var style = layer.get('style') || layer.get('metadata').style || '';
-      style.name = this.configuration.username + '-' + this.configuration.id + '-' + style.typeName + '-' + layer.get('metadata').title;
+      var style = layer.get('style') || layer.get('metadata').style;
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
+        style.name = this.configuration.username + '-' + this.configuration.id + '-' + style.typeName + '-' + layer.get('metadata').title;
         var layerSource = layer.getSource();
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams) && goog.isDefAndNotNull(layer.get('styleName'))) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
