@@ -37,9 +37,7 @@
             cartLayerName = [];
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
-            scope.histogram = {
-              maxValue: 1
-            };
+            var histogram = {};
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -152,16 +150,30 @@
               scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
             });
 
-            scope.$on('dateRangeHistogram', function(even, histogram) {
-              scope.histogram = histogram;
-              scope.histogram.barsWidth = $('#bars').width();
-              scope.histogram.maxValue = Math.max.apply(null, histogram.buckets.map(function(obj) {
+            function renderingSvgBars() {
+              if (histogram.buckets) {
+                histogram.barsWidth = $('#bars').width();
+                var svgRect = histogram.buckets.map(function(bar, barKey) {
+                  var height = 40 * bar.doc_count / histogram.maxValue;
+                  var y = 40 * (1 - (bar.doc_count / histogram.maxValue));
+                  var translate = (histogram.barsWidth / histogram.buckets.length) * barKey;
+                  return '<g transform="translate(' + translate + ', 0)">' +
+                         '  <rect width="10" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
+                         '</g>';
+                });
+                var svgbar = '<svg width="100%" height="40">' + svgRect.join('') + '</svg>';
+                $('#bars').html(svgbar);
+              }
+            }
+
+            scope.$on('dateRangeHistogram', function(even, histogramData) {
+              histogram = histogramData;
+              histogram.maxValue = Math.max.apply(null, histogram.buckets.map(function(obj) {
                 return obj.doc_count;
               }));
+              renderingSvgBars();
             });
-            window.onresize = function() {
-              scope.histogram.barsWidth = $('#bars').width();
-            };
+            window.onresize = renderingSvgBars;
 
             $('#add-layer-dialog').on('shown.bs.modal', function() {
               scope.search();
