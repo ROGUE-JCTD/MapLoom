@@ -325,7 +325,7 @@
 
     this.updateStyle = function(layer) {
       var style = layer.get('style') || layer.get('metadata').style || '';
-      var styleName = this.configuration.username + '_' + layer.get('typeName');
+      style.name = this.configuration.username + '-' + this.configuration.id + '-' + style.typeName + '-' + layer.get('metadata').title;
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
         var layerSource = layer.getSource();
@@ -333,36 +333,36 @@
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
-            url: '/geoserver/rest/styles.xml?name=' + styleName,
+            url: '/gs/rest/styles?name=' + style.name,
             method: 'POST',
             data: xml,
             headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
           }).then(function(result) {
             console.log('Style Create Response ', result);
-            layer.get('metadata').config.styles = styleName;
+            layer.get('metadata').config.styles = style.name;
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
               layerSource.updateParams({
                 '_dc': new Date().getTime(),
                 '_olSalt': Math.random(),
-                'STYLES': styleName
+                'STYLES': style.name
               });
             }
           }, function errorCallback(response) {
             console.log('Style Create Error Response ', response);
             if (response.status === 403) {
               httpService_({
-                url: '/geoserver/rest/styles/' + styleName + '.xml',
+                url: '/gs/rest/styles/' + style.name + '.xml',
                 method: 'PUT',
                 data: xml,
                 headers: { 'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8' }
               }).then(function(result) {
                 console.log('Style Update Response ', result);
-                layer.get('metadata').config.styles = styleName;
+                layer.get('metadata').config.styles = style.name;
                 if (goog.isDefAndNotNull(layerSource.updateParams)) {
                   layerSource.updateParams({
                     '_dc': new Date().getTime(),
                     '_olSalt': Math.random(),
-                    'STYLES': styleName
+                    'STYLES': style.name
                   });
                 }
               });
