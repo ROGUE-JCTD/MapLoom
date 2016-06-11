@@ -194,6 +194,7 @@
       this.editLayer = createVectorEditLayer();
 
       this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
+      this.createBBoxFromCoordinatesFromProjectionIntoProjection = createBBoxFromCoordinatesFromProjectionIntoProjection;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);

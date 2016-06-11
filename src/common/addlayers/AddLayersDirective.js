@@ -12,7 +12,6 @@
           link: function(scope, element) {
             var searchFavorites = false;
             var searchHyper = true;
-            var mapPreviewCoordinates = [];
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -23,7 +22,8 @@
               from: null,
               size: 10,
               minYear: null,
-              maxYear: null
+              maxYear: null,
+              mapPreviewCoordinatesBbox: []
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
@@ -166,7 +166,7 @@
 
             // Before to start the search, check if the mapPreview is rendered.
             $('#add-layer-dialog').on('shown.bs.modal', function() {
-              if (mapPreviewCoordinates.length === 4) {
+              if (scope.filterOptions.mapPreviewCoordinatesBbox.length === 4) {
                 scope.search();
               }
             });
@@ -189,7 +189,7 @@
             });
 
             scope.$on('moveendMap', function(event, coordinates) {
-              mapPreviewCoordinates = coordinates;
+              scope.filterOptions.mapPreviewCoordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
               scope.search();
             });
 
