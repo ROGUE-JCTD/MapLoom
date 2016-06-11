@@ -12,6 +12,7 @@
           link: function(scope, element) {
             var searchFavorites = false;
             var searchHyper = true;
+            var mapPreviewCoordinates = [];
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -163,8 +164,11 @@
               scope.histogram.barsWidth = $('#bars').width();
             };
 
+            // Before to start the search, check if the mapPreview is rendered.
             $('#add-layer-dialog').on('shown.bs.modal', function() {
-              scope.search();
+              if (mapPreviewCoordinates.length === 4) {
+                scope.search();
+              }
             });
 
             scope.getCurrentServerName = function() {
@@ -181,6 +185,11 @@
             });
             scope.$on('changeSliderValues', function() {
               resetFrom();
+              scope.search();
+            });
+
+            scope.$on('moveendMap', function(event, coordinates) {
+              mapPreviewCoordinates = coordinates;
               scope.search();
             });
 
@@ -215,7 +224,6 @@
               }
             };
             scope.addLayers = function() {
-
               scope.selectedLayer = {};
               $('#add-layer-dialog').modal('hide');
               scope.cart.forEach(addLayer);
