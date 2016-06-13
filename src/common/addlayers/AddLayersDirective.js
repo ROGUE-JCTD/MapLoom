@@ -37,9 +37,6 @@
             cartLayerName = [];
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
-            scope.histogram = {
-              maxValue: 1
-            };
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -152,20 +149,7 @@
               scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
             });
 
-            scope.$on('dateRangeHistogram', function(even, histogram) {
-              scope.histogram = histogram;
-              scope.histogram.barsWidth = $('#bars').width();
-              scope.histogram.maxValue = Math.max.apply(null, histogram.buckets.map(function(obj) {
-                return obj.doc_count;
-              }));
-            });
-            window.onresize = function() {
-              scope.histogram.barsWidth = $('#bars').width();
-            };
-
-            $('#add-layer-dialog').on('shown.bs.modal', function() {
-              scope.search();
-            });
+            $('#add-layer-dialog').on('shown.bs.modal', scope.search);
 
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
