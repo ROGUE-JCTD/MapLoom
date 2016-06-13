@@ -1134,7 +1134,8 @@
         category: map_config.category,
         is_published: map_config.is_published,
         chapter_index: map_config.chapter_index,
-        story_id: map_config.id
+        story_id: map_config.id,
+        viewer_playbackmode: map_config.viewer_playbackmode || null
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {

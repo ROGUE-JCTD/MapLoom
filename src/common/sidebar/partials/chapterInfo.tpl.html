@@ -30,9 +30,22 @@
 </div>
 
 <div class="menuItem">
-    <label for="defaultzoom">Set default chapter view</label>
-    <button ng-click="storyService.saveChapterView()" class="btn-composer btn-block" name="defaultzoom" id="defaultzoom"> Set Chapter View </button>
+    <label for="defaultzoom">Chapter View</label>
+    <div>
+        <button ng-click="storyService.saveChapterView()" class="btn-composer btn-block" name="defaultzoom" id="defaultzoom"> Set Current Zoom </button>
+    </div>
 </div>
+
 <div class="menuItem">
-    <button ng-click="storyService.save()" type="button" class="btn-composer">Save Chapter Info</button>
+    <label for="playbackSettings">Data Playback</label>
+    <div class="btn-group">
+        <label class="btn btn-composer togglePlayback" btn-radio="'instant'" ng-change="storyService.setDataPlayback('instant')" ng-model="active_chapter.viewer_playbackmode"> Instant </label>
+        </label>
+        <label class="btn btn-composer togglePlayback" btn-radio="'cumulative'" ng-change="storyService.setDataPlayback('cumulative')" ng-model="active_chapter.viewer_playbackmode"> Cumulative </label>
+        </label>
+    </div>
+</div>
+
+<div class="menuItem">
+    <button ng-click="storyService.save()" type="button" class="btn-composer btn-block">Save Chapter Info</button>
 </div>
