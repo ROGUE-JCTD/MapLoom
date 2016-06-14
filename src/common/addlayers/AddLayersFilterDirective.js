@@ -65,8 +65,8 @@
             var barsheight = 40;
             var rectWidth = histogram.barsWidth / histogram.buckets.length;
             var svgRect = histogram.buckets.map(function(bar, barKey) {
-              var height = barsheight * bar.doc_count / histogram.maxValue;
-              var y = barsheight * (1 - (bar.doc_count / histogram.maxValue));
+              var height = histogram.maxValue === 0 ? 0 : barsheight * bar.doc_count / histogram.maxValue;
+              var y = barsheight - height;
               var translate = (rectWidth) * barKey;
               return '<g transform="translate(' + translate + ', 0)">' +
                      '  <rect width="' + rectWidth + '" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
