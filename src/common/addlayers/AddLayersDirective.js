@@ -12,6 +12,7 @@
           link: function(scope, element) {
             var searchFavorites = false;
             var searchHyper = true;
+            var mapPreviewChangeCount = 0;
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -38,9 +39,6 @@
             cartLayerName = [];
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
-            scope.histogram = {
-              maxValue: 1
-            };
 
             var resetText = function() {
               scope.filterOptions.text = null;
@@ -164,12 +162,7 @@
               scope.histogram.barsWidth = $('#bars').width();
             };
 
-            // Before to start the search, check if the mapPreview is rendered.
-            $('#add-layer-dialog').on('shown.bs.modal', function() {
-              if (scope.filterOptions.mapPreviewCoordinatesBbox.length === 4) {
-                scope.search();
-              }
-            });
+            scope.search();
 
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
@@ -189,8 +182,11 @@
             });
 
             scope.$on('moveendMap', function(event, coordinates) {
-              scope.filterOptions.mapPreviewCoordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
-              scope.search();
+              mapPreviewChangeCount++;
+              if (mapPreviewChangeCount > 1) {
+                scope.filterOptions.mapPreviewCoordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
+                scope.search();
+              }
             });
 
             function searchRangeValues() {
