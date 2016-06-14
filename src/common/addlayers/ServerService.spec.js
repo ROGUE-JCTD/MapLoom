@@ -227,7 +227,18 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
+        var body = {
+                     'query': {
+                       'bool': {
+                         'must': [{
+                                   'query_string': {
+                                     'query': 'Ocean'
+                                   }
+                                 }]
+                       }
+                     }
+                   };
+        expect(serverService.applyBodyFilter(filterOptions)).toEqual(body);
       });
     });
     describe('only owner filter', function() {
