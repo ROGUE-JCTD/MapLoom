@@ -659,6 +659,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.applyBodyFilter = function(filter_options) {
       var body = {};
       var ranges = [];
+      var mapExtentFilter = [];
       if (filter_options.sliderValues) {
         for (var i = 10; i < filter_options.sliderValues.length - 2; i++) {
           ranges.push({ 'from': filter_options.sliderValues[i].toString(), 'to': filter_options.sliderValues[i + 1].toString()});
@@ -667,18 +668,54 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
         body = {
           'query': {
-            'filtered': {
-              'filter': {
-                'range' : {
-                  'LayerDate' : {
-                    'gte': filter_options.minYear + '-01-01T00:00:00',
-                    'lte': filter_options.maxYear + '-01-01T00:00:00'
+            'bool': {
+              'must': [
+                {
+                  'range' : {
+                    'LayerDate' : {
+                      'gte': filter_options.minYear + '-01-01T00:00:00',
+                      'lte': filter_options.maxYear + '-01-01T00:00:00'
+                    }
                   }
                 }
-              }
+              ]
             }
           }
         };
+        console.log(filter_options.mapPreviewCoordinatesBbox);
+        if (filter_options.mapPreviewCoordinatesBbox.length === 4) {
+          mapExtentFilter = [
+            {
+              'range': {
+                'MinX': {
+                  'gte': filter_options.mapPreviewCoordinatesBbox[0][0]
+                }
+              }
+            },
+            {
+              'range': {
+                'MaxX': {
+                  'lte': filter_options.mapPreviewCoordinatesBbox[2][0]
+                }
+              }
+            },
+            {
+              'range': {
+                'MinY': {
+                  'gte': filter_options.mapPreviewCoordinatesBbox[0][1]
+                }
+              }
+            },
+            {
+              'range': {
+                'MaxY': {
+                  'lte': filter_options.mapPreviewCoordinatesBbox[2][1]
+                }
+              }
+            }];
+          body.query.bool.must.push.apply(body.query.bool.must, mapExtentFilter);
+        }
+
         if (ranges.length > 0) {
           body.aggs = {
             'range': {

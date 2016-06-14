@@ -31,12 +31,20 @@
                   zoom: scope.zoom
                 })
               });
+
+              map.on('moveend', function(event) {
+                $rootScope.$broadcast('moveendMap', event.frameState.extent);
+              });
+
             };
             $('#add-layer-dialog').on('shown.bs.modal', function() {
               if (map === undefined) {
                 createMap();
               }
             });
+
+
+
             scope.$watch('layers', function(layers) {
               if (layers && map) {
                 var layerLength = map.getLayers().getLength();

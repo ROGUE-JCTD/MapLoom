@@ -12,6 +12,7 @@
           link: function(scope, element) {
             var searchFavorites = false;
             var searchHyper = true;
+            var mapPreviewChangeCount = 0;
             scope.serverService = serverService;
             scope.currentServerId = -1;
             scope.currentServer = null;
@@ -22,7 +23,8 @@
               from: null,
               size: 10,
               minYear: null,
-              maxYear: null
+              maxYear: null,
+              mapPreviewCoordinatesBbox: []
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
@@ -149,7 +151,18 @@
               scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
             });
 
-            $('#add-layer-dialog').on('shown.bs.modal', scope.search);
+            scope.$on('dateRangeHistogram', function(even, histogram) {
+              scope.histogram = histogram;
+              scope.histogram.barsWidth = $('#bars').width();
+              scope.histogram.maxValue = Math.max.apply(null, histogram.buckets.map(function(obj) {
+                return obj.doc_count;
+              }));
+            });
+            window.onresize = function() {
+              scope.histogram.barsWidth = $('#bars').width();
+            };
+
+            scope.search();
 
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
@@ -166,6 +179,14 @@
             scope.$on('changeSliderValues', function() {
               resetFrom();
               scope.search();
+            });
+
+            scope.$on('moveendMap', function(event, coordinates) {
+              mapPreviewChangeCount++;
+              if (mapPreviewChangeCount > 1) {
+                scope.filterOptions.mapPreviewCoordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
+                scope.search();
+              }
             });
 
             function searchRangeValues() {
@@ -199,7 +220,6 @@
               }
             };
             scope.addLayers = function() {
-
               scope.selectedLayer = {};
               $('#add-layer-dialog').modal('hide');
               scope.cart.forEach(addLayer);
