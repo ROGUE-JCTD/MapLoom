@@ -162,7 +162,7 @@
               scope.histogram.barsWidth = $('#bars').width();
             };
 
-            scope.search();
+            $('#add-layer-dialog').on('shown.bs.modal', scope.search);
 
             scope.getCurrentServerName = function() {
               var server = serverService.getServerById(scope.currentServerId);
