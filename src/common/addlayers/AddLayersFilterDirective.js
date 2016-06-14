@@ -63,12 +63,13 @@
           if (histogram.buckets) {
             histogram.barsWidth = $('#bars').width();
             var barsheight = 40;
+            var rectWidth = histogram.barsWidth / histogram.buckets.length;
             var svgRect = histogram.buckets.map(function(bar, barKey) {
               var height = barsheight * bar.doc_count / histogram.maxValue;
               var y = barsheight * (1 - (bar.doc_count / histogram.maxValue));
-              var translate = (histogram.barsWidth / histogram.buckets.length) * barKey;
+              var translate = (rectWidth) * barKey;
               return '<g transform="translate(' + translate + ', 0)">' +
-                     '  <rect width="10" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
+                     '  <rect width="' + rectWidth + '" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
                      '</g>';
             });
             var svgbar = '<svg width="100%" height="' + barsheight + '">' + svgRect.join('') + '</svg>';
