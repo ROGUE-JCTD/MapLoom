@@ -62,7 +62,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
-      //console.log('----[ returning server id: ', id, ', server: ', server);
       return server;
     };
 
@@ -109,7 +108,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
-      //console.log('----[ returning server ptype: ', ptype, ', server: ', server);
       return server;
     };
 
@@ -134,7 +132,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
-      //console.log('----[ returning server with name: ', name, ', server: ', server);
       return server;
     };
 
@@ -177,7 +174,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (service_.isUrlAVirtualService(serverInfo.url) === true) {
         var urlSections = serverInfo.url.split('/');
         var newUrl = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] + '/' + urlSections[6];
-        console.log('---- changing layer-specific server to generic. old: ', serverInfo.url, ', new: ', newUrl);
         serverInfo.isVirtualService = true;
         serverInfo.virtualServiceUrl = serverInfo.url;
         serverInfo.url = newUrl;
@@ -270,7 +266,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
 
       var doWork = function() {
-        console.log('---- MapService.layerInfo. trying to add server: ', server);
         service_.populateLayersConfig(server)
             .then(function(response) {
               // set the id. it should always resolve to the length
@@ -375,7 +370,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.configDefaultServers = function() {
       var config = null;
-      console.log('----- Configuring default servers.');
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_bingsource'))) {
         config = {ptype: 'gxp_bingsource', name: 'Bing', defaultServer: true};
@@ -438,7 +432,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       var name = layerName.split(':')[1];
       url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
       url += '/' + name + '/wms?request=GetCapabilities';
-      console.log('WMS url: ', url);
       server.populatingLayersConfig = true;
       var config = {};
       config.headers = {};
@@ -476,12 +469,10 @@ var SERVER_SERVICE_USE_PROXY = true;
               }
             }
           }
-          console.log('getting layer config, crs', layerConfig.CRS);
           break;
         }
       }
 
-      console.log('---- ServerService.getLayerConfig: ', layerConfig);
       return layerConfig;
     };
 
@@ -604,12 +595,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      console.log('---searchUrl: ', searchUrl);
 
       http_.post(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
-          console.log('---- populateLayersConfig.populateLayersConfig server', server);
           rootScope_.$broadcast('layers-loaded', server.id);
           layers_loaded = true;
           server.populatingLayersConfig = false;
@@ -785,7 +774,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.populateLayersConfig = function(server, force) {
       var deferredResponse = q_.defer();
-      console.log('---- ServerService.populateLayersConfig. server', server);
 
       if (!goog.isDefAndNotNull(server)) {
         //TODO: make sure it is okay to reject and then return the promise
@@ -869,7 +857,6 @@ var SERVER_SERVICE_USE_PROXY = true;
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_wmscsource' ||
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
-          console.log('---- ServerService.Sending Elastic Search: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
