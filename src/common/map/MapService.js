@@ -853,8 +853,6 @@
 
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
-          var layerPrjObject = ol.proj.get(meta.projection);
-          console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
 
@@ -863,7 +861,6 @@
         console.log('====[Error: could not load layer: ', minimalConfig);
       }
 
-      console.log('-- MapService.addLayer, added: ', layer);
       pulldownService_.showLayerPanel();
       return layer;
     };
