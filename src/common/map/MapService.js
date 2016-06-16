@@ -5,8 +5,6 @@
   var serverService_ = null;
   var geogigService_ = null;
   var httpService_ = null;
-  var cookieStoreService_ = null;
-  var cookiesService_ = null;
   var configService_ = null;
   var dialogService_ = null;
   var pulldownService_ = null;
@@ -159,10 +157,7 @@
                          $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
-      cookieStoreService_ = $cookieStore;
-      cookiesService_ = $cookies;
       configService_ = configService;
-      console.log(cookiesService_, cookieStoreService_);
       serverService_ = serverService;
       geogigService_ = geogigService;
       dialogService_ = dialogService;
@@ -288,7 +283,6 @@
           }
         }
       }
-      console.log('---- MapService.zoomToExtent. extent: ', extent);
 
       if (animate) {
         var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
@@ -344,12 +338,10 @@
             '</wps:Execute>';
 
         httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
-          //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
           var x2js = new X2JS();
           var json = x2js.xml_str2json(data);
           if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
               goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
-            console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
             service_.zoomToLayerExtent(layer);
             deferredResponse.resolve();
             return;
@@ -360,14 +352,12 @@
                         JSON.parse(lower[1], 10),
                         JSON.parse(upper[0], 10),
                         JSON.parse(upper[1], 10)];
-          //console.log('------- [[ bounds: ', bounds);
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
               ol.proj.get('EPSG:900913'));
           var extent900913 = ol.extent.applyTransform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
           deferredResponse.resolve();
         }).error(function(data, status, headers, config) {
-          console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
           service_.zoomToLayerExtent(layer);
           deferredResponse.resolve();
         });
@@ -542,14 +532,11 @@
     };
 
     this.createLayerFull = function(minimalConfig, fullConfig, server, opt_layerOrder) {
-      console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
-          server, ', opt_layerOrder: ', opt_layerOrder);
 
       // download missing projection projection if we don't have it
       if (goog.isDefAndNotNull(fullConfig)) {
         var projcode = service_.getCRSCode(fullConfig.CRS);
         if (goog.isDefAndNotNull(projcode)) {
-          console.log('----[ addLayer, looking up projection: ', projcode);
           // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
           // it we we have internet connectivity. When working in disconnected mode, you can only use projections
           // that have been defined by maploom in Proj4jDefs
@@ -658,8 +645,6 @@
             goog.object.extend(sourceParams, fullConfig.sourceParams);
           }
 
-          // console.log(sourceParams, config.sourceParams, {});
-
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -727,8 +712,6 @@
             }
           }
 
-          console.log('config crs', fullConfig.CRS);
-          console.log('getCode', service_.getCRSCode(fullConfig.CRS));
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -870,8 +853,6 @@
 
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
-          var layerPrjObject = ol.proj.get(meta.projection);
-          console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
 
@@ -880,7 +861,6 @@
         console.log('====[Error: could not load layer: ', minimalConfig);
       }
 
-      console.log('-- MapService.addLayer, added: ', layer);
       pulldownService_.showLayerPanel();
       return layer;
     };
@@ -948,8 +928,6 @@
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
-        console.log('saving server: ', server);
-
         // Remove the MapLoom-specific virtual service flag and attribute.  These are re-created when the
         // layer is added.
         if (server.config.isVirtualService === true && goog.isDefAndNotNull(server.config.virtualServiceUrl)) {
@@ -989,13 +967,9 @@
         } else if (goog.isDefAndNotNull(layer.get('metadata').savedSchema)) {
           config.schema = layer.get('metadata').savedSchema;
         }
-        console.log('saving layer: ', layer);
-        console.log('metadata: ', layer.get('metadata'));
-        console.log('config: ', layer.get('metadata').config);
+
         cfg.map.layers.push(config);
       });
-
-      console.log('--- save.cfg: ', cfg);
 
       httpService_({
         url: service_.getSaveURL(),
@@ -1006,7 +980,6 @@
         }
       }).success(function(data, status, headers, config) {
         service_.updateMap(data);
-        console.log('----[ map.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));
@@ -1019,7 +992,6 @@
 
     this.loadLayers = function() {
       //TODO: use configService_.configuration instead of saving ref in this service
-      console.log('=======[[ using service_.configuration: ', service_.configuration);
 
       if (goog.isDefAndNotNull(service_.configuration) &&
           goog.isDefAndNotNull(service_.configuration.sources) &&
@@ -1035,7 +1007,6 @@
         });
 
         var ordered = new Array(service_.configuration.sources.length);
-        console.log('service_.configuration.sources: ', service_.configuration.sources);
         goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
@@ -1176,7 +1147,6 @@
                   }
                   dialogService_.error(translate_.instant('server'), translate_.instant('load_server_failed',
                       {'server': serverInfo.name, 'value': reject}), [translate_.instant('btn_ok')], false);
-                  console.log('====[ Error: Add server failed. ', reject);
                 });
           } else {
             orderedUniqueLength--;
@@ -1193,7 +1163,6 @@
         //TODO: once all servers were added, async, then add any missing ones.
       } else {
         console.log('invalid config object, cannot load map: ', service_.configuration);
-        alert('invalid config object, cannot load map');
       }
     };
 
@@ -1265,8 +1234,6 @@
         projection: 'EPSG:4326',
         coordinateFormat: coordDisplay
       });
-
-      console.log('====[[ loading config: ', service_.configuration);
 
       var map = new ol.Map({
         //layers: do not add any layers to the map as they will be added once server is created and getcapabilities

@@ -521,7 +521,6 @@
         if (diffsNeeded_ === 0) {
           dialogService_.error(translate_.instant('error'), translate_.instant('feature_diff_error'));
         }
-        console.log('Feature diff failed: ', panel, reject);
       });
     };
   });

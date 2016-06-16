@@ -231,7 +231,6 @@
         deferredResponse.resolve(response);
       }, function(reject) {
         //failed to get diff
-        console.log(reject);
         deferredResponse.reject();
       });
       return deferredResponse.promise;

@@ -44,7 +44,6 @@
             return;
           }
           errorDialogShowing = true;
-          console.log('==== onErrorCallback, error msg:', msg);
           var msg_string = msg;
           if (typeof msg != 'string') {
             msg_string = 'message not string. view console for object detail';
@@ -94,4 +93,3 @@
     $translateProvider.preferredLanguage('en');
   });
 }());
-

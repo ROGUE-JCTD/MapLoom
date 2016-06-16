@@ -4,7 +4,6 @@
 
   module.directive('loomFeatureInfoBox',
       function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService) {
-        //console.log('---- loom_feature_info_box_directive');
 
         return {
           replace: false,
