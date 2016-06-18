@@ -93,7 +93,10 @@
               clearFilters();
               scope.slider = scope.defaultSliderValue();
               searchHyper = true;
-              scope.search();
+              if (mapPreviewChangeCount <= 1) {
+                return scope.search();
+              }
+              $rootScope.$broadcast('resetMap');
             };
 
             scope.searchMyFavorites = function() {
