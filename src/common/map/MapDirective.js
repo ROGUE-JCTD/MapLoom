@@ -14,7 +14,7 @@
           },
           link: function(scope, element) {
             var map;
-            var firsExtent = null;
+            var firstExtent = null;
 
             var createMap = function() {
               map = new ol.Map({
@@ -33,11 +33,10 @@
                 })
               });
 
+              firstExtent = map.getView().calculateExtent(map.getSize());
+
               map.on('moveend', function(event) {
                 $rootScope.$broadcast('moveendMap', event.frameState.extent);
-                if (firsExtent === null) {
-                  firsExtent = event.frameState.extent;
-                }
               });
 
             };
@@ -51,7 +50,7 @@
               var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
               var pan = ol.animation.pan({source: map.getView().getCenter()});
               map.beforeRender(pan, zoom);
-              map.getView().fitExtent(firsExtent, map.getSize());
+              map.getView().fitExtent(firstExtent, map.getSize());
             });
 
             scope.$watch('layers', function(layers) {
