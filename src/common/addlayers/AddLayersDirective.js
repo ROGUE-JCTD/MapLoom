@@ -49,6 +49,13 @@
             var resetFrom = function() {
               scope.filterOptions.from = null;
             };
+            var resetMapPreview = function() {
+              if (mapPreviewChangeCount > 1) {
+                mapPreviewChangeCount = 0;
+                scope.filterOptions.mapPreviewCoordinatesBbox = [];
+                $rootScope.$broadcast('resetMap');
+              }
+            };
             //angular.element('#layer-filter')[0].attributes.placeholder.value = $translate.instant('filter_layers');
             scope.setCurrentServerId = function(serverId) {
               var server = serverService.getServerById(serverId);
@@ -91,6 +98,7 @@
 
             scope.searchHyper = function() {
               clearFilters();
+              resetMapPreview();
               scope.slider = scope.defaultSliderValue();
               searchHyper = true;
               scope.search();
