@@ -8,3 +8,5 @@ vendor/
 reports/
 .idea
 ZZZIGNORE_*.js
+.log
+.DS_Store

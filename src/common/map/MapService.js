@@ -145,8 +145,8 @@
       }
     };
     return new ol.layer.Vector({
-      source: new ol.source.GeoJSON({
-        object: geojsonObject
+      source: new ol.source.Vector({
+        features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
       })
     });
   }
@@ -168,10 +168,10 @@
       q_ = $q;
 
       // create map on init so that other components can use map on their init
-      this.configuration = configService_.configuration;
-      this.title = this.configuration.about.title;
-      this.abstract = this.configuration.about.abstract;
-      this.id = this.configuration.id;
+      //this.configuration = configService_.configuration;
+      this.title = configService_.configuration.about.title;
+      this.abstract = configService_.configuration.about.abstract;
+      this.id = configService_.configuration.id;
       this.save_method = 'POST';
 
       if (goog.isDefAndNotNull(this.id) && this.id) {
@@ -183,7 +183,7 @@
 
       this.map = this.createMap();
 
-      // now taht we have a map, lets try to add layers and servers
+      // now that we have a map, lets try to add layers and servers
       service_.loadLayers();
 
       this.editLayer = createVectorEditLayer();
@@ -290,7 +290,7 @@
         map.beforeRender(pan, zoom);
       }
 
-      view.fitExtent(extent, map.getSize());
+      view.fit(extent, map.getSize());
     };
 
     this.zoomToLayerFeatures = function(layer) {
@@ -301,7 +301,7 @@
         return deferredResponse.promise;
       }
 
-      if (!service_.layerIsEditable(layer)) {
+      if (service_.layerIsEditable(layer)) {
         var layerTypeName = layer.get('metadata').name;
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
 
@@ -353,7 +353,7 @@
                         JSON.parse(upper[0], 10),
                         JSON.parse(upper[1], 10)];
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
-              ol.proj.get('EPSG:900913'));
+              ol.proj.get(service_.map.getView().getProjection()));
           var extent900913 = ol.extent.applyTransform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
           deferredResponse.resolve();
@@ -430,7 +430,7 @@
             !(layer.get('metadata').internalLayer)) {
 
           // if it is imagery
-          if (service_.layerIsEditable(layer)) {
+          if (!service_.layerIsEditable(layer)) {
             // if we want imagery
             if (goog.isDefAndNotNull(includeEditable) && includeEditable) {
               if (layer.get('visible')) {
@@ -459,7 +459,7 @@
     };
 
     this.layerIsEditable = function(layer) {
-      return !goog.isDefAndNotNull(layer.get('metadata').editable) || !layer.get('metadata').editable;
+      return goog.isDefAndNotNull(layer.get('metadata').editable) && layer.get('metadata').editable;
     };
 
     this.downloadProjection = function(epsgCode) {
@@ -538,7 +538,7 @@
         var projcode = service_.getCRSCode(fullConfig.CRS);
         if (goog.isDefAndNotNull(projcode)) {
           // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
-          // it we we have internet connectivity. When working in disconnected mode, you can only use projections
+          // it if we have internet connectivity. When working in disconnected mode, you can only use projections
           // that have been defined by maploom in Proj4jDefs
           var prj = null;
           try {
@@ -658,8 +658,10 @@
           dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
               {type: 'gxp_googlesource'}));
         } else if (server.ptype === 'gxp_mapboxsource') {
+
           var parms = {
-            url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp',
+            //url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
+            url: 'http://api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
             crossOrigin: true
           };
           var mbsource = new ol.source.TileJSON(parms);
@@ -673,6 +675,25 @@
               },
               visible: minimalConfig.visibility,
               source: mbsource
+            });
+          } else {
+            console.log('====[ Error: could not create base layer.');
+          }
+        } else if (server.ptype === 'gxp_tilejsonsource') {
+          //currently we assume only one layer per 'server'
+          var jsontile_source = server.layersConfig[0].TileJSONSource;
+
+          if (goog.isDefAndNotNull(jsontile_source)) {
+            layer = new ol.layer.Tile({
+              metadata: {
+                serverId: server.id,
+                name: minimalConfig.name,
+                title: fullConfig.Title,
+                bbox: { extent: fullConfig.bounds, crs: 'CRS:84' },
+                sourceParms: fullConfig.sourceParams
+              },
+              visible: minimalConfig.visibility,
+              source: jsontile_source
             });
           } else {
             console.log('====[ Error: could not create base layer.');
@@ -850,12 +871,10 @@
         } else {
           this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
         }
-
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
-
         rootScope_.$broadcast('layer-added');
       } else {
         console.log('====[Error: could not load layer: ', minimalConfig);
@@ -874,6 +893,21 @@
 
     this.getCenter = function() {
       return this.map.getView().getCenter();
+    };
+
+    this.getMapViewParams = function() {
+      var params = {
+        projection: configService_.configuration.map.projection,
+        center: configService_.configuration.map.center,
+        zoom: configService_.configuration.map.zoom,
+        maxZoom: 17
+      };
+      if (configService_.configuration.map.projection === 'EPSG:4326') {
+        params['minZoom'] = 3;
+      } else {
+        params['maxResolution'] = 40075016.68557849 / 2048;
+      }
+      return params;
     };
 
     this.getProjection = function() {
@@ -992,22 +1026,21 @@
 
     this.loadLayers = function() {
       //TODO: use configService_.configuration instead of saving ref in this service
-
-      if (goog.isDefAndNotNull(service_.configuration) &&
-          goog.isDefAndNotNull(service_.configuration.sources) &&
-          goog.isDefAndNotNull(service_.configuration.map) &&
-          goog.isDefAndNotNull(service_.configuration.map.layers)) {
+      if (goog.isDefAndNotNull(configService_.configuration) &&
+          goog.isDefAndNotNull(configService_.configuration.sources) &&
+          goog.isDefAndNotNull(configService_.configuration.map) &&
+          goog.isDefAndNotNull(configService_.configuration.map.layers)) {
 
         // go through each server and if any of them are pointing to a specific layer's wms change it to point to
         // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
-        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
+        goog.object.forEach(configService_.configuration.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
             serverService_.replaceVirtualServiceUrl(serverInfo);
           }
         });
 
-        var ordered = new Array(service_.configuration.sources.length);
-        goog.object.forEach(service_.configuration.sources, function(serverInfo, key, obj) {
+        var ordered = new Array(configService_.configuration.sources.length);
+        goog.object.forEach(configService_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
 
@@ -1054,8 +1087,8 @@
                   ' serverInfo: ', serverInfo, ', foundServer: ', foundServer);
 
               // update any layer's source that is using this duplicate server to the existing server
-              for (var index2 = 0; index2 < service_.configuration.map.layers.length; index2++) {
-                var layer = service_.configuration.map.layers[index2];
+              for (var index2 = 0; index2 < configService_.configuration.map.layers.length; index2++) {
+                var layer = configService_.configuration.map.layers[index2];
                 if (layer.source === key.toString()) {
                   console.log('====[ Note: updating layer source from old:', layer.source,
                       ', to new: ', foundServerIndex, ', layer: ', layer);
@@ -1069,8 +1102,8 @@
 
             // Ignore lazy loading if a map layer depends on the server.
             if (serverInfo.lazy === true) {
-              for (var layerIndex = 0; layerIndex < service_.configuration.map.layers.length; layerIndex++) {
-                var mapLayer = service_.configuration.map.layers[layerIndex];
+              for (var layerIndex = 0; layerIndex < configService_.configuration.map.layers.length; layerIndex++) {
+                var mapLayer = configService_.configuration.map.layers[layerIndex];
                 if (mapLayer.source === key.toString() && goog.isDefAndNotNull(mapLayer.name)) {
                   console.log('====[ Note: Server is marked as lazy, but a map layer depends on the server.  ' +
                       'Will ignore lazy flag.', serverInfo, mapLayer);
@@ -1091,7 +1124,7 @@
 
           // get all layers that refer to this serverIndex
           var configs = [];
-          goog.array.forEach(service_.configuration.map.layers, function(layerInfo, index, obj) {
+          goog.array.forEach(configService_.configuration.map.layers, function(layerInfo, index, obj) {
             // Note: config.source will be string while serverIndex might be number
             if (layerInfo.source == configServerIndex) {
               layerInfo.temp_layerOrder = index;
@@ -1162,7 +1195,8 @@
 
         //TODO: once all servers were added, async, then add any missing ones.
       } else {
-        console.log('invalid config object, cannot load map: ', service_.configuration);
+        console.log('invalid config object, cannot load map: ', configService_.configuration);
+        alert('invalid config object, cannot load map');
       }
     };
 
@@ -1253,12 +1287,7 @@
         //renderer: ol.RendererHint.CANVAS,
         ol3Logo: false,
         target: 'map',
-        view: new ol.View({
-          center: this.configuration.map.center,
-          zoom: this.configuration.map.zoom,
-          maxZoom: 17,
-          maxResolution: 40075016.68557849 / 2048
-        })
+        view: new ol.View(service_.getMapViewParams())
       });
 
       map.on('dragend', function() {

@@ -38,7 +38,7 @@ module.exports = {
    */
   test_files: {
     js: [
-      'vendor/angular-mocks/angular-mocks.js'
+      'vendor/angular-mocks/angular-mocks.js', 'node_modules/jasmine-ajax/lib/mock-ajax.js'
     ]
   },
 

@@ -126,7 +126,9 @@
               scope.search();
             };
             scope.hasNext = function() {
-              return scope.getResults().length === scope.filterOptions.size;
+              if (scope.getResults()) {
+                return scope.getResults().length === scope.filterOptions.size;
+              }
             };
             scope.hasPrevious = function() {
               return scope.filterOptions.from !== null;

@@ -29,7 +29,7 @@
       var wfsPayload = tableViewService_.getFeaturesPostPayloadXML(layer, filters, null, null, null, true);
       console.log('wfsPayload: ', wfsPayload);
 
-      if (!mapService_.layerIsEditable(layer)) {
+      if (mapService_.layerIsEditable(layer)) {
         var url = layer.get('metadata').url + '/wps?version=' + settings.WPSVersion;
         var wpsPostData = '' +
             '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="' + settings.WPSVersion + '" service="WPS" ' +

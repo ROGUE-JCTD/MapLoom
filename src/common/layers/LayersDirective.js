@@ -128,6 +128,10 @@
             scope.getLayerInfo = function(layer) {
               $rootScope.$broadcast('getLayerInfo', layer);
             };
+
+            scope.getLayerAttributeVisibility = function(layer) {
+              $rootScope.$broadcast('getLayerAttributeVisibility', layer);
+            };
           }
         };
       }
