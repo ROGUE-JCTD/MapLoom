@@ -30,7 +30,8 @@
                 view: new ol.View({
                   center: scope.center,
                   zoom: scope.zoom
-                })
+                }),
+                logo: false
               });
 
               firstExtent = map.getView().calculateExtent(map.getSize());

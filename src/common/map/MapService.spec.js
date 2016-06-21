@@ -155,7 +155,6 @@ describe('MapService', function() {
       expect(mapService.map.getLayers().values_.length).toBeGreaterThan(0);
 
       //ensure the number of servers loaded is equal to the number in the configService
-      console.log(serverService.getServers());
       expect(serverService.getServers().length).toBe(configService.configuration.sources.length);
     });
   });
