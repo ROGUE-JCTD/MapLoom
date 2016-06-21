@@ -194,7 +194,7 @@ describe('StoryLegendDirective', function() {
       addLayerSpy = spyOn(mapService, 'addLayer');
       zoomToExtentForProjectionSpy = spyOn(mapService, 'zoomToExtentForProjection');
     });
-    it('adds the layer via mapSerice addLayer', function() {
+    it('adds the layer via mapService addLayer', function() {
       compiledElement.scope().addLayers();
       expect(addLayerSpy).toHaveBeenCalledWith(minimalConfig);
     });

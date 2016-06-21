@@ -1,6 +1,6 @@
 module.exports = function ( karma ) {
   karma.set({
-    /** 
+    /**
      * From where to look for files, starting with the location of this file.
      */
     basePath: '../',
@@ -11,21 +11,20 @@ module.exports = function ( karma ) {
     files: [
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
-      'src/**/*.js',
+      'src/**/*.js'
     ],
     exclude: [
       'src/assets/**/*.js'
     ],
     frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage' ],
+    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-spec-reporter' ],
     preprocessors: {
-      'src/**/!(*spec).js': ['coverage']
     },
 
     /**
      * How to report, by default.
      */
-    reporters: ['dots', 'coverage'],
+    reporters: 'spec',
 
     /**
      * On which port should the browser connect, on which port is the test runner
@@ -35,7 +34,7 @@ module.exports = function ( karma ) {
     runnerPort: 9100,
     urlRoot: '/',
 
-    /** 
+    /**
      * Disable file watching by default.
      */
     autoWatch: false,

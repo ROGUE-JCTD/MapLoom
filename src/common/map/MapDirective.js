@@ -21,7 +21,7 @@
                 layers: [
                   new ol.layer.Tile({
                     source: new ol.source.TileJSON({
-                      url: 'http://api.tiles.mapbox.com/v3/mapbox.world-light.jsonp',
+                      url: 'http://api.tiles.mapbox.com/v4/mapbox.world-light.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
                       crossOrigin: true
                     })
                   })
@@ -50,7 +50,7 @@
               var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
               var pan = ol.animation.pan({source: map.getView().getCenter()});
               map.beforeRender(pan, zoom);
-              map.getView().fitExtent(firstExtent, map.getSize());
+              map.getView().fit(firstExtent, map.getSize());
             });
 
             scope.$watch('layers', function(layers) {
