@@ -108,6 +108,30 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
+    this.getServerByUrl = function(url) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(url)) {
+        return server;
+      }
+
+      if (url.indexOf('/wms') === -1) {
+        url += '/wms';
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        var serverUrl = goog.isDefAndNotNull(servers[index].virtualServiceUrl) ? servers[index].virtualServiceUrl : servers[index].url;
+        console.log(' - ' + serverUrl);
+        if (serverUrl === url) {
+          server = servers[index];
+          break;
+        }
+      }
+
+      //console.log('----[ returning server with name: ', name, ', server: ', server);
+      return server;
+    };
+
     this.getServerByName = function(name) {
       var server = null;
 
@@ -166,7 +190,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.replaceVirtualServiceUrl = function(serverInfo) {
       if (!goog.isDefAndNotNull(serverInfo.url)) {
-        return;
+        return null;
       }
 
       if (service_.isUrlAVirtualService(serverInfo.url) === true) {
@@ -179,6 +203,63 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         serverInfo.isVirtualService = false;
       }
+
+      return serverInfo;
+    };
+
+    this.getWfsRequestUrl = function(url) {
+      var wfsurl = null;
+      var server = service_.getServerByUrl(url);
+      url = goog.isDefAndNotNull(server) ? service_.getMostSpecificUrl(server) : url;
+      var currentDomain = locationService_.host();
+      if (goog.isDefAndNotNull(url)) {
+        if (url.indexOf(currentDomain) > -1) {
+          wfsurl = 'http://' + currentDomain + ':8000/wfsproxy/';
+          return wfsurl;
+        }
+      }
+      wfsurl = url + '/wfs/WfsDispatcher';
+      return wfsurl;
+    };
+
+    this.getWfsRequestHeaders = function(server) {
+
+      var headers = {};
+
+      if (!goog.isDefAndNotNull(server)) {
+        return headers;
+      }
+
+      var currentDomain = locationService_.host();
+      var serverUrl = service_.getMostSpecificUrl(server);
+      headers['Content-Type'] = 'application/xml';
+      if (goog.isDefAndNotNull(server.authentication)) {
+        headers['Authorization'] = 'Basic ' + server.authentication;
+      }
+
+      if (serverUrl.indexOf(currentDomain) > -1) {
+        headers['X-CSRFToken'] = configService_.csrfToken;
+      }
+
+      return headers;
+    };
+
+    this.getMostSpecificUrl = function(server) {
+
+      // favor virtual service url when available
+      var mostSpecificUrl = server.url;
+      var mostSpecificUrlWms;
+      if (goog.isDefAndNotNull(server.isVirtualService) && server.isVirtualService === true) {
+        mostSpecificUrlWms = server.virtualServiceUrl;
+      }
+      if (goog.isDefAndNotNull(mostSpecificUrlWms)) {
+        var urlIndex = mostSpecificUrlWms.lastIndexOf('/');
+        if (urlIndex !== -1) {
+          mostSpecificUrl = mostSpecificUrlWms.slice(0, urlIndex);
+        }
+      }
+
+      return mostSpecificUrl;
     };
 
     this.changeCredentials = function(server) {
@@ -693,4 +774,3 @@ function addXMLRequestCallback(callback) {
     };
   }
 }
-
