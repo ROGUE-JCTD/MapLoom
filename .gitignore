@@ -5,6 +5,7 @@ bin/
 node_modules/
 bower_components/
 vendor/
+reports/
 .idea
 ZZZIGNORE_*.js
 .log

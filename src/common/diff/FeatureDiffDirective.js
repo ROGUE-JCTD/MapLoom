@@ -153,7 +153,6 @@
                     scope.isLoading = false;
                   }
                 }, function(reject) {
-                  console.log('ERROR: Log Failure: ', options, reject);
                   dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                   scope.isLoading = false;
                 });
@@ -194,7 +193,6 @@
                     }, function(reject) {
                       numPanels--;
                       numFailed++;
-                      console.log('ERROR: Blame Failure: ', options, reject);
                       if (numPanels === 0) {
                         dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                         scope.isLoading = false;
@@ -256,7 +254,6 @@
                       dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
                       transaction.abort();
                       scope.cancel();
-                      console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
                     }
                   });
                 }, function(mergeFailure) {
@@ -268,12 +265,10 @@
                     dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
                     transaction.abort();
                     scope.cancel();
-                    console.log('ERROR: Revert failure: ', options, mergeFailure);
                   }
                 });
               }, function(beginTransactionFailure) {
                 dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
-                console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
               });
             };

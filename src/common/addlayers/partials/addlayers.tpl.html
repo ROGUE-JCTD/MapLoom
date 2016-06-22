@@ -1,80 +1,90 @@
-<div class="modal-body">
-  <form class="form-horizontal col-md-12">
-    <div class="form-group">
-      <div class="btn-group custom-width-100">
-        <div class="btn-group custom-width-88">
-          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
-            <span class="pull-left"> {{getCurrentServerName()}} </span>
-            <span class="caret right-and-center"></span>
-          </button>
-          <ul id="server-list" class="dropdown-menu col-md-12">
-            <li ng-repeat="server in servers = serverService.getServers()">
-              <a ng-click="setCurrentServerId(server.id)">{{server.name}}
-                <div ng-hide="server.defaultServer" stop-event='click' ng-click="removeServer(server.id)" class="glyphicon glyphicon-remove-circle pull-right"></div>
-                <div ng-hide="server.defaultServer" stop-event='click' ng-click="editServer(server)" class="glyphicon glyphicon-pencil pull-right server-edit-icon"></div>
-              </a>
-
-            </li>
-            <li class="divider"></li>
-            <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
-          </ul>
-        </div>
-        <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
-                type="button"
-                ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)" class="btn btn-default">
-          <i class="glyphicon glyphicon-repeat"></i>
-        </button>
-      </div>
-    </div>
-    <div class="form-group">
-      <div ng-class="{'input-group':filterLayers !== '' && filterLayers !== null && filterLayers !== undefined}">
-        <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control filter-field"
-               placeholder="{{'filter_layers' | translate}}">
-        <span ng-if="filterLayers !== '' && filterLayers != null && filterLayers != undefined" class="input-group-btn">
-          <a class="btn btn-default" ng-click="clearFilter()" type="button">
-            <i class="glyphicon glyphicon-remove"></i>
-          </a>
-        </span>
-      </div>
-    </div>
-    <div class="form-group" ng-if="currentServer.username !== null && currentServer.username !== undefined">
-      <div ng-class="{'input-group':!currentServer.isLocal}">
-        <input type="text" value="{{getConnectedString()}}" disabled class="form-control logged-in-as-input">
-        <span class="input-group-btn" ng-if="!currentServer.isLocal">
-          <a class="switch-user-btn btn btn-default" tooltip-append-to-body="true" tooltip-placement="top"
-             tooltip="{{'connect_as' | translate}}" ng-click="changeCredentials()" type="button">
-            <i class="glyphicon glyphicon-transfer"></i>
-          </a>
-        </span>
-      </div>
-    </div>
-    <button type="button" style="margin-left:-15px;" ng-if="currentServer.lazy && currentServer.layersConfig.length===0 && !currentServer.populatingLayersConfig"
-            tooltip="This server is configured to lazily load layers." tooltip-placement="right"
-            class="btn btn-default" ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)">
-      <i class="glyphicon glyphicon-save"></i>
-      <span>{{'fetch_layers_from_server' | translate}}</span>
-    </button>
-    <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
-    <div class="form-group layer-container">
-      <ul id="layer-list" class="list-group">
-        <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerId) | filter:filterLayers | filter:filterAddedLayers"
-            class="list-group-item loom-layerinfo-popover" data-placement="left">
-          <div class="row">
-            <div class="col-xs-2">
-              <div class="loom-check-button btn btn-xs" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
-                   btn-checkbox-false="false">
-                <i class="glyphicon" ng-class="{'glyphicon-unchecked': !layer.add, 'glyphicon-check': layer.add}"></i>
-              </div>
+<div>
+    <div class="modal-body explorer">
+        <div class="row">
+            <div class="col-md-12">
             </div>
-            <div class="ellipsis">{{layer.Title}}</div>
-          </div>
-        </li>
-      </ul>
+            <div class="tab-content col-md-7 explorer-content">
+                <div class="tab-pane active" id="explore">
+                  <div loom-addlayersfilter></div>
+                </div>
+                <div class="result-table">
+                  <div class="clearfix search-results panel">
+                    <table class="table table-hover list-results panel-body">
+                      <tr>
+                        <th>Title</th>
+                        <th>Domain</th>
+                      </tr>
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
+                        ng-repeat="layer in layersConfig = getResults() | filter:filterLayers | filter:filterAddedLayers">
+                        <td class="ellipsis">{{ layer.Title }}</td>
+                        <td>{{ layer.domain }}</td>
+                      </tr>
+                    </table>
+                    <div class="actions">
+                      <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default">Previous</button>
+                      <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default">Next</button>
+                      <span class="text-muted">
+                        Showing {{pagination.showdocs}} of {{pagination.sizeDocuments}} - Page {{pagination.currentPage}} / {{pagination.pages}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="search-pagination">
+                </div>
+            </div>
+            <div class="col-md-5 clearfix result-panel">
+                <div class="panel panel-default" id="mapreview" name="loom-map-panel">
+                  <div class="alert alert-title alert-layer-mp">
+                      Limit the search to data that includes features in the displayed area.
+                  </div>
+                  <div class="panel-body">
+                    <div class="loom-map" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                  </div>
+                </div>
+
+                <div class="filter panel panel-default" name="layer-information-panel">
+                  <div class="alert alert-title alert-warning-mp">
+                    <h3>{{currentLayer.Title}}</h3>
+                  </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-8 col-sm-8">
+                          <p class="abstract">{{currentLayer.Abstract}}</p>
+                        </div>
+
+                        <div class="col-md-4 col-sm-4 row">
+                          <div class="layer-info-left">
+                            <div>{{currentLayer.LayerDate || 'Date' | date : 'd/MM/y'}}</div>
+                            <div>{{currentLayer.LayerCategory || 'Category'}}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-cart">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Cart</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-hover list-results">
+                      <tr class="result" ng-repeat="layer in cart.slice().reverse()">
+                        <td class="remove-button">
+                          {{layer.Title}}
+                          <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="row actions" style="">
+                    <button type="button" ng-click="clearCart();" class="btn btn-cart">CLEAR</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!cart.length" class="btn btn-cart">ADD</button>
+                </div>
+
+            </div>
+        </div>
     </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
-  <button type="button" class="btn btn-primary" ng-click="addLayers(layersConfig)" data-dismiss="modal"
-    translate="add_btn">Add</button>
 </div>

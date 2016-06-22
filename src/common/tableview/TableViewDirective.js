@@ -421,7 +421,6 @@
                 commitMessage = $translate.instant('modified_x_features',
                     {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName});
               }
-              console.log('commit message: ', commitMessage);
               var xml = '' +
                   '<?xml version="1.0" encoding="UTF-8"?>' +
                   '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs"' +
@@ -482,7 +481,6 @@
             };
 
             scope.searchTable = function() {
-              console.log('scope.searchTable', scope.search.isSearching, scope.search.text);
               scope.search.isSearching = !scope.search.isSearching;
               scope.isSaving = true;
               if (scope.search.isSearching) {

@@ -1,20 +1,25 @@
 language: node_js
 node_js:
-  - "0.10"
-  
-before_install:
-  - mkdir travis-phantomjs
-  - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
-  - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
-
+- '0.12'
+- '0.10'
+addons:
+  code_climate:
+    repo_token:
+      secure: i7X0pPBPIH+bTZykwLIXw4cTjIK0O38e0/qYfRKZdtv8R5oZnrTYUCkWzSK7q4l85RpC/aFCmx8etmfCSxSfTCx5lq3Fg1yU66c7CoGExLAZxcVdibnrFCp9KdXAwzlUIlaZ3hisBmskRLdQMSzi57Ld8JTrE4wW68g5QL08qHkpKTtoyHgkRnmc4shQqyZbAXvPvWN3F7VKe8J0Cctkj9cdt1zfM/g3J2wT7x/uoLJmuWZaJms65pAuxfOIix8L6T6aWMZkXSXbrHa9buKregYdmH9HhTh5937DHCqXWMi0t4CpCl6NlXOeaz0gjytanGUgkw96qjP+1lw7NM1d1GyOBdpmqkNdqpBaTLj22qZfkQaqxTy29rYA2laAOJjDwTWId1WuzuW8DIq5byDFSKQjGEcREWbnS9XHZQaBJdT6HD1UjaYaTESW68HNv7e1mOhVIit0MQzhjINxXajuptwwfs3sU2mJc303WmmPRnIXjfYewk8coTCHtDm9Ar6wKuET2zDkSQSMohQOd4KhZcn3X0FWGssvegd80YuTz/4dUUuPKgEdGUcFXmjfxuAeI3pg2Qihdxwr9/Jkc/7Dk4OlZPZnr90kYPi9/aaGDglIyLbWcu6RNmqxhlVY2+LOR/k3UxyhV4Zs2i0lW2E5Q6/qJ0v1fMC/WfKJrzA/Jxk=
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - npm install --quiet -g grunt-cli karma bower
-  - bower install
-  - grunt
-  - grunt karmaconfig
-
-script: grunt karma
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- npm install --quiet -g grunt-cli karma bower codeclimate-test-reporter
+- bower install
+- grunt
+- grunt karmaconfig
+script: grunt test
+env:
+  matrix:
+  - DEPLOY_BRANCH=hypermap
+  global:
+  - secure: Abv5HJD1co7uWtYTxme2iNeoZNDqB7KuNSTBg7FCZtGObnzR1Y7kJsrjjaVG1YszL7uuX0tL423sc12wHdDy0+vMOgdPVT3dHF6lfKxFYd4e08NqStXirrCBH6SpY6s+RHd7KIUzqUyHq0nUrVa2pp/AnjkHpVhYNfjnlhsaCni1Rot7QkY2SfzjChQhemI5JWkHlr0hNEDhHHzPszed+Teh02frKKkR4FJSMaeStdQkOSAytGdOds1HwbXaVgjQYpZ2CPPb88FloXVCBYRyh28Vm2AaO/b/PudmWxxE4mWxJE0KGzf6PYZjl9sKUuSlDcdzxIrXo3+vuydni/HaO+GWS5ZwYPwn6Aoaqdy6OkKVMnloXbEaoLqDhXjH+Y3GKQ0IRzc16ygalZ/Hsa83GdI0136wPy6bpyif52yCRkr1FT8akvoY+Hmj/WFLI5XjgU9LEqldNajzjtrRkSEYXxnjQreQ4GQHNdQrz4ZXw4+O6W+4ARhLJCEs4O1KQoeJmLpz+blU/5VOpj17O767OATehgelrvFO4sOVXEC/IW5Jw7+l0zq3NylGfrg7Z1N0QXuw1uqwJYt3YodIWwCUV2FxUbDN3LckcOo4iP6zlwelBiyR1wE25TUe+58XC5EzyH6kvykK6gQky/oZ2i74HKv6pmOY1f0AzsLeATJfkcc=
+after_success:
+- grunt deploy
+after_script:
+- codeclimate-test-reporter < reports/coverage/lcov.info
