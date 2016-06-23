@@ -11,7 +11,7 @@
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
         if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.url) && config.url.indexOf('http') === 0 &&
-            config.url.indexOf('http://' + $location.host()) !== 0) {
+            config.url.indexOf($location.protocol() + '://' + $location.host()) !== 0) {
           var server = service_.getServerByURL(config.url);
           if (goog.isDefAndNotNull(server)) {
             if (!goog.isDefAndNotNull(server.authentication)) {
