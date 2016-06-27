@@ -194,6 +194,61 @@
       return true;
     };
 
+    this.defaultPinValues = function(pin) {
+      Object.keys(pin).forEach(function(key, index) {
+        if (pin[key] === '') {
+          if (key === 'in_timeline' || key === 'auto_show' || key === 'pause_playback') {
+            pin[key] = false;
+          } else if (key === 'in_map') {
+            pin[key] = true;
+          } else {
+            pin[key] = null;
+          }
+        } else if (pin[key] === 'TRUE') {
+          pin[key] = true;
+        } else if (pin[key] === 'FALSE') {
+          pin[key] = false;
+        }
+      });
+
+      return pin;
+    };
+
+    this.bulkPinAdd = function(pins, chapter_index) {
+      var failedToAdd = 0;
+      for (var iPin = 0; iPin < pins.length; iPin += 1) {
+        var pin = pins[iPin];
+
+        pin = this.defaultPinValues(pin);
+
+        pin.id = new Date().getUTCMilliseconds();
+        pin.geometry = {coordinates: [pin['longitude'], pin['latitude']]};
+        delete pin['longitude'];
+        delete pin['latitude'];
+
+
+        if (this.validateAllPinProperties(pin) !== true) {
+          failedToAdd += 1;
+          continue;
+        }
+
+        if (getTime(pin.start_time) > getTime(pin.end_time)) {
+          failedToAdd += 1;
+          continue;
+        }
+
+        if (goog.isDefAndNotNull(pin.media) && !this.isUrl(pin.media)) {
+          pin.media = pin.media.replace(/width="\d+"/i, 'width=' + embed_width);
+          pin.media = pin.media.replace(/height="\d+"/i, 'height=' + embed_height);
+
+        }
+
+        var storyPin = new Pin(pin);
+        pins_[chapter_index].push(storyPin);
+      }
+      rootScope_.$broadcast('pin-added', chapter_index);
+    };
+
     this.addPin = function(props, chapter_index) {
       var pinValidated = this.validateAllPinProperties(props);
       if (pinValidated !== true) {

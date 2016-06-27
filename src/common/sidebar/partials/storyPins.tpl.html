@@ -6,6 +6,7 @@
     <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id); updateTourStep(26)">Back to Selected Chapter</a>
 </div>
 
+<input type="file" id="bulkPins" pin-change="handleBulkPinUpload" />
 <a href="#" class="menuItem" ng-click="updateMenuSection('addStoryPin' + chapter.id); updateTourStep(21)" id="addNewStoryPinButton">Add a New StoryPin...</a>
 
 <div id="storyPinsList">

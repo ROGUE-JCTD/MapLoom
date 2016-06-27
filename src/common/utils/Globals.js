@@ -45,198 +45,73 @@ var clean = function(array, deleteValue) {
   return array;
 };
 
-var create_chapter_template = function(index) {
-  var add_chapter_template = [
-    {
-      name: 'Chapter ' + (index),
-      id: 'chapter' + (index),
-      link: '#',
-      items: [
-        {
-          title: 'Chapter ' + (index),
-          id: 'sub-chapter' + (index),
-          icon: 'fa fa-bookmark',
-          items: [
-            {
-              name: 'Chapter Info',
-              icon: 'fa fa-info-circle',
-              link: '#',
-              items: [
-                {
-                  title: 'Chapter Info',
-                  id: ('chapter-info-' + (index)),
-                  icon: 'fa fa-info-cicle',
-                  items: [
-                    {
-                      name: 'Chapter Title',
-                      link: '#'
-                    },
-                    {
-                      name: '<input type="text" name="test" id="test" value="" />',
-                      link: '#'
-                    },
-                    {
-                      name: 'Chapter Summary',
-                      link: '#'
-                    },
-                    {
-                      name: '<textarea rows ="6" cols="20"></textarea>',
-                      link: '#'
-                    },
-                    {
-                      name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Chapter Info</button>'
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              name: 'StoryLayers',
-              icon: 'fa fa-clone',
-              link: '#',
-              items: [
-                {
-                  title: 'Chapter ' + (index) + ' StoryLayers',
-                  icon: 'fa fa-bookmark',
-                  id: 'storylayers' + (index),
-                  items: [
-                    {
-                      name: 'Add a New StoryLayer...',
-                      id: 'addNewLayer',
-                      link: '#'
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              name: 'StoryBoxes',
-              icon: 'fa fa-object-group',
-              link: '#',
-              items: [
-                {
-                  title: 'Chapter ' + (index),
-                  icon: 'fa fa-bookmark',
-                  items: [
-                    {
-                      name: 'Add a New StoryBox...',
-                      link: '#',
-                      items: [
-                        {
-                          title: 'Add Storybox',
-                          icon: 'fa fa-bookmark',
-                          link: '#',
-                          items: [
-                            {
-                              name: 'Story # Map Extents',
-                              link: '#'
-                            },
-                            {
-                              name: '<p>Pan and zoom on the map to set the map bounds.</p><button class = "btn btn-default btn-lg center-block">Set Map Bounds</button>',
-                              link: '#'
-                            },
-                            {
-                              name: 'Time Frame',
-                              link: '#'
-                            },
-                            {
-                              name: '<p>Start Time</p><input type = "time" name = "start_time">',
-                              link: '#'
-                            },
-                            {
-                              name: '<p>End Time<p><input type = "time" name = "end_time">',
-                              link: '#'
-                            },
-                            {
-                              name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save Storybox</button>',
-                              link: '#'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              name: 'StoryPins',
-              icon: 'fa fa-neuter',
-              link: '#',
-              items: [
-                {
-                  title: 'Chapter ' + (index),
-                  icon: 'fa fa-bookmark',
-                  items: [
-                    {
-                      name: 'Add a New StoryPin...',
-                      link: '#',
-                      items: [
-                        {
-                          title: 'Add StoryPin',
-                          icon: 'fa fa-bookmark',
-                          link: '#',
-                          items: [
-                            {
-                              name: 'StoryPin Title',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type="text" name="storyPinTitle" />',
-                              link: '#'
-                            },
-                            {
-                              name: 'StoryPin Content',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type="text" name="storyPinContent" />',
-                              link: '#'
-                            },
-                            {
-                              name: '<button class = "btn btn-default btn-lg center-block">Link Media...</button>',
-                              link: '#'
-                            },
-                            {
-                              name: 'Pin Location',
-                              link: '#'
-                            },
-                            {
-                              name: '<p>Drop pin on the map to set pin location</p><button class = "btn btn-default btn-lg center-block">Save Pin Location</button>',
-                              link: '#'
-                            },
-                            {
-                              name: 'Time',
-                              link: '#'
-                            },
-                            {
-                              name: '<input type = "time" name = "storyPinTime">',
-                              link: '#'
-                            },
-                            {
-                              name: '<button data-target="#mapSave" data-toggle="modal" type="button" class="btn btn-default btn-lg center-block">Save StoryPin</button>',
-                              link: '#'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              name: 'Delete Chapter',
-              id: 'deleteChapter',
-              icon: 'fa fa-trash-o',
-              link: '#'
-            }
-          ]
-        }
-      ]
+function CSVToArray(strData, strDelimiter) {
+  // Check to see if the delimiter is defined. If not,
+  // then default to comma.
+  strDelimiter = (strDelimiter || ',');
+  // Create a regular expression to parse the CSV values.
+  var objPattern = new RegExp((
+      // Delimiters.
+      '(\\' + strDelimiter + '|\\r?\\n|\\r|^)' +
+      // Quoted fields.
+      '(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|' +
+      // Standard fields.
+      '([^\"\\' + strDelimiter + '\\r\\n]*))'), 'gi');
+  // Create an array to hold our data. Give the array
+  // a default empty first row.
+  var arrData = [[]];
+  // Create an array to hold our individual pattern
+  // matching groups.
+  var arrMatches = null;
+  // Keep looping over the regular expression matches
+  // until we can no longer find a match.
+  while (arrMatches = objPattern.exec(strData)) {
+    // Get the delimiter that was found.
+    var strMatchedDelimiter = arrMatches[1];
+    // Check to see if the given delimiter has a length
+    // (is not the start of string) and if it matches
+    // field delimiter. If id does not, then we know
+    // that this delimiter is a row delimiter.
+    if (strMatchedDelimiter.length && (strMatchedDelimiter != strDelimiter)) {
+      // Since we have reached a new row of data,
+      // add an empty row to our data array.
+      arrData.push([]);
     }
-  ];
-  return add_chapter_template;
+    // Now that we have our delimiter out of the way,
+    // let's check to see which kind of value we
+    // captured (quoted or unquoted).
+    var strMatchedValue = null;
+    if (arrMatches[2]) {
+      // We found a quoted value. When we capture
+      // this value, unescape any double quotes.
+      strMatchedValue = arrMatches[2].replace(
+          new RegExp('\"\"', 'g'), '\"');
+    } else {
+      // We found a non-quoted value.
+      strMatchedValue = arrMatches[3];
+    }
+    // Now that we have our value string, let's add
+    // it to the data array.
+    if (strMatchedValue !== null) {
+      arrData[arrData.length - 1].push(strMatchedValue);
+    }
+  }
+  // Return the parsed data.
+  return (arrData);
+}
+
+var CSV2JSON = function(csv) {
+  var array = new CSVToArray(csv);
+  var objArray = [];
+  for (var i = 1; i < array.length; i++) {
+    objArray[i - 1] = {};
+    for (var k = 0; k < array[0].length && k < array[i].length; k++) {
+      var key = array[0][k];
+      objArray[i - 1][key] = array[i][k];
+    }
+  }
+
+  return objArray;
 };
 
 
