@@ -222,17 +222,12 @@
         pin = this.defaultPinValues(pin);
 
         pin.id = new Date().getUTCMilliseconds();
-        pin.geometry = {coordinates: [pin['longitude'], pin['latitude']]};
+        pin.geometry = {coordinates: ol.proj.transform([Number(pin['longitude']), Number(pin['latitude'])], 'EPSG:4326', 'EPSG:3857')};
         delete pin['longitude'];
         delete pin['latitude'];
 
 
-        if (this.validateAllPinProperties(pin) !== true) {
-          failedToAdd += 1;
-          continue;
-        }
-
-        if (getTime(pin.start_time) > getTime(pin.end_time)) {
+        if (this.validateAllPinProperties(pin) !== true || getTime(pin.start_time) > getTime(pin.end_time)) {
           failedToAdd += 1;
           continue;
         }
