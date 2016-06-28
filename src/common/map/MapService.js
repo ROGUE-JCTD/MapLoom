@@ -55,6 +55,26 @@
     });
   };
 
+  var createSpatialFilterLayer = function() {
+    return new ol.layer.Vector({
+      metadata: {
+        spatialFilterLayer: true,
+        editable: true,
+        title: 'Spatial Filters'
+      },
+      source: new ol.source.Vector(),
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 160, 0, 0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: 'rgba(255, 160, 0, 1.0)',
+          width: 2
+        })
+      })
+    });
+  };
+
   var styleFunc = (function() {
     var styles = {};
     styles['Polygon'] = [
@@ -187,6 +207,15 @@
       service_.loadLayers();
 
       this.editLayer = createVectorEditLayer();
+      this.spatialFilterLayer = createSpatialFilterLayer();
+
+      this.spatialFilterLayer.getSource().on(['addfeature', 'changefeature', 'clear', 'removefeature'], function(event) {
+        var spatialFilterGML = [];
+        service_.getSpatialFilterLayer().getSource().getFeatures().forEach(function(feature) {
+          spatialFilterGML.push(service_.getGeometryGML3FromFeature(feature));
+        });
+        tableViewService_.setSpatialFilter(spatialFilterGML);
+      });
 
       this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
       this.createBBoxFromCoordinatesFromProjectionIntoProjection = createBBoxFromCoordinatesFromProjectionIntoProjection;
@@ -426,7 +455,8 @@
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer)) {
+            !(layer.get('metadata').internalLayer) &&
+            !(layer.get('metadata').spatialFilterLayer)) {
 
           // if it is imagery
           if (!service_.layerIsEditable(layer)) {
@@ -1483,6 +1513,127 @@
         }
       });
       return code;
+    };
+
+    this.addToSpatialFilterLayer = function(feature) {
+      this.map.removeLayer(this.spatialFilterLayer);
+
+      // Handle using the same feature multiple times
+      if (this.spatialFilterLayer.getSource().getFeatureById(feature.getId()) !== null) {
+        var num = 1;
+        while (this.spatialFilterLayer.getSource().getFeatureById(feature.getId() + '-' + num) !== null) {
+          num++;
+        }
+        feature.setId(feature.getId() + '-' + num);
+      }
+
+      this.spatialFilterLayer.getSource().addFeature(feature);
+      this.map.addLayer(this.spatialFilterLayer);
+    };
+
+    this.getSpatialFilterLayer = function() {
+      return this.spatialFilterLayer;
+    };
+
+    this.getGeometryGML3FromFeature = function(feature) {
+      // TODO: Copied from FeatureManagerService#getGeometryGMLFromFeature changing Polygon to Surface.
+      // Only used by the spatial filter. Didn't know what else is using the above method.
+      // At some point in the future should figure out what needs Surface and what needs Polygon.
+      var featureGML = '';
+      var index = 0;
+      var length = 1;
+      var geometries = [feature.getGeometry()];
+      var buildCoordString = function(coords) {
+        var counter = 0;
+        return String(coords).replace(/,/g, function(all, match) {
+          if (counter === 1) {
+            counter = 0;
+            return ' ';
+          }
+          counter++;
+          return ',';
+        });
+      };
+      var isGeometryCollection = false;
+      if (feature.getGeometry().getType().toLowerCase() == 'geometrycollection') {
+        geometries = feature.getGeometry().getGeometries();
+        length = geometries.length;
+        featureGML += '<gml:MultiGeometry xmlns:gml="http://www.opengis.net/gml" srsName="' +
+            service_.map.getView().getProjection().getCode() + '">';
+        isGeometryCollection = true;
+      }
+      for (var geometryIndex = 0; geometryIndex < length; geometryIndex++) {
+        var geometry = geometries[geometryIndex];
+        var geometryType = geometry.getType().toLowerCase();
+        if (isGeometryCollection) {
+          featureGML += '<gml:geometryMember>';
+        }
+        if (geometryType == 'point') {
+          featureGML += '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:coordinates decimal="." cs="," ts=" ">' +
+              geometry.getCoordinates().toString() +
+              '</gml:coordinates></gml:Point>';
+        } else if (geometryType == 'linestring') {
+          featureGML += '<gml:LineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:coordinates decimal="." cs="," ts=" ">' + buildCoordString(geometry.getCoordinates().toString()) +
+              '</gml:coordinates></gml:LineString>';
+        } else if (geometryType == 'polygon') {
+          featureGML += '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+              buildCoordString(geometry.getCoordinates()[0].toString()) + '</gml:coordinates>' +
+              '</gml:LinearRing></gml:outerBoundaryIs>';
+          for (index = 1; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+                buildCoordString(geometry.getCoordinates()[index].toString()) + '</gml:coordinates>' +
+                '</gml:LinearRing></gml:innerBoundaryIs>';
+          }
+          featureGML += '</gml:Polygon>';
+        } else if (geometryType == 'multipoint') {
+          featureGML += '<gml:MultiPoint xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:pointMember><gml:Point><gml:coordinates decimal="." cs="," ts=" ">' +
+                geometry.getCoordinates()[index].toString() +
+                '</gml:coordinates></gml:Point></gml:pointMember>';
+          }
+          featureGML += '</gml:MultiPoint>';
+        } else if (geometryType == 'multilinestring') {
+          featureGML += '<gml:MultiLineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:lineMember><gml:LineString><gml:coordinates decimal="." cs="," ts=" ">' +
+                buildCoordString(geometry.getCoordinates()[index].toString()) +
+                '</gml:coordinates></gml:LineString></gml:lineMember>';
+          }
+          featureGML += '</gml:MultiLineString>';
+        } else if (geometryType == 'multipolygon') {
+          featureGML += '<gml:MultiSurface xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:surfaceMember><gml:Polygon>' +
+                '<gml:exterior><gml:LinearRing><gml:posList>' +
+                geometry.getCoordinates()[index][0].toString().replace(/,/g, ' ') + '</gml:posList>' +
+                '</gml:LinearRing></gml:exterior>';
+            for (var innerIndex = 1; innerIndex < geometry.getCoordinates()[index].length; innerIndex++) {
+              featureGML += '<gml:interior><gml:LinearRing><gml:posList>' +
+                  geometry.getCoordinates()[index][innerIndex].toString().replace(/,/g, ' ') + '</gml:posList>' +
+                  '</gml:LinearRing></gml:interior>';
+            }
+            featureGML += '</gml:Polygon></gml:surfaceMember>';
+          }
+          featureGML += '</gml:MultiSurface>';
+        }
+        if (isGeometryCollection) {
+          featureGML += '</gml:geometryMember>';
+        }
+      }
+      if (isGeometryCollection) {
+        featureGML += '</gml:MultiGeometry>';
+      }
+      return featureGML;
     };
   });
 

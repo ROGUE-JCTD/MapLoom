@@ -127,9 +127,8 @@
 
             scope.setAsSpatialFilter = function() {
               var feature = mapService.editLayer.getSource().getFeatures()[0];
-              var geometryGML = featureManagerService.getGeometryGML3FromFeature(feature);
-              var layerName = featureManagerService.getSelectedLayer().get('metadata')['title'];
-              tableViewService.setSpatialFilter(geometryGML, layerName);
+              feature.setId(featureManagerService.getSelectedItem().id);
+              mapService.addToSpatialFilterLayer(feature);
               featureManagerService.hide();
             };
           }
