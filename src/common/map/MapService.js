@@ -1582,13 +1582,13 @@
         } else if (geometryType == 'polygon') {
           featureGML += '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
               service_.map.getView().getProjection().getCode() + '">' +
-              '<gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+              '<gml:exterior><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
               buildCoordString(geometry.getCoordinates()[0].toString()) + '</gml:coordinates>' +
-              '</gml:LinearRing></gml:outerBoundaryIs>';
+              '</gml:LinearRing></gml:exterior>';
           for (index = 1; index < geometry.getCoordinates().length; index++) {
-            featureGML += '<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+            featureGML += '<gml:exterior><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
                 buildCoordString(geometry.getCoordinates()[index].toString()) + '</gml:coordinates>' +
-                '</gml:LinearRing></gml:innerBoundaryIs>';
+                '</gml:LinearRing></gml:exterior>';
           }
           featureGML += '</gml:Polygon>';
         } else if (geometryType == 'multipoint') {

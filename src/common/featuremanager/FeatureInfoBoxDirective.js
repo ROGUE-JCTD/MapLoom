@@ -3,7 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService) {
+      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService, $rootScope) {
 
         return {
           replace: false,
@@ -128,8 +128,13 @@
             scope.setAsSpatialFilter = function() {
               var feature = mapService.editLayer.getSource().getFeatures()[0];
               feature.setId(featureManagerService.getSelectedItem().id);
-              mapService.addToSpatialFilterLayer(feature);
-              featureManagerService.hide();
+
+              if (feature.getGeometry().getType() === 'Point') {
+                $rootScope.$broadcast('enterSpatialFilterRadius', feature);
+              } else {
+                mapService.addToSpatialFilterLayer(feature);
+                featureManagerService.hide();
+              }
             };
           }
         };
