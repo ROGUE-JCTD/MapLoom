@@ -196,6 +196,10 @@
                             <div id="editStoryPin" ng-show="menuSection=='editStoryPin' + chapter.id + storyPins.id">
                                 <ng-include src="'sidebar/partials/editStoryPin.tpl.html'"></ng-include>
                             </div>
+
+                            <div id="bulkStoryPin" ng-show="menuSection=='bulkPinUpload' + chapter.id + storyPins.id">
+                                <ng-include src="'sidebar/partials/bulkPinUpload.tpl.html'"></ng-include>
+                            </div>
                         </div>
                     </div>
                 </div>

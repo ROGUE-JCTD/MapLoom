@@ -1,0 +1,17 @@
+<div class="topText">{{ 'brand_name' | translate }} > {{ chapter.chapter }}</div>
+<div class="bottomText">Bulk Upload</div>
+
+<div class="menuItem">
+    <i class="fa fa-angle-right"></i>
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id)">Back to Selected Chapter</a>
+</div>
+
+<div class="menuItem">
+    <span> To add multiple StoryPins at once, download the template file and update the table. Once finished, upload the file here.</span>
+    <a target="_blank" href="http://wiki.mapstory.org/wiki/Community_User_Manual#Adding_StoryPins" >Bulk Upload Help</a>
+    <a class="menuItem" target="_self" href="/static/maploom/assets/bulk_pin_template.csv"
+       download="bulk_pin_template.csv" id="downloadTemplate">Download Template</a>
+    <input type="file" id="bulkPins" pin-change="handleBulkPinUpload"/>
+</div>
+
+<a class="menuItem" ng-click="uploadBulkPins()"> Upload File</a>

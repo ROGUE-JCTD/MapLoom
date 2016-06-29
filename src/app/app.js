@@ -100,26 +100,30 @@
         $scope.serverService = serverService;
         $scope.box = {};
         $scope.pin = {};
-        $scope.pinFile = {};
+        $scope.pinFile = null;
 
         $scope.handleBulkPinUpload = function(event) {
           var csv_reader = new FileReader();
           csv_reader.addEventListener('loadend', function() {
-            $scope.pinFile = CSV2JSON(csv_reader.result);
-
-            $scope.pinService.bulkPinAdd($scope.pinFile, $scope.active_menu_chapter.id);
-            $scope.pinFile = {};
+            $scope.pinFile = csv_reader.result;
           });
           for (var iFile = 0; iFile < event.target.files.length; iFile += 1) {
             var file = event.target.files[iFile];
 
             if (file.type === 'text/csv') {
               csv_reader.readAsText(file);
-
-              console.log(file);
             }
           }
 
+        };
+
+        $scope.uploadBulkPins = function() {
+          if ($scope.pinFile !== null) {
+            $scope.pinFile = CSV2JSON($scope.pinFile);
+            $scope.pinService.bulkPinAdd($scope.pinFile, $scope.active_menu_chapter.id);
+            $scope.pinFile = null;
+            $scope.updateMenuSection('storyPins' + $scope.active_menu_chapter.id);
+          }
         };
 
         $scope.initBasemap = function() {
