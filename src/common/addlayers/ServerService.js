@@ -214,7 +214,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       var currentDomain = locationService_.host();
       if (goog.isDefAndNotNull(url)) {
         if (url.indexOf(currentDomain) > -1) {
-          wfsurl = 'http://' + currentDomain + ':8000/wfsproxy/';
+          wfsurl = 'http://' + location.host + '/wfsproxy/';
           return wfsurl;
         }
       }
