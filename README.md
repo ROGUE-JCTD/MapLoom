@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 MapLoom [![Build Status](https://travis-ci.org/ROGUE-JCTD/MapLoom.svg?branch=master)](https://travis-ci.org/ROGUE-JCTD/MapLoom)
 ============
-=======
-[![Build Status](https://travis-ci.org/ROGUE-JCTD/MapLoom.svg?branch=master)](https://travis-ci.org/ROGUE-JCTD/MapLoom)
-
-MapLoom
-=========
-
->>>>>>> master
 
 MapLoom is a web client that leverages GeoGig to allow users to edit geographic information, view history, and sync layers with other GeoGig repositories.  The goal is to put the power of distributed versioned editing into the hands of users.  It's been developed to sit inside of [GeoNode](http://geonode.org) as an alternative to the default GeoNode map client but it can also be set up to stand alone. The best way to see MapLoom in action is to create a GeoSHAPE virtual machine. Please visit [How To Get GeoSHAPE](https://docs.google.com/document/d/1KMpk6dXuqvwfEi0pfRpaGY62j6ikoYtpYUPU0sJQAmk) document for instructions.
 
@@ -50,12 +42,6 @@ The recommended way to develop maploom is to:
    ```
    geoshape-config maploom_dev
    ```
-<<<<<<< HEAD
 - you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. Changes on your host machine will cause `grunt watch` to rebuild MapLoom, and the symbolic links created by `geoshape-config maploom_dev` will make the newly buit maploom immediately available to Geonode in your VM.
 
 Note that linter used by `grunt watch` is very paticular about the js programing style and guildlines. Be sure to fix all compile issues.
-=======
-- you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. Changes on your host machine will cause `grunt watch` to rebuild MapLoom, and the symbolic links created by `geoshape-config maploom_dev` will make the newly buit maploom immediately available to Geonode in your VM. 
-
-Note that linter used by `grunt watch` is very paticular about the js programing style and guildlines. Be sure to fix all compile issues. 
->>>>>>> master

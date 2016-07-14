@@ -1,10 +1,6 @@
 module.exports = function ( karma ) {
   karma.set({
-<<<<<<< HEAD
     /**
-=======
-    /** 
->>>>>>> master
      * From where to look for files, starting with the location of this file.
      */
     basePath: '../',

@@ -593,8 +593,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      console.log(config);
-      console.log(searchUrl);
       http_.post(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
@@ -617,7 +615,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (elasticResponse.aggregations) {
         rootScope_.$broadcast('dateRangeHistogram', elasticResponse.aggregations.range);
       }
-      console.log(createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl));
       return createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl);
     };
 

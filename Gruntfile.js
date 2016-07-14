@@ -351,12 +351,9 @@ module.exports = function ( grunt ) {
       options: {
         configFile: '<%= build_dir %>/karma-unit.js'
       },
-<<<<<<< HEAD
       unit: {
         singleRun: true
       },
-=======
->>>>>>> master
       continuous: {
         autoWatch: true
       }
