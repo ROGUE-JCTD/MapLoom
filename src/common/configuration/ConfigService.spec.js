@@ -31,8 +31,9 @@ describe('ConfigService', function() {
 
   describe('getServerByUrl', function() {
     it('should return null if a server with a matching url cannot be found', function() {
-      //Use a test url
-      var server = configService.getServerByURL('http://example.com/');
+      //the default servers do not have a url object defined, so even if we use a valid url
+      //we should get no server
+      var server = configService.getServerByURL(configService.configuration.sources[0].url);
       expect(server).toBe(null);
     });
     it('should return a server based on a given url if one is found', function(){

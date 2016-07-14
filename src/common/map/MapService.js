@@ -884,7 +884,6 @@
         } else {
           this.map.getLayerGroup().getLayers().insertAt(insertIndex, layer);
         }
-
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
@@ -1039,7 +1038,7 @@
     };
 
     this.loadLayers = function() {
-      //TODO: use configService_.configuration instead of saving ref in this service
+      console.log('=======[[ using configService_.configuration: ', configService_.configuration);
       if (goog.isDefAndNotNull(configService_.configuration) &&
           goog.isDefAndNotNull(configService_.configuration.sources) &&
           goog.isDefAndNotNull(configService_.configuration.map) &&
@@ -1282,7 +1281,6 @@
         projection: 'EPSG:4326',
         coordinateFormat: coordDisplay
       });
-
       var map = new ol.Map({
         //layers: do not add any layers to the map as they will be added once server is created and getcapabilities
         //        equivalent functions respond if relevant.
