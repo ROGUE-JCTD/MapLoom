@@ -31,8 +31,12 @@
                 if (goog.isDefAndNotNull(config.url) && config.url.lastIndexOf('/') !== config.url.length - 1) {
                   config.url += '/';
                 }
-              } else {
+              } else if (info.type == 'WMS') {
                 config.ptype = 'gxp_wmscsource';
+              } else if (info.type == 'TileJSON') {
+                config.ptype = 'gxp_tilejsonsource';
+              } else {
+                config.ptype = 'gxp_mapboxsource';
               }
               scope.loading = true;
               serverService.addServer(config).then(function(server) {
@@ -61,6 +65,8 @@
                 return 'http://url/geoserver/wms';
               } else if (scope.type === 'TMS') {
                 return 'http://url/1.0.0/';
+              } else if (scope.type === 'MapBox') {
+                return 'http://api.tiles.mapbox.com/v4';
               }
             };
 

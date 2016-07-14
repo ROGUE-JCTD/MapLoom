@@ -1,6 +1,6 @@
 module.exports = function ( karma ) {
-  karma.configure({
-    /** 
+  karma.set({
+    /**
      * From where to look for files, starting with the location of this file.
      */
     basePath: '../',
@@ -11,22 +11,20 @@ module.exports = function ( karma ) {
     files: [
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
-      'src/**/*.js',
-      'src/**/*.coffee',
+      'src/**/*.js'
     ],
     exclude: [
       'src/assets/**/*.js'
     ],
     frameworks: [ 'jasmine' ],
-    plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-phantomjs-launcher', 'karma-coffee-preprocessor' ],
+    plugins: [ 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-spec-reporter' ],
     preprocessors: {
-      '**/*.coffee': 'coffee',
     },
 
     /**
      * How to report, by default.
      */
-    reporters: 'dots',
+    reporters: 'spec',
 
     /**
      * On which port should the browser connect, on which port is the test runner
@@ -36,7 +34,7 @@ module.exports = function ( karma ) {
     runnerPort: 9100,
     urlRoot: '/',
 
-    /** 
+    /**
      * Disable file watching by default.
      */
     autoWatch: false,
@@ -54,9 +52,15 @@ module.exports = function ( karma ) {
      * open and the tests will automatically occur there during the build. This has
      * the aesthetic advantage of not launching a browser every time you save.
      */
+    coverageReporter: {
+      dir: 'reports',
+      reporters:[
+        {type: 'html', subdir: 'html/'},
+        {type: 'lcovonly', subdir: 'coverage/', file: 'lcov.info'},
+      ]
+    },
     browsers: [
-      'Chrome'
+      'PhantomJS'
     ]
   });
 };
-

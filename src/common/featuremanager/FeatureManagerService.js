@@ -46,7 +46,7 @@
     ];
   */
   var selectedItemProperties_ = null;
-
+  //The selected layer is only set when the user selects a single feature either on the map, or through the deconfliction pop-up
   var selectedLayer_ = null;
   var featureInfoPerLayer_ = [];
   var containerInstance_ = null;
@@ -61,7 +61,6 @@
 
     this.$get = function($rootScope, $translate, $q, mapService, $compile, $http, exclusiveModeService, dialogService,
                          historyService, configService) {
-      //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
@@ -131,7 +130,7 @@
     this.getSelectedItemMediaByProp = function(propName) {
       var media = null;
 
-      if (getItemType(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
+      if (classifyItem(selectedItem_) === 'feature' && goog.isDefAndNotNull(selectedItem_) &&
           goog.isDefAndNotNull(selectedItemProperties_)) {
 
         goog.object.forEach(selectedItemProperties_, function(prop, index) {
@@ -182,7 +181,6 @@
           url = service_.getMediaUrl(mediaItem);
         }
       }
-      //console.log('----[ getMediaUrlThumbnail: ', url);
       return url;
     };
 
@@ -196,6 +194,11 @@
 
     this.getSelectedItemProperties = function() {
       return selectedItemProperties_;
+    };
+
+    //this method is intended for unit testing only
+    this.setSelectedItemProperties = function(props) {
+      selectedItemProperties_ = props;
     };
 
     this.getSelectedLayer = function() {
@@ -222,9 +225,8 @@
     /**
      * item: can be a feature, a layer containing features, or a collection of layers
      */
-    // layers, layer, feature
+    // This method displays the feature info box when a user clicks on a feature or finishes creating a new one
     this.show = function(item, position, forceUpdate) {
-      //console.log('---- show: ', item);
 
       if (!goog.isDefAndNotNull(forceUpdate)) {
         forceUpdate = false;
@@ -237,9 +239,12 @@
 
       var selectedItemOld = selectedItem_;
 
-      var type = getItemType(item);
+      //classify the item parameter as a layer, feature, or layers
+      var type = classifyItem(item);
+
       // when there is nothing in featureInfoPerLayer_, we need to used the passed in item to initialize it
-      // this is used when code calls show without the user clicking on the map.
+      // this is done when the user clicks on a single feature (on the map) vice selecting a feature from the pop-up
+      // (such as clicking on overlapping features)
       if (featureInfoPerLayer_.length === 0) {
 
         if (type === 'feature') {
@@ -249,7 +254,6 @@
         } else if (type === 'layers') {
           featureInfoPerLayer_ = item;
         } else {
-          console.log('====[ Error: expected layers, layer, or feature. got: ', item);
           throw ({
             name: 'featureInfoBox',
             level: 'High',
@@ -261,6 +265,15 @@
         }
       }
 
+      //set the service's state_ variable (feature, layer, or layers)
+      //the state is 'layer' when the user clicks on multiple (aka overlapping) features in a single layer
+      //the state is 'layers' when the user clicks on multiple (overlapping) features that exist in separate layers
+      //the state is 'feature' when the user finishes creating a feature, they clicked on a single (non-overlapping)
+      //feature, or they select a feature from the deconfliction pop-up
+
+      //we are also going to set the selectedItem_ variable
+      //the selectedItem will be a single feature, a single layer, or a collection of layers
+      //the state is essentially a designation of the selectedItem type
       if (type === 'feature') {
         state_ = 'feature';
         selectedItem_ = item;
@@ -301,7 +314,8 @@
 
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
-        if (getItemType(selectedItem_) === 'feature') {
+        if (classifyItem(selectedItem_) === 'feature') {
+
           selectedLayer_ = this.getSelectedItemLayer().layer;
           // note that another service may make a fake feature selection on a layer not in mapservice.
           // checking to make sure it had a geometry before making assumptions about edit layer etc
@@ -310,16 +324,14 @@
             position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
                 clickPosition_);
           }
-        } else {
-          mapService_.clearEditLayer();
-        }
 
+          // -- update selectedItemProperties_ to contain the props from the newly selected item
+          var tempProps = {};
+          var props = [];
 
-        // -- update the selectedItemProperties_
-        var tempProps = {};
-        var props = [];
-
-        if (getItemType(selectedItem_) === 'feature') {
+          //if the selectedItem_ is a feature go through and collect the properties in tempProps
+          //if the property is a media property (like photo or video), we need to parse out
+          //the value into an array (since there may be multiple photos or videos)
           goog.object.forEach(selectedItem_.properties, function(v, k) {
             if (service_.isMediaPropertyName(k)) {
               if (goog.isDefAndNotNull(v)) {
@@ -332,7 +344,6 @@
                   } catch (e) {
                     // was not able to parse it. field might unintentionally have a name that fits the media
                     // property name in maploom. tread it as a string.
-                    console.log('----[ Warning: media property field ' + k + ' has invalid value of: ' + v);
                     jsonValue = '\"' + v + '\"';
                   }
                 }
@@ -348,34 +359,37 @@
               tempProps[k] = [k, v];
             }
           });
-        }
 
-        var propName = null;
-        if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
-          for (propName in selectedLayer_.get('metadata').schema) {
-            if (tempProps.hasOwnProperty(propName)) {
-              props.push(tempProps[propName]);
+          //ensure we only take properties that are defined in the layer schema, the selectedLayer_
+          //may be some other layer so
+          var propName = null;
+          if (goog.isDefAndNotNull(selectedLayer_) && goog.isDefAndNotNull(selectedLayer_.get('metadata').schema)) {
+            for (propName in selectedLayer_.get('metadata').schema) {
+              if (tempProps.hasOwnProperty(propName)) {
+                props.push(tempProps[propName]);
+              }
+            }
+          } else {
+            for (propName in tempProps) {
+              if (tempProps.hasOwnProperty(propName)) {
+                props.push(tempProps[propName]);
+              }
             }
           }
+          selectedItemProperties_ = props;
+          console.log('---- selectedItemProperties_: ', selectedItemProperties_);
+
+          // -- update the selectedItemMedia_
+          selectedItemMedia_ = service_.getSelectedItemMediaByProp(null);
+          console.log('---- selectedItemMedia_: ', selectedItemMedia_);
         } else {
-          for (propName in tempProps) {
-            if (tempProps.hasOwnProperty(propName)) {
-              props.push(tempProps[propName]);
-            }
-          }
+          mapService_.clearEditLayer();
         }
-
-        selectedItemProperties_ = props;
-        console.log('---- selectedItemProperties_: ', selectedItemProperties_);
-
-        // -- update the selectedItemMedia_
-        selectedItemMedia_ = service_.getSelectedItemMediaByProp(null);
-        console.log('---- selectedItemMedia_: ', selectedItemMedia_);
-
       }
 
       if (goog.isDefAndNotNull(position)) {
         position_ = position;
+        //actually display the pop-up
         mapService_.map.getOverlays().array_[0].setPosition(position);
       }
     };
@@ -397,7 +411,6 @@
     };
 
     this.getPreviousState = function() {
-      //console.log('---- getPreviousState.begin, state: ', state, ', item: ' , item);
 
       var state = null;
       var item = null;
@@ -413,7 +426,6 @@
             state = 'layers';
           }
         } else {
-          console.log('=====[ Error feature not found! selectedItem: ', selectedItem_);
           throw ({
             name: 'featureInfoBox',
             level: 'High',
@@ -429,8 +441,6 @@
           item = featureInfoPerLayer_;
         }
       }
-
-      //console.log('---- getPreviousState, state: ', state, ', item: ' , item);
 
       if (item !== null) {
         return {
@@ -493,6 +503,11 @@
       //array[1] of interactions is doubleClickZoom
       mapService_.map.interactions_.array_[1].values_.active = false;
 
+      //iterate over the schema in the layer's metadata definition
+      //the schema contains the legal attributes and geometry type the layer supports
+      //we are going to parse out the supported geometry type for this layer
+      //and we are also going to hang on to a copy of all the supported attributes (in 'props')
+      //Note: these attributes will be stored in the feature when the user finishes creating
       goog.object.forEach(layer.get('metadata').schema, function(v, k) {
         if (!service_.isMediaPropertyName(k)) {
           if (v._type.search('gml:') == -1) {
@@ -505,6 +520,8 @@
           }
         }
       });
+
+      //Rename certain geometry types to supported ones for given WFS versions
       geometryType = geometryType.split(':')[1].replace('PropertyType', '');
       if (settings.WFSVersion == '1.1.0') {
         geometryType = geometryType.replace('Curve', 'Geometry');
@@ -513,13 +530,18 @@
       }
       geometryType = geometryType.replace('Surface', 'Polygon');
 
+      //exclusive mode will start the actual editing/creation process
+      //where the user can create the feature geometry
       exclusiveModeService_.startExclusiveMode(translate_.instant('drawing_geometry'),
           geometryType,
           exclusiveModeService_.button(translate_.instant('accept_feature'), function() {
+            //the user has clicked 'accept feature' button
             if (mapService_.editLayer.getSource().getFeatures().length < 1) {
+              //if the user clicks accept but they have not drawn anything, tell them they must draw something
               dialogService_.warn(translate_.instant('adding_feature'), translate_.instant('must_create_feature'),
                   [translate_.instant('btn_ok')], false);
             } else {
+              //otherwise terminate the editing/ exclusive mode
               exclusiveModeService_.addMode = false;
               exclusiveModeService_.endExclusiveMode();
               mapService_.removeDraw();
@@ -570,6 +592,7 @@
               service_.startAttributeEditing(true);
             }
           }), exclusiveModeService_.button(translate_.instant('cancel_feature'), function() {
+            //if the user clicks the cancel button, reset everything and terminate exclusive mode
             exclusiveModeService_.addMode = false;
             exclusiveModeService_.endExclusiveMode();
             mapService_.removeDraw();
@@ -603,7 +626,7 @@
         var newPos;
         var feature = mapService_.editLayer.getSource().getFeatures()[0];
         if (goog.isDefAndNotNull(coords)) {
-          // Check if either of the coordinates we changed in the attribute editing process
+          // Check if either of the coordinates were changed in the attribute editing process
           if ((coords[0] !== selectedItem_.geometry.coordinates[0]) ||
               (coords[1] !== selectedItem_.geometry.coordinates[1])) {
             // Transform the geometry so we can get the new place on the map to show the info-box
@@ -663,6 +686,8 @@
       return returnResponse.promise;
     };
 
+    //this method is called when the user clicks on the edit geometry button
+    //in the feature info box/ pop-up
     this.startGeometryEditing = function() {
       rootScope_.$broadcast('startGeometryEdit');
       var geometryType = selectedItem_.geometry.type;
@@ -727,7 +752,10 @@
         var geometry;
         var index;
         var geometryType = selectedItem_.geometry.type;
+
         if (geometryType.search(/^Multi/g) > -1) {
+          //if the selectedItem_ is a 'Multi' type of geometry then take the separate features (created for editing)
+          //and extract their coordinates to merge into a single geometry/feature.
           feature = new ol.Feature();
           var coordinates = [];
           for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
@@ -739,11 +767,15 @@
           mapService_.editLayer.getSource().clear();
           mapService_.editLayer.getSource().addFeature(feature);
         } else if (geometryType.toLowerCase() == 'geometrycollection') {
+          //if the selectedItem_ is a 'collection' type of geometry then take the separate features/geom (created for editing)
+          //and merge into a single feature.
           feature = new ol.Feature();
           var geometries = [];
           for (index = 0; index < mapService_.editLayer.getSource().getFeatures().length; index++) {
             geometries.push(mapService_.editLayer.getSource().getFeatures()[index].getGeometry());
           }
+          //note that we are not stashing coordinates but the actual separate geometries
+          //we are just using the coordinates property to pass in the geoms
           geometry = transformGeometry({type: 'multigeometry', coordinates: geometries});
           feature.setGeometry(geometry);
           mapService_.editLayer.getSource().clear();
@@ -810,7 +842,6 @@
     };
 
     this.endAttributeEditing = function(save, inserting, properties, coords) {
-      //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
       var deferredResponse = q_.defer();
       if (inserting) {
         // create request
@@ -907,8 +938,6 @@
   function registerOnMapClick($rootScope, $compile) {
     mapService_.map.on('singleclick', function(evt) {
       if (enabled_) {
-        //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
-
         // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it
         if (!goog.isDefAndNotNull(containerInstance_)) {
           containerInstance_ = mapService_.map.getOverlays().array_[0].getElement();
@@ -918,16 +947,28 @@
         service_.hide();
 
         var view = mapService_.map.getView();
-        var layers = mapService_.getLayers();
-        var completed = 0;
+        var layers = mapService_.getLayers(false, true);
+        var validRequestCount = 0;
+        var completedRequestCount = 0;
 
         var infoPerLayer = [];
 
-        // wait for all get feature infos to retun before proceeding.
-        var getFeatureInfoCompleted = function() {
-          completed += 1;
+        //we need to count the number of layers that support GetFeatureInfo
+        //that way when the requests are processed we can keep track of when
+        //all features are returned
+        goog.array.forEach(layers, function(layer, index) {
+          var source = layer.getSource();
+          if (goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
+            validRequestCount++;
+          }
+        });
 
-          if (completed === layers.length) {
+        //This function is called each time a get feature info request returns (call is made below).
+        //when the completedRequestCount == validRequestCount, we can display the popup
+        var getFeatureInfoCompleted = function() {
+          completedRequestCount++;
+
+          if (completedRequestCount === validRequestCount) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
@@ -937,11 +978,13 @@
           }
         };
 
+
+        //Get the feature info for each layer that supports it
         goog.array.forEach(layers, function(layer, index) {
-          if (!layer.get('metadata').editable) {
+          var source = layer.getSource();
+          if (!goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
             return;
           }
-          var source = layer.getSource();
           var url = source.getGetFeatureInfoUrl(evt.coordinate, view.getResolution(), view.getProjection(),
               {
                 'INFO_FORMAT': 'application/json',
@@ -957,18 +1000,16 @@
               goog.array.insert(infoPerLayer, layerInfo);
             }
 
-            //console.log('-- infoPerLayer: ', infoPerLayer);
             getFeatureInfoCompleted();
           }, function(reject) {
             getFeatureInfoCompleted();
-            console.log('getFeatureInfo failed for layer: ', layer, ', reject response: ', reject);
           });
         });
       }
     });
   }
 
-  function getItemType(item) {
+  function classifyItem(item) {
     var type = '';
 
     if (goog.isDefAndNotNull(item)) {
@@ -1051,7 +1092,6 @@
     var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
     var layerName = selectedLayer_.get('metadata').uniqueID;
     httpService_.post(url, wfsRequestData).success(function(data, status, headers, config) {
-      //console.log('====[ great success. ', data, status, headers, config);
       var x2js = new X2JS();
       var json = x2js.xml_str2json(data);
       if (goog.isDefAndNotNull(json.WFS_TransactionResponse) &&
@@ -1087,11 +1127,9 @@
           goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException)) {
         deferredResponse.reject(json.ServiceExceptionReport.ServiceException);
       } else {
-        console.log(json);
         deferredResponse.reject(translate_.instant('unknown_error'));
       }
     }).error(function(data, status, headers, config) {
-      console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
       deferredResponse.reject(status);
     });
     return deferredResponse.promise;

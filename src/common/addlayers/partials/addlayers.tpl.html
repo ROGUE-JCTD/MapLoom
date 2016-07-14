@@ -1,43 +1,80 @@
-<div>
-    <div class="modal-body explorer-mini">
-        <div class="row">
-            <div class="col-md-12">
-                <ul class="nav nav-tabs">
-                    <li><a data-toggle="tab" ng-click="defaultSearch();">Search</a></li>
-                    <li><a data-toggle="tab" ng-click="searchMyUploads();">My Uploads</a></li>
-                    <li><a data-toggle="tab" ng-click="searchMyFavorites();">My Favorites</a></li>
-                </ul>
-            </div>
-            <div class="tab-content col-md-12" style="min-height:270px;">
-                <div class="tab-pane active" id="Explore">
-                    <div>
-                        <div>
-                            <nav class="filter">
-                                <div class="input-group search-bar" >
-                                    <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for StoryLayers ..." ng-model="filterOptions.text" type="text" class="form-control search-input">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary search-btn" ng-disabled="!filterOptions.text" ng-click="search()" type="submit" id="text_search_btn"><i class="glyphicon glyphicon-search"></i> Search</button>
-                                    </span>
-                                </div>
-                            </nav>
-                            <div class="clearfix search-results">
-                                    <div class = "col-sm-4 panel panel-default" ng-repeat="layer in layersConfig = serverService.getLayersConfigByName('Local Geoserver') | filter:filterLayers | filter:filterAddedLayers">
-                                        <div class = "panel-body">
-                                          <img class = "img-responsive" src = "{{layer.thumbnail_url}}" height="150" width="200">
-                                            <h4>{{ layer.Title }}</h4>
-                                            <i class = "icon-user"></i><h4>{{ layer.author }}</h4>
-                                            <button class = "btn btn-default center-block" ng-click = "addLayers(layer)" data-dismiss="modal">Use</button>
-                                            <a ng-href="{{ layer.detail_url }}" target = "_blank"><button class = "btn btn-default center-block">View</button></a>
-                                        </div>
-                                    </div>
+<div class="modal-body">
+  <form class="form-horizontal col-md-12">
+    <div class="form-group">
+      <div class="btn-group custom-width-100">
+        <div class="btn-group custom-width-88">
+          <button type="button" class="btn btn-default dropdown-toggle custom-width-100" data-toggle="dropdown">
+            <span class="pull-left"> {{getCurrentServerName()}} </span>
+            <span class="caret right-and-center"></span>
+          </button>
+          <ul id="server-list" class="dropdown-menu col-md-12">
+            <li ng-repeat="server in servers = serverService.getServers()">
+              <a ng-click="setCurrentServerId(server.id)">{{server.name}}
+                <div ng-hide="server.defaultServer" stop-event='click' ng-click="removeServer(server.id)" class="glyphicon glyphicon-remove-circle pull-right"></div>
+                <div ng-hide="server.defaultServer" stop-event='click' ng-click="editServer(server)" class="glyphicon glyphicon-pencil pull-right server-edit-icon"></div>
+              </a>
 
-                            </div>
-                            <div class="search-pagination">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </li>
+            <li class="divider"></li>
+            <li><a data-target="#add-server-dialog" data-toggle="modal" translate="add_new_server">Add New Server</a></li>
+          </ul>
         </div>
+        <button tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'refresh_layers' | translate}}"
+                type="button"
+                ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)" class="btn btn-default">
+          <i class="glyphicon glyphicon-repeat"></i>
+        </button>
+      </div>
     </div>
+    <div class="form-group">
+      <div ng-class="{'input-group':filterLayers !== '' && filterLayers !== null && filterLayers !== undefined}">
+        <input id="layer-filter" ng-model="filterLayers" type="text" class="form-control filter-field"
+               placeholder="{{'filter_layers' | translate}}">
+        <span ng-if="filterLayers !== '' && filterLayers != null && filterLayers != undefined" class="input-group-btn">
+          <a class="btn btn-default" ng-click="clearFilter()" type="button">
+            <i class="glyphicon glyphicon-remove"></i>
+          </a>
+        </span>
+      </div>
+    </div>
+    <div class="form-group" ng-if="currentServer.username !== null && currentServer.username !== undefined">
+      <div ng-class="{'input-group':!currentServer.isLocal}">
+        <input type="text" value="{{getConnectedString()}}" disabled class="form-control logged-in-as-input">
+        <span class="input-group-btn" ng-if="!currentServer.isLocal">
+          <a class="switch-user-btn btn btn-default" tooltip-append-to-body="true" tooltip-placement="top"
+             tooltip="{{'connect_as' | translate}}" ng-click="changeCredentials()" type="button">
+            <i class="glyphicon glyphicon-transfer"></i>
+          </a>
+        </span>
+      </div>
+    </div>
+    <button type="button" style="margin-left:-15px;" ng-if="currentServer.lazy && currentServer.layersConfig.length===0 && !currentServer.populatingLayersConfig"
+            tooltip="This server is configured to lazily load layers." tooltip-placement="right"
+            class="btn btn-default" ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)">
+      <i class="glyphicon glyphicon-save"></i>
+      <span>{{'fetch_layers_from_server' | translate}}</span>
+    </button>
+    <div class="add-layers-loading loom-loading" spinner-hidden="!currentServer.populatingLayersConfig"></div>
+    <div class="form-group layer-container">
+      <ul id="layer-list" class="list-group">
+        <li ng-repeat="layer in layersConfig = serverService.getLayersConfig(currentServerId) | filter:filterLayers | filter:filterAddedLayers"
+            class="list-group-item loom-layerinfo-popover" data-placement="left">
+          <div class="row">
+            <div class="col-xs-2">
+              <div class="loom-check-button btn btn-xs" ng-model="layer.add" btn-checkbox btn-checkbox-true="true"
+                   btn-checkbox-false="false">
+                <i class="glyphicon" ng-class="{'glyphicon-unchecked': !layer.add, 'glyphicon-check': layer.add}"></i>
+              </div>
+            </div>
+            <div class="ellipsis">{{layer.Title}}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal" translate="close_btn">Close</button>
+  <button type="button" class="btn btn-primary" ng-click="addLayers(layersConfig)" data-dismiss="modal"
+    translate="add_btn">Add</button>
 </div>

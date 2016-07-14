@@ -28,8 +28,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       configService_ = configService;
       configService_.serverList = servers;
       q_ = $q;
+      catalogList = configService.configuration.catalogList;
 
       return this;
+    };
+
+    this.getCatalogList = function() {
+      return catalogList;
     };
 
     this.getServers = function() {
@@ -38,7 +43,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.getServerById = function(id) {
       var server = null;
-
       if (!goog.isDefAndNotNull(id)) {
         throw ({
           name: 'serverService',
@@ -57,7 +61,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
-      //console.log('----[ returning server id: ', id, ', server: ', server);
       return server;
     };
 
@@ -104,7 +107,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
-      //console.log('----[ returning server ptype: ', ptype, ', server: ', server);
       return server;
     };
 
@@ -128,15 +130,13 @@ var SERVER_SERVICE_USE_PROXY = true;
           break;
         }
       }
-
-      //console.log('----[ returning server with name: ', name, ', server: ', server);
       return server;
     };
 
     this.getServerLocalGeoserver = function() {
       var server = null;
       for (var index = 0; index < servers.length; index += 1) {
-        if (servers[index].isLocal === true && servers[index].isVirtualService !== true) {
+        if ((servers[index].isLocal === true && servers[index].isVirtualService !== true) || servers[index].isPrimaryGeoserver === true) {
           server = servers[index];
           break;
         }
@@ -172,7 +172,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (service_.isUrlAVirtualService(serverInfo.url) === true) {
         var urlSections = serverInfo.url.split('/');
         var newUrl = urlSections[0] + '//' + urlSections[2] + '/' + urlSections[3] + '/' + urlSections[6];
-        console.log('---- changing layer-specific server to generic. old: ', serverInfo.url, ', new: ', newUrl);
         serverInfo.isVirtualService = true;
         serverInfo.virtualServiceUrl = serverInfo.url;
         serverInfo.url = newUrl;
@@ -236,7 +235,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.addServer = function(serverInfo, loaded) {
       var deferredResponse = q_.defer();
-
       // save the config object on the server object so that when we save the server, we only pass the config as opposed
       // to anything else that the app ads to the server objects.
       var server = {
@@ -265,7 +263,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
 
       var doWork = function() {
-        console.log('---- MapService.layerInfo. trying to add server: ', server);
         service_.populateLayersConfig(server)
             .then(function(response) {
               // set the id. it should always resolve to the length
@@ -370,7 +367,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.configDefaultServers = function() {
       var config = null;
-      console.log('----- Configuring default servers.');
 
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_bingsource'))) {
         config = {ptype: 'gxp_bingsource', name: 'Bing', defaultServer: true};
@@ -433,7 +429,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       var name = layerName.split(':')[1];
       url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
       url += '/' + name + '/wms?request=GetCapabilities';
-      console.log('WMS url: ', url);
       server.populatingLayersConfig = true;
       var config = {};
       config.headers = {};
@@ -463,21 +458,18 @@ var SERVER_SERVICE_USE_PROXY = true;
         if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
             layersConfig[index].Name === layerName.split(':')[1])) {
           layerConfig = layersConfig[index];
-
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
             for (var code in layerConfig.CRS) {
               if (layerConfig.CRS[code] !== 'CRS:84') {
-                layerConfig.CRS = layerConfig.CRS[code];
+                layerConfig.CRS = [layerConfig.CRS[code]];
                 break;
               }
             }
           }
-          console.log('getting layer config, crs', layerConfig.CRS);
           break;
         }
       }
 
-      console.log('---- ServerService.getLayerConfig: ', layerConfig);
       return layerConfig;
     };
 
@@ -493,12 +485,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       return thumbnailUrl;
     };
 
+    var domain = function(layerInfo) {
+      if (layerInfo.hasOwnProperty('DomainName')) {
+        return layerInfo.DomainName;
+      }
+      return '';
+    };
     var author = function(layerInfo) {
       if (layerInfo.owner__first_name) {
         return layerInfo.owner__first_name + ' ' + layerInfo.owner__last_name;
       }
       if (layerInfo.owner__username) {
         return layerInfo.owner__username;
+      }
+      if (layerInfo.LayerUsername) {
+        return layerInfo.LayerUsername;
       }
       return 'No owner name available';
     };
@@ -507,6 +508,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return {
         add: true,
         Abstract: layerInfo.abstract,
+        extent: layerInfo.extent,
         Name: layerInfo.typename,
         Title: layerInfo.title,
         CRS: layerInfo.srid,
@@ -516,12 +518,47 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
     };
 
+    var createExtentFromHyper = function(layerInfo) {
+      return [layerInfo.MinX, layerInfo.MinY, layerInfo.MaxX, layerInfo.MaxY];
+    };
+
+    var createHyperSearchLayerObject = function(layerInfo, serverUrl) {
+      return {
+        add: true,
+        Abstract: layerInfo.Abstract,
+        Name: layerInfo.LayerName,
+        Title: layerInfo.LayerTitle,
+        LayerDate: layerInfo.LayerDate,
+        LayerCategory: layerInfo.LayerCategory,
+        CRS: ['EPSG:4326'],
+        detail_url: configService_.configuration.registryUrl + '/layer/' + layerInfo.LayerId,
+        thumbnail_url: layerInfo.ThumbnailURL ? (configService_.configuration.registryUrl + layerInfo.ThumbnailURL) : null,
+        author: author(layerInfo),
+        domain: domain(layerInfo),
+        type: 'mapproxy_tms',
+        extent: createExtentFromHyper(layerInfo)
+      };
+    };
+
     var createSearchLayerObjects = function(layerObjects, serverUrl) {
       var finalConfigs = [];
       //TODO: Update with handling multiple projections per layer if needed.
       for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
         var layerInfo = layerObjects[iLayer];
         var configTemplate = createSearchLayerObject(layerInfo, serverUrl);
+
+        finalConfigs.push(configTemplate);
+      }
+
+      return finalConfigs;
+    };
+
+    var createHyperSearchLayerObjects = function(layerObjects, serverUrl) {
+      var finalConfigs = [];
+      //TODO: Update with handling multiple projections per layer if needed.
+      for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
+        var layerInfo = layerObjects[iLayer];
+        var configTemplate = createHyperSearchLayerObject(layerInfo._source, serverUrl);
 
         finalConfigs.push(configTemplate);
       }
@@ -550,16 +587,17 @@ var SERVER_SERVICE_USE_PROXY = true;
       return '/geoserver/wms';
     };
 
-    var addSearchResults = function(searchUrl, server, layerConfigCallback) {
+    var addSearchResults = function(searchUrl, body, server, layerConfigCallback) {
+      body = body || {};
       var layers_loaded = false;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      console.log('---searchUrl: ', searchUrl);
-      http_.get(searchUrl, config).then(function(xhr) {
+      console.log(config);
+      console.log(searchUrl);
+      http_.post(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
-          console.log('---- populateLayersConfig.populateLayersConfig server', server);
           rootScope_.$broadcast('layers-loaded', server.id);
           layers_loaded = true;
           server.populatingLayersConfig = false;
@@ -572,6 +610,15 @@ var SERVER_SERVICE_USE_PROXY = true;
         server.populatingLayersConfig = false;
       });
       return layers_loaded;
+    };
+
+    this.reformatLayerHyperConfigs = function(elasticResponse, serverUrl) {
+      rootScope_.$broadcast('totalOfDocs', elasticResponse.hits.total);
+      if (elasticResponse.aggregations) {
+        rootScope_.$broadcast('dateRangeHistogram', elasticResponse.aggregations.range);
+      }
+      console.log(createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl));
+      return createHyperSearchLayerObjects(elasticResponse.hits.hits, serverUrl);
     };
 
     this.reformatLayerConfigs = function(elasticResponse, serverUrl) {
@@ -587,16 +634,110 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filter_options.owner !== null) {
         url = url + '&owner__username__in=' + configService_.username;
       }
-      if (filter_options.text !== null) {
-        url = url + '&q=' + filter_options.text;
+      if (filter_options.size !== null) {
+        url = url + '&size=' + filter_options.size;
+      }
+      if (filter_options.from !== null) {
+        url = url + '&from=' + filter_options.from;
       }
       return url;
     };
+    this.applyBodyFilter = function(filter_options) {
+      var ranges = [];
+      var mapExtentFilter = [];
+      var textFilter = [];
+      var rangeSliderFilter = [];
+      var body = {
+                   'query': {
+                     'bool': {
+                       'must': []
+                     }
+                   }
+                 };
+      if (filter_options.sliderValues) {
+        for (var i = 10; i < filter_options.sliderValues.length - 2; i++) {
+          ranges.push({ 'from': filter_options.sliderValues[i].toString(), 'to': filter_options.sliderValues[i + 1].toString()});
+        }
+      }
+      if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+        rangeSliderFilter = [{
+                              'range' : {
+                                'LayerDate' : {
+                                  'gte': filter_options.minYear + '-01-01T00:00:00',
+                                  'lte': filter_options.maxYear + '-01-01T00:00:00'
+                                 }
+                              }
+                             }];
+        body.query.bool.must.push.apply(body.query.bool.must, rangeSliderFilter);
+      }
+      if (filter_options.text !== null) {
+        textFilter = [{
+                        'query_string': {
+                          'query': filter_options.text
+                        }
+                      }];
+        body.query.bool.must.push.apply(body.query.bool.must, textFilter);
+      }
+      if (filter_options.mapPreviewCoordinatesBbox && filter_options.mapPreviewCoordinatesBbox.length === 4) {
+        mapExtentFilter = [
+          {
+            'range': {
+              'MinX': {
+                'gte': filter_options.mapPreviewCoordinatesBbox[0][0]
+              }
+            }
+          },
+          {
+            'range': {
+              'MaxX': {
+                'lte': filter_options.mapPreviewCoordinatesBbox[2][0]
+              }
+            }
+          },
+          {
+            'range': {
+              'MinY': {
+                'gte': filter_options.mapPreviewCoordinatesBbox[0][1]
+              }
+            }
+          },
+          {
+            'range': {
+              'MaxY': {
+                'lte': filter_options.mapPreviewCoordinatesBbox[2][1]
+              }
+            }
+          }];
+        body.query.bool.must.push.apply(body.query.bool.must, mapExtentFilter);
+      }
+      if (ranges.length > 0) {
+        body.aggs = {
+          'range': {
+            'date_range': {
+              'field': 'LayerDate',
+              'format': 'yyyy',
+              'ranges': ranges
+            }
+          }
+        };
+      }
+      return body;
+    };
+
     var applyFavoritesFilter = function(url, filterOptions) {
       if (filterOptions.text !== null) {
         url += '&title__contains=' + filterOptions.text;
       }
       return url;
+    };
+
+    this.validateCatalogKey = function(catalogKey) {
+      catalogKey = Number(catalogKey);
+      if (!isNaN(catalogKey) && catalogList.length >= catalogKey + 1) {
+        return catalogKey;
+      }else {
+        return false;
+      }
     };
 
     this.populateLayersConfigElastic = function(server, filterOptions) {
@@ -605,27 +746,86 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, {}, server, service_.reformatLayerConfigs);
     };
 
-    this.addSearchResultsForHyper = function(server, filterOptions) {
-      var searchUrl = 'http://52.38.116.143:9200/hypermap/layer/_search?';
+    this.populateLayersConfigInelastic = function(server, deferredResponse) {
+      // prevent getCapabilities request until ran by the user.
+      if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
+        var parser = new ol.format.WMSCapabilities();
+        var url = server.url;
+
+        // If this is a virtual service, use the virtual service url for getCapabilties
+        if (server.isVirtualService === true) {
+          url = server.virtualServiceUrl;
+        }
+
+        var iqm = url.indexOf('?');
+        var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
+
+        server.populatingLayersConfig = true;
+        var config = {};
+        config.headers = {};
+        if (goog.isDefAndNotNull(server.authentication)) {
+          config.headers['Authorization'] = 'Basic ' + server.authentication;
+        } else {
+          config.headers['Authorization'] = '';
+        }
+        // server hasn't been added yet, so specify the auth headers here
+        http_.get(url_getcaps, config).then(function(xhr) {
+          if (xhr.status === 200) {
+            var response = parser.read(xhr.data);
+            if (goog.isDefAndNotNull(response.Capability) &&
+                goog.isDefAndNotNull(response.Capability.Layer)) {
+              server.layersConfig = response.Capability.Layer.Layer;
+              console.log('---- populateLayersConfig.populateLayersConfig server', server);
+              rootScope_.$broadcast('layers-loaded', server.id);
+              deferredResponse.resolve(server);
+            } else {
+              deferredResponse.resolve(server);
+            }
+            server.populatingLayersConfig = false;
+          } else {
+            deferredResponse.resolve(server);
+            server.populatingLayersConfig = false;
+          }
+        }, function(xhr) {
+          deferredResponse.resolve(server);
+          server.populatingLayersConfig = false;
+        });
+      } else {
+        deferredResponse.resolve(server);
+        server.populatingLayersConfig = false;
+      }
+
+      return deferredResponse;
+    };
+
+    this.addSearchResultsForHyper = function(server, filterOptions, catalogKey) {
+      var searchUrl;
+      var bodySearch = {};
+      catalogKey = service_.validateCatalogKey(catalogKey);
+      if (catalogKey === false) {
+        return false;
+      }
+      searchUrl = catalogList[catalogKey].url + '_search?';
       if (filterOptions !== null) {
         searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+        bodySearch = service_.applyBodyFilter(filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, bodySearch, server, service_.reformatLayerHyperConfigs);
     };
+
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
       if (filterOptions !== null) {
         searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
+      return addSearchResults(searchUrl, {}, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {
       var deferredResponse = q_.defer();
-      console.log('---- ServerService.populateLayersConfig. server', server);
 
       if (!goog.isDefAndNotNull(server)) {
         //TODO: make sure it is okay to reject and then return the promise
@@ -707,16 +907,95 @@ var SERVER_SERVICE_USE_PROXY = true;
               sourceParams: {layer: 'world-print'}}
           ];
           deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_tilejsonsource') {
+
+          //first we need to add/connect to the server. we need to init some placeholder
+          //layersConfig data just so to satisfy some logic in the doWork() function above.
+          //The logic itself should be re-analyzed in the future.
+          server.defaultServer = true;
+          server.layersConfig = [
+            {Title: 'Loading...', Name: 'null'}
+          ];
+
+          //NOTE: server.sourceParams is only undefined when the server is being added via the add server dialog. This is because
+          //the user will have entered the 'get' params as part of the URL in one long string. In this case the params are parsed
+          //out following the next comment block.
+          var json_parms = {
+            url: goog.isDefAndNotNull(server.sourceParams) ? server.url + '?' + server.sourceParams : server.url,
+            crossOrigin: true
+          };
+
+          //change the url on both server and server.config to truncate the request parameters (we'll store the params in sourceParams below),
+          //urls are only allowed 200 chars max in the database when serialization occurs. sourceParams on the other hand
+          //is serialized as a straight-up text object.
+          if (!goog.isDefAndNotNull(server.sourceParams)) {
+            var splitURL = server.url.split('?');
+            var urlSansParameters = splitURL[0];
+            var urlParams = '';
+            if (splitURL.length > 1) {
+              urlParams = splitURL[1];
+            }
+            server.config.url = urlSansParameters;
+            server.config.sourceParams = urlParams;
+            server.url = urlSansParameters;
+          }
+
+          //In order to populate the layer list, (once connected to the server) we need to override the TileJSON class from openlayers.
+          //The payload that comes back into code, the JSON, is stripped of the name attribute. Hence, we overload the handler
+          //to intercept the full JSON and keep track of the name for the layer list etc.
+          var TileJSONClass = {};
+          angular.copy(ol.source.TileJSON.prototype, TileJSONClass);
+
+          //HACK: We need to know if there is an xhr error (Currently TileJSON provides no feedback if there is).
+          //This is slightly unsafe if another xhr goes out and returns during this one
+          //because the callback will be removed before it gets a chance to execute here.
+          addXMLRequestCallback(function(xhr) {
+            xhr.onerror = function() {
+              deferredResponse.reject(server);
+            };
+            XMLHttpRequest.callbacks.length = 0;
+          });
+
+          //this internally fires off the 'get' call
+          var jsontile_source = new TileJSONClass.constructor(json_parms);
+
+          //copy and override the handler functions that are 'inherited' from ol.source.TileJSON
+          //this is how the full json returns/errors are intercepted
+          if (!goog.isDefAndNotNull(jsontile_source.responseHandler)) {
+            jsontile_source.responseHandler = jsontile_source.handleTileJSONResponse;
+          }
+
+          jsontile_source.handleTileJSONResponse = function(tileJSON) {
+            server.layersConfig[0].Title = tileJSON.name;
+            server.layersConfig[0].Name = tileJSON.id;
+            server.layersConfig[0].sourceParams = {urlArgs: urlParams, layer: tileJSON.id};
+            server.layersConfig[0].bounds = tileJSON.bounds;
+            this.responseHandler(tileJSON);
+            deferredResponse.resolve(server);
+          };
+
+          if (!goog.isDefAndNotNull(jsontile_source.errorResponseHandler)) {
+            jsontile_source.errorResponseHandler = jsontile_source.handleTileJSONError;
+          }
+
+          jsontile_source.handleTileJSONError = function() {
+            this.errorResponseHandler();
+            deferredResponse.reject(server);
+          };
+
+          //stash the returned source in the layersConfig so MapService.js can instantiate the tile later on
+          server.layersConfig[0].TileJSONSource = jsontile_source;
+
         } else if (server.ptype === 'gxp_wmscsource' ||
             server.ptype === 'gxp_tmssource') { // currently, if it is a tms endpoint, assume it has wmsgetcapabilities
-          console.log('---- ServerService.Sending Elastic Search: ', server);
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
-          } else {
+          } else if (server.url.indexOf('/web/') > -1) {
             service_.populateLayersConfigElastic(server, null);
             deferredResponse.resolve(server);
-
+          } else {
+            deferredResponse = service_.populateLayersConfigInelastic(server, deferredResponse);
           }
         } else {
           deferredResponse.reject();
@@ -730,3 +1009,30 @@ var SERVER_SERVICE_USE_PROXY = true;
 
   });
 }());
+
+function addXMLRequestCallback(callback) {
+  var oldSend, i;
+  if (XMLHttpRequest.callbacks) {
+    // we've already overridden send() so just add the callback
+    XMLHttpRequest.callbacks.push(callback);
+  } else {
+    // create a callback queue
+    XMLHttpRequest.callbacks = [callback];
+    // store the native send()
+    oldSend = XMLHttpRequest.prototype.send;
+    // override the native send()
+    XMLHttpRequest.prototype.send = function() {
+      // process the callback queue
+      // the xhr instance is passed into each callback but seems pretty useless
+      // you can't tell what its destination is or call abort() without an error
+      // so only really good for logging that a request has happened
+      // I could be wrong, I hope so...
+      // EDIT: I suppose you could override the onreadystatechange handler though
+      for (i = 0; i < XMLHttpRequest.callbacks.length; i++) {
+        XMLHttpRequest.callbacks[i](this);
+      }
+      // call the native send()
+      oldSend.apply(this, arguments);
+    };
+  }
+}

@@ -1,17 +1,13 @@
 describe('addLayers/ServerService', function() {
   var serverService, $httpBackend;
   var configService = {};
-  var filterOptions = { owner: null, text: null };
+  var filterOptions = { owner: null, text: null, from: null, size: null };
   beforeEach(module('MapLoom'));
   beforeEach(module('loom_addlayers'));
 
-  beforeEach(function() {
-    module(function($provide) {
-      $provide.value('configService', configService);
-    });
-  });
   beforeEach(inject(function(_serverService_, _configService_, _$httpBackend_) {
     serverService = _serverService_;
+    configService = _configService_;
     $httpBackend = _$httpBackend_;
   }));
 
@@ -106,6 +102,71 @@ describe('addLayers/ServerService', function() {
       });
     });
   });
+  describe('#reformatLayerHyperConfigs', function() {
+    describe('no layers', function() {
+      it('returns an empty array', function() {
+        expect(serverService.reformatLayerHyperConfigs({hits: { hits: [] }}, '').length).toEqual(0);
+      });
+    });
+    describe('result has one layer', function() {
+      var layers = { hits: {} };
+      beforeEach(function() {
+        layers.hits.hits = [
+          {
+            _type: 'layer',
+            _id: '61',
+            _source: {
+              LayerTitle: 'Ocean Beach',
+              Abstract: '',
+              LayerId: '60',
+              LayerName: 'geonode:oceanbeach',
+              LayerUrl: '/layers/OceanBeach',
+              ThumbnailURL: '/test.jpg',
+              DomainName: 'harvard.org',
+              LayerUsername: 'Admin',
+              MaxX: 1,
+              MaxY: 1,
+              MinX: 0,
+              MinY: 0
+            }
+          }
+        ];
+      });
+      it('returns one formatted layer', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '').length).toEqual(1);
+      });
+      it('has a thumbnail image', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          thumbnail_url: 'http://52.38.116.143/test.jpg'
+        }));
+      });
+      it('has a Title', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          Title: 'Ocean Beach'
+        }));
+      });
+      it('has a Domain', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          domain: 'harvard.org'
+        }));
+      });
+      it('has a author', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          author: 'Admin'
+        }));
+      });
+      it('has an extent', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          extent: [0, 0, 1, 1]
+        }));
+      });
+      it('has a CRS', function() {
+        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+          CRS: ['EPSG:4326']
+        }));
+      });
+    });
+  });
   describe('#populateLayersConfigElastic', function() {
     describe('no server', function() {
       it('returns an empty array', function() {
@@ -115,7 +176,7 @@ describe('addLayers/ServerService', function() {
     describe('server is available and returns results', function() {
       beforeEach(function() {
         $httpBackend.resetExpectations();
-        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
+        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -132,7 +193,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
+        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
@@ -147,7 +208,9 @@ describe('addLayers/ServerService', function() {
       it('returns the url', function() {
         var filterOptions = {
           owner: null,
-          text: null
+          text: null,
+          from: null,
+          size: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory');
       });
@@ -156,9 +219,22 @@ describe('addLayers/ServerService', function() {
       it('returns the url with q', function() {
         var filterOptions = {
           owner: null,
-          text: 'Ocean'
+          text: 'Ocean',
+          from: null,
+          size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q=Ocean');
+        var body = {
+                     'query': {
+                       'bool': {
+                         'must': [{
+                                   'query_string': {
+                                     'query': 'Ocean'
+                                   }
+                                 }]
+                       }
+                     }
+                   };
+        expect(serverService.applyBodyFilter(filterOptions)).toEqual(body);
       });
     });
     describe('only owner filter', function() {
@@ -168,9 +244,31 @@ describe('addLayers/ServerService', function() {
       it('returns the url with q', function() {
         var filterOptions = {
           owner: true,
-          text: null
+          text: null,
+          from: null,
+          size: null
         };
         expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
+      });
+    });
+    describe('pagination', function() {
+      it('first page has no from', function() {
+        var filterOptions = {
+          owner: null,
+          text: null,
+          from: null,
+          size: 10
+        };
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10');
+      });
+      it('pagination with from', function() {
+        var filterOptions = {
+          owner: null,
+          text: null,
+          from: 10,
+          size: 10
+        };
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10&from=10');
       });
     });
   });
@@ -208,7 +306,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100').respond(200, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -225,7 +323,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('search server is invalid', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100').respond(501, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(501, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
@@ -236,11 +334,13 @@ describe('addLayers/ServerService', function() {
     });
     describe('filter for title', function() {
       it('returns the url with title__contains', function() {
-        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
+        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
         spyOn(serverService, 'reformatConfigForFavorites');
         var filterOptions = {
           owner: null,
-          text: 'Dijkstra'
+          text: 'Dijkstra',
+          from: null,
+          size: null
         };
         serverService.addSearchResultsForFavorites({}, filterOptions);
         $httpBackend.flush();
@@ -254,21 +354,26 @@ describe('addLayers/ServerService', function() {
         expect(serverService.addSearchResultsForHyper('', filterOptions)).toEqual(false);
       });
     });
+    describe('catalogKey is not a number', function() {
+      it('returns an empty array', function() {
+        expect(serverService.addSearchResultsForHyper({}, filterOptions, NaN)).toEqual(false);
+      });
+    });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', 'http://52.38.116.143:9200/hypermap/layer/_search?').respond(200, []);
+        $httpBackend.expect('POST', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
-        spyOn(serverService, 'reformatLayerConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions);
+        spyOn(serverService, 'reformatLayerHyperConfigs');
+        serverService.addSearchResultsForHyper({}, filterOptions, 0);
         $httpBackend.flush();
-        expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
-        spyOn(serverService, 'reformatLayerConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions);
+        spyOn(serverService, 'reformatLayerHyperConfigs');
+        serverService.addSearchResultsForHyper({}, filterOptions, 0);
         $httpBackend.flush();
-        expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], 'http://52.38.116.143:9200/geoserver/wms');
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://geoshape.geointservices.io/geoserver/wms');
       });
     });
   });

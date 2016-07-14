@@ -21,6 +21,8 @@
           $scope.addLayers = pulldownService.addLayers;
           $scope.serversLoading = pulldownService.serversLoading;
           $scope.pulldownService = pulldownService;
+          $scope.registryEnabled = configService.configuration.registryEnabled;
+
         }
 
         function updateScopeVariables() {

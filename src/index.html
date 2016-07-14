@@ -63,8 +63,6 @@
         };
 
     goog.object.extend( config, {{ config|safe }});
-
-    console.log('############ config: ', config);
 </script>
 <% } %>
 
@@ -120,7 +118,16 @@
               </div>
             </div>
           </div>
+
           <div class="panel" ng-show="layersPanel">
+            <div ng-show="registryEnabled" class="panel-heading" data-parent="#pulldown-content">
+              <span translate="registry">Registry</span>
+              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#registry-layer-dialog')"
+                   tooltip-placement="top" tooltip="{{'registry_layer_btn' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
+            </div>
+
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#layer-manager-panel">
               <span translate="map_layers">Map Layers</span>
@@ -133,6 +140,7 @@
               <div class="loom-layers"></div>
             </div>
           </div>
+
           <div class="panel" ng-show="syncPanel">
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#syncronization-panel">
@@ -203,9 +211,11 @@
   <div class="loom-timeline"></div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
+<div loom-modal id="registry-layer-dialog" modal-title="registry_layers">
+  <div loom-registrylayers id="registry-layers"></div>
+</div>
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">
-  <div loom-addlayers id="add-layers">
-  </div>
+  <div loom-addlayers></div>
 </div>
 <div loom-modal id="add-server-dialog" modal-title="add_server">
   <div loom-add-server id="add-server">
@@ -257,6 +267,10 @@
 </div>
 <div loom-modal id="layerInfoDialog" modal-title="layerinfo">
   <div loom-layer-info id="layer-info">
+  </div>
+</div>
+<div loom-modal id="layerInfoDialog" modal-title="layerattributevisibility">
+  <div loom-layer-attribute-visibility id="layer-attribute-visibility">
   </div>
 </div>
 <div loom-feature-info-box id="info-box" ng-show="featureManagerService.getSelectedItem() && featureManagerService.getEnabled()"
