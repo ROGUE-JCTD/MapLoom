@@ -120,10 +120,14 @@
     };
   })();
 
+  module.config(function($httpProvider) {
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+  });
+
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
+                         $cookieStore, $cookies, $location, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -134,6 +138,7 @@
       geogigService_ = geogigService;
       dialogService_ = dialogService;
       translate_ = $translate;
+      locationService_ = $location;
       rootScope_ = $rootScope;
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
@@ -715,8 +720,10 @@
                   '</ogc:Filter></wfs:Update>' +
                   '</wfs:Transaction>';
 
-              var wfsurl = mostSpecificUrl + '/wfs/WfsDispatcher';
-              httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
+              var serverUrl = serverService_.getMostSpecificUrl(server);
+              var wfsurl = serverService_.getWfsRequestUrl(serverUrl);
+
+              function _handlePostResponse(data, status, headers, config) {
                 var x2js = new X2JS();
                 var json = x2js.xml_str2json(data);
                 if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
@@ -725,8 +732,16 @@
                 } else {
                   layer.get('metadata').readOnly = false;
                 }
-              }).error(function(data, status, headers, config) {
-              });
+              }
+
+              var wfsReqConfig = {
+                withCredentials: true
+              };
+              wfsReqConfig.headers = serverService_.getWfsRequestHeaders(server);
+
+              httpService_.post(wfsurl, wfsRequestData, wfsReqConfig)
+              .success(_handlePostResponse);
+
             };
             geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
               testReadOnly();
@@ -982,7 +997,7 @@
         // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
         goog.object.forEach(configService_.configuration.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
-            serverService_.replaceVirtualServiceUrl(serverInfo);
+            configService_.configuration.sources[key] = serverService_.replaceVirtualServiceUrl(serverInfo);
           }
         });
 

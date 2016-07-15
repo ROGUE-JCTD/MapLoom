@@ -10,7 +10,8 @@ describe('ServerService', function() {
   //include the whole application to initialize all services and modules
   beforeEach(module('MapLoom'));
 
-  beforeEach(inject(function (_mapService_, _serverService_, _configService_, $q, $rootScope) {
+  beforeEach(inject(function (_mapService_, _serverService_,
+                              _configService_, $q, $rootScope) {
     mapService = _mapService_;
     serverService = _serverService_;
     configService = _configService_;
@@ -93,6 +94,83 @@ describe('ServerService', function() {
       defer.resolve();
       rootScope.$apply();
       expect(serverService.getServers()[0].layersConfig[0].Name).not.toBe('test123');
+    });
+  });
+
+  describe('replaceVirtualServiceUrl', function() {
+    it('should change a url pointing to a specific wms to the server\'s url', function() {
+      var testServerInfo = {
+        url: 'http://192.168.99.110:8888/proxy/http://192.168.99.110:8080/geoserver/wms'
+      };
+      var replacedServerInfo = serverService.replaceVirtualServiceUrl(testServerInfo);
+      expect(replacedServerInfo.url).toBe('http://192.168.99.110:8888/proxy/192.168.99.110:8080');
+    });
+
+    it('isVirtualService should be true if serverInfo.url is a virtual service', function() {
+      var testServerInfo = {
+        url: 'http://192.168.99.110:8888/proxy/http://192.168.99.110:8080/geoserver/wms'
+      };
+      var replacedServerInfo = serverService.replaceVirtualServiceUrl(testServerInfo);
+      expect(replacedServerInfo.isVirtualService).toBe(true);
+    });
+
+    it('isVirtualService should be false if serverInfo.url is not a virtual service', function() {
+      var testServerInfo = {
+        url: 'http://192.168.99.110:8080'
+      };
+      var replacedServerInfo = serverService.replaceVirtualServiceUrl(testServerInfo);
+      expect(replacedServerInfo.isVirtualService).toBe(false);
+    });
+
+    it('should return null if serverInfo does not contain a url property', function() {
+      var testObj = {};
+      var virtualServiceUrl = serverService.replaceVirtualServiceUrl(testObj);
+      expect(virtualServiceUrl).toBe(null);
+    });
+  });
+
+  describe('getMostSpecificUrl', function() {
+    it('should return a virtual service url without \'wms\' if virtual service url is available', function() {
+      testService = {
+        url: 'http://test.com',
+        virtualServiceUrl: 'http://test.com/geoserver/wms',
+        isVirtualService: true
+      };
+      var mostSpecificUrl = serverService.getMostSpecificUrl(testService);
+      expect(mostSpecificUrl).toBe('http://test.com/geoserver');
+    });
+
+    it('should return the server url if a virtual service url isn\'t available', function() {
+      testService = {
+        url: 'http://test.com'
+      };
+      var mostSpecificUrl = serverService.getMostSpecificUrl(testService);
+      expect(mostSpecificUrl).toBe(testService.url);
+    });
+  });
+
+  describe('getWfsRequestUrl', function() {
+    it('should return a WFS dispatcher URL given a server url', function() {
+      var testUrl = "http://domain.com";
+      var actualUrl = serverService.getWfsRequestUrl(testUrl);
+      var expectedUrl = testUrl + '/wfs/WfsDispatcher';
+      expect(expectedUrl).toBe(actualUrl);
+    });
+  });
+
+  describe('getWfsRequestHeaders', function() {
+    beforeEach(inject(function (_$rootScope_, _$location_) {
+        $rootScope = _$rootScope_;
+        $location = _$location_;
+    }));
+
+    it('should return a basic http authorization token in the headers if the server object has authentication defined', function() {
+      var server = {
+        url: 'local.com',
+        authentication: 'auth string'
+      };
+      var headers = serverService.getWfsRequestHeaders(server);
+      expect(headers['Authorization']).toBeDefined();
     });
   });
 
