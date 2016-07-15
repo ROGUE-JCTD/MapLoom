@@ -91,10 +91,10 @@
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url=',
-        registryEnabled: true,
         nominatimUrl: 'http://nominatim.openstreetmap.org',
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
+        registryEnabled: true,
         registryUrl: 'http://52.38.116.143',
         catalogList: [
           {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},

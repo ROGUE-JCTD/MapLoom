@@ -60,8 +60,10 @@
         localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
-        };
-
+        registryEnabled: "{{ REGISTRY }}",
+        registryUrl: "{{ REGISTRYURL }}",
+        catalogList: "{{ CATALOGLIST }}"
+    };
     goog.object.extend( config, {{ config|safe }});
 </script>
 <% } %>
