@@ -42,7 +42,7 @@
 </div>
 
 <h2 ng-show="menuSection=='mainMenu'">
-    <div class="topText">{{ 'brand_name' | translate }} > Chapters</div>
+    <div class="topText">{{ 'application_name' | translate:'{ name: application.name }' }} > Chapters</div>
     <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}"
                                target="_blank">{{ storyService.title }}</a></div>
 </h2>
