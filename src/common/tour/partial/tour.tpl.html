@@ -22,14 +22,14 @@
                     <div class="text-center" ng-show="recentDrafts.length">
                         <h3>Recent Drafts</h3>
                         <div ng-repeat="draft in recentDrafts">
-                            <h5 class="pointer" ng-click="redirect('/story/' + draft.id + '/draft')" target="_self">{{ draft.title }}</h5>
+                            <h5 class="pointer" ng-click="redirect('/story/' + draft.id + '/draft')">{{ draft.title }}</h5>
                             <p>{{ draft.abstract }}</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="text-center">
-                <small><a href="/" target="_self">Return to {{ application.name }} Home</a></small>
+                <small><a class="pointer" ng-click="redirect('/')">Return to {{ application.name }} Home</a></small>
             </div>
         </div>
     </div>

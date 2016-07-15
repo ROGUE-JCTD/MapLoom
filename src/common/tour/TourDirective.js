@@ -98,7 +98,7 @@
                   // UpdateTourStep(12)
                   target: 'editStoryLayerMaskingButton',
                   placement: 'right',
-                  content: 'Finally, with Masking you can customize the name of the Layer to make it more appropriate for your Story. The name you choose is what will appear in your Legend. Also, you can customize the features in your Layer that you want to appear win a viewer clicks on your features, and how you want those features to be named. When you’re done, click Back to Layers List and then click Back to Chapters List.'
+                  content: 'Finally, with Masking you can customize the name of the Layer to make it more appropriate for your Story. The name you choose is what will appear in your Legend. Also, you can customize the features in your Layer that you want to appear when a viewer clicks on your features, and how you want those features to be named. When you’re done, click Back to Layers List and then click Back to Chapters List.'
                 },
                 {
                   // UpdateTourStep(13)
@@ -206,9 +206,6 @@
                 .success(function(data) {
                   scope.recentDrafts = data.objects;
                 });
-            scope.redirect = function(url) {
-              $window.top.location.href = url;
-            };
           }
         };
       });

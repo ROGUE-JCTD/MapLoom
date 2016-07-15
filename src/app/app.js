@@ -358,6 +358,10 @@
           }
         };
 
+        $scope.redirect = function(url) {
+          $window.top.location.href = url;
+        };
+
       });
 
   module.provider('debugService', function() {
