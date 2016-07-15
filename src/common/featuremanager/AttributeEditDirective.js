@@ -98,7 +98,6 @@
             };
 
             scope.uploadMedia = function(propName, files, element) {
-              console.log('====[ uploadMedia, files: ', files, ', propName: ', propName);
               if (goog.isDefAndNotNull(files)) {
                 scope.isLoading = true;
                 var icon = $(element).parent().find('.bootstrap-filestyle .icon-span-filestyle');
@@ -116,7 +115,6 @@
                 };
 
                 var onSuccess = function(response) {
-                  console.log(response);
                   for (var i = 0; i < scope.properties.length; i++) {
                     if (scope.properties[i][0] === propName) {
                       scope.properties[i][1].push(response.name);
@@ -127,7 +125,6 @@
 
                 var onReject = function(reject) {
                   completed++;
-                  console.log(reject);
                   window.alert(reject);
                   checkCompleted();
                 };

@@ -6,7 +6,7 @@
   module.factory('httpRequestInterceptor', function($cookieStore, $location) {
     return {
       request: function(config) {
-        if (goog.isDefAndNotNull(config) &&
+        if (goog.isDefAndNotNull(config) && config.url.indexOf($location.protocol() + '://' + $location.host()) > -1 &&
             (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
@@ -21,10 +21,10 @@
             }
           }
           var configCopy = $.extend(true, {}, config);
-          var proxy = service_.configuration.proxy;
-          if (goog.isDefAndNotNull(proxy)) {
-            configCopy.url = proxy + encodeURIComponent(configCopy.url);
-          }
+          // var proxy = service_.configuration.proxy;
+          // if (goog.isDefAndNotNull(proxy)) {
+          //   configCopy.url = proxy + encodeURIComponent(configCopy.url);
+          // }
           return configCopy;
         }
         return config;
@@ -44,6 +44,7 @@
 
     this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
+
       this.configuration = {
         about: {
           title: $translate.instant('new_map'),
@@ -52,7 +53,7 @@
         map: {
           projection: 'EPSG:900913',
           center: [-9707182.048613328, 1585691.7893914054],
-          zoom: 14,
+          zoom: 1,
           layers: [
             {
               'opacity': 1,
@@ -70,10 +71,13 @@
         },
         sources: [
           {
-            'url': ('http://' + $location.host() + '/geoserver/wms'),
+            'url': (location.host + '/geoserver/web/'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
-            'name': 'local geoserver'
+            'name': 'local geoserver',
+            'alwaysAnonymous': true,
+            'isPrimaryGeoserver': true,
+            'lazy': true
           },
           {
             'ptype': 'gxp_osmsource',
@@ -87,13 +91,27 @@
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url=',
+        registryEnabled: true,
         nominatimUrl: 'http://nominatim.openstreetmap.org',
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
-        fileserviceUploadUrl: '/api/fileservice/'
+        fileserviceUploadUrl: '/api/fileservice/',
+        registryUrl: 'http://52.38.116.143',
+        catalogList: [
+          {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},
+          {name: 'hypersearch catalog 2', url: 'http://geoshape.geointservices.io/search/hypermap/'}
+        ]
       };
 
       if (goog.isDefAndNotNull($window.config)) {
+        var sourceLen = Object.keys($window.config.sources).length;
+        for (var i = 0; i < this.configuration.sources.length; i++) {
+          $window.config.sources[sourceLen] = this.configuration.sources[i];
+          sourceLen++;
+        }
+        $window.config.sources[sourceLen - 1] = this.configuration.sources[this.configuration.sources.length - 1];
         goog.object.extend(this.configuration, $window.config, {});
+
+        console.log(this.configuration);
       }
       this.username = this.configuration.username;
       this.currentLanguage = this.configuration.currentLanguage;
@@ -147,4 +165,3 @@
     };
   });
 }());
-

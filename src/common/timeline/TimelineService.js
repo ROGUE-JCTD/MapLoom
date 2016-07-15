@@ -26,13 +26,11 @@
 
       // when a layer is added, reinitialize the service.
       $rootScope.$on('layer-added', function(event, layer) {
-        console.log('----[ timelineService, layer added. initializing');
         service_.initialize();
       });
 
       // when a layer is removed, reinitialize the service.
       $rootScope.$on('layerRemoved', function(event, layer) {
-        console.log('----[ timelineService, layer removed. initializing');
         service_.initialize();
       });
 

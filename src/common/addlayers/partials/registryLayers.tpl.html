@@ -1,0 +1,91 @@
+<div>
+    <div class="modal-body explorer">
+        <div class="row">
+            <div class="col-md-12">
+            </div>
+            <div class="tab-content col-md-6 explorer-content">
+                <div class="tab-pane active" id="explore">
+                  <div loom-addlayersfilter></div>
+                </div>
+                <div class="result-table">
+                  <div class="clearfix search-results panel add-layer">
+                    <table class="table table-hover list-results panel-body">
+                      <tr>
+                        <th>Title</th>
+                        <th>Domain</th>
+                      </tr>
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
+                        ng-repeat="layer in layersConfig = getResults() | filter:filterAddedLayers">
+                        <td class="ellipsis">{{ layer.Title }}</td>
+                        <td>{{ layer.domain }}</td>
+                      </tr>
+                    </table>
+                    <div class="actions">
+                      <button type="button" ng-disabled="!hasPrevious()" ng-click="previousPage();" class="btn btn-default">Previous</button>
+                      <button type="button" ng-disabled="!hasNext()" ng-click="nextPage();" class="btn btn-default">Next</button>
+                      <span class="text-muted">
+                        Showing {{pagination.showdocs}} of {{pagination.sizeDocuments}} - Page {{pagination.currentPage}} / {{pagination.pages}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="search-pagination">
+                </div>
+            </div>
+            <div class="col-md-6 clearfix result-panel">
+                <div class="panel panel-default add-layer" id="mapreview" name="loom-map-panel">
+                  <div class="alert alert-title alert-layer-mp">
+                      Limit the search to data that includes features in the displayed area.
+                  </div>
+                  <div class="panel-body">
+                    <div class="loom-map" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 filter panel panel-default add-layer panel-abstract" name="layer-information-panel">
+                    <div class="alert alert-title alert-warning-mp">
+                      <h3>{{currentLayer.Title}}</h3>
+                    </div>
+                      <div class="panel-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="layer-info-left">
+                              <div class="col-md-12">{{currentLayer.LayerDate || 'Date' | date : 'd/MM/y'}}</div>
+                              <div class="col-md-12">{{currentLayer.LayerCategory || 'Category'}}</div>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <p class="abstract">{{currentLayer.Abstract}}</p>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 panel panel-cart add-layer">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Cart</h3>
+                    </div>
+                    <div class="panel-body">
+                      <table class="table table-hover list-results">
+                        <tr class="result" ng-repeat="layer in cart.slice().reverse()">
+                          <td class="remove-button">
+                            <div class="col-md-10 ellipsis">{{layer.Title}}</div>
+                            <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row actions" style="">
+                    <button type="button" ng-click="clearCart();" class="btn btn-cart">CLEAR</button>
+                    <button type="button" ng-click = "addLayers(selectedLayer)" ng-disabled="!cart.length" class="btn btn-cart">ADD</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

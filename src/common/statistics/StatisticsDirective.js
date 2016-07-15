@@ -77,7 +77,6 @@
             scope.$watch('data', function(newVals, oldVals) {
               if (goog.isDefAndNotNull(newVals) && goog.isDefAndNotNull(newVals)) {
                 scope.data = newVals;
-                console.log('New Data value: ', newVals);
                 if (goog.isDefAndNotNull(scope.data) || goog.isDefAndNotNull(scope.data.statistics) &&
                     goog.isDefAndNotNull(scope.data.statistics.uniqueValues)) {
 
