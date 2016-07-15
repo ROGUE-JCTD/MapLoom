@@ -3,6 +3,7 @@
 
   //-- Private Variables
   var service_ = null;
+  var serverService_ = null;
   var mapService_ = null;
   var rootScope_ = null;
   var translate_ = null;
@@ -59,11 +60,12 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, $translate, $q, mapService, $compile, $http, exclusiveModeService, dialogService,
+    this.$get = function($rootScope, $translate, $q, mapService, serverService, $compile, $http, exclusiveModeService, dialogService,
                          historyService, configService) {
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
+      serverService_ = serverService;
       historyService_ = historyService;
       translate_ = $translate;
       httpService_ = $http;
@@ -1089,9 +1091,19 @@
         wfsRequestTypePartial +
         '</wfs:Transaction>';
 
-    var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
+    var layerUrl = selectedLayer_.get('metadata').url;
+    var server = serverService_.getServerByUrl(selectedLayer_.get('metadata').url);
+    var wfsurl = serverService_.getWfsRequestUrl(layerUrl);
     var layerName = selectedLayer_.get('metadata').uniqueID;
-    httpService_.post(url, wfsRequestData).success(function(data, status, headers, config) {
+    var wfsReqConfig = {
+      headers: serverService_.getWfsRequestHeaders(server)
+    };
+
+    httpService_.post(wfsurl, wfsRequestData, wfsReqConfig)
+    .success(_handleFeaturePostSuccess)
+    .error(_handleFeaturePostError);
+
+    function _handleFeaturePostSuccess(data, status, headers, config) {
       var x2js = new X2JS();
       var json = x2js.xml_str2json(data);
       if (goog.isDefAndNotNull(json.WFS_TransactionResponse) &&
@@ -1129,9 +1141,13 @@
       } else {
         deferredResponse.reject(translate_.instant('unknown_error'));
       }
-    }).error(function(data, status, headers, config) {
+    }
+
+    function _handleFeaturePostError(data, status, headers, config) {
+      console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
       deferredResponse.reject(status);
-    });
+    }
+
     return deferredResponse.promise;
   }
 
