@@ -134,6 +134,30 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
+    this.getServerByUrl = function(url) {
+      var server = null;
+
+      if (!goog.isDefAndNotNull(url)) {
+        return server;
+      }
+
+      if (url.indexOf('/wms') === -1) {
+        url += '/wms';
+      }
+
+      for (var index = 0; index < servers.length; index += 1) {
+        var serverUrl = goog.isDefAndNotNull(servers[index].virtualServiceUrl) ? servers[index].virtualServiceUrl : servers[index].url;
+        console.log(' - ' + serverUrl);
+        if (serverUrl === url) {
+          server = servers[index];
+          break;
+        }
+      }
+
+      //console.log('----[ returning server with name: ', name, ', server: ', server);
+      return server;
+    };
+
     this.getServerByName = function(name) {
       var server = null;
 
