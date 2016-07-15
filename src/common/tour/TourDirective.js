@@ -3,7 +3,7 @@
   var module = angular.module('loom_welcome_tour', []);
 
   module.directive('loomWelcomeTour',
-      function(storyService, configService, $translate) {
+      function(storyService, configService, $translate, $http, $window) {
         return {
           templateUrl: 'tour/partial/tour.tpl.html',
           link: function(scope, element, attrs) {
@@ -199,6 +199,15 @@
             };
             scope.startTour = function() {
               hopscotch.startTour(scope.tour);
+            };
+            scope.recentDrafts = null;
+            scope.username = config.username;
+            $http.get('/api/base/search/?sort_by=date&limit=5&offset=0&type__in=mapstory&is_published=false&owner__username__in=' + scope.username)
+                .success(function(data) {
+                  scope.recentDrafts = data.objects;
+                });
+            scope.redirect = function(url) {
+              $window.top.location.href = url;
             };
           }
         };

@@ -12,19 +12,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-12">
                     <a href="#" id="start-tour" ng-click="startTour()" data-dismiss="modal" data-target="#mapProperties" data-toggle="modal">
-                        <h3>Take a Tour</h3></a>
-                </div>
-                <div class="col-sm-4">
+                        <h3>Take a Tour</h3>
+                    </a>
                     <a href="#" id="start-composing" data-dismiss="modal" data-target="#mapProperties" data-toggle="modal">
                         <h3>Compose Story</h3>
                     </a>
-                </div>
-                <div class="col-sm-4">
-                    <a href="/storyteller/{{ storyService.username }}" id="resume-draft" target="_blank">
-                        <h3>Resume Draft</h3>
-                    </a>
+                    <div class="text-center" ng-show="recentDrafts.length">
+                        <h3>Recent Drafts</h3>
+                        <div ng-repeat="draft in recentDrafts">
+                            <h5 class="pointer" ng-click="redirect('/story/' + draft.id + '/draft')" target="_self">{{ draft.title }}</h5>
+                            <p>{{ draft.abstract }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="text-center">
