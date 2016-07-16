@@ -101,7 +101,7 @@
         $scope.box = {};
         $scope.pin = {};
         $scope.pinFile = null;
-        $scope.application = { name: $window.site_name || 'MapLoom' };
+        $scope.application = { name: $window.site_name || 'MapLoom', icon: $window.site_icon };
 
         $scope.handleBulkPinUpload = function(event) {
           var csv_reader = new FileReader();
