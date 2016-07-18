@@ -408,10 +408,10 @@
               var commitMessage = '';
               if (featuresModified === 1) {
                 commitMessage = $translate.instant('modified_1_feature',
-                    {'layer': tableViewService.selectedLayer.get('metadata').nativeName});
+                    {'layer': tableViewService.selectedLayer.get('metadata').nativeName, 'application_name': $rootScope.application.name});
               } else {
                 commitMessage = $translate.instant('modified_x_features',
-                    {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName});
+                    {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName, 'application_name': $rootScope.application.name});
               }
               console.log('commit message: ', commitMessage);
               var xml = '' +

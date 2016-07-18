@@ -12,6 +12,7 @@
   var geogigService_ = null;
   var translate_ = null;
   var configService_ = null;
+  var rootScope_ = null;
 
   module.provider('conflictService', function() {
     this.features = null;
@@ -36,6 +37,7 @@
       geogigService_ = geogigService;
       translate_ = $translate;
       configService_ = configService;
+      rootScope_ = $rootScope;
       service_ = this;
       return this;
     };
@@ -125,7 +127,7 @@
           }
         }
       }
-      message += ' ' + translate_.instant('applied_via_maploom');
+      message += ' ' + translate_.instant('applied_via_maploom', {'application_name': rootScope_.application.name});
       return message;
     };
   });

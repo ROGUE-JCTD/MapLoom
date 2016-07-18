@@ -235,7 +235,7 @@
                 options.newCommitId = featureDiffService.getTheirsId();
               }
               options.commitMessage = $translate.instant('reverted_changes_to_feature',
-                  {feature: featureDiffService.feature.id}) + ' ' + $translate.instant('applied_via_maploom');
+                  {feature: featureDiffService.feature.id}) + ' ' + $translate.instant('applied_via_maploom', {'application_name': $rootScope.application.name});
               options.mergeMessage = options.commitMessage;
               var repoId = featureDiffService.getRepoId();
               geogigService.beginTransaction(repoId).then(function(transaction) {

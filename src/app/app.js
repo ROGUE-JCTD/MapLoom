@@ -22,7 +22,7 @@
     editableOptions.theme = 'bs3';
   });
 
-  module.controller('AppCtrl', function AppCtrl($scope, $window, $location, $translate, mapService, debugService,
+  module.controller('AppCtrl', function AppCtrl($rootScope, $scope, $window, $location, $translate, mapService, debugService,
                                                 refreshService, dialogService, historyService, storyService, boxService, pinService, $http, layerService, serverService) {
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
@@ -101,7 +101,8 @@
         $scope.box = {};
         $scope.pin = {};
         $scope.pinFile = null;
-        $scope.application = { name: $window.site_name || 'MapLoom', icon: $window.site_icon };
+
+        $rootScope.application = { name: $window.site_name || 'MapLoom', icon: $window.site_icon };
 
         $scope.handleBulkPinUpload = function(event) {
           var csv_reader = new FileReader();

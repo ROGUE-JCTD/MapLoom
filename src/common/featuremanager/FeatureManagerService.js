@@ -1108,7 +1108,7 @@
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
       var featureType = selectedLayer_.get('metadata').name.split(':')[1] || selectedLayer_.get('metadata').name;
-      commitMsg = translate_.instant('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+      commitMsg = translate_.instant('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName, 'application_name': rootScope_.application.name});
       wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
           '"><feature:' + featureType + ' xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '">' +
           partial + '</feature:' + featureType + '></wfs:Insert>';
@@ -1128,13 +1128,13 @@
           '<ogc:FeatureId fid="' + selectedItem_.id + '" />' +
           '</ogc:Filter>';
       if (postType === wfsPostTypes_.DELETE) {
-        commitMsg = translate_.instant('removed_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+        commitMsg = translate_.instant('removed_1_feature', {'layer': selectedLayer_.get('metadata').nativeName, 'application_name': rootScope_.application.name});
         wfsRequestTypePartial = '<wfs:Delete handle="' + commitMsg +
             '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
             filter + '</wfs:Delete>';
       } else if (postType === wfsPostTypes_.UPDATE) {
-        commitMsg = translate_.instant('modified_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
+        commitMsg = translate_.instant('modified_1_feature', {'layer': selectedLayer_.get('metadata').nativeName, 'application_name': rootScope_.application.name});
         wfsRequestTypePartial = '<wfs:Update handle="' + commitMsg +
             '" xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '" typeName="' +
             selectedLayer_.get('metadata').name + '">' +
