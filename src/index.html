@@ -60,7 +60,7 @@
         localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
-        registryEnabled: "{{ REGISTRY }}",
+        registryEnabled: "{{ REGISTRY }}".toLowerCase(),
         registryUrl: "{{ REGISTRYURL }}",
         catalogList: "{{ CATALOGLIST }}"
     };

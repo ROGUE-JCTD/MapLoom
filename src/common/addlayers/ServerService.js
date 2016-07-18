@@ -34,7 +34,9 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.getCatalogList = function() {
-      return catalogList;
+      if (configService_.configuration.registryEnabled === true) {
+        return catalogList;
+      }
     };
 
     this.getServers = function() {
@@ -123,7 +125,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       for (var index = 0; index < servers.length; index += 1) {
         var serverUrl = goog.isDefAndNotNull(servers[index].virtualServiceUrl) ? servers[index].virtualServiceUrl : servers[index].url;
-        console.log(' - ' + serverUrl);
         if (serverUrl === url) {
           server = servers[index];
           break;
@@ -147,7 +148,6 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       for (var index = 0; index < servers.length; index += 1) {
         var serverUrl = goog.isDefAndNotNull(servers[index].virtualServiceUrl) ? servers[index].virtualServiceUrl : servers[index].url;
-        console.log(' - ' + serverUrl);
         if (serverUrl === url) {
           server = servers[index];
           break;
@@ -181,15 +181,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
-    this.getServerLocalGeoserver = function() {
-      var server = null;
-      for (var index = 0; index < servers.length; index += 1) {
-        if ((servers[index].isLocal === true && servers[index].isVirtualService !== true) || servers[index].isPrimaryGeoserver === true) {
-          server = servers[index];
-          break;
-        }
-      }
-      return server;
+    this.getElasticLayerConfig = function() {
+      return configService_.configuration.elasticLayerConfig;
     };
 
     this.isUrlAVirtualService = function(url) {
@@ -500,8 +493,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         service_.getServerByPtype('gxp_osmsource').defaultServer = true;
       }
-      if (goog.isDefAndNotNull(service_.getServerLocalGeoserver())) {
-        service_.getServerLocalGeoserver().defaultServer = true;
+      if (goog.isDefAndNotNull(service_.getElasticLayerConfig())) {
+        service_.getElasticLayerConfig().defaultServer = true;
       }
     };
 
@@ -523,7 +516,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       //Issue WMS request to get full layer config for mapService
       var result = q_.defer();
       var layerConfig = null;
-      var server = service_.getServerLocalGeoserver();
+      var server = service_.getElasticLayerConfig();
       if (server.id != serverId) {
         result.resolve(service_.getLayerConfig(serverId, layerName));
         return result.promise;
@@ -1093,8 +1086,10 @@ var SERVER_SERVICE_USE_PROXY = true;
           if (!goog.isDefAndNotNull(server.url)) {
             dialogService_.error(translate_.instant('error'), translate_.instant('server_url_not_specified'));
             deferredResponse.reject(server);
-          } else if (server.url.indexOf('/web/') > -1) {
-            service_.populateLayersConfigElastic(server, null);
+          } else if (server.elastic) {
+            // @TODO: enable the function below when the elastic geoserver being
+            // used has elastic serach functionality enabled.
+            // service_.populateLayersConfigElastic(server, null);
             deferredResponse.resolve(server);
           } else {
             deferredResponse = service_.populateLayersConfigInelastic(server, deferredResponse);

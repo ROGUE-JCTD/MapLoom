@@ -1,3 +1,4 @@
+console.log = function(sdf) {}; ///turn off console logging when the test runs
 describe('ConfigService', function() {
   var serverService;
   var configService;

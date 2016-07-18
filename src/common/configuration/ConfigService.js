@@ -71,12 +71,12 @@
         },
         sources: [
           {
-            'url': (location.host + '/geoserver/web/'),
+            'url': ('http://52.38.116.143'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
-            'name': 'local geoserver',
+            'name': 'Local GeoServer',
+            'elastic': true,
             'alwaysAnonymous': true,
-            'isPrimaryGeoserver': true,
             'lazy': true
           },
           {
@@ -84,6 +84,10 @@
             'name': 'OpenStreetMap'
           }
         ],
+        elasticLayerConfig: {
+          id: 0,
+          layersConfig: []
+        },
         currentLanguage: 'en',
         username: 'anonymous',
         userprofilename: 'Anonymous',
@@ -103,16 +107,9 @@
       };
 
       if (goog.isDefAndNotNull($window.config)) {
-        var sourceLen = Object.keys($window.config.sources).length;
-        for (var i = 0; i < this.configuration.sources.length; i++) {
-          $window.config.sources[sourceLen] = this.configuration.sources[i];
-          sourceLen++;
-        }
-        $window.config.sources[sourceLen - 1] = this.configuration.sources[this.configuration.sources.length - 1];
         goog.object.extend(this.configuration, $window.config, {});
-
-        console.log(this.configuration);
       }
+
       this.username = this.configuration.username;
       this.currentLanguage = this.configuration.currentLanguage;
       this.user_profile_name = this.configuration.userprofilename;
