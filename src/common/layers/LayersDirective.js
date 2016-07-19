@@ -52,7 +52,9 @@
             scope.filterInternalLayers = function(layer) {
               return !(!goog.isDefAndNotNull(layer.get('metadata')) ||
                   (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
-                      layer.get('metadata').vectorEditLayer));
+                      layer.get('metadata').vectorEditLayer) ||
+                  (goog.isDefAndNotNull(layer.get('metadata').spatialFilterLayer) &&
+                      layer.get('metadata').spatialFilterLayer));
             };
 
             scope.isGeogig = function(layer) {

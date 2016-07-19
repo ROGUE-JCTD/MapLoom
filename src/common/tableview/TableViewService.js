@@ -25,7 +25,10 @@
     this.currentPage = 0;
     this.totalPages = 0;
     this.totalFeatures = 0;
-    this.spatialFilter = {};
+    this.spatialFilter = {
+      active: false,
+      geometryGML: []
+    };
 
     this.nextPage = function() {
       this.currentPage++;
@@ -282,10 +285,16 @@
           '>';
 
       var spatialFilter = '';
-      if (this.spatialFilter.active) {
+      if (this.spatialFilter.active && (this.spatialFilter.geometryGML.length > 0)) {
+        spatialFilter += '<Or>';
+
         var geometryColumn = getGeometryColumn(metadata.schema);
-        var geometry = this.spatialFilter.geometryGML;
-        spatialFilter = getSpatialFilterXML(geometry, geometryColumn);
+
+        this.spatialFilter.geometryGML.forEach(function(geometryGML) {
+          spatialFilter += getSpatialFilterXML(geometryGML, geometryColumn);
+        });
+
+        spatialFilter += '</Or>';
       }
 
       if (xmlFilterBody) {
@@ -300,7 +309,7 @@
           }
         }
         xml += '</ogc:Filter>';
-      } else if (this.spatialFilter.active) {
+      } else if (this.spatialFilter.active && (this.spatialFilter.geometryGML.length > 0)) {
         xml += '<ogc:Filter>';
         xml += spatialFilter;
         xml += '</ogc:Filter>';
@@ -417,9 +426,8 @@
       return deferredResponse.promise;
     };
 
-    this.setSpatialFilter = function(geometryGML, layerName) {
+    this.setSpatialFilter = function(geometryGML) {
       this.spatialFilter.geometryGML = geometryGML;
-      this.spatialFilter.layerName = layerName;
     };
 
     this.getSpatialFilter = function() {
