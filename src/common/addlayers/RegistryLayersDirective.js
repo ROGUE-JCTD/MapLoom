@@ -39,9 +39,7 @@
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
-            // default to the Local Geoserver. Note that when a map is saved and loaded again,
-            // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            var server = angular.copy(serverService.getElasticLayerConfig());
+            var server = angular.copy(serverService.getRegistryLayerConfig());
             if (goog.isDefAndNotNull(server)) {
               scope.currentServerId = 0; //server.id;
               scope.currentServer = server;
@@ -131,12 +129,12 @@
             scope.search = function() {
               searchRangeValues();
               if (searchFavorites) {
-                serverService.addSearchResultsForFavorites(serverService.getElasticLayerConfig(), scope.filterOptions);
+                serverService.addSearchResultsForFavorites(serverService.getRegistryLayerConfig(), scope.filterOptions);
               } else if (searchHyper) {
-                // serverService.addSearchResultsForHyper(serverService.getElasticLayerConfig(), scope.filterOptions, scope.catalogKey);
+                // serverService.addSearchResultsForHyper(serverService.getRegistryLayerConfig(), scope.filterOptions, scope.catalogKey);
                 serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalogKey);
               } else {
-                serverService.populateLayersConfigElastic(serverService.getElasticLayerConfig(), scope.filterOptions);
+                serverService.populateLayersConfigElastic(serverService.getRegistryLayerConfig(), scope.filterOptions);
               }
             };
 

@@ -181,7 +181,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return server;
     };
 
-    this.getElasticLayerConfig = function() {
+    this.getRegistryLayerConfig = function() {
       return configService_.configuration.elasticLayerConfig;
     };
 
@@ -493,8 +493,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         service_.getServerByPtype('gxp_osmsource').defaultServer = true;
       }
-      if (goog.isDefAndNotNull(service_.getElasticLayerConfig())) {
-        service_.getElasticLayerConfig().defaultServer = true;
+      if (goog.isDefAndNotNull(service_.getRegistryLayerConfig())) {
+        service_.getRegistryLayerConfig().defaultServer = true;
       }
     };
 
@@ -516,7 +516,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       //Issue WMS request to get full layer config for mapService
       var result = q_.defer();
       var layerConfig = null;
-      var server = service_.getElasticLayerConfig();
+      var server = service_.getRegistryLayerConfig();
       if (server.id != serverId) {
         result.resolve(service_.getLayerConfig(serverId, layerName));
         return result.promise;

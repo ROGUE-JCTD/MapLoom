@@ -30,6 +30,8 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
     {% get_current_language as language%}
 <script type="text/javascript">
+    var catalogList = JSON.parse("{{ CATALOGLIST|safe }}");
+
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
         username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
@@ -62,7 +64,7 @@
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: "{{ REGISTRY }}".toLowerCase(),
         registryUrl: "{{ REGISTRYURL }}",
-        catalogList: "{{ CATALOGLIST }}"
+        catalogList: catalogList
     };
     goog.object.extend( config, {{ config|safe }});
 </script>

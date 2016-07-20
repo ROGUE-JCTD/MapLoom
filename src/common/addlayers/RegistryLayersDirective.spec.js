@@ -210,7 +210,7 @@ describe('registryLayersDirective', function() {
     var layerConfig, minimalConfig, addLayerSpy, zoomToExtentForProjectionSpy, server;
     beforeEach(function() {
       layerConfig = { add: true, Name: 'Test', extent: [], CRS: ['EPSG:4326'] };
-      server = angular.copy(serverService.getElasticLayerConfig());
+      server = angular.copy(serverService.getRegistryLayerConfig());
       compiledElement.scope().cart = [layerConfig];
       scope.$digest();
       minimalConfig = { source: 0,
@@ -256,7 +256,7 @@ describe('registryLayersDirective', function() {
     describe('with results', function() {
       var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
       beforeEach(function() {
-        compiledElement.scope().currentServer = angular.copy(serverService.getElasticLayerConfig());
+        compiledElement.scope().currentServer = angular.copy(serverService.getRegistryLayerConfig());
         compiledElement.scope().currentServer.layersConfig.push(layerConfig);
         scope.$digest();
       });
