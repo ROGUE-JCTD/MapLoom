@@ -6,13 +6,14 @@
   ]);
 
   module.directive('loomRegistrylayers',
-      function($rootScope, serverService, mapService, geogigService, $translate, dialogService, $timeout, LayersService) {
+      function($rootScope, configService, serverService, mapService, geogigService, $translate, dialogService, $timeout, LayersService) {
         return {
           templateUrl: 'addlayers/partials/registryLayers.tpl.html',
           link: function(scope, element) {
             var searchFavorites = false;
             var searchHyper = true;
             var mapPreviewChangeCount = 0;
+            var savedLayers = configService.configuration.map['layers'];
             scope.currentServerId = -1;
             scope.currentServer = null;
             scope.filterOptions = {
@@ -38,11 +39,9 @@
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
-            // default to the Local Geoserver. Note that when a map is saved and loaded again,
-            // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            var server = angular.copy(serverService.getServerLocalGeoserver());
+            var server = angular.copy(serverService.getRegistryLayerConfig());
             if (goog.isDefAndNotNull(server)) {
-              scope.currentServerId = server.id;
+              scope.currentServerId = 0; //server.id;
               scope.currentServer = server;
             }
 
@@ -130,12 +129,12 @@
             scope.search = function() {
               searchRangeValues();
               if (searchFavorites) {
-                serverService.addSearchResultsForFavorites(serverService.getServerLocalGeoserver(), scope.filterOptions);
+                serverService.addSearchResultsForFavorites(serverService.getRegistryLayerConfig(), scope.filterOptions);
               } else if (searchHyper) {
-                // serverService.addSearchResultsForHyper(serverService.getServerLocalGeoserver(), scope.filterOptions, scope.catalogKey);
+                // serverService.addSearchResultsForHyper(serverService.getRegistryLayerConfig(), scope.filterOptions, scope.catalogKey);
                 serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalogKey);
               } else {
-                serverService.populateLayersConfigElastic(serverService.getServerLocalGeoserver(), scope.filterOptions);
+                serverService.populateLayersConfigElastic(serverService.getRegistryLayerConfig(), scope.filterOptions);
               }
             };
 
@@ -179,6 +178,7 @@
             };
 
             var addLayer = function(layerConfig) {
+              layerConfig['registry'] = true;
               LayersService.addLayer(layerConfig, scope.currentServerId, server);
             };
 
@@ -243,6 +243,20 @@
                 scope.$apply();
               }
             });
+
+            scope.addRegistryLayersFromSavedMap = function(savedLayers) {
+              for (var lyr in savedLayers) {
+                var iteratedlayer = configService.configuration.map['layers'][lyr];
+                if (iteratedlayer['registry']) {
+                  scope.addToCart(iteratedlayer.registryConfig);
+                  scope.addLayers();
+                  return true;
+                }
+              }
+            };
+
+            // load saved registry layers if they exist
+            scope.addRegistryLayersFromSavedMap();
           }
         };
       }

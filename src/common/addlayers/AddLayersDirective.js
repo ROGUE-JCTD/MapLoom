@@ -25,9 +25,7 @@
               return $translate.instant('connected_as', {value: scope.currentServer.username});
             };
 
-            // default to the Local Geoserver. Note that when a map is saved and loaded again,
-            // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            var server = serverService.getServerLocalGeoserver();
+            var server = serverService.getRegistryLayerConfig();
             if (goog.isDefAndNotNull(server)) {
               scope.setCurrentServerId(server.id);
             }
@@ -78,7 +76,7 @@
             // is added, make it the selected server
             scope.$on('server-added', function(event, id) {
               var server = serverService.getServerById(id);
-              if (server === serverService.getServerLocalGeoserver()) {
+              if (server.isLocal) {
                 scope.setCurrentServerId(id);
               } else if (scope.currentServerId == -1 && server === serverService.getServerByName('OpenStreetMap')) {
                 scope.setCurrentServerId(id);
@@ -110,7 +108,7 @@
 
             scope.$on('server-removed', function(event, server) {
               if (scope.currentServerId == server.id) {
-                scope.setCurrentServerId(serverService.getServerLocalGeoserver().id);
+                scope.setCurrentServerId(serverService.getRegistryLayerConfig().id);
               }
             });
 

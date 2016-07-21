@@ -557,6 +557,11 @@
       if (goog.isDefAndNotNull(server)) {
         fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
       }
+
+      if (goog.isDefAndNotNull(minimalConfig.registryConfig)) {
+        fullConfig = minimalConfig.registryConfig;
+      }
+
       return service_.createLayerFull(minimalConfig, fullConfig, server, opt_layerOrder);
     };
 
@@ -901,12 +906,23 @@
         //      being defined. If it is not defined, we should add an empty one here.
         var meta = layer.get('metadata');
 
+        if (minimalConfig['registry']) {
+          meta['registry'] = minimalConfig['registry'];
+          meta['registryConfig'] = minimalConfig['registryConfig'];
+        }
+
         meta.config = minimalConfig;
         // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
         meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
         var mapLayers = this.map.getLayerGroup().getLayers().getArray();
         meta.layerOrder = goog.isDefAndNotNull(opt_layerOrder) ? opt_layerOrder : mapLayers.length;
+
+        // the first registry layer gets added beneath the base map.
+        // this prevents that.
+        if (meta.registry && meta.layerOrder === 1) {
+          meta.layerOrder++;
+        }
 
         var insertIndex = -1;
 

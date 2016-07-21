@@ -40,8 +40,14 @@
         //       has already been resolved so you can used that info to append values to the layer.
         var minimalConfig = {
           name: layerConfig.Name,
-          source: currentServerId
+          source: currentServerId,
+          registry: layerConfig['registry']
         };
+
+        if (layerConfig['registry']) {
+          minimalConfig['registryConfig'] = layerConfig;
+        }
+
         if (virtualServer) {
           mapService_.addVirtualLayer(minimalConfig, layerConfig, virtualServer);
         }else {

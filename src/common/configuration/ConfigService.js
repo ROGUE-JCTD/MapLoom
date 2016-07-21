@@ -21,10 +21,14 @@
             }
           }
           var configCopy = $.extend(true, {}, config);
-          // var proxy = service_.configuration.proxy;
-          // if (goog.isDefAndNotNull(proxy)) {
-          //   configCopy.url = proxy + encodeURIComponent(configCopy.url);
-          // }
+          var proxy = service_.configuration.proxy;
+          var useProxy = service_.configuration.useProxy;
+          var localDomain = $location.protocol() + '://' + $location.host();
+          var serviceDomain = configCopy.url.split('/geoserver/wms')[0];
+          // Don't use a proxy if the geoserver is local
+          if (goog.isDefAndNotNull(proxy) && localDomain != serviceDomain && useProxy) {
+            configCopy.url = proxy + encodeURIComponent(configCopy.url);
+          }
           return configCopy;
         }
         return config;
@@ -74,9 +78,9 @@
             'url': (location.host + '/geoserver/web/'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
-            'name': 'local geoserver',
+            'name': 'Local GeoServer',
+            'elastic': true,
             'alwaysAnonymous': true,
-            'isPrimaryGeoserver': true,
             'lazy': true
           },
           {
@@ -84,6 +88,10 @@
             'name': 'OpenStreetMap'
           }
         ],
+        elasticLayerConfig: {
+          id: 0,
+          layersConfig: []
+        },
         currentLanguage: 'en',
         username: 'anonymous',
         userprofilename: 'Anonymous',
@@ -91,10 +99,11 @@
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url=',
-        registryEnabled: true,
+        useProxy: false,
         nominatimUrl: 'http://nominatim.openstreetmap.org',
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
+        registryEnabled: true,
         registryUrl: 'http://52.38.116.143',
         catalogList: [
           {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},
@@ -103,16 +112,9 @@
       };
 
       if (goog.isDefAndNotNull($window.config)) {
-        var sourceLen = Object.keys($window.config.sources).length;
-        for (var i = 0; i < this.configuration.sources.length; i++) {
-          $window.config.sources[sourceLen] = this.configuration.sources[i];
-          sourceLen++;
-        }
-        $window.config.sources[sourceLen - 1] = this.configuration.sources[this.configuration.sources.length - 1];
         goog.object.extend(this.configuration, $window.config, {});
-
-        console.log(this.configuration);
       }
+
       this.username = this.configuration.username;
       this.currentLanguage = this.configuration.currentLanguage;
       this.user_profile_name = this.configuration.userprofilename;

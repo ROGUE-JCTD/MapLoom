@@ -1,17 +1,39 @@
-describe('StoryLegendDirective', function() {
-  var element, scope, compiledElement, serverService, mapService;
+describe('registryLayersDirective', function() {
+  var element, scope, compiledElement, configService, serverService, mapService;
   beforeEach(module('MapLoom'));
   beforeEach(module('loom_addlayers'));
   beforeEach(module('addlayers/partials/registryLayers.tpl.html'));
 
-  beforeEach(inject(function($rootScope, $compile, $templateCache, _serverService_, _mapService_) {
+  beforeEach(inject(function($rootScope, $compile, $templateCache, _configService_,
+                            _serverService_, _mapService_) {
     scope = $rootScope.$new();
     element = angular.element('<div loom-registrylayers></div>');
     compiledElement = $compile(element)(scope);
     scope.$digest();
+    configService = _configService_;
     serverService = _serverService_;
     mapService = _mapService_;
   }));
+  describe('#addRegistryLayersFromSavedMap', function() {
+    var addLayerSpy;
+    beforeEach(function() {
+      layerConfig = { add: true,
+                      Name: 'Test',
+                      extent: [],
+                      CRS: ['EPSG:4326'] };
+      minimalConfig = { source: 0,
+                        name: layerConfig.Name,
+                        registry: true,
+                        registryConfig: layerConfig
+                      };
+      configService.configuration.map['layers'] = [minimalConfig];
+      addLayerSpy = spyOn(compiledElement.scope(), 'addLayers');
+    });
+    it('should add layers to map stored in config map object', function() {
+      compiledElement.scope().addRegistryLayersFromSavedMap(configService.configuration.map['layers']);
+      expect(addLayerSpy).toHaveBeenCalled();
+    });
+  });
   describe('default search', function() {
     it('changes the filterOptions', function() {
       compiledElement.find('ul.nav-tabs li:nth-child(2) a').click();
@@ -188,10 +210,14 @@ describe('StoryLegendDirective', function() {
     var layerConfig, minimalConfig, addLayerSpy, zoomToExtentForProjectionSpy, server;
     beforeEach(function() {
       layerConfig = { add: true, Name: 'Test', extent: [], CRS: ['EPSG:4326'] };
-      server = angular.copy(serverService.getServerLocalGeoserver());
+      server = angular.copy(serverService.getRegistryLayerConfig());
       compiledElement.scope().cart = [layerConfig];
       scope.$digest();
-      minimalConfig = { source: 0, name: layerConfig.Name };
+      minimalConfig = { source: 0,
+                        name: layerConfig.Name,
+                        registry: true,
+                        registryConfig: layerConfig
+                      };
       addLayerSpy = spyOn(mapService, 'addVirtualLayer');
       zoomToExtentForProjectionSpy = spyOn(mapService, 'zoomToExtentForProjection');
     });
@@ -230,7 +256,7 @@ describe('StoryLegendDirective', function() {
     describe('with results', function() {
       var layerConfig = { Title: 'Test', add: true, extent: [], CRS: 'EPSG:4326' };
       beforeEach(function() {
-        compiledElement.scope().currentServer = angular.copy(serverService.getServerLocalGeoserver());
+        compiledElement.scope().currentServer = angular.copy(serverService.getRegistryLayerConfig());
         compiledElement.scope().currentServer.layersConfig.push(layerConfig);
         scope.$digest();
       });
