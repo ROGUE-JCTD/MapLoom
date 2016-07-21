@@ -379,13 +379,6 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.getServerByPtype('gxp_bingsource').defaultServer = true;
       }
 
-      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapquestsource'))) {
-        config = {ptype: 'gxp_mapquestsource', name: 'MapQuest', defaultServer: true};
-        service_.addServer(config);
-      } else {
-        service_.getServerByPtype('gxp_mapquestsource').defaultServer = true;
-      }
-
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapboxsource'))) {
         config = {ptype: 'gxp_mapboxsource', name: 'MapBox', defaultServer: true};
         service_.addServer(config);
@@ -661,17 +654,6 @@ var SERVER_SERVICE_USE_PROXY = true;
               sourceParams: {imagerySet: 'AerialWithLabels'}},
             {Title: 'BingCollinsBart', Name: 'CollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
             {Title: 'BingSurvey', Name: 'Survey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
-          ];
-          deferredResponse.resolve(server);
-        } else if (server.ptype === 'gxp_mapquestsource') {
-          server.defaultServer = true;
-          if (!goog.isDefAndNotNull(server.name)) {
-            server.name = 'MapQuest';
-          }
-          server.layersConfig = [
-            {Title: 'MapQuestSat', Name: 'sat', sourceParams: {layer: 'sat'}},
-            {Title: 'MapQuestHybrid', Name: 'hyb', sourceParams: {layer: 'hyb'}},
-            {Title: 'MapQuestOSM', Name: 'osm', sourceParams: {layer: 'osm'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
