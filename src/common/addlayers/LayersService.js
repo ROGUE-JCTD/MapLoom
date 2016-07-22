@@ -19,9 +19,16 @@
             goog.isDefAndNotNull(layer.get('metadata').config)) {
           var conf = layer.get('metadata').config;
           if (conf.source === currentServerId) {
-            if (conf.name === layerName) {
-              show = false;
-              break;
+            if (conf.registry === true) {
+              if (conf.registryConfig.LayerId === layerConfig.LayerId) {
+                show = false;
+                break;
+              }
+            } else {
+              if (conf.name === layerName) {
+                show = false;
+                break;
+              }
             }
           }
         }

@@ -281,13 +281,13 @@ describe('registryLayersDirective', function() {
   });
   describe('#isInCart', function() {
     beforeEach(function() {
-      cartLayerName = [1];
+      cartLayerId = [1];
     });
     it('returns true if in cart', function() {
-      expect(compiledElement.scope().isInCart({'Name':1})).toEqual(true);
+      expect(compiledElement.scope().isInCart({'LayerId':1})).toEqual(true);
     });
     it('returns false if not in cart', function() {
-      expect(compiledElement.scope().isInCart({'Name':2})).toEqual(false);
+      expect(compiledElement.scope().isInCart({'LayerId':2})).toEqual(false);
     });
   });
 });
