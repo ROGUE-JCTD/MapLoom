@@ -249,8 +249,14 @@
 
         // -- select the geometry if it is a feature, clear otherwise
         // -- store the selected layer of the feature
-        if (getItemType(selectedItem_) === 'feature' || getItemType(selectedItem_) === 'pin') {
-          selectedLayer_ = this.getSelectedItemLayer().layer;
+        var itemType = getItemType(selectedItem_);
+        if (itemType === 'feature' || itemType === 'pin') {
+          selectedLayer_ = mapService_.pinLayer;
+
+          //If the item is a layer feature then we need to compare against the click event info to get the correct layer.
+          if (itemType === 'feature') {
+            selectedLayer_ = this.getSelectedItemLayer().layer;
+          }
           // note that another service may make a fake feature selection on a layer not in mapservice.
           // checking to make sure it had a geometry before making assumptions about edit layer etc
           if (goog.isDefAndNotNull(selectedItem_.geometry)) {
