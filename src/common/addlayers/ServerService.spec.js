@@ -117,12 +117,11 @@ describe('addLayers/ServerService', function() {
             _type: 'layer',
             _id: '61',
             _source: {
-              LayerTitle: 'Ocean Beach',
-              Abstract: '',
-              LayerId: '60',
-              LayerName: 'geonode:oceanbeach',
+              title: 'Ocean Beach',
+              abstract: '',
+              id: '60',
+              name: 'geonode:oceanbeach',
               LayerUrl: '/layers/OceanBeach',
-              ThumbnailURL: '/test.jpg',
               DomainName: 'harvard.org',
               LayerUsername: 'Admin',
               MaxX: 1,
@@ -135,11 +134,6 @@ describe('addLayers/ServerService', function() {
       });
       it('returns one formatted layer', function() {
         expect(serverService.reformatLayerHyperConfigs(layers, '').length).toEqual(1);
-      });
-      it('has a thumbnail image', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
-          thumbnail_url: 'http://52.38.116.143/test.jpg'
-        }));
       });
       it('has a Title', function() {
         expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({

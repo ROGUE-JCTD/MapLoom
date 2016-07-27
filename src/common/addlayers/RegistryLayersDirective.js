@@ -35,7 +35,7 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
             scope.cart = [];
-            cartLayerName = [];
+            cartLayerId = [];
             scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
@@ -214,24 +214,25 @@
             };
 
             scope.addToCart = function(layerConfig) {
-              var layerCopi = layerConfig.Name;
-              var configIndex = cartLayerName.indexOf(layerCopi);
-              if (configIndex === -1) {
-                cartLayerName.push(layerCopi);
+              var layerId = layerConfig.LayerId;
+              var idIndex = cartLayerId.indexOf(layerId);
+              if (idIndex === -1) {
+                cartLayerId.push(layerId);
                 scope.cart.push(layerConfig);
               } else {
-                cartLayerName.splice(configIndex, 1);
-                scope.cart.splice(configIndex, 1);
+                cartLayerId.splice(idIndex, 1);
+                scope.cart.splice(idIndex, 1);
               }
             };
 
             scope.isInCart = function(layerConfig) {
-              return cartLayerName.indexOf(layerConfig.Name) !== -1 ? true : false;
+              var idInCart = cartLayerId.indexOf(layerConfig.LayerId) !== -1 ? true : false;
+              return idInCart;
             };
 
             scope.clearCart = function() {
               scope.cart = [];
-              cartLayerName = [];
+              cartLayerId = [];
             };
 
             scope.filterAddedLayers = function(layerConfig) {
