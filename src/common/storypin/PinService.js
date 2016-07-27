@@ -204,9 +204,9 @@
           } else {
             pin[key] = null;
           }
-        } else if (pin[key] === 'TRUE') {
+        } else if (pin[key].toUpperCase() === 'TRUE') {
           pin[key] = true;
-        } else if (pin[key] === 'FALSE') {
+        } else if (pin[key].toUpperCase() === 'FALSE') {
           pin[key] = false;
         }
       });

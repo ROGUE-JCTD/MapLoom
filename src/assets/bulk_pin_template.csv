@@ -1,3 +1,3 @@
-title,content,media,start_time,end_time,in_map,in_timeline,pause_playback,auto_show
-,,,,,,,,
-,,,,,,,,
+title,content,media,start_time,end_time,latitude,longitude,in_map,in_timeline,pause_playback,auto_show
+Example Pin,Example Content about pin,media embed or image href,7-1-91,3-20-92,35.78,28.98,TRUE,TRUE,FALSE,FALSE
+,,,,,,,,,,
