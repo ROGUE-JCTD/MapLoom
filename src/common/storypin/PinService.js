@@ -65,6 +65,7 @@
               props.start_time = props.start_time * 1000;
               props.end_time = props.end_time * 1000;
               var storyPin = new Pin(props);
+              storyPin.setId(f.id);
               pins_[index].push(storyPin);
             });
           });
@@ -95,6 +96,10 @@
             a.set('end_time', getTime(a.get('end_time')));
             clone.set('end_time', a.get('end_time') / 1000);
           }
+          if (goog.isDefAndNotNull(a.getId())) {
+            clone.setId(a.getId());
+            clone.id = a.getId();
+          }
           clones.push(clone);
         });
         httpService_.post('/maps/' + config.map.id + '/annotations', new ol.format.GeoJSON().writeFeatures(clones, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
@@ -107,6 +112,7 @@
             for (var i = 0; i < current_pins.length; i++) {
               if (!goog.isDefAndNotNull(current_pins[i].getId())) {
                 current_pins[i].setId(data.ids[i]);
+                current_pins[i].id = data.ids[i];
               }
             }
           }
