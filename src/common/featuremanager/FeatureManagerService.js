@@ -3,6 +3,7 @@
 
   //-- Private Variables
   var service_ = null;
+  var serverService_ = null;
   var mapService_ = null;
   var rootScope_ = null;
   var translate_ = null;
@@ -59,12 +60,12 @@
 
   module.provider('featureManagerService', function() {
 
-    this.$get = function($rootScope, $translate, $q, mapService, $compile, $http, exclusiveModeService, dialogService,
+    this.$get = function($rootScope, $translate, $q, mapService, serverService, $compile, $http, exclusiveModeService, dialogService,
                          historyService, configService) {
-      //console.log('---- featureInfoBoxService.get');
       rootScope_ = $rootScope;
       service_ = this;
       mapService_ = mapService;
+      serverService_ = serverService;
       historyService_ = historyService;
       translate_ = $translate;
       httpService_ = $http;
@@ -182,7 +183,6 @@
           url = service_.getMediaUrl(mediaItem);
         }
       }
-      //console.log('----[ getMediaUrlThumbnail: ', url);
       return url;
     };
 
@@ -229,7 +229,6 @@
      */
     // This method displays the feature info box when a user clicks on a feature or finishes creating a new one
     this.show = function(item, position, forceUpdate) {
-      //console.log('---- show: ', item);
 
       if (!goog.isDefAndNotNull(forceUpdate)) {
         forceUpdate = false;
@@ -257,7 +256,6 @@
         } else if (type === 'layers') {
           featureInfoPerLayer_ = item;
         } else {
-          console.log('====[ Error: expected layers, layer, or feature. got: ', item);
           throw ({
             name: 'featureInfoBox',
             level: 'High',
@@ -348,7 +346,6 @@
                   } catch (e) {
                     // was not able to parse it. field might unintentionally have a name that fits the media
                     // property name in maploom. tread it as a string.
-                    console.log('----[ Warning: media property field ' + k + ' has invalid value of: ' + v);
                     jsonValue = '\"' + v + '\"';
                   }
                 }
@@ -416,7 +413,6 @@
     };
 
     this.getPreviousState = function() {
-      //console.log('---- getPreviousState.begin, state: ', state, ', item: ' , item);
 
       var state = null;
       var item = null;
@@ -432,7 +428,6 @@
             state = 'layers';
           }
         } else {
-          console.log('=====[ Error feature not found! selectedItem: ', selectedItem_);
           throw ({
             name: 'featureInfoBox',
             level: 'High',
@@ -448,8 +443,6 @@
           item = featureInfoPerLayer_;
         }
       }
-
-      //console.log('---- getPreviousState, state: ', state, ', item: ' , item);
 
       if (item !== null) {
         return {
@@ -851,7 +844,6 @@
     };
 
     this.endAttributeEditing = function(save, inserting, properties, coords) {
-      //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
       var deferredResponse = q_.defer();
       if (inserting) {
         // create request
@@ -948,8 +940,6 @@
   function registerOnMapClick($rootScope, $compile) {
     mapService_.map.on('singleclick', function(evt) {
       if (enabled_) {
-        //console.log('loomFeatureInfoBox.map.onclick. event ', evt);
-
         // Overlay clones the element so we need to compile it after it is cloned so that ng knows about it
         if (!goog.isDefAndNotNull(containerInstance_)) {
           containerInstance_ = mapService_.map.getOverlays().array_[0].getElement();
@@ -1012,11 +1002,9 @@
               goog.array.insert(infoPerLayer, layerInfo);
             }
 
-            //console.log('-- infoPerLayer: ', infoPerLayer);
             getFeatureInfoCompleted();
           }, function(reject) {
             getFeatureInfoCompleted();
-            console.log('getFeatureInfo failed for layer: ', layer, ', reject response: ', reject);
           });
         });
       }
@@ -1103,10 +1091,19 @@
         wfsRequestTypePartial +
         '</wfs:Transaction>';
 
-    var url = selectedLayer_.get('metadata').url + '/wfs/WfsDispatcher';
+    var layerUrl = selectedLayer_.get('metadata').url;
+    var server = serverService_.getServerByUrl(selectedLayer_.get('metadata').url);
+    var wfsurl = serverService_.getWfsRequestUrl(layerUrl);
     var layerName = selectedLayer_.get('metadata').uniqueID;
-    httpService_.post(url, wfsRequestData).success(function(data, status, headers, config) {
-      //console.log('====[ great success. ', data, status, headers, config);
+    var wfsReqConfig = {
+      headers: serverService_.getWfsRequestHeaders(server)
+    };
+
+    httpService_.post(wfsurl, wfsRequestData, wfsReqConfig)
+    .success(_handleFeaturePostSuccess)
+    .error(_handleFeaturePostError);
+
+    function _handleFeaturePostSuccess(data, status, headers, config) {
       var x2js = new X2JS();
       var json = x2js.xml_str2json(data);
       if (goog.isDefAndNotNull(json.WFS_TransactionResponse) &&
@@ -1142,13 +1139,15 @@
           goog.isDefAndNotNull(json.ServiceExceptionReport.ServiceException)) {
         deferredResponse.reject(json.ServiceExceptionReport.ServiceException);
       } else {
-        console.log(json);
         deferredResponse.reject(translate_.instant('unknown_error'));
       }
-    }).error(function(data, status, headers, config) {
+    }
+
+    function _handleFeaturePostError(data, status, headers, config) {
       console.log('----[ ERROR: wfs-t post failed! ', data, status, headers, config);
       deferredResponse.reject(status);
-    });
+    }
+
     return deferredResponse.promise;
   }
 

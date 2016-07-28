@@ -75,7 +75,6 @@
           break;
         case 'exactMatch':
           if (filter.text !== '') {
-            console.log('getting filter xml, exact match', resType);
             if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
               var dateStringSansTime = filter.text.split('T')[0];
 
@@ -314,7 +313,6 @@
 
     //TODO: add bbox to filters.geom instead
     this.getFeaturesWfs = function(layer, filters, bbox, resultsPerPage, currentPage) {
-      //console.log('---- tableviewservice.getFeaturesWfs: ', layer, filters, bbox, resultsPerPage, currentPage);
       var deferredResponse = q_.defer();
 
       var metadata = layer.get('metadata');
@@ -327,7 +325,6 @@
       }).success(function(data, status, headers, config) {
         deferredResponse.resolve(data);
       }).error(function(data, status, headers, config) {
-        console.log('post error', data, status, headers, config);
         deferredResponse.reject(status);
       });
       return deferredResponse.promise;
@@ -341,11 +338,9 @@
       var xmlData;
       xmlData = service_.getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null,
           service_.resultsPerPage, service_.currentPage);
-      console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {headers: {
         'Content-Type': 'text/xml;charset=utf-8'
       }}).success(function(data, status, headers, config) {
-        console.log('post success', data, status, headers, config);
         var getRestrictions = function() {
           if (metadata.readOnly || !metadata.editable) {
             service_.readOnly = true;
@@ -417,15 +412,8 @@
         }
         deferredResponse.resolve();
       }).error(function(data, status, headers, config) {
-        console.log('post error', data, status, headers, config);
         deferredResponse.reject(status);
       });
-
-      /*http_.get(url).then(function(response) {
-      }, function(reject) {
-        deferredResponse.reject(reject);
-      });*/
-
       return deferredResponse.promise;
     };
 

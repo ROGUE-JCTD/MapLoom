@@ -286,7 +286,6 @@
 
       function _handleDiffResponseError(reject) {
         //failed to get diff
-        console.log(reject);
         deferredResponse.reject();
       }
 
