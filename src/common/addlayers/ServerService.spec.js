@@ -13,8 +13,6 @@ describe('addLayers/ServerService', function() {
   }));
 
   afterEach(function() {
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
   });
 
   describe('#reformatLayerConfigs', function() {
@@ -168,32 +166,27 @@ describe('addLayers/ServerService', function() {
         expect(serverService.populateLayersConfigElastic('', {})).toEqual(false);
       });
     });
+    beforeEach(function() {
+      $httpBackend.expect('GET', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
+    });
     describe('server is available and returns results', function() {
-      beforeEach(function() {
-        $httpBackend.resetExpectations();
-        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(200, []);
-      });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, filterOptions);
+        serverService.populateLayersConfigElastic({}, null);
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, filterOptions);
+        serverService.populateLayersConfigElastic({}, null);
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], '/geoserver/wms');
       });
     });
     describe('search server is invalid', function() {
-      beforeEach(function() {
-        $httpBackend.expect('POST', '/api/layers/search/?is_published=true&limit=100').respond(500, '');
-      });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, filterOptions);
-        $httpBackend.flush();
+        serverService.populateLayersConfigElastic({}, null);
         expect(serverService.reformatLayerConfigs).not.toHaveBeenCalled();
       });
     });
@@ -207,7 +200,7 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=');
       });
     });
     describe('only text filter', function() {
@@ -243,7 +236,7 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&owner__username__in=Dijkstra');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=owner__username__in=Dijkstra');
       });
     });
     describe('pagination', function() {
@@ -254,7 +247,7 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=size=10');
       });
       it('pagination with from', function() {
         var filterOptions = {
@@ -263,7 +256,7 @@ describe('addLayers/ServerService', function() {
           from: 10,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10&from=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=d_docs_page=10&size=10');
       });
     });
   });
@@ -299,47 +292,41 @@ describe('addLayers/ServerService', function() {
         expect(serverService.addSearchResultsForFavorites('', filterOptions)).toEqual(false);
       });
     });
+    beforeEach(function() {
+      $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100').respond(200, []);
+    });
     describe('server is available and returns results', function() {
-      beforeEach(function() {
-        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(200, []);
-      });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        serverService.addSearchResultsForFavorites({}, filterOptions);
+        serverService.addSearchResultsForFavorites({}, null);
         $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        serverService.addSearchResultsForFavorites({}, filterOptions);
+        serverService.addSearchResultsForFavorites({}, null);
         $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], '/geoserver/wms');
       });
     });
     describe('search server is invalid', function() {
-      beforeEach(function() {
-        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100').respond(501, []);
-      });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
         serverService.addSearchResultsForFavorites({}, filterOptions);
-        $httpBackend.flush();
         expect(serverService.reformatConfigForFavorites).not.toHaveBeenCalled();
       });
     });
     describe('filter for title', function() {
+      beforeEach(function() {
+        $httpBackend.expect('GET', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
+      });
       it('returns the url with title__contains', function() {
-        $httpBackend.expect('POST', '/api/favorites/?content_type=42&limit=100&title__contains=Dijkstra').respond(200, []);
-        spyOn(serverService, 'reformatConfigForFavorites');
+        spyOn(serverService, 'applyFavoritesFilter');
         var filterOptions = {
-          owner: null,
-          text: 'Dijkstra',
-          from: null,
-          size: null
+          text: 'Dijkstra'
         };
         serverService.addSearchResultsForFavorites({}, filterOptions);
-        $httpBackend.flush();
-        expect(serverService.reformatConfigForFavorites).toHaveBeenCalled();
+        expect(serverService.applyFavoritesFilter).toHaveBeenCalled();
       });
     });
   });
@@ -357,17 +344,17 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('POST', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
+        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions, 0);
+        serverService.addSearchResultsForHyper({}, null, 0);
         $httpBackend.flush();
         expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
-        serverService.addSearchResultsForHyper({}, filterOptions, 0);
+        serverService.addSearchResultsForHyper({}, null, 0);
         $httpBackend.flush();
         expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://geoshape.geointservices.io/geoserver/wms');
       });

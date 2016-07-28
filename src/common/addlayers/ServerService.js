@@ -29,7 +29,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       configService_.serverList = servers;
       q_ = $q;
       catalogList = configService.configuration.catalogList;
-
       return this;
     };
 
@@ -690,7 +689,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      http_.post(searchUrl, body, config).then(function(xhr) {
+      http_.get(searchUrl, body, config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
           rootScope_.$broadcast('layers-loaded', server.id);
@@ -725,17 +724,106 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.applyESFilter = function(url, filter_options) {
-      if (filter_options.owner !== null) {
-        url = url + '&owner__username__in=' + configService_.username;
+      var queries = [];
+      url += 'q=';
+      if (filter_options.text !== null) {
+        queries.push('q_text=' + filter_options.text);
       }
-      if (filter_options.size !== null) {
-        url = url + '&size=' + filter_options.size;
+      if (filter_options.owner !== null) {
+        queries.push('owner__username__in=' + configService_.username);
       }
       if (filter_options.from !== null) {
-        url = url + '&from=' + filter_options.from;
+        queries.push('d_docs_page=' + filter_options.from);
       }
+      if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+        queries.push('q_time=' + encodeURIComponent('[' + filter_options.minYear +
+            '-01-01 TO ' + filter_options.maxYear + '-01-01T00:00:00]'));
+      }
+      if (goog.isDefAndNotNull(filter_options.mapPreviewCoordinatesBbox) && filter_options.mapPreviewCoordinatesBbox.length === 4) {
+        console.log(filter_options.mapPreviewCoordinatesBbox);
+        //[min_y, min_x TO max_y, max_x]
+        var spatialQuery = '[' + filter_options.mapPreviewCoordinatesBbox[0][1] + ',' +
+                             filter_options.mapPreviewCoordinatesBbox[0][0] +
+                             ' TO ' + filter_options.mapPreviewCoordinatesBbox[2][1] + ',' +
+                             filter_options.mapPreviewCoordinatesBbox[2][0] + ']';
+        queries.push('q_geo=' + encodeURIComponent(spatialQuery));
+      }
+      for (var i = 0; i < queries.length; i++) {
+        if (i === 0) {
+          url += queries[i];
+        } else {
+          url += '&' + queries[i];
+        }
+      }
+      if (filter_options.size !== null) {
+        if (queries.length === 0) {
+          url += 'size=' + filter_options.size;
+        } else {
+          url += '&size=' + filter_options.size;
+        }
+      }
+      dateRangeHistogram(undefined, filter_options.sliderValues);
       return url;
     };
+
+    function dateRangeHistogram(counts, sliderValues) {
+      counts = counts || [
+        {
+          'count': 53,
+          'value': '1900-01-01T00:00:00Z'
+        },
+        {
+          'count': 10,
+          'value': '1901-01-01T00:00:00Z'
+        },
+        {
+          'count': 2,
+          'value': '1902-01-01T00:00:00Z'
+        },
+        {
+          'count': 4,
+          'value': '1903-01-01T00:00:00Z'
+        },{
+          'count': 4,
+          'value': '1913-01-01T00:00:00Z'
+        },{
+          'count': 5,
+          'value': '1916-01-01T00:00:00Z'
+        },{
+          'count': 10,
+          'value': '1966-01-01T00:00:00Z'
+        },{
+          'count': 10,
+          'value': '1996-01-01T00:00:00Z'
+        }];
+      if (!sliderValues || !counts) {
+        return [];
+      }
+      var suma = 0, sliderIndex = 0, histogram = [];
+
+      for (var i = 0; i < counts.length; i++) {
+        var count = counts[i];
+        var sliderValue = Number(sliderValues[sliderIndex]);
+        suma = suma + count.count;
+        yearCount = Number(count.value.substring(0, 4));
+        yearCountNext = counts[i + 1] === undefined ? null : Number(counts[i + 1].value.substring(0, 4));
+
+        while (sliderIndex < sliderValues.length && (isNaN(sliderValue) || yearCount > sliderValue)) {
+          sliderIndex++;
+          sliderValue = Number(sliderValues[sliderIndex]);
+          histogram.push({key: sliderValues[sliderIndex], doc_count: 0});
+        }
+        if (yearCount === sliderValue || yearCountNext > sliderValue) {
+          histogram.push({key: sliderValue, doc_count: suma});
+          suma = 0;
+          sliderIndex++;
+        }else if (i + 1 === counts.length) {
+          histogram.push({key: sliderValue, doc_count: suma});
+        }
+      }
+      return histogram;
+    }
+
     this.applyBodyFilter = function(filter_options) {
       var ranges = [];
       var mapExtentFilter = [];
@@ -818,7 +906,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return body;
     };
 
-    var applyFavoritesFilter = function(url, filterOptions) {
+    this.applyFavoritesFilter = function(url, filterOptions) {
       if (filterOptions.text !== null) {
         url += '&title__contains=' + filterOptions.text;
       }
@@ -913,7 +1001,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
       if (filterOptions !== null) {
-        searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
+        searchUrl = this.applyFavoritesFilter(searchUrl, filterOptions);
       }
       return addSearchResults(searchUrl, {}, server, service_.reformatConfigForFavorites);
     };
