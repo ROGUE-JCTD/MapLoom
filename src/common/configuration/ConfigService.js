@@ -104,10 +104,10 @@
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
         registryEnabled: true,
-        registryUrl: 'http://52.38.116.143',
+        registryUrl: 'http://exchange-dev.boundlessps.com/registry',
         catalogList: [
-          {name: 'hypersearch catalog 1', url: 'http://geoshape.geointservices.io/search/hypermap/'},
-          {name: 'hypersearch catalog 2', url: 'http://geoshape.geointservices.io/search/hypermap/'}
+          {name: 'hypersearch catalog 1', url: 'http://exchange-dev.boundlessps.com/hypermap/'},
+          {name: 'hypersearch catalog 2', url: 'http://exchange-dev.boundlessps.com/hypermap/'}
         ]
       };
 
