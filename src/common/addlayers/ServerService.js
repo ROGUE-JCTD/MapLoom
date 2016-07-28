@@ -733,7 +733,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         queries.push('owner__username__in=' + configService_.username);
       }
       if (filter_options.from !== null) {
-        queries.push('d_docs_page=' + filter_options.from);
+        queries.push('from=' + filter_options.from);
       }
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
         queries.push('q_time=' + encodeURIComponent('[' + filter_options.minYear +
