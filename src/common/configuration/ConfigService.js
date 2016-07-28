@@ -90,8 +90,7 @@
         ],
         elasticLayerConfig: {
           id: 0,
-          layersConfig: [],
-          authentication: 'YWRtaW46ZXhjaGFuZ2U='
+          layersConfig: []
         },
         currentLanguage: 'en',
         username: 'anonymous',
