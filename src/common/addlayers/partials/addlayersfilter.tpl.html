@@ -7,9 +7,8 @@
               ng-model="filterOptions.text" type="text" class="form-control search-input">
           </div>
           <div class="form-group col-md-6 col-xs-6">
-            <!--select class="form-control search-input select-search" ng-model="catalogKey" ng-change="searchHyper()">
-              <option ng-repeat="(catalogKey, catalog) in serverService.getCatalogList()" value="{{catalogKey}}">{{catalog.name}}</option-->
-            <select class="form-control search-input select-search" value="{{catalogKey}}" ng-change="searchHyper()" ng-model="initc" ng-init="initc = serverService.getCatalogList()[0] || catalogKey" ng-options="catalog.name for (catalogKey, catalog) in serverService.getCatalogList()">
+            <select class="form-control search-input select-search" ng-model="catalogKey" ng-change="searchHyper()">
+              <option ng-repeat="(catalogKey, catalog) in serverService.getCatalogList()" value="{{catalogKey}}">{{catalog.name}}</option>
             <select>
           </div>
         </div>
