@@ -200,7 +200,7 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory');
       });
     });
     describe('only text filter', function() {
@@ -247,7 +247,7 @@ describe('addLayers/ServerService', function() {
           from: null,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=size=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10');
       });
       it('pagination with from', function() {
         var filterOptions = {
@@ -256,7 +256,7 @@ describe('addLayers/ServerService', function() {
           from: 10,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstoryq=d_docs_page=10&size=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&size=10&from=10');
       });
     });
   });
