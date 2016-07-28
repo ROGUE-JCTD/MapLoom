@@ -33,9 +33,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.getCatalogList = function() {
-      if (configService_.configuration.registryEnabled === true) {
-        return catalogList;
-      }
+      return catalogList;
     };
 
     this.getServers = function() {
