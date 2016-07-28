@@ -1411,7 +1411,7 @@
         heatmapLayerTitle = meta.title;
       }
 
-      var source = new ol.source.ServerVector({
+      var source = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         loader: function(extent, resolution, projection) {
           tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
@@ -1420,7 +1420,7 @@
             dialogService_.open(translate_.instant('error'), translate_.instant('error'));
           });
         },
-        strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
+        strategy: ol.loadingstrategy.tile(new ol.source.XYZ({
           maxZoom: 19
         })),
         projection: 'EPSG:3857'
