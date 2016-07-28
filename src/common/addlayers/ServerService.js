@@ -725,15 +725,11 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     this.applyESFilter = function(url, filter_options) {
       var queries = [];
-      url += 'q=';
       if (filter_options.text !== null) {
         queries.push('q_text=' + filter_options.text);
       }
       if (filter_options.owner !== null) {
         queries.push('owner__username__in=' + configService_.username);
-      }
-      if (filter_options.from !== null) {
-        queries.push('d_docs_page=' + filter_options.from);
       }
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
         queries.push('q_time=' + encodeURIComponent('[' + filter_options.minYear +
@@ -748,6 +744,9 @@ var SERVER_SERVICE_USE_PROXY = true;
                              filter_options.mapPreviewCoordinatesBbox[2][0] + ']';
         queries.push('q_geo=' + encodeURIComponent(spatialQuery));
       }
+      if (queries.length > 0) {
+        url += 'q=';
+      }
       for (var i = 0; i < queries.length; i++) {
         if (i === 0) {
           url += queries[i];
@@ -755,12 +754,13 @@ var SERVER_SERVICE_USE_PROXY = true;
           url += '&' + queries[i];
         }
       }
+
+      //`size` & `from` should be outside of the query, either at the begining or the end
       if (filter_options.size !== null) {
-        if (queries.length === 0) {
-          url += 'size=' + filter_options.size;
-        } else {
-          url += '&size=' + filter_options.size;
-        }
+        url += '&size=' + filter_options.size;
+      }
+      if (filter_options.from !== null) {
+        url += '&from=' + filter_options.from;
       }
       dateRangeHistogram(undefined, filter_options.sliderValues);
       return url;
