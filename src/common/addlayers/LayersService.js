@@ -52,6 +52,7 @@
         };
 
         if (layerConfig['registry']) {
+          minimalConfig['name'] = layerConfig.Title;
           minimalConfig['registryConfig'] = layerConfig;
         }
 
