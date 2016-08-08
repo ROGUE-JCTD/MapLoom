@@ -32,6 +32,7 @@
     'loom_storybox',
     'loom_storypin',
     'loom_storylegend',
-    'loom_welcome_tour'
+    'loom_welcome_tour',
+    'loom_media'
   ]);
 }());
