@@ -447,7 +447,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         if (status === 200) {
           var response = parser.read(data);
           if (goog.isDefAndNotNull(response.Capability) && goog.isDefAndNotNull(response.Capability.Layer)) {
-            layerConfig = response.Capability.Layer.Layer[0];
+            layerConfig = response.Capability.Layer;
             result.resolve(layerConfig);
           }
         }

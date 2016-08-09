@@ -805,7 +805,7 @@
               }
 
             } else if (server.ptype === 'gxp_wmscsource') {
-              nameSplit = fullConfig.Name.split(':');
+              nameSplit = fullConfig.Layer[0].Name.split(':');
 
               // favor virtual service url when available
               var mostSpecificUrl = server.url;
@@ -902,7 +902,7 @@
                 });
               }
             } else if (server.ptype === 'gxp_tmssource') {
-              nameSplit = fullConfig.Name.split(':');
+              nameSplit = fullConfig.Layer.Name.split(':');
               url = server.url;
 
               if (goog.isDefAndNotNull(server.url)) {
