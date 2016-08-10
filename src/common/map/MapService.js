@@ -757,7 +757,7 @@
                 metadata: {
                   serverId: server.id,
                   name: minimalConfig.name,
-                  title: fullConfig.Title
+                  title: fullConfig.Layer[0].Title
                 },
                 visible: minimalConfig.visibility,
                 source: new ol.source.BingMaps(sourceParams)
@@ -795,7 +795,7 @@
                   metadata: {
                     serverId: server.id,
                     name: minimalConfig.name,
-                    title: fullConfig.Title
+                    title: fullConfig.Layer[0].Title
                   },
                   visible: minimalConfig.visibility,
                   source: source
@@ -823,10 +823,10 @@
               }
 
               var styles = [];
-              if (goog.isDefAndNotNull(fullConfig.Style)) {
-                console.log('config style', fullConfig.Style);
-                for (var index = 0; index < fullConfig.Style.length; index++) {
-                  var style = fullConfig.Style[index];
+              if (goog.isDefAndNotNull(fullConfig.Layer[0].Style)) {
+                console.log('config style', fullConfig.Layer[0].Style);
+                for (var index = 0; index < fullConfig.Layer[0].Style.length; index++) {
+                  var style = fullConfig.Layer[0].Style[index];
                   styles.push({
                     name: style.Name,
                     title: style.Title,
@@ -836,24 +836,24 @@
                 }
               }
 
-              console.log('config crs', fullConfig.CRS);
-              console.log('getCode', service_.getCRSCode(fullConfig.CRS));
+              console.log('config crs', fullConfig.Layer[0].CRS);
+              console.log('getCode', service_.getCRSCode(fullConfig.Layer[0].CRS));
               layer = new ol.layer.Tile({
                 metadata: {
                   serverId: server.id,
                   name: minimalConfig.name,
                   url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
-                  title: fullConfig.Title,
-                  abstract: fullConfig.Abstract,
-                  keywords: fullConfig.KeywordList,
+                  title: fullConfig.Layer[0].Title,
+                  abstract: fullConfig.Layer[0].Abstract,
+                  keywords: fullConfig.Layer[0].KeywordList,
                   workspace: nameSplit.length > 1 ? nameSplit[0] : '',
                   readOnly: false,
                   editable: false,
                   styles: styles,
-                  bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
-                  projection: service_.getCRSCode(fullConfig.CRS),
+                  bbox: (goog.isArray(fullConfig.Layer[0].BoundingBox) ? fullConfig.Layer[0].BoundingBox[0] : fullConfig.Layer[0].BoundingBox),
+                  projection: service_.getCRSCode(fullConfig.Layer[0].CRS),
                   savedSchema: minimalConfig.schema,
-                  dimensions: fullConfig.Dimension
+                  dimensions: fullConfig.Layer[0].Dimension
                 },
                 visible: minimalConfig.visibility,
                 source: new ol.source.TileWMS({
@@ -902,7 +902,7 @@
                 });
               }
             } else if (server.ptype === 'gxp_tmssource') {
-              nameSplit = fullConfig.Layer.Name.split(':');
+              nameSplit = fullConfig.Layer[0].Name.split(':');
               url = server.url;
 
               if (goog.isDefAndNotNull(server.url)) {
@@ -916,12 +916,12 @@
                   serverId: server.id,
                   name: minimalConfig.name,
                   url: goog.isDefAndNotNull(url) ? url : undefined,
-                  title: fullConfig.Title,
-                  abstract: fullConfig.Abstract,
-                  keywords: fullConfig.KeywordList,
+                  title: fullConfig.Layer[0].Title,
+                  abstract: fullConfig.Layer[0].Abstract,
+                  keywords: fullConfig.Layer[0].KeywordList,
                   workspace: nameSplit.length > 1 ? nameSplit[0] : '',
                   editable: false,
-                  bbox: fullConfig.BoundingBox[0]
+                  bbox: fullConfig.Layer[0].BoundingBox[0]
                 },
                 visible: minimalConfig.visibility,
                 source: new ol.source.XYZ({
