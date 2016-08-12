@@ -581,8 +581,8 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     var domain = function(layerInfo) {
-      if (layerInfo.hasOwnProperty('DomainName')) {
-        return layerInfo.DomainName;
+      if (layerInfo.hasOwnProperty('domain_name')) {
+        return layerInfo.domain_name;
       }
       return '';
     };
@@ -623,6 +623,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         Abstract: layerInfo.abstract,
         Name: layerInfo.name,
         Title: layerInfo.title,
+        LayerDate: layerInfo.layer_date,
         LayerCategory: layerInfo.layer_category,
         LayerId: layerInfo.id,
         CRS: ['EPSG:4326'],
@@ -734,7 +735,6 @@ var SERVER_SERVICE_USE_PROXY = true;
             '-01-01 TO ' + filter_options.maxYear + '-01-01T00:00:00]'));
       }
       if (goog.isDefAndNotNull(filter_options.mapPreviewCoordinatesBbox) && filter_options.mapPreviewCoordinatesBbox.length === 4) {
-        console.log(filter_options.mapPreviewCoordinatesBbox);
         //[min_y, min_x TO max_y, max_x]
         var spatialQuery = '[' + filter_options.mapPreviewCoordinatesBbox[0][1] + ',' +
                              filter_options.mapPreviewCoordinatesBbox[0][0] +

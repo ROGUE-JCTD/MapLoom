@@ -120,7 +120,7 @@ describe('addLayers/ServerService', function() {
               id: '60',
               name: 'geonode:oceanbeach',
               LayerUrl: '/layers/OceanBeach',
-              DomainName: 'harvard.org',
+              domain_name: 'harvard.org',
               LayerUsername: 'Admin',
               MaxX: 1,
               MaxY: 1,
