@@ -344,7 +344,7 @@ describe('addLayers/ServerService', function() {
     });
     describe('server is available and returns results', function() {
       beforeEach(function() {
-        $httpBackend.expect('GET', 'http://geoshape.geointservices.io/search/hypermap/_search?').respond(200, []);
+        $httpBackend.expect('GET', 'http://exchange-dev.boundlessps.com/hypermap/_search?').respond(200, []);
       });
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
@@ -356,7 +356,7 @@ describe('addLayers/ServerService', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
         serverService.addSearchResultsForHyper({}, null, 0);
         $httpBackend.flush();
-        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://geoshape.geointservices.io/geoserver/wms');
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://exchange-dev.boundlessps.com/geoserver/wms');
       });
     });
   });
