@@ -104,10 +104,17 @@
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
         registryEnabled: true,
-        registryUrl: 'http://exchange-dev.boundlessps.com/registry',
         catalogList: [
-          {name: 'hypersearch catalog 1', url: 'http://exchange-dev.boundlessps.com/hypermap/'},
-          {name: 'hypersearch catalog 2', url: 'http://exchange-dev.boundlessps.com/hypermap/'}
+          {
+            name: 'hypersearch catalog',
+            url: 'http://exchange-dev.boundlessps.com/hypermap/',
+            registryUrl: 'http://exchange-dev.boundlessps.com/registry'
+          },
+          {
+            name: 'hypersearch local catalog',
+            url: 'http://localhost:9200/hypermap/',
+            registryUrl: 'http://localhost/registry/hypermap'
+          }
         ]
       };
 

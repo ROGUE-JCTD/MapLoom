@@ -131,7 +131,6 @@
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getRegistryLayerConfig(), scope.filterOptions);
               } else if (searchHyper) {
-                // serverService.addSearchResultsForHyper(serverService.getRegistryLayerConfig(), scope.filterOptions, scope.catalogKey);
                 serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalogKey);
               } else {
                 serverService.populateLayersConfigElastic(serverService.getRegistryLayerConfig(), scope.filterOptions);
