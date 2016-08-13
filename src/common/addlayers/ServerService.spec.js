@@ -122,39 +122,39 @@ describe('addLayers/ServerService', function() {
               LayerUrl: '/layers/OceanBeach',
               domain_name: 'harvard.org',
               LayerUsername: 'Admin',
-              MaxX: 1,
-              MaxY: 1,
-              MinX: 0,
-              MinY: 0
+              max_x: 1,
+              max_y: 1,
+              min_x: 0,
+              min_y: 0
             }
           }
         ];
       });
       it('returns one formatted layer', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '').length).toEqual(1);
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0).length).toEqual(1);
       });
       it('has a Title', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
           Title: 'Ocean Beach'
         }));
       });
       it('has a Domain', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
           domain: 'harvard.org'
         }));
       });
       it('has a author', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
           author: 'Admin'
         }));
       });
       it('has an extent', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
           extent: [0, 0, 1, 1]
         }));
       });
       it('has a CRS', function() {
-        expect(serverService.reformatLayerHyperConfigs(layers, '')[0]).toEqual(jasmine.objectContaining({
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
           CRS: ['EPSG:4326']
         }));
       });
@@ -180,7 +180,7 @@ describe('addLayers/ServerService', function() {
         spyOn(serverService, 'reformatLayerConfigs');
         serverService.populateLayersConfigElastic({}, null);
         $httpBackend.flush();
-        expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], '/geoserver/wms');
+        expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], '/geoserver/wms', undefined);
       });
     });
     describe('search server is invalid', function() {
@@ -306,7 +306,7 @@ describe('addLayers/ServerService', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
         serverService.addSearchResultsForFavorites({}, null);
         $httpBackend.flush();
-        expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], '/geoserver/wms');
+        expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], '/geoserver/wms', undefined);
       });
     });
     describe('search server is invalid', function() {
@@ -356,7 +356,7 @@ describe('addLayers/ServerService', function() {
         spyOn(serverService, 'reformatLayerHyperConfigs');
         serverService.addSearchResultsForHyper({}, null, 0);
         $httpBackend.flush();
-        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://exchange-dev.boundlessps.com/geoserver/wms');
+        expect(serverService.reformatLayerHyperConfigs).toHaveBeenCalledWith([], 'http://exchange-dev.boundlessps.com/geoserver/wms', 0);
       });
     });
   });
