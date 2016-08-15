@@ -7,11 +7,11 @@ build:
 
 sync:
 	# set up the database tables
-	docker-compose run django python manage.py migrate --noinput
+	docker-compose run django bash -c "python manage.py makemigrations && python manage.py migrate account && python manage.py migrate --noinput"
 	# load the default catalog (hypermap)
-	docker-compose run django python manage.py loaddata exchange/core/fixtures/catalog_default.json
+	docker-compose run django python manage.py loaddata catalog_default.json
 	# load a superuser admin / exchange
-	docker-compose run django python manage.py loaddata exchange/core/fixtures/initial.json
+	docker-compose run django python manage.py loaddata initial.json
 
 wait:
 	sleep 5
@@ -30,4 +30,7 @@ reset: down up wait sync
 pull:
 	docker-compose pull
 
-hardreset: down pull build reset
+clean:
+	./clean-build
+
+hardreset: clean down pull build reset
