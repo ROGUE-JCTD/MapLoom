@@ -45,3 +45,4 @@ The recommended way to develop maploom is to:
 - you can now go to http://geoshape_vm_server_ip/maps/new or http://geoshape_vm_server_ip/layers to create a map from a layer. Changes on your host machine will cause `grunt watch` to rebuild MapLoom, and the symbolic links created by `geoshape-config maploom_dev` will make the newly buit maploom immediately available to Geonode in your VM.
 
 Note that linter used by `grunt watch` is very paticular about the js programing style and guildlines. Be sure to fix all compile issues.
+

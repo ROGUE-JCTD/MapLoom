@@ -131,7 +131,6 @@
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getRegistryLayerConfig(), scope.filterOptions);
               } else if (searchHyper) {
-                // serverService.addSearchResultsForHyper(serverService.getRegistryLayerConfig(), scope.filterOptions, scope.catalogKey);
                 serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalogKey);
               } else {
                 serverService.populateLayersConfigElastic(serverService.getRegistryLayerConfig(), scope.filterOptions);
@@ -139,7 +138,6 @@
             };
 
             scope.$on('totalOfDocs', function(event, totalDocsCount) {
-              console.log(scope.filterOptions); //!DJA xxx2
               scope.pagination.sizeDocuments = totalDocsCount;
               scope.pagination.showdocs = scope.pagination.sizeDocuments < 10 ? scope.pagination.sizeDocuments : scope.filterOptions.size;
               scope.pagination.docsSoFar = goog.isDefAndNotNull(scope.filterOptions.from) ? scope.filterOptions.from + 10 : scope.filterOptions.size;
@@ -169,8 +167,13 @@
 
             function searchRangeValues() {
               if (goog.isDefAndNotNull(scope.sliderValues)) {
-                scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue];
-                scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue];
+                if (scope.slider.minValue === 0 && scope.slider.maxValue === scope.sliderValues.length - 1) {
+                  scope.filterOptions.minYear = null;
+                  scope.filterOptions.maxYear = null;
+                } else {
+                  scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue];
+                  scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue];
+                }
                 scope.filterOptions.sliderValues = scope.sliderValues;
               }
             }

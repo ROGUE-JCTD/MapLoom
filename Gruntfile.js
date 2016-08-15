@@ -10,6 +10,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-recess');
@@ -34,6 +35,18 @@ module.exports = function ( grunt ) {
      * version. It's already there, so we don't repeat ourselves here.
      */
     pkg: grunt.file.readJSON("package.json"),
+
+    /**
+     * Connect server for development
+     */
+    connect: {
+      server: {
+        options: {
+          port: 3000,
+          base: 'build'
+        }
+      }
+    },
 
     /**
      * The banner is the comment that is placed at the top of our compiled

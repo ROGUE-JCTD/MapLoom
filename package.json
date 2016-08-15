@@ -1,7 +1,7 @@
 {
   "author": "Prominent Edge",
   "name": "MapLoom",
-  "version": "1.5.1",
+  "version": "1.5.5",
   "homepage": "http://www.prominentedge.com",
   "licenses": {
     "type": "BSD",
@@ -24,6 +24,7 @@
     "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-jshint": "~0.4.3",
     "grunt-contrib-uglify": "~0.2.0",
@@ -37,10 +38,10 @@
     "grunt-ngmin": "0.0.2",
     "grunt-recess": "~0.3.0",
     "jasmine": "^2.4.1",
+    "karma": "^0.13.22",
     "karma-coverage": "^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.0",
-    "karma": "^0.13.22",
     "karma-spec-reporter": "~0.0.24",
     "phantomjs-prebuilt": "^2.0.0"
   }
