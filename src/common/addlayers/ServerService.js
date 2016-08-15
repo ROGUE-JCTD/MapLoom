@@ -778,11 +778,12 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
+
         rangeSliderFilter = [{
                               'range' : {
                                 'layer_date' : {
-                                  'gte': filter_options.minYear + '-01-01T00:00:00',
-                                  'lte': filter_options.maxYear + '-01-01T00:00:00'
+                                  'gte': formatYearToFourSizeString(filter_options.minYear) + '-01-01T00:00:00',
+                                  'lte': formatYearToFourSizeString(filter_options.maxYear) + '-01-01T00:00:00'
                                  }
                               }
                              }];
@@ -840,6 +841,17 @@ var SERVER_SERVICE_USE_PROXY = true;
         };
       }
       return body;
+
+      function formatYearToFourSizeString(year) {
+        if (!goog.isDefAndNotNull(year)) {
+          return '0000';
+        }
+        var lenString = year.toString().length;
+        if (lenString > 0 && lenString < 4) {
+          year = '0'.repeat(4 - lenString) + year;
+        }
+        return year;
+      }
     };
 
     this.applyFavoritesFilter = function(url, filterOptions) {
