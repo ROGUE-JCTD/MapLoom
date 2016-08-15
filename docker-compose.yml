@@ -30,6 +30,8 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
       - BROKER_URL=amqp://guest:guest@rabbitmq:5672/
       - ALLOWED_HOSTS=['django',]
+      - SITE_URL=http://localhost/
+
   celery:
     image: terranodo/registry
     links:
@@ -42,6 +44,7 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
       - BROKER_URL=amqp://guest:guest@rabbitmq:5672/
       - ALLOWED_HOSTS=['django',]
+      - SITE_URL=http://localhost/
       - C_FORCE_ROOT=1
 
   nginx:
