@@ -1,13 +1,12 @@
 (function() {
   var module = angular.module('loom_media_service', ['ngSanitize']);
   var service_ = null;
-  var sce_ = null;
   var mediaHandlers_ = null;
   var q_ = null;
   var noembedProviders_ = null;
 
 
-  //ALERT: ANGULARJS WHITELIST IS BULLSHIT. The regex objects you provide get altered in various ways by angular upon
+  //ALERT: ANGULARJS WHITELIST IS BULL****. The regex objects you provide get altered in various ways by angular upon
   //creation of the whitelist. 1st it adds start and end anchor tokens to the regex, and then it ignores and flags you
   //may have set for regex. This means all regex must be valid without use of case insensitivity flag (which sucks).
   module.config(function($sceDelegateProvider) {
@@ -23,8 +22,7 @@
 
   module.provider('mediaService', function() {
 
-    this.$get = function($rootScope, $http, $sce, $translate, $q) {
-      sce_ = $sce;
+    this.$get = function($rootScope, $http, $translate, $q) {
       http_ = $http;
       translate_ = $translate;
       q_ = $q;
@@ -49,11 +47,11 @@
         for (var iUrlScheme = 0; iUrlScheme < provider.patterns.length; iUrlScheme += 1) {
           var regExp = new RegExp(provider.patterns[iUrlScheme], 'i');
           if (url.match(regExp) !== null) {
-            return provider;
+            return true;
           }
         }
       }
-      return null;
+      return false;
     };
 
     this.configureDefaultHandlers = function() {
@@ -71,10 +69,6 @@
         return false;
       }
       return true;
-    };
-
-    this.trustHTMLContent = function(html) {
-      return sce_.trustAsHtml(html);
     };
 
     this.getEmbedContent = function(url, embed_params) {
@@ -133,23 +127,9 @@
 
     }
 
-
-    function embed_youtube(url, embed_params) {
+    function embed_imgur(url, embed_params) {
 
       var response = q_.defer();
-
-      http_.jsonp('https://www.youtube.com/oembed?url=' + url + '&format=json&maxwidth=' + embed_params.maxwidth + '&maxheight=' + embed_params.maxheight, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).success(function(result) {
-        response.resolve(result.html);
-      });
-
-      return response.promise;
-    }
-
-    function embed_imgur(url, embed_params) {
 
       var regex = /(https?:\/\/(\w+\.)?imgur\.com)/ig;
 
@@ -166,7 +146,8 @@
             '<blockquote class="imgur-embed-pub" lang="en" data-id="a/$1"></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>');
       }
 
-      return embed;
+      response.resolve(embed);
+      return response.promise;
 
     }
 
