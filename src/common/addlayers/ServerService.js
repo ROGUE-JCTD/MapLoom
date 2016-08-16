@@ -627,7 +627,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         LayerCategory: layerInfo.layer_category,
         LayerId: layerInfo.id,
         CRS: ['EPSG:4326'],
-        detail_url: catalogList[catalogKey].registryUrl + '/layer/' + layerInfo.id,
+        detail_url: configService_.configuration.registryUrl + '/layer/' + layerInfo.id,
         author: author(layerInfo),
         domain: domain(layerInfo),
         type: 'mapproxy_tms',
