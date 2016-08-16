@@ -36,7 +36,7 @@
             <div ng-if="featureManagerService.getSelectedItemProperties()['media']">
                 <br>
                 <div ng-if="isUrl(featureManagerService.getSelectedItemProperties()['media'])" >
-                    <loom-media src="{{ featureManagerService.getSelectedItemProperties()['media'] }}"></loom-media>
+                    <loom-media max-width="180" max-height="180" src="{{ featureManagerService.getSelectedItemProperties()['media'] }}"></loom-media>
                 </div>
                 <div ng-if="!isUrl(featureManagerService.getSelectedItemProperties()['media'])">
                     <div ng-bind-html="sanitizeEmbed(featureManagerService.getSelectedItemProperties()['media'])"></div>
