@@ -13,6 +13,13 @@
     $sceDelegateProvider.resourceUrlWhitelist([
       // Allow same origin resource loads.
       'self',
+      new RegExp(/https?:\/\/.*\.flickr\.com\/photos\/.*/),
+      new RegExp(/https?:\/\/flic\.kr\/p\/.*/),
+      new RegExp(/https?:\/\/instagram\.com\/p\/.*/),
+      new RegExp(/https?:\/\/instagr\.am\/p\/.*/),
+      new RegExp(/https?:\/\/vine\.co\/v\/.*/),
+      new RegExp(/https?:\/\/(?:www\.)?vimeo\.com\/.+/),
+      new RegExp(/https?:\/\/((?:www\.)|(?:pic\.)?)twitter\.com\/.*/),
       new RegExp(/https?:\/\/(?:w{3}\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com).+/im),
       new RegExp(/https?:\/\/(w{3}\.)?soundcloud\.com\/.+/im),
       new RegExp(/https?:\/\/(?:((?:m)\.)|((?:www)\.)|((?:i)\.))?imgur\.com\/?.+/im)
