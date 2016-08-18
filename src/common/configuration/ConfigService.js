@@ -21,10 +21,10 @@
             }
           }
           var configCopy = $.extend(true, {}, config);
-          var proxy = service_.configuration.proxy;
-          if (goog.isDefAndNotNull(proxy)) {
-            configCopy.url = proxy + encodeURIComponent(configCopy.url);
-          }
+          //var proxy = service_.configuration.proxy;
+          //if (goog.isDefAndNotNull(proxy)) {
+          //configCopy.url = proxy + encodeURIComponent(configCopy.url);
+          //}
           return configCopy;
         }
         return config;
