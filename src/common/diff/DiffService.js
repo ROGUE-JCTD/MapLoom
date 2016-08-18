@@ -163,12 +163,12 @@
       var olFeature = new ol.Feature();
 
       diffLayerFound = false;
-      changeLayer = service_.findChangeLayer(change, repo, layers);
+      var changeLayer = service_.findChangeLayer(change, repo, layers);
 
       geom = WKT.read(change.geometry);
 
       if (goog.isDefAndNotNull(changeLayer)) {
-        crs = changeLayer.metadata.projection;
+        crs = changeLayer.get('metadata').projection;
       }
 
       if (goog.isDefAndNotNull(crs)) {
