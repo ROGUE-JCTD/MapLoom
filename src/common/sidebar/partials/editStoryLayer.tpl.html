@@ -1,4 +1,8 @@
-<div class="topText">{{ 'application_name' | translate:'{ name: application.name }' }} > {{ chapter.chapter }} > StoryLayers</div>
+<div class="topText">
+    <a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'application_name' | translate:'{ name: application.name }' }}</a> >
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a> >
+    <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep()">StoryLayers</a>
+</div>
 <div class="bottomText">{{ layerService.getTitle(storyService.active_layer) }}</div>
 
 <div class="menuItem">

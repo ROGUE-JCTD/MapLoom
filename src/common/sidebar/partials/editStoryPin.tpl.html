@@ -1,4 +1,8 @@
-<div class="topText">{{ 'application_name' | translate:'{ name: application.name }' }} > {{ chapter.chapter }} > StoryPins</div>
+<div class="topText">
+    <a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'application_name' | translate:'{ name: application.name }' }}</a> >
+    <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a> >
+    <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id); updateTourStep()">StoryPins</a>
+</div>
 <div class="bottomText"></div>
 
 <div class="menuItem">

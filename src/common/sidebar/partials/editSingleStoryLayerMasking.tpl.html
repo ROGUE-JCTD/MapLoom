@@ -1,4 +1,4 @@
-<h2 ng-show="menuSection=='editSingleStoryLayerMasking' + layerName">{{ chapter.chapter }}</h2>
+<div class="topText"><a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'application_name' | translate:'{ name: application.name }' }}</a> > <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a></div>
 
 <h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
