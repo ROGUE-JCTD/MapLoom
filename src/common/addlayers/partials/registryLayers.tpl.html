@@ -16,7 +16,7 @@
                       </tr>
                       <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
                         ng-repeat="layer in layersConfig = getResults() | filter:filterAddedLayers">
-                        <td class="ellipsis">{{ layer.Title }}</td>
+                        <td class="ellipsis">{{ layer.title }}</td>
                         <td>{{ layer.domain }}</td>
                       </tr>
                     </table>
@@ -46,18 +46,18 @@
                 <div class="row">
                   <div class="col-md-6 filter panel panel-default add-layer panel-abstract" name="layer-information-panel">
                     <div class="alert alert-title alert-warning-mp">
-                      <h3>{{currentLayer.Title}}</h3>
+                      <h3>{{currentLayer.title}}</h3>
                     </div>
                       <div class="panel-body">
                         <div class="row">
                           <div class="col-md-12">
                             <div class="layer-info-left">
-                              <div class="col-md-12">{{currentLayer.LayerDate || 'Date' | date : 'd/MM/y'}}</div>
-                              <div class="col-md-12">{{currentLayer.LayerCategory || 'Category'}}</div>
+                              <div class="col-md-12">{{currentLayer.layerDate || 'Date' | date : 'd/MM/y'}}</div>
+                              <div class="col-md-12">{{currentLayer.layerCategory || 'Category'}}</div>
                             </div>
                           </div>
                           <div class="col-md-12">
-                            <p class="abstract">{{currentLayer.Abstract}}</p>
+                            <p class="abstract">{{currentLayer.abstract}}</p>
                           </div>
                         </div>
                       </div>
@@ -71,7 +71,7 @@
                       <table class="table table-hover list-results">
                         <tr class="result" ng-repeat="layer in cart.slice().reverse()">
                           <td class="remove-button">
-                            <div class="col-md-10 ellipsis">{{layer.Title}}</div>
+                            <div class="col-md-10 ellipsis">{{layer.title}}</div>
                             <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
                           </td>
                         </tr>

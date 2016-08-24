@@ -150,6 +150,15 @@
     ]];
   }
 
+  function angleNormalize(angle) {
+    if (angle < -180) {
+      return 360 + angle;
+    }else if (angle > 180) {
+      return -360 + angle;
+    }
+    return angle;
+  }
+
   function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, projection) {
     var geojsonObject = {
       'type': 'Feature',
@@ -219,6 +228,7 @@
 
       this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
       this.createBBoxFromCoordinatesFromProjectionIntoProjection = createBBoxFromCoordinatesFromProjectionIntoProjection;
+      this.angleNormalize = angleNormalize;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
@@ -534,7 +544,7 @@
     this.createLayerWithFullConfig = function(fullConfig, serverId) {
       var server = serverService_.getServerById(serverId);
       var minimalConfig = {
-        name: fullConfig.Name,
+        name: fullConfig.name,
         source: serverId
       };
       return service_.createLayerFull(minimalConfig, fullConfig, server);
@@ -625,20 +635,13 @@
         });
       } else {
         if (fullConfig.type && fullConfig.type == 'mapproxy_tms') {
-          var layername = '';
-          if (fullConfig.Name.split(':').length > 1) {
-            layername = fullConfig.Name.split(':')[1];
-          } else {
-            layername = fullConfig.Name;
-          }
-
           layer = new ol.layer.Tile({
             metadata: {
               name: minimalConfig.name,
               url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
-              title: fullConfig.Title,
+              title: fullConfig.title,
               extent: fullConfig['extent'],
-              abstract: fullConfig.Abstract,
+              abstract: fullConfig.abstract,
               readOnly: false,
               editable: false,
               projection: service_.getCRSCode(fullConfig.CRS),
@@ -649,7 +652,7 @@
             },
             visible: true,
             source: new ol.source.XYZ({
-              url: fullConfig.detail_url + '/map/wmts/' + layername + '/default_grid/{z}/{x}/{y}.png'
+              url: fullConfig.detail_url
             })
           });
         } else if (server.ptype === 'gxp_osmsource') {
