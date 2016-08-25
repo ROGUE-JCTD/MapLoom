@@ -48,6 +48,7 @@
 
     this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
+      var serverLocation = $location.protocol() + '://' + $location.host();
 
       this.configuration = {
         about: {
@@ -104,18 +105,8 @@
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
         registryEnabled: true,
-        catalogList: [
-          {
-            name: 'hypersearch catalog',
-            url: 'http://exchange-dev.boundlessps.com/hypermap/',
-            registryUrl: 'http://exchange-dev.boundlessps.com/registry'
-          },
-          {
-            name: 'hypersearch local catalog',
-            url: 'http://localhost:9200/hypermap/',
-            registryUrl: 'http://localhost/registry/hypermap'
-          }
-        ]
+        serverLocation: serverLocation,
+        searchApiURL: serverLocation + '/registry/api/catalogs/'
       };
 
       if (goog.isDefAndNotNull($window.config)) {

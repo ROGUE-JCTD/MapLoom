@@ -8,8 +8,7 @@
       link: function(scope, element) {
 
         var topIndex = -1;
-        var minIndex = 10;
-
+        var minIndex = 11;
         scope.sliderValues = ['5000M BC', '500M BC', '50M BC', '5M BC', '1M BC', '100K BC', '10K BC', '1K BC', '500 BC', '100 BC',
           0, 100, 500, 1000, 1500, 1600, 1700, 1800, 1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 1991, 1992, 1993,
           1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013,
@@ -65,38 +64,75 @@
           }
         };
 
-        function renderingSvgBars() {
-          if (histogram.buckets) {
-            histogram.barsWidth = $('#bars').width();
-            var barsheight = 40;
-            var rectWidth = histogram.barsWidth / histogram.buckets.length;
-            var svgRect = histogram.buckets.map(function(bar, barKey) {
-              var height = histogram.maxValue === 0 ? 0 : barsheight * bar.doc_count / histogram.maxValue;
-              var y = barsheight - height;
-              var translate = (rectWidth) * barKey;
-              return '<g transform="translate(' + translate + ', 0)">' +
-                     '  <rect width="' + rectWidth + '" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
-                     '</g>';
-            });
-            var svgbar = '<svg width="100%" height="' + barsheight + '">' + svgRect.join('') + '</svg>';
-            $('#bars').html(svgbar);
-          }
-        }
-
-        scope.$on('dateRangeHistogram', function(even, histogramData) {
-          histogram = histogramData;
-          histogram.maxValue = Math.max.apply(null, histogram.buckets.map(function(obj) {
-            return obj.doc_count;
-          }));
-          renderingSvgBars();
-        });
-        $(window).resize(renderingSvgBars);
-
         scope.$on('slideEnded', function() {
           if (changeSliderValues) {
             scope.sliderValues = sliderValues.slice();
             changeSliderValues = false;
           }
+        });
+
+        function dateRangeHistogram(counts, sliderValues) {
+          if (!sliderValues || !counts) {
+            return [];
+          }
+          var suma = 0, sliderIndex = 0, histogram = [];
+          for (var i = 0; i < counts.length; i++) {
+            var count = counts[i];
+            var sliderValue = Number(sliderValues[sliderIndex]);
+            suma = suma + count.count;
+            yearCount = Number(count.value.substring(0, 4));
+            yearCountNext = counts[i + 1] === undefined ? null : Number(counts[i + 1].value.substring(0, 4));
+
+            if (yearCount === sliderValue || (yearCount < sliderValue && yearCountNext > sliderValue)) {
+              histogram.push({key: sliderValue, count: suma});
+              suma = 0;
+              sliderIndex++;
+            }
+            while (
+                sliderIndex < sliderValues.length &&
+                (isNaN(sliderValue) || yearCount > sliderValue ||
+                (i + 1 === counts.length && yearCount <= sliderValue))
+            ) {
+              histogram.push({key: sliderValue, count: 0});
+              sliderIndex++;
+              sliderValue = Number(sliderValues[sliderIndex]);
+              i = yearCount === sliderValue ? i - 1 : i;
+            }
+          }
+          return histogram;
+        }
+
+        function makeHistogram(histogram) {
+
+          function renderingSvgBars() {
+            if (histogram.counts) {
+              histogram.barsWidth = $('#bars').width();
+              var barsheight = 40;
+              var rectWidth = histogram.barsWidth / histogram.counts.length;
+              var svgRect = histogram.counts.map(function(bar, barKey) {
+                var height = histogram.maxValue === 0 ? 0 : barsheight * bar.count / histogram.maxValue;
+                var y = barsheight - height;
+                var translate = (rectWidth) * barKey;
+                return '<g transform="translate(' + translate + ', 0)">' +
+                       '  <rect width="' + rectWidth + '" height="' + height + '" y="' + y + '" fill="#E4E4E4"></rect>' +
+                       '</g>';
+              });
+              var svgbar = '<svg width="100%" height="' + barsheight + '">' + svgRect.join('') + '</svg>';
+              $('#bars').html(svgbar);
+            }
+          }
+
+          $(window).resize(renderingSvgBars);
+
+          histogram.maxValue = Math.max.apply(null, histogram.counts.map(function(obj) {
+            return obj.count;
+          }));
+          histogram.counts = dateRangeHistogram(histogram.counts, scope.sliderValues);
+          renderingSvgBars();
+        }
+
+        scope.$on('dateRangeHistogram', function(even, histogramData) {
+          makeHistogram(histogramData);
         });
 
         $('#registry-layer-dialog').on('shown.bs.modal', function() {

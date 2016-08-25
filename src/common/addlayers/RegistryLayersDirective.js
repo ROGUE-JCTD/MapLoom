@@ -15,15 +15,15 @@
             var mapPreviewChangeCount = 0;
             var savedLayers = configService.configuration.map['layers'];
             scope.currentServerId = -1;
-            scope.currentServer = null;
             scope.filterOptions = {
               owner: null,
               text: null,
-              from: null,
+              docsPage: 1,
               size: 10,
               minYear: null,
               maxYear: null,
-              mapPreviewCoordinatesBbox: []
+              mapPreviewCoordinatesBbox: null,
+              histogramFlag: true
             };
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
@@ -36,13 +36,12 @@
             scope.selectedLayer = {};
             scope.cart = [];
             cartLayerId = [];
-            scope.catalogKey = 0;
             scope.pagination = {sizeDocuments: 1, pages: 1};
+            scope.catalogList = [];
 
-            var server = angular.copy(serverService.getRegistryLayerConfig());
+            var server = serverService.getRegistryLayerConfig();
             if (goog.isDefAndNotNull(server)) {
-              scope.currentServerId = 0; //server.id;
-              scope.currentServer = server;
+              scope.currentServerId = 0;
             }
 
             var resetText = function() {
@@ -51,13 +50,13 @@
             var resetOwner = function() {
               scope.filterOptions.owner = null;
             };
-            var resetFrom = function() {
-              scope.filterOptions.from = null;
+            var resetDocsPage = function() {
+              scope.filterOptions.docsPage = 1;
             };
             var resetMapPreview = function() {
               if (mapPreviewChangeCount > 1) {
                 mapPreviewChangeCount = 0;
-                scope.filterOptions.mapPreviewCoordinatesBbox = [];
+                scope.filterOptions.mapPreviewCoordinatesBbox = null;
                 $rootScope.$broadcast('resetMap');
               }
             };
@@ -65,10 +64,12 @@
             var clearFilters = function() {
               resetText();
               resetOwner();
-              resetFrom();
+              resetDocsPage();
               searchFavorites = false;
               searchHyper = false;
             };
+
+            scope.resetDocsPage = resetDocsPage;
 
             scope.defaultSearch = function() {
               clearFilters();
@@ -96,32 +97,26 @@
             };
 
             scope.getResults = function() {
-              return scope.currentServer.layersConfig;
+              return server.layersConfig;
             };
 
 
             scope.nextPage = function() {
-              if (scope.filterOptions.from !== null) {
-                scope.filterOptions.from += scope.filterOptions.size;
-              } else {
-                scope.filterOptions.from = scope.filterOptions.size;
-              }
+              scope.filterOptions.docsPage++;
               scope.search();
             };
             scope.hasNext = function() {
-              if (scope.getResults()) {
-                return scope.getResults().length === scope.filterOptions.size;
+              if (scope.pagination.currentPage > 0) {
+                return scope.pagination.pages > scope.pagination.currentPage;
               }
+              return false;
             };
             scope.hasPrevious = function() {
-              return scope.filterOptions.from !== null;
+              return scope.filterOptions.docsPage > 1;
             };
             scope.previousPage = function() {
-              if (scope.filterOptions.from !== null) {
-                scope.filterOptions.from -= scope.filterOptions.size;
-                if (scope.filterOptions.from < 1) {
-                  scope.filterOptions.from = null;
-                }
+              if (scope.filterOptions.docsPage > 1) {
+                scope.filterOptions.docsPage--;
               }
               scope.search();
             };
@@ -131,7 +126,7 @@
               if (searchFavorites) {
                 serverService.addSearchResultsForFavorites(serverService.getRegistryLayerConfig(), scope.filterOptions);
               } else if (searchHyper) {
-                serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalogKey);
+                serverService.addSearchResultsForHyper(server, scope.filterOptions, scope.catalog);
               } else {
                 serverService.populateLayersConfigElastic(serverService.getRegistryLayerConfig(), scope.filterOptions);
               }
@@ -142,25 +137,35 @@
               scope.pagination.showdocs = scope.pagination.sizeDocuments < 10 ? scope.pagination.sizeDocuments : scope.filterOptions.size;
               scope.pagination.docsSoFar = goog.isDefAndNotNull(scope.filterOptions.from) ? scope.filterOptions.from + 10 : scope.filterOptions.size;
               scope.pagination.docsSoFar = scope.pagination.docsSoFar > totalDocsCount ? totalDocsCount : scope.pagination.docsSoFar;
-              scope.pagination.currentPage = scope.pagination.showdocs === 0 ? 0 : (scope.filterOptions.from / scope.pagination.showdocs) + 1;
+              scope.pagination.currentPage = scope.filterOptions.docsPage;
               scope.pagination.pages = Math.ceil(scope.pagination.sizeDocuments / scope.filterOptions.size);
             });
 
-            $('#registry-layer-dialog').on('shown.bs.modal', scope.search);
+            $('#registry-layer-dialog').on('shown.bs.modal', function() {
+              serverService.getCatalogList(function(catalogList) {
+                scope.catalogList = catalogList.data;
+                scope.catalog = scope.catalogList[0];
+                scope.search();
+              });
+            });
 
             scope.$on('slideEnded', function() {
-              resetFrom();
+              resetDocsPage();
               scope.search();
             });
             scope.$on('changeSliderValues', function() {
-              resetFrom();
+              resetDocsPage();
               scope.search();
             });
 
             scope.$on('moveendMap', function(event, coordinates) {
               mapPreviewChangeCount++;
               if (mapPreviewChangeCount > 1) {
-                scope.filterOptions.mapPreviewCoordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
+                coordinatesBbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), 'EPSG:4326')[0];
+                //[min_y, min_x TO max_y, max_x] from the lower-left to the upper-right.
+                scope.filterOptions.mapPreviewCoordinatesBbox = '[' + coordinatesBbox[0][1] + ',' +
+                    mapService.angleNormalize(coordinatesBbox[0][0]) + ' TO ' + coordinatesBbox[2][1] + ',' +
+                    mapService.angleNormalize(coordinatesBbox[2][0]) + ']';
                 scope.search();
               }
             });
@@ -168,11 +173,11 @@
             function searchRangeValues() {
               if (goog.isDefAndNotNull(scope.sliderValues)) {
                 if (scope.slider.minValue === 0 && scope.slider.maxValue === scope.sliderValues.length - 1) {
-                  scope.filterOptions.minYear = null;
-                  scope.filterOptions.maxYear = null;
+                  scope.filterOptions.minYear = '*';
+                  scope.filterOptions.maxYear = '*';
                 } else {
-                  scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue];
-                  scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue];
+                  scope.filterOptions.minYear = scope.sliderValues[scope.slider.minValue] + '-01-01';
+                  scope.filterOptions.maxYear = scope.sliderValues[scope.slider.maxValue] + '-01-01T00:00:00';
                 }
                 scope.filterOptions.sliderValues = scope.sliderValues;
               }
@@ -220,7 +225,7 @@
             };
 
             scope.addToCart = function(layerConfig) {
-              var layerId = layerConfig.LayerId;
+              var layerId = layerConfig.layerId;
               var idIndex = cartLayerId.indexOf(layerId);
               if (idIndex === -1) {
                 cartLayerId.push(layerId);
@@ -232,7 +237,7 @@
             };
 
             scope.isInCart = function(layerConfig) {
-              var idInCart = cartLayerId.indexOf(layerConfig.LayerId) !== -1 ? true : false;
+              var idInCart = cartLayerId.indexOf(layerConfig.layerId) !== -1 ? true : false;
               return idInCart;
             };
 
@@ -242,7 +247,7 @@
             };
 
             scope.filterAddedLayers = function(layerConfig) {
-              return LayersService.filterAddedLayers(layerConfig, scope.currentServerId, layerConfig.Name);
+              return LayersService.filterAddedLayers(layerConfig, scope.currentServerId, layerConfig.name);
             };
 
             scope.$on('layers-loaded', function() {
