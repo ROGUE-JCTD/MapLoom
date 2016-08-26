@@ -51,6 +51,19 @@
                       <div class="panel-body">
                         <div class="row">
                           <div class="col-md-12">
+                            <div class="col-md-12 status-block">
+                              <div>
+                                Last status:
+                                <span ng-if="currentLayer.lastStatus === false" class="glyphicon glyphicon-remove text-red"></span>
+                                <span ng-if="currentLayer.lastStatus === true" class="glyphicon glyphicon-ok text-green"></span>
+                              </div>
+                              <div>
+                                Reliability: {{currentLayer.reliability}}
+                              </div>
+                              <div>
+                                Recent-reliability: {{currentLayer.recentReliability}}
+                              </div>
+                            </div>
                             <div class="layer-info-left">
                               <div class="col-md-12">{{currentLayer.layerDate || 'Date' | date : 'd/MM/y'}}</div>
                               <div class="col-md-12">{{currentLayer.layerCategory || 'Category'}}</div>

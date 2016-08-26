@@ -621,7 +621,6 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     var createHyperSearchLayerObject = function(layerInfo) {
-
       /* Temporaly script to delete ":" extra info in layerInfo.tile_url
       * before : http://localhost/registry/hypermap/layer/44/map/wmts/osm:placenames_capital/default_grid/1/1/0.png
       * after: http://localhost/registry/hypermap/layer/44/map/wmts/placenames_capital/default_grid/1/1/0.png
@@ -650,7 +649,10 @@ var SERVER_SERVICE_USE_PROXY = true;
         author: author(layerInfo),
         domain: domain(layerInfo),
         type: 'mapproxy_tms',
-        extent: createExtentFromHyper(layerInfo)
+        extent: createExtentFromHyper(layerInfo),
+        reliability: layerInfo.reliability,
+        recentReliability: layerInfo.recent_reliability,
+        lastStatus: layerInfo.last_status
       };
     };
 
@@ -675,7 +677,6 @@ var SERVER_SERVICE_USE_PROXY = true;
       for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
         var layerInfo = layerObjects[iLayer];
         var configTemplate = createHyperSearchLayerObject(layerInfo);
-
         finalConfigs.push(configTemplate);
       }
 
@@ -840,6 +841,9 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForHyper = function(server, filterOptions, catalog) {
+      if (!goog.isDefAndNotNull(catalog)) {
+        return;
+      }
       var searchUrl = configService_.configuration.serverLocation + catalog.search_url + '?';
 
       if (filterOptions !== null) {
