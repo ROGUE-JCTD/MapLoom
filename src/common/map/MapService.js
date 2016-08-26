@@ -721,6 +721,22 @@
           } else {
             console.log('====[ Error: could not create base layer.');
           }
+        } else if (server.ptype === 'gxp_arcrestsource') {
+          var attribution = new ol.Attribution({
+            html: 'Tiles &copy; <a href="' + server.url + '">ArcGIS</a>'
+          });
+          layer = new ol.layer.Tile({
+            metadata: {
+              serverId: server.id,
+              name: minimalConfig.name,
+              title: fullConfig.Title
+            },
+            visible: minimalConfig.visibility,
+            source: new ol.source.XYZ({
+              attributions: [attribution],
+              url: server.url + 'tile/{z}/{y}/{x}'
+            })
+          });
         } else if (server.ptype === 'gxp_tilejsonsource') {
           //currently we assume only one layer per 'server'
           var jsontile_source = server.layersConfig[0].TileJSONSource;

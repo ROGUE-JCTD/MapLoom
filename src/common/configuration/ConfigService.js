@@ -87,6 +87,13 @@
           {
             'ptype': 'gxp_osmsource',
             'name': 'OpenStreetMap'
+          },
+          {
+            ptype: 'gxp_arcrestsource',
+            name: 'Esri',
+            defaultServer: true,
+            alwaysAnonymous: true,
+            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/'
           }
         ],
         elasticLayerConfig: {

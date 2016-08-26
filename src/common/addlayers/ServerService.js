@@ -473,6 +473,19 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.getServerByPtype('gxp_bingsource').defaultServer = true;
       }
 
+      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_arcrestsource'))) {
+        config = {
+          ptype: 'gxp_arcrestsource',
+          name: 'Esri',
+          defaultServer: true,
+          alwaysAnonymous: true,
+          url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/'
+        };
+        service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_arcrestsource').defaultServer = true;
+      }
+
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapquestsource'))) {
         config = {ptype: 'gxp_mapquestsource', name: 'MapQuest', defaultServer: true};
         service_.addServer(config);
@@ -787,7 +800,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
     };
 
-    this.populateLayersConfigInelastic = function(server, deferredResponse) {
+    this.populateLayersConfigInelastic = function(server, force, deferredResponse) {
       // prevent getCapabilities request until ran by the user.
       if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
         var parser = new ol.format.WMSCapabilities();
@@ -894,6 +907,15 @@ var SERVER_SERVICE_USE_PROXY = true;
             {Title: 'MapQuestSat', Name: 'sat', sourceParams: {layer: 'sat'}},
             {Title: 'MapQuestHybrid', Name: 'hyb', sourceParams: {layer: 'hyb'}},
             {Title: 'MapQuestOSM', Name: 'osm', sourceParams: {layer: 'osm'}}
+          ];
+          deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_arcrestsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'Esri';
+          }
+          server.layersConfig = [
+            {Title: 'World Topographic', Name: 'world_topo', sourceParams: {layer: 'world_topo'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
@@ -1029,7 +1051,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             // service_.populateLayersConfigElastic(server, null);
             deferredResponse.resolve(server);
           } else {
-            deferredResponse = service_.populateLayersConfigInelastic(server, deferredResponse);
+            deferredResponse = service_.populateLayersConfigInelastic(server, force, deferredResponse);
           }
         } else {
           deferredResponse.reject();
