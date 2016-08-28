@@ -416,25 +416,25 @@
         var metadata = layer.get('metadata');
         if (!goog.isDefAndNotNull(metadata.isGeoGig)) {
           if (goog.isDefAndNotNull(fullConfig.Identifier) && goog.isDefAndNotNull(fullConfig.Identifier[0])) {
-            var splitGeogig = fullConfig.Identifier[0].split(':');
-            if (goog.isArray(splitGeogig) && (splitGeogig.length === 3 || splitGeogig.length === 4)) {
-              var repoUUID = splitGeogig[0];
+            var splitGeogig = fullConfig.Identifier[0].replace('geoserver://', '').split(':');
+            if (goog.isArray(splitGeogig) && (splitGeogig.length === 2 || splitGeogig.length === 3)) {
+              var repoName = splitGeogig[0];
               var nativeName = splitGeogig[1];
-              var branchName = splitGeogig[2];
+              var branchName = 'master';
               metadata.branchName = branchName;
               metadata.nativeName = nativeName;
-              if (splitGeogig.length === 4) {
-                metadata.branchName = splitGeogig[3];
+              if (splitGeogig.length === 3) {
+                metadata.branchName = splitGeogig[2];
               }
-              var geogigURL = metadata.url + '/geogig/' + repoUUID;
+              var geogigURL = metadata.url + '/geogig/repos/' + repoName;
               if (server.isVirtualService === true) {
-                geogigURL = server.url.replace('wms', 'geogig') + '/' + repoUUID;
+                geogigURL = server.url.replace('wms', 'geogig') + '/' + repoName;
               }
               service_.getRepoInfo(geogigURL).then(function(info) {
                 http.get(geogigURL + '/repo/manifest').then(function() {
                   var addRepo = function(admin) {
                     var promise = service_.addRepo(
-                        new GeoGigRepo(geogigURL, repoUUID, metadata.branchName, info.name), admin);
+                        new GeoGigRepo(geogigURL, repoName, metadata.branchName, info.name), admin);
                     promise.then(function(repo) {
                       if (goog.isDef(repo.id)) {
                         rootScope.$broadcast('repoAdded', repo);
@@ -448,16 +448,20 @@
                       getFeatureType();
                     });
                     metadata.isGeoGig = true;
-                    metadata.geogigStore = repoUUID;
+                    metadata.geogigStore = repoName;
                   };
                   // see if we have admin access
-                  // HACK see if the merge endpoint is available.
+                  // HACK see if the pull endpoint is available.
                   http.get(geogigURL + '/merge').then(function() {
-                    metadata.isGeoGigAdmin = true;
-                    addRepo(true);
+                    // wont happen
                   }, function(reject) {
-                    metadata.isGeoGigAdmin = false;
-                    addRepo(false);
+                    if (reject.status == 403) { // Permission denied
+                      metadata.isGeoGigAdmin = false;
+                      addRepo(false);
+                    } else {
+                      metadata.isGeoGigAdmin = true;
+                      addRepo(true);
+                    }
                   });
                 }, function() {
                   metadata.isGeoGig = false;

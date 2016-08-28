@@ -153,6 +153,7 @@
                     scope.isLoading = false;
                   }
                 }, function(reject) {
+                  console.log('ERROR: Log Failure: ', options, reject);
                   dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                   scope.isLoading = false;
                 });
@@ -193,6 +194,7 @@
                     }, function(reject) {
                       numPanels--;
                       numFailed++;
+                      console.log('ERROR: Blame Failure: ', options, reject);
                       if (numPanels === 0) {
                         dialogService.error($translate.instant('error'), $translate.instant('author_fetch_failed'));
                         scope.isLoading = false;
@@ -237,38 +239,50 @@
               options.mergeMessage = options.commitMessage;
               var repoId = featureDiffService.getRepoId();
               geogigService.beginTransaction(repoId).then(function(transaction) {
-                transaction.command('revertfeature', options).then(function() {
-                  transaction.finalize().then(function() {
-                    dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));
-                    scope.undoEnabled = false;
-                    historyService.refreshHistory(layerName);
-                    mapService.dumpTileCache(layerName);
-                  }, function(endTransactionFailure) {
-                    if (goog.isObject(endTransactionFailure) &&
-                        goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
-                      handleConflicts(repoId, endTransactionFailure, transaction,
-                          dialogService, conflictService, $translate,
-                          $translate.instant('transaction'), $translate.instant('repository'), scope,
-                          $translate.instant('transaction'));
+                var checkoutOptions = new GeoGigCheckoutOptions();
+                checkoutOptions.branch = branch;
+                transaction.command('checkout', checkoutOptions).then(function() {
+                  transaction.command('revertfeature', options).then(function() {
+                    transaction.finalize().then(function() {
+                      dialogService.open($translate.instant('undo_successful'), $translate.instant('changes_undone'));
+                      scope.undoEnabled = false;
+                      historyService.refreshHistory(layerName);
+                      mapService.dumpTileCache(layerName);
+                    }, function(endTransactionFailure) {
+                      if (goog.isObject(endTransactionFailure) &&
+                          goog.isDefAndNotNull(endTransactionFailure.conflicts)) {
+                        handleConflicts(repoId, endTransactionFailure, transaction,
+                            dialogService, conflictService, $translate,
+                            $translate.instant('transaction'), $translate.instant('repository'), scope,
+                            $translate.instant('transaction'));
+                      } else {
+                        dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
+                        transaction.abort();
+                        scope.cancel();
+                        console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
+                      }
+                    });
+                  }, function(mergeFailure) {
+                    if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
+                      handleConflicts(repoId, mergeFailure, transaction,
+                          dialogService, conflictService, $translate, branch, $translate.instant('fixed_feature'),
+                          scope, $translate.instant('fixed_feature'));
                     } else {
-                      dialogService.error($translate.instant('error'), $translate.instant('merge_unknown_error'));
+                      dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
                       transaction.abort();
                       scope.cancel();
+                      console.log('ERROR: Revert failure: ', options, mergeFailure);
                     }
                   });
-                }, function(mergeFailure) {
-                  if (goog.isObject(mergeFailure) && goog.isDefAndNotNull(mergeFailure.conflicts)) {
-                    handleConflicts(repoId, mergeFailure, transaction,
-                        dialogService, conflictService, $translate, branch, $translate.instant('fixed_feature'),
-                        scope, $translate.instant('fixed_feature'));
-                  } else {
-                    dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
-                    transaction.abort();
-                    scope.cancel();
-                  }
+                }, function(checkoutFailure) {
+                  dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
+                  transaction.abort();
+                  scope.cancel();
+                  console.log('ERROR: Revert failure: ', options, checkoutFailure);
                 });
               }, function(beginTransactionFailure) {
                 dialogService.error($translate.instant('error'), $translate.instant('undo_unknown_error'));
+                console.log('ERROR: Begin transaction failure: ', beginTransactionFailure);
                 scope.cancel();
               });
             };
@@ -308,8 +322,8 @@
 
   function handleConflicts(repoId, mergeFailure, transaction, dialogService, conflictService, translate, ourName,
                            theirName, scope, mergeBranch) {
-    var myDialog = dialogService.warn(translate('undo_conflicts'), translate('conflicts_encountered'),
-        [translate('abort'), translate('resolve_conflicts')], false);
+    var myDialog = dialogService.warn(translate.instant('undo_conflicts'), translate.instant('conflicts_encountered'),
+        [translate.instant('abort'), translate.instant('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {
