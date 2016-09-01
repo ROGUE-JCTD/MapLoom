@@ -722,21 +722,47 @@
             console.log('====[ Error: could not create base layer.');
           }
         } else if (server.ptype === 'gxp_arcrestsource') {
+          var metadata = {
+            serverId: server.id,
+            name: minimalConfig.name,
+            title: fullConfig.Title
+          };
           var attribution = new ol.Attribution({
             html: 'Tiles &copy; <a href="' + server.url + '">ArcGIS</a>'
           });
-          layer = new ol.layer.Tile({
-            metadata: {
-              serverId: server.id,
-              name: minimalConfig.name,
-              title: fullConfig.Title
-            },
-            visible: minimalConfig.visibility,
-            source: new ol.source.XYZ({
+          var serviceUrl = server.url + 'tile/{z}/{y}/{x}';
+          var serviceSource = null;
+          if (server.proj === 'EPSG:4326') {
+            var projection = ol.proj.get('EPSG:4326');
+            var tileSize = 512;
+            serviceSource = new ol.source.XYZ({
               attributions: [attribution],
-              url: server.url + 'tile/{z}/{y}/{x}'
-            })
+              maxZoom: 16,
+              projection: projection,
+              tileSize: tileSize,
+              metadata: metadata,
+              tileUrlFunction: function(tileCoord) {
+                return serviceUrl.replace('{z}', (tileCoord[0] - 1).toString())
+                                  .replace('{x}', tileCoord[1].toString())
+                                  .replace('{y}', (-tileCoord[2] - 1).toString());
+              },
+              wrapX: true
+            });
+          } else {
+            serviceSource = new ol.source.XYZ({
+              attributions: [attribution],
+              maxZoom: 16,
+              metadata: metadata,
+              url: serviceUrl
+            });
+          }
+
+          layer = new ol.layer.Tile({
+            metadata: metadata,
+            visible: minimalConfig.visibility,
+            source: serviceSource
           });
+
         } else if (server.ptype === 'gxp_tilejsonsource') {
           //currently we assume only one layer per 'server'
           var jsontile_source = server.layersConfig[0].TileJSONSource;

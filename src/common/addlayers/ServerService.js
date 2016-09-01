@@ -477,9 +477,10 @@ var SERVER_SERVICE_USE_PROXY = true;
         config = {
           ptype: 'gxp_arcrestsource',
           name: 'Esri',
+          proj: 'EPSG:4326',
           defaultServer: true,
           alwaysAnonymous: true,
-          url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/'
+          url: 'https://services.arcgisonline.com/arcgis/rest/services/NGS_Topo_US_2D/MapServer/'
         };
         service_.addServer(config);
       } else {
@@ -915,7 +916,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             server.name = 'Esri';
           }
           server.layersConfig = [
-            {Title: 'World Topographic', Name: 'world_topo', sourceParams: {layer: 'world_topo'}}
+            {Title: 'NGS Topographic', Name: 'NGS_Topo_US_2D', proj: 'EPSG:4326', sourceParams: {layer: 'NGS_Topo_US_2D'}}
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
