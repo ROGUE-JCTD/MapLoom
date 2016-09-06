@@ -5,11 +5,12 @@
   module.directive('loomMap',
       function($rootScope, serverService, mapService, geogigService, $translate, dialogService) {
         return {
-          template: '<div id="{{mapId}}"></div>',
+          template: '<div id="{{mapId}}" ng-style="style"></div>',
           scope: {
             mapId: '@',
             layers: '=',
             center: '=',
+            style: '=',
             zoom: '='
           },
           link: function(scope, element) {
@@ -53,15 +54,44 @@
 
             scope.$watch('layers', function(layers) {
               if (layers && map) {
-                var layerLength = map.getLayers().getLength();
-                for (var i = 1; i < layerLength; i++) {
-                  map.removeLayer(map.getLayers().getArray()[1]);
+                removeLayersWithNoId();
+                addNewAndRemoveRepeatedLayers(layers);
+              }
+            });
+
+            function removeLayersWithNoId() {
+              var layerLength = map.getLayers().getLength();
+              var mapLayers = map.getLayers().getArray();
+              var rmIndex = 1;
+              for (var i = 1; i < layerLength; i++) {
+                if (!angular.isDefined(mapLayers[rmIndex].layerId)) {
+                  map.removeLayer(mapLayers[rmIndex]);
+                }else {
+                  rmIndex++;
                 }
-                for (var j = 0; j < layers.length; j++) {
+              }
+            }
+
+            function addNewAndRemoveRepeatedLayers(layers) {
+              for (var j = 0; j < layers.length; j++) {
+                var deletedLayer = compareAndDeleteLayer(layers[j]);
+                if (!deletedLayer) {
                   map.addLayer(layers[j]);
                 }
               }
-            });
+            }
+
+            function compareAndDeleteLayer(layer) {
+              var mapLayers = map.getLayers().getArray();
+              for (var i = 1; i < mapLayers.length; i++) {
+                if (angular.isDefined(layer.layerId) && mapLayers[i].layerId === layer.layerId) {
+                  map.removeLayer(mapLayers[i]);
+                  return true;
+                }
+              }
+              return false;
+            }
+
           }
         };
       });

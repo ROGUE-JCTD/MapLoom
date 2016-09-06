@@ -85,7 +85,7 @@ describe('registryLayersDirective', function() {
           text: null,
           owner: null,
           docsPage: 2,
-          size: 10
+          size: 5
         }));
       });
       it('next page if from is set', function() {
@@ -95,7 +95,7 @@ describe('registryLayersDirective', function() {
           text: null,
           owner: null,
           docsPage: 3,
-          size: 10
+          size: 5
         }));
       });
       it('calls search', function() {
@@ -132,7 +132,7 @@ describe('registryLayersDirective', function() {
           text: null,
           owner: null,
           docsPage: 1,
-          size: 10
+          size: 5
         }));
       });
       it('previous page if from is set', function() {
@@ -142,7 +142,7 @@ describe('registryLayersDirective', function() {
           text: null,
           owner: null,
           docsPage: 19,
-          size: 10
+          size: 5
         }));
       });
       it('previous is first page set to 1', function() {
@@ -152,7 +152,7 @@ describe('registryLayersDirective', function() {
           text: null,
           owner: null,
           docsPage: 1,
-          size: 10
+          size: 5
         }));
       });
       it('calls search', function() {
