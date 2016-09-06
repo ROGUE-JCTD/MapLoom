@@ -919,9 +919,46 @@ var SERVER_SERVICE_USE_PROXY = true;
           if (!goog.isDefAndNotNull(server.name)) {
             server.name = 'Esri';
           }
-          server.layersConfig = [
-            {Title: 'NGS Topographic', Name: 'NGS_Topo_US_2D', proj: 'EPSG:4326', sourceParams: {layer: 'NGS_Topo_US_2D'}}
-          ];
+
+          // get esri layer configs from config service if they exist
+          _getEsriLayersConfig = function() {
+            var esriIndex = null;
+            var configSources = configService_.configuration.sources;
+            var configMapLayers = configService_.configuration.map.layers;
+            var lyrsCfg = [];
+            // get gxp_arcsource server index
+            for (var i = 0; i < configSources.length; i++) {
+              if (configSources[i]['ptype'] === 'gxp_arcrestsource') {
+                esriIndex = i;
+              }
+            }
+            // get all layers that reference gxp_arcsource server
+            for (var k = 0; k < configMapLayers.length; k++) {
+              if (configMapLayers[k]['source'] === esriIndex) {
+                var cnf = {
+                  Title: configMapLayers[k].title || 'NGS Topographic',
+                  Name: configMapLayers[k].name || 'NGS_Topo_US_2D',
+                  proj: configMapLayers[k].proj || 'EPSG:4326',
+                  sourceParams: {
+                    layer: configMapLayers[k].name || 'NGS_Topo_US_2D'
+                  }
+                };
+                lyrsCfg.push(cnf);
+              }
+            }
+            return lyrsCfg;
+          };
+
+          //if esri layer configs are already included in the config service, use those
+          var esriLayersConfig = _getEsriLayersConfig();
+          if (esriLayersConfig.length > 0) {
+            server.layersConfig = esriLayersConfig;
+          } else {
+            server.layersConfig = [
+              {Title: 'NGS Topographic', Name: 'NGS_Topo_US_2D', proj: 'EPSG:4326', sourceParams: {layer: 'NGS_Topo_US_2D'}}
+            ];
+          }
+
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
           server.defaultServer = true;
