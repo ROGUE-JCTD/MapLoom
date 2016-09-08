@@ -804,7 +804,7 @@
                 console.log('====[ Error: could not create base layer.');
               }
 
-            } else if (server.ptype === 'gxp_wmscsource') {
+            } else if (server.ptype === 'gxp_wmscsource' && goog.isDefAndNotNull(fullConfig.Layer)) {
               nameSplit = fullConfig.Layer[0].Name.split(':');
 
               // favor virtual service url when available
@@ -993,15 +993,15 @@
             }
 
             rootScope_.$broadcast('layer-added');
+            console.log('-- MapService.addLayer, added: ', layer);
+            toastr.clear();
+            toastr.success(layer.get('metadata').title + ' Layer has been successfully loaded', 'Layer Loaded');
           } else {
             console.log('====[Error: could not load layer: ', minimalConfig);
             toastr.clear();
             toastr.error('Layer could not be loaded.', 'Loading Failed');
           }
-
-          console.log('-- MapService.addLayer, added: ', layer);
-          toastr.clear();
-          toastr.success(layer.get('metadata').title + ' Layer has been successfully loaded', 'Layer Loaded');
+          
           pulldownService_.showLayerPanel();
           return layer;
 
