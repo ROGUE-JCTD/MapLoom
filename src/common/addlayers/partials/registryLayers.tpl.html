@@ -14,8 +14,8 @@
                         <th>Title</th>
                         <th>Domain</th>
                       </tr>
-                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-click="selectRow(layer)" ng-class="{'preview-hover': isInCart(layer)}"
-                        ng-repeat="layer in layersConfig = getResults() | filter:filterAddedLayers">
+                      <tr class="result" ng-mouseover="previewLayer(layer);" ng-mouseleave="cleanMapPreview();" ng-click="selectRow(layer)"
+                      ng-class="{'preview-hover': isInCart(layer)}" ng-repeat="layer in layersConfig = getResults() | filter:filterAddedLayers">
                         <td class="ellipsis">{{ layer.title }}</td>
                         <td>{{ layer.domain }}</td>
                       </tr>
@@ -39,7 +39,7 @@
                       Limit the search to data that includes features in the displayed area.
                   </div>
                   <div class="panel-body">
-                    <div class="loom-map" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
+                    <div class="loom-map" style="mapStyle" zoom="previewZoom" center="previewCenter" loom-map map-id="layer-map-preview" layers="previewLayers"></div>
                   </div>
                 </div>
 
@@ -52,16 +52,25 @@
                         <div class="row">
                           <div class="col-md-12">
                             <div class="col-md-12 status-block">
-                              <div>
-                                Last status:
+                              <div ng-if="currentLayer.lastStatus === true || currentLayer.lastStatus === false">
+                                <strong>Last status:</strong>
                                 <span ng-if="currentLayer.lastStatus === false" class="glyphicon glyphicon-remove text-red"></span>
                                 <span ng-if="currentLayer.lastStatus === true" class="glyphicon glyphicon-ok text-green"></span>
                               </div>
-                              <div>
-                                Reliability: {{currentLayer.reliability}}
+                              <div ng-if='currentLayer.reliability'>
+                                <strong>Reliability</strong>: {{currentLayer.reliability}}
                               </div>
-                              <div>
-                                Recent-reliability: {{currentLayer.recentReliability}}
+                              <div ng-if='currentLayer.recentReliability'>
+                                <strong>Recent-reliability:</strong> {{currentLayer.recentReliability}}
+                              </div>
+                              <div ng-if='currentLayer.phone'>
+                                <strong>Contact information/Phone:</strong> {{currentLayer.phone}}
+                              </div>
+                              <div ng-if='currentLayer.classification'>
+                                <strong>Classification record:</strong> {{currentLayer.classification}}
+                              </div>
+                              <div ng-if='currentLayer.license'>
+                                <strong>License/copyright:</strong> {{currentLayer.license}}
                               </div>
                             </div>
                             <div class="layer-info-left">
@@ -71,6 +80,74 @@
                           </div>
                           <div class="col-md-12">
                             <p class="abstract">{{currentLayer.abstract}}</p>
+                          </div>
+
+                          <div class="col-md-12">
+                            <ul class="list-group registry-block " ng-if="currentLayer.registry">
+                              <li class="list-group-item" ng-if="currentLayer.registry['ContactInformation/Email']">
+                                <strong>Email: </strong>{{currentLayer.registry['ContactInformation/Email']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['ContactInformation/Phone']">
+                                <strong>Phone: </strong>{{currentLayer.registry['ContactInformation/Phone']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['ContactInformation/Primary/organization']">
+                                <strong>Organization: </strong>{{currentLayer.registry['ContactInformation/Primary/organization']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['ContactInformation/Primary/owner']">
+                                <strong>Owner: </strong>{{currentLayer.registry['ContactInformation/Primary/owner']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['authentication']">
+                                <strong>Authentication: </strong>{{currentLayer.registry['authentication']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['classificationData/classification']">
+                                <strong>classification Data: </strong>{{currentLayer.registry['classificationData/classification']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['classificationRecord/classification']">
+                                <strong>classification Record: </strong>{{currentLayer.registry['classificationRecord/classification']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['crisis']">
+                                <strong>Crisis: </strong>{{currentLayer.registry['crisis']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['description/classification/classification']">
+                                <strong>Description - classification: </strong>{{currentLayer.registry['description/classification/classification']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['description/classification/classifiedBy']">
+                                <strong>Description - classified by: </strong>{{currentLayer.registry['description/classification/classifiedBy']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['intlAgreement/bilateral']">
+                                <strong>intlAgreement - bilateral: </strong>{{currentLayer.registry['intlAgreement/bilateral']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['intlAgreement/multi']">
+                                <strong>intlAgreement - multi: </strong>{{currentLayer.registry['intlAgreement/multi']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['lastmodifiedby']">
+                                <strong>Last modified by: </strong>{{currentLayer.registry['lastmodifiedby']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['license/copyright']">
+                                <strong>License/copyright: </strong>{{currentLayer.registry['license/copyright']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['license/restrictions']">
+                                <strong>License/restrictions: </strong>{{currentLayer.registry['license/restrictions']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['mission']">
+                                <strong>Mission: </strong>{{currentLayer.registry['mission']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['nomination/serviceOwner']">
+                                <strong>Nomination/serviceOwner: </strong>{{currentLayer.registry['nomination/serviceOwner']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['nominator/email']">
+                                <strong>Nominator/email: </strong>{{currentLayer.registry['nominator/email']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['nominator/name']">
+                                <strong>Nominator/name: </strong>{{currentLayer.registry['nominator/name']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['serviceName/classification/classification']">
+                                <strong>ServiceName/classification: </strong>{{currentLayer.registry['serviceName/classification/classification']}}
+                              </li>
+                              <li class="list-group-item" ng-if="currentLayer.registry['serviceName/classification/classifiedBy']">
+                                <strong>ServiceName/classified by: </strong>{{currentLayer.registry['serviceName/classification/classifiedBy']}}
+                              </li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -85,7 +162,7 @@
                         <tr class="result" ng-repeat="layer in cart.slice().reverse()">
                           <td class="remove-button">
                             <div class="col-md-10 ellipsis">{{layer.title}}</div>
-                            <span ng-click="addToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
+                            <span ng-click="addLayersAndMapPreviewToCart(layer)" class="glyphicon glyphicon-remove pull-right"></span>
                           </td>
                         </tr>
                       </table>

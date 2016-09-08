@@ -210,7 +210,7 @@ describe('addLayers/ServerService', function() {
           docsPage: null,
           size: null
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q_text=Ocean');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&q.text=Ocean');
       });
     });
     describe('only owner filter', function() {
@@ -235,7 +235,7 @@ describe('addLayers/ServerService', function() {
           docsPage: null,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&d_docs_limit=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&d.docs.limit=10');
       });
       it('pagination with docsPage', function() {
         var filterOptions = {
@@ -244,7 +244,7 @@ describe('addLayers/ServerService', function() {
           docsPage: 10,
           size: 10
         };
-        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&d_docs_limit=10&d_docs_page=10');
+        expect(serverService.applyESFilter('mapstory', filterOptions)).toEqual('mapstory&d.docs.limit=10&d.docs.page=10');
       });
     });
   });

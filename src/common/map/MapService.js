@@ -170,7 +170,7 @@
       },
       'geometry': {
         'type': 'Polygon',
-        'coordinates': createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, 'EPSG:4326', projection)
+        'coordinates': createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, projection, 'EPSG:900913')
       }
     };
     return new ol.layer.Vector({
