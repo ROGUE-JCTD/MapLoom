@@ -379,6 +379,20 @@ var SERVER_SERVICE_USE_PROXY = true;
         service_.getServerByPtype('gxp_bingsource').defaultServer = true;
       }
 
+      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_arcrestsource'))) {
+        config = {
+          ptype: 'gxp_arcrestsource',
+          name: 'Esri',
+          proj: 'EPSG:4326',
+          defaultServer: true,
+          alwaysAnonymous: true,
+          url: 'https://services.arcgisonline.com/arcgis/rest/services/NGS_Topo_US_2D/MapServer/'
+        };
+        service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_arcrestsource').defaultServer = true;
+      }
+
       if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_mapboxsource'))) {
         config = {ptype: 'gxp_mapboxsource', name: 'MapBox', defaultServer: true};
         service_.addServer(config);
@@ -655,6 +669,52 @@ var SERVER_SERVICE_USE_PROXY = true;
             {Title: 'BingCollinsBart', Name: 'CollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
             {Title: 'BingSurvey', Name: 'Survey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
           ];
+          deferredResponse.resolve(server);
+        } else if (server.ptype === 'gxp_arcrestsource') {
+          server.defaultServer = true;
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'Esri';
+          }
+
+          // get esri layer configs from config service if they exist
+          _getEsriLayersConfig = function() {
+            var esriIndex = null;
+            var configSources = configService_.configuration.sources;
+            var configMapLayers = configService_.configuration.map.layers;
+            var lyrsCfg = [];
+            // get gxp_arcsource server index
+            for (var i = 0; i < configSources.length; i++) {
+              if (configSources[i]['ptype'] === 'gxp_arcrestsource') {
+                esriIndex = i;
+              }
+            }
+            // get all layers that reference gxp_arcsource server
+            for (var k = 0; k < configMapLayers.length; k++) {
+              if (configMapLayers[k]['source'] === esriIndex) {
+                var cnf = {
+                  Title: configMapLayers[k].title || 'World Topographic',
+                  Name: configMapLayers[k].name || 'NGS_Topo_US_2D',
+                  proj: configMapLayers[k].proj || 'EPSG:4326',
+                  sourceParams: {
+                    layer: configMapLayers[k].name || 'NGS_Topo_US_2D'
+                  }
+                };
+                lyrsCfg.push(cnf);
+              }
+            }
+            return lyrsCfg;
+          };
+
+          //if esri layer configs are already included in the config service, use those
+          var esriLayersConfig = _getEsriLayersConfig();
+          if (esriLayersConfig.length > 0) {
+            server.layersConfig = esriLayersConfig;
+          } else {
+            server.layersConfig = [
+              {Title: 'World Topographic', Name: 'NGS_Topo_US_2D', sourceParams: {layer: 'NGS_Topo_US_2D'}}
+            ];
+          }
+
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_osmsource') {
           server.defaultServer = true;
