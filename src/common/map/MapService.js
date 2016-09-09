@@ -765,6 +765,47 @@
             } else if (server.ptype === 'gxp_googlesource') {
               dialogService_.error(translate_.instant('add_layers'), translate_.instant('layer_type_not_supported',
                   {type: 'gxp_googlesource'}));
+            } else if (server.ptype === 'gxp_arcrestsource') {
+              var metadata = {
+                serverId: server.id,
+                name: minimalConfig.name,
+                title: fullConfig.Title
+              };
+              var attribution = new ol.Attribution({
+                html: 'Tiles &copy; <a href="' + server.url + '">ArcGIS</a>'
+              });
+              var serviceUrl = server.url + 'tile/{z}/{y}/{x}';
+              var serviceSource = null;
+              if (server.proj === 'EPSG:4326') {
+                var projection = ol.proj.get('EPSG:4326');
+                var tileSize = 512;
+                serviceSource = new ol.source.XYZ({
+                  attributions: [attribution],
+                  maxZoom: 16,
+                  projection: projection,
+                  tileSize: tileSize,
+                  metadata: metadata,
+                  tileUrlFunction: function(tileCoord) {
+                    return serviceUrl.replace('{z}', (tileCoord[0] - 1).toString())
+                                     .replace('{x}', tileCoord[1].toString())
+                                     .replace('{y}', (-tileCoord[2] - 1).toString());
+                  },
+                  wrapX: true
+                });
+              } else {
+                serviceSource = new ol.source.XYZ({
+                  attributions: [attribution],
+                  maxZoom: 16,
+                  metadata: metadata,
+                  url: serviceUrl
+                });
+              }
+
+              layer = new ol.layer.Tile({
+                metadata: metadata,
+                visible: minimalConfig.visibility,
+                source: serviceSource
+              });
             } else if (server.ptype === 'gxp_mapboxsource') {
               var parms = {
                 url: 'https://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.jsonp?secure=1',
@@ -1001,7 +1042,7 @@
             toastr.clear();
             toastr.error('Layer could not be loaded.', 'Loading Failed');
           }
-          
+
           pulldownService_.showLayerPanel();
           return layer;
 
