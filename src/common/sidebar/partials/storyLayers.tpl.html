@@ -8,17 +8,6 @@
 <a href="#add-layer-dialog" class="menuItem" data-toggle="modal" id="addNewStoryLayerButton">Add a New StoryLayer...
 </a>
 
-<div id="baseMaps" class="menuItem">
-    <label for="baseMapList">Choose Your Basemap</label><i class="fa fa-question-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'choose_your_basemap_tooltip' | translate }}"></i>
-
-    <select class="form-control" name="baseMapList" id="baseMapList"
-            ng-init="baseMap=initBasemap()"
-            ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
-            ng-model="baseMap"
-            ng-change="mapService.selectedBaseMap(baseMap)">
-    </select>
-</div>
-
 <div class="layer-container" ui-tree="layerTree" id="storyLayersList">
     <div ui-tree-nodes ng-model="storyLayers">
         <div ng-repeat="storyLayer in storyLayers" ui-tree-node>
