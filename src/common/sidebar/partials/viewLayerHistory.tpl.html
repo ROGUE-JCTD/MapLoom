@@ -2,7 +2,7 @@
 <div class="bottomText">{{ storyService.active_layer.get('metadata').title }} History</div>
 
 <div class="menuItem">
-    <i class="fa fa-angle-right"></i>
+    <i class="fa fa-angle-left pull-left"></i>
     <a href="#" ng-click="storyService.clearHistory();updateMenuSection('editStoryLayer' + chapter.id + storyLayers.id)">Back to StoryLayer</a>
 </div>
     <div ng-repeat="commit in log = historyService.log | filter:{visible:'true'}">

@@ -2,33 +2,29 @@
 <div class="bottomText">{{ storyService.active_chapter.about.title }}</div>
 
 <div class="menuItem">
-    <i class="fa fa-angle-right"></i>
+    <i class="fa fa-angle-left pull-left"></i>
     <a href="#" ng-click="updateMenuSection('mainMenu'); updateTourStep(27)">Back to Chapters List</a>
 </div>
 <div class="menuItem">
     <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id); updateTourStep(4)" id="chapterInfoButton">
-        <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-info-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'chapter_info_tooltip' | translate }}"></i>
         Chapter Info
     </a>
 </div>
 <div class="menuItem">
     <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep(6)" id="storyLayersButton">
-        <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-clone" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayers_tooltip' | translate }}"></i>
         StoryLayers ({{ mapService.getStoryLayers().length }})
     </a>
 </div>
 <div class="menuItem">
     <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id); updateTourStep(14)" id="storyBoxesButton">
-        <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-object-group" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storyboxes_tooltip' | translate }}"></i>
         StoryBoxes ({{ boxService.getBoxes(chapter.id).length }})
     </a>
 </div>
 <div class="menuItem">
     <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id); updateTourStep(20)" id="storyPinsButton">
-        <i class="fa fa-angle-left pull-left"></i>
         <i class="fa fa-neuter" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypins_tooltip' | translate }}"></i>
         StoryPins ({{ pinService.getPins(chapter.id).length }})
     </a>
