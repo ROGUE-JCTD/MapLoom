@@ -864,6 +864,14 @@
               }
 
               var styles = [];
+              var paramStyles = null;
+
+              var layerParams = {
+                LAYERS: minimalConfig.name,
+                tiled: 'true',
+                wrapX: false
+              };
+
               if (goog.isDefAndNotNull(fullConfig.Layer[0].Style)) {
                 console.log('config style', fullConfig.Layer[0].Style);
                 for (var index = 0; index < fullConfig.Layer[0].Style.length; index++) {
@@ -874,6 +882,12 @@
                     abstract: style.Abstract,
                     legendUrl: style.LegendURL[0].OnlineResource
                   });
+                  paramStyles = service_.configuration.username + '-' +
+                                service_.configuration.id + '-simple-' + style.Name +
+                                '-' + minimalConfig.name.split(':')[1]; //'admin-0-simple-line-lewisclark',
+                  if (service_.configuration.id !== 0) {
+                    layerParams['STYLES'] = paramStyles;
+                  }
                 }
               }
 
@@ -899,11 +913,7 @@
                 visible: minimalConfig.visibility,
                 source: new ol.source.TileWMS({
                   url: mostSpecificUrlWms,
-                  params: {
-                    'LAYERS': minimalConfig.name,
-                    'tiled': 'true',
-                    wrapX: false
-                  }
+                  params: layerParams
                 })
               });
 
