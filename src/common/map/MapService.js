@@ -323,7 +323,7 @@
       view.fit(extent, map.getSize());
     };
 
-    this.updateStyle = function(layer) {
+    this.updateStyle = function(layer, chapter_index) {
       var style = layer.get('style') || layer.get('metadata').style;
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
@@ -331,6 +331,34 @@
         var layerSource = layer.getSource();
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams) && goog.isDefAndNotNull(layer.get('styleName'))) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
+
+          //!!!DJA STYLE SAVE TEST
+          //if the story was loaded from a previous save then stash the styling info in the config
+          if (goog.isDefAndNotNull(service_.configuration.chapters) &&
+              goog.isDefAndNotNull(service_.configuration.chapters[chapter_index])) {
+            var chapterLayers = service_.configuration.chapters[chapter_index].map.layers;
+            for (var i = 0; i < chapterLayers.length; i++) {
+              if (chapterLayers[i].name === layer.get('metadata').name) {
+                service_.configuration.chapters[chapter_index].map.layers[i]['jsonstyle'] = style;
+                console.log('!DJA ----- jsonstyle saved, chapter config: ');
+                console.log(service_.configuration.chapters[chapter_index]);
+              }
+            }
+          // or if a temporary style store has been created, overwrite it
+          } else if (goog.isDefAndNotNull(service_.configuration['stylestore'])) {
+            if (goog.isDefAndNotNull(service_.configuration['stylestore'][chapter_index])) {
+              service_.configuration['stylestore'][chapter_index][layer.get('metadata').name] = style;
+            } else {
+              service_.configuration['stylestore'][chapter_index] = {};
+              service_.configuration['stylestore'][chapter_index][layer.get('metadata').name] = style;
+            }
+          // otherwise create a temporary place to store it
+          } else {
+            service_.configuration['stylestore'] = {};
+            service_.configuration['stylestore'][chapter_index] = {};
+            service_.configuration['stylestore'][chapter_index][layer.get('metadata').name] = style;
+          }
+
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
             url: '/gs/rest/styles?name=' + style.name,
@@ -855,6 +883,18 @@
                 mostSpecificUrlWms = server.virtualServiceUrl;
               }
 
+              var getChapterLayerConfig = function() { //!DJA
+                if (goog.isDefAndNotNull(service_.configuration.chapters) &&
+                    goog.isDefAndNotNull(service_.configuration.chapters[chapter_index])) {
+                  var chapterLayers = service_.configuration.chapters[chapter_index].map.layers;
+                  for (var i = 0; i < chapterLayers.length; i++) {
+                    if (chapterLayers[i].name === minimalConfig.name) {
+                      return chapterLayers[i];
+                    }
+                  }
+                }
+              };
+
               // favor virtual service url when available
               if (goog.isDefAndNotNull(mostSpecificUrlWms)) {
                 var urlIndex = mostSpecificUrlWms.lastIndexOf('/');
@@ -885,14 +925,22 @@
                   paramStyles = service_.configuration.username + '-' +
                                 service_.configuration.id + '-simple-' + style.Name +
                                 '-' + minimalConfig.name.split(':')[1]; //'admin-0-simple-line-lewisclark',
-                  if (service_.configuration.id !== 0) {
-                    layerParams['STYLES'] = paramStyles;
-                  }
                 }
+              }
+
+              var chapterLayerConfig = getChapterLayerConfig();
+              console.log('!DJA ------ chapter layer config:');
+              console.log(chapterLayerConfig);
+              if (goog.isDefAndNotNull(chapterLayerConfig)) {
+                if (goog.isDefAndNotNull(chapterLayerConfig.styles)) {
+                  paramStyles = chapterLayerConfig.styles;
+                }
+                layerParams['STYLES'] = paramStyles;
               }
 
               console.log('config crs', fullConfig.Layer[0].CRS);
               console.log('getCode', service_.getCRSCode(fullConfig.Layer[0].CRS));
+
               layer = new ol.layer.Tile({
                 metadata: {
                   serverId: server.id,
@@ -1166,19 +1214,51 @@
       });
 
       // -- save layers
+      var chapterLayers = null;
+      if (goog.isDefAndNotNull(service_.configuration.chapters)) {
+        chapterLayers = service_.configuration.chapters[cfg.chapter_index]['map']['layers'];
+        console.log('!DJA chapter layers:');
+        console.log(chapterLayers);
+      }
+
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         var config = layer.get('metadata').config;
+
+        var jsonStyle = null;
+        // if the chapter config exists, retrieve the json style from within the layer config
+        if (goog.isDefAndNotNull(service_.configuration.chapters) &&
+            goog.isDefAndNotNull(service_.configuration.chapters[cfg.chapter_index])) {
+          var chapterLayers = service_.configuration.chapters[cfg.chapter_index].map.layers;
+          for (var ii = 0; ii < chapterLayers.length; ii++) {
+            if (chapterLayers[ii].name === layer.get('metadata').name) {
+              console.log('!DJA ----- storing jsonstyle for ' + layer.get('metadata').name);
+              jsonStyle = service_.configuration.chapters[cfg.chapter_index].map.layers[ii]['jsonstyle'];
+            }
+          }
+        // otherwise retrieve it from the temporary style store, if that exists
+        } else if (goog.isDefAndNotNull(service_.configuration['stylestore'])) {
+          if (goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index]) &&
+              goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name])) {
+            jsonStyle = service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name];
+            console.log('!DJA retrieved json style:');
+            console.log(jsonStyle);
+          }
+        }
 
         if (!goog.isDefAndNotNull(config)) {
           console.log('Not saving layer: ', layer.get('metadata').name,
               'because the layer does not have a configuration object.');
           return false;
         }
+
         // Note: when a server is removed, its id diverges from the index. since in geonode's config object it is all
         // index based, updating it to be the index in case the id is no longer the index
         var serverIndex = serverService_.getServerIndex(config.source);
         if (serverIndex > -1) {
           config.source = serverIndex;
+        }
+        if (goog.isDefAndNotNull(jsonStyle)) {
+          config.jsonstyle = jsonStyle;
         }
         config.visibility = layer.get('visible');
         if (goog.isDefAndNotNull(layer.get('metadata').dimensions)) {
