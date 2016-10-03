@@ -17,6 +17,7 @@
   var q_ = null;
   var mousePositionControl_ = null;
   var showTimeline_ = false;
+  var windowService_ = null;
 
   var select = null;
   var draw = null;
@@ -157,7 +158,7 @@
 
 
   module.provider('mapService', function() {
-    this.$get = function($translate, serverService, geogigService, $http, pulldownService,
+    this.$get = function($window, $translate, serverService, geogigService, $http, pulldownService,
                          $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
@@ -173,6 +174,7 @@
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
       q_ = $q;
+      windowService_ = $window;
 
       // create map on init so that other components can use map on their init
       this.configuration = angular.copy(configService_.configuration);
@@ -331,17 +333,13 @@
         var layerSource = layer.getSource();
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams) && goog.isDefAndNotNull(layer.get('styleName'))) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
-
-          //!!!DJA STYLE SAVE TEST
-          //if the story was loaded from a previous save then stash the styling info in the config
+          // if the story was loaded from a previous save then stash the styling info in the config
           if (goog.isDefAndNotNull(service_.configuration.chapters) &&
               goog.isDefAndNotNull(service_.configuration.chapters[chapter_index])) {
             var chapterLayers = service_.configuration.chapters[chapter_index].map.layers;
             for (var i = 0; i < chapterLayers.length; i++) {
               if (chapterLayers[i].name === layer.get('metadata').name) {
                 service_.configuration.chapters[chapter_index].map.layers[i]['jsonstyle'] = style;
-                console.log('!DJA ----- jsonstyle saved, chapter config: ');
-                console.log(service_.configuration.chapters[chapter_index]);
               }
             }
           // or if a temporary style store has been created, overwrite it
@@ -358,6 +356,7 @@
             service_.configuration['stylestore'][chapter_index] = {};
             service_.configuration['stylestore'][chapter_index][layer.get('metadata').name] = style;
           }
+          goog.object.extend(windowService_.config, service_.configuration, {});
 
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
@@ -883,7 +882,7 @@
                 mostSpecificUrlWms = server.virtualServiceUrl;
               }
 
-              var getChapterLayerConfig = function() { //!DJA
+              var getChapterLayerConfig = function() {
                 if (goog.isDefAndNotNull(service_.configuration.chapters) &&
                     goog.isDefAndNotNull(service_.configuration.chapters[chapter_index])) {
                   var chapterLayers = service_.configuration.chapters[chapter_index].map.layers;
@@ -929,8 +928,6 @@
               }
 
               var chapterLayerConfig = getChapterLayerConfig();
-              console.log('!DJA ------ chapter layer config:');
-              console.log(chapterLayerConfig);
               if (goog.isDefAndNotNull(chapterLayerConfig)) {
                 if (goog.isDefAndNotNull(chapterLayerConfig.styles)) {
                   paramStyles = chapterLayerConfig.styles;
@@ -943,6 +940,7 @@
 
               layer = new ol.layer.Tile({
                 metadata: {
+                  chapter: chapter_index,
                   serverId: server.id,
                   name: minimalConfig.name,
                   url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
@@ -1217,8 +1215,6 @@
       var chapterLayers = null;
       if (goog.isDefAndNotNull(service_.configuration.chapters)) {
         chapterLayers = service_.configuration.chapters[cfg.chapter_index]['map']['layers'];
-        console.log('!DJA chapter layers:');
-        console.log(chapterLayers);
       }
 
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
@@ -1231,7 +1227,6 @@
           var chapterLayers = service_.configuration.chapters[cfg.chapter_index].map.layers;
           for (var ii = 0; ii < chapterLayers.length; ii++) {
             if (chapterLayers[ii].name === layer.get('metadata').name) {
-              console.log('!DJA ----- storing jsonstyle for ' + layer.get('metadata').name);
               jsonStyle = service_.configuration.chapters[cfg.chapter_index].map.layers[ii]['jsonstyle'];
             }
           }
@@ -1240,8 +1235,6 @@
           if (goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index]) &&
               goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name])) {
             jsonStyle = service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name];
-            console.log('!DJA retrieved json style:');
-            console.log(jsonStyle);
           }
         }
 
