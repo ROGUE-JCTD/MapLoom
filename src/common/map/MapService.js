@@ -1490,14 +1490,13 @@
         format: new ol.format.GeoJSON(),
         loader: function(extent, resolution, projection) {
           tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
-            source.addFeatures(source.readFeatures(response));
+            var features = new ol.format.GeoJSON().readFeatures(response);
+            source.addFeatures(features);
           }, function(reject) {
             dialogService_.open(translate_.instant('error'), translate_.instant('error'));
           });
         },
-        strategy: ol.loadingstrategy.tile(new ol.source.XYZ({
-          maxZoom: 19
-        })),
+        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({ maxZoom: 19 })),
         projection: 'EPSG:3857'
       });
 
