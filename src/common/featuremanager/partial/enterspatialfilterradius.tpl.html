@@ -1,0 +1,17 @@
+<div class="modal-body">
+  <form name="enterradiusform" novalidate>
+    <div>
+      <label for="radius">{{'enter_spatial_filter_radius' | translate}}</label>
+      <div>
+        <input type="number" class="form-control"
+               ng-model="radius" name="radius" id="radius"
+               required />
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" ng-disabled="!enterradiusform.$valid" ng-click="addFilter()">
+    <span>{{'add_spatial_filter' | translate}}</span>
+  </button>
+</div>

@@ -1,6 +1,6 @@
 {
   "name": "MapLoom",
-  "version": "1.6.0",
+  "version": "1.5.10",
   "devDependencies": {},
   "dependencies": {
     "bootstrap": "3.0.0",
@@ -22,6 +22,7 @@
     "d3": "3.4.11",
     "proj4": "2.3.3",
     "mgrs": "git://github.com/proj4js/mgrs.git#0.0.3",
-    "bootstrap-filestyl": "git://github.com/markusslima/bootstrap-filestyle.git#1.2.1"
+    "bootstrap-filestyl": "git://github.com/markusslima/bootstrap-filestyle.git#1.2.1",
+    "angularjs-slider": "~2.13.0"
   }
 }

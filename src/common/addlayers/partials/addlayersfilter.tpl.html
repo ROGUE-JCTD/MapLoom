@@ -1,0 +1,47 @@
+<nav class="filter panel panel-default add-layer">
+    <div class="panel-body">
+      <form class="col-md-12" ng-submit="search()">
+        <div class="row">
+          <div class="search-bar col-md-6 col-xs-6">
+            <input name="text_search_input_exp" id="text_search_input_exp" placeholder="Search for ..."
+              ng-model="filterOptions.text" ng-change="resetDocsPage()" type="text" class="form-control search-input">
+          </div>
+          <div class="form-group col-md-6 col-xs-6">
+              <select class="form-control search-input select-search" ng-model="catalog" ng-change="searchHyper()"
+              ng-options="catalog.name for catalog in catalogList"></select>
+          </div>
+        </div>
+        <div class="row range-search">
+          <div class="col-lg-2 col-lg-offset-1  col-sm-3  col-xs-3 text-right range-search-label">FROM</div>
+          <div class="col-lg-3 col-sm-3 col-xs-7">
+            <input type="text" name="name" id="inputMinValue" ng-change="setRange('inputMinValue')" ng-model="sliderValues[slider.minValue]" class="form-control search-input input-sm">
+          </div>
+          <div class="col-lg-1 col-sm-3 col-xs-3 text-right range-search-label">TO</div>
+          <div class="col-lg-3 col-sm-3 col-xs-7">
+            <input type="text" name="name" id="inputMaxValue" ng-change="setRange('inputMaxValue')" ng-model="sliderValues[slider.maxValue]" class="form-control search-input input-sm">
+          </div>
+
+          <div class="bar-graph" id="bars">
+            <svg width="100%" height="40"></svg>
+          </div>
+
+          <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-xs-6">
+              <div class="pull-right">
+                <button type="button" ng-click="searchHyper()" name="button" class="btn btn-search">RESET</button>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-6">
+              <div class="pull-left">
+                <button class="btn btn-search" ng-disabled="!filterOptions.text" type="submit" id="text_search_btn">
+                  <i class="glyphicon glyphicon-search"></i> SEARCH
+                </button>
+              </div>
+            </div>
+        </div>
+      </form>
+    </div>
+</nav>
