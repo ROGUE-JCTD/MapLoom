@@ -940,9 +940,10 @@
 
               layer = new ol.layer.Tile({
                 metadata: {
-                  chapter: chapter_index,
+                  chapter: window.config.chapter_index,
                   serverId: server.id,
                   name: minimalConfig.name,
+                  jsonstyle: service_.getJsonStyle(minimalConfig.name, window.config.chapter_index),
                   url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
                   title: fullConfig.Layer[0].Title,
                   abstract: fullConfig.Layer[0].Abstract,
@@ -1170,6 +1171,27 @@
       this.chapterLayers.splice(to_index, 0, this.chapterLayers.splice(from_index, 1)[0]);
     };
 
+    this.getJsonStyle = function(layerName, chapter_index) {
+      var jsonStyle = null;
+      // if the chapter config exists, retrieve the json style from within the layer config
+      if (goog.isDefAndNotNull(service_.configuration.chapters) &&
+          goog.isDefAndNotNull(service_.configuration.chapters[chapter_index])) {
+        var chapterLayers = service_.configuration.chapters[chapter_index].map.layers;
+        for (var ii = 0; ii < chapterLayers.length; ii++) {
+          if (chapterLayers[ii].name === layerName) {
+            jsonStyle = service_.configuration.chapters[chapter_index].map.layers[ii]['jsonstyle'];
+          }
+        }
+      // otherwise retrieve it from the temporary style store, if that exists
+      } else if (goog.isDefAndNotNull(service_.configuration['stylestore'])) {
+        if (goog.isDefAndNotNull(service_.configuration['stylestore'][chapter_index]) &&
+            goog.isDefAndNotNull(service_.configuration['stylestore'][chapter_index][layerName])) {
+          jsonStyle = service_.configuration['stylestore'][chapter_index][layerName];
+        }
+      }
+      return jsonStyle;
+    };
+
     this.save = function(map_config) {
 
       console.log('------ map_config:', map_config);
@@ -1212,31 +1234,10 @@
       });
 
       // -- save layers
-      var chapterLayers = null;
-      if (goog.isDefAndNotNull(service_.configuration.chapters)) {
-        chapterLayers = service_.configuration.chapters[cfg.chapter_index]['map']['layers'];
-      }
-
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         var config = layer.get('metadata').config;
 
-        var jsonStyle = null;
-        // if the chapter config exists, retrieve the json style from within the layer config
-        if (goog.isDefAndNotNull(service_.configuration.chapters) &&
-            goog.isDefAndNotNull(service_.configuration.chapters[cfg.chapter_index])) {
-          var chapterLayers = service_.configuration.chapters[cfg.chapter_index].map.layers;
-          for (var ii = 0; ii < chapterLayers.length; ii++) {
-            if (chapterLayers[ii].name === layer.get('metadata').name) {
-              jsonStyle = service_.configuration.chapters[cfg.chapter_index].map.layers[ii]['jsonstyle'];
-            }
-          }
-        // otherwise retrieve it from the temporary style store, if that exists
-        } else if (goog.isDefAndNotNull(service_.configuration['stylestore'])) {
-          if (goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index]) &&
-              goog.isDefAndNotNull(service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name])) {
-            jsonStyle = service_.configuration['stylestore'][cfg.chapter_index][layer.get('metadata').name];
-          }
-        }
+        var jsonStyle = service_.getJsonStyle(layer.get('metadata').name, cfg.chapter_index);
 
         if (!goog.isDefAndNotNull(config)) {
           console.log('Not saving layer: ', layer.get('metadata').name,

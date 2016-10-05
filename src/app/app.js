@@ -25,7 +25,12 @@
   module.controller('AppCtrl', function AppCtrl($rootScope, $scope, $window, $location, $translate, mapService, debugService,
                                                 refreshService, dialogService, historyService, storyService, boxService, pinService, $http, layerService, serverService) {
 
-        $scope.activeChapterId = 0;
+        var setActiveChapter = function(chapter_index) {
+          $scope.activeChapterId = chapter_index;
+          $window.config.chapter_index = chapter_index;
+        };
+
+        setActiveChapter(0);
 
         $scope.$on('$stateChangeSuccess', function(event, toState) {
           if (angular.isDefined(toState.data.pageTitle)) {
@@ -44,7 +49,7 @@
 
         $scope.$on('chapter-switch', function(event, chapterId) {
           if (goog.isDefAndNotNull($scope.mapService)) {
-            $scope.activeChapterId = chapterId;
+            setActiveChapter(chapterId);
             $scope.storyLayers = $scope.mapService.getStoryLayers(true, true);
           }
         });
