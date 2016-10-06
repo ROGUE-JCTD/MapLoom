@@ -76,7 +76,7 @@
         },
         sources: [
           {
-            'url': (location.host + '/geoserver/web/'),
+            'url': (location.host + '/geoserver/wms/'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
             'name': 'Local GeoServer',
