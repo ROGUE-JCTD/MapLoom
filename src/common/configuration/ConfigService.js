@@ -76,7 +76,7 @@
         },
         sources: [
           {
-            'url': (location.host + '/geoserver/web/'),
+            'url': (serverLocation + '/geoserver/wms'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
             'name': 'Local GeoServer',
@@ -105,6 +105,7 @@
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
         registryEnabled: true,
+        nominatimSearchEnabled: false,
         serverLocation: serverLocation,
         searchApiURL: serverLocation + '/registry/api/catalogs/'
       };

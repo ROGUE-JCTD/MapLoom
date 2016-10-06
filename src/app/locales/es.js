@@ -8,6 +8,8 @@
     'registry': 'Registro',
     'registry_layers': 'Registro de Capas',
     'registry_layer_btn': 'Registro de Capa',
+    'search_layers_btn': 'Búsqueda de Capas',
+    'search_layers' : 'Búsqueda de Capas',
     'map_layers': 'Capas',
     'add_layer_btn': 'Añadir Capa',
     'add_layers': 'Añadir Capas',

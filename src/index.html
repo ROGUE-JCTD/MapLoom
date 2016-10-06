@@ -34,6 +34,9 @@
     var registryEnabled = function(){
       return "{{ REGISTRY }}".toLowerCase() === "true" || true ? true : false;
     };
+    var nominatimSearchEnabled = function(){
+      return "{{ NOMINATIM_SEARCH }}".toLowerCase() === "true" || true ? true : false;
+    };
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
         username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
@@ -64,9 +67,11 @@
         localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
         registryEnabled: "{{ REGISTRY }}",
         catalogList: "{{ CATALOGLIST }}",
+        nominatimSearchEnabled: "{{ NOMINATIM_SEARCH }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
+        nominatimSearchEnabled: nominatimSearchEnabled(),
         catalogList: catalogList
     };
     goog.object.extend( config, {{ config|safe }});
@@ -102,7 +107,7 @@
           <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
         </div>
       </div>
-      <div class="loom-search"></div>
+      <div ng-show="nominatimSearchEnabled" class="loom-search"></div>
       <div id="pulldown-menu" class="panel-group in">
         <div id="pulldown-content">
           <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
@@ -218,7 +223,7 @@
   <div class="loom-timeline"></div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
-<div loom-modal id="registry-layer-dialog" modal-title="registry_layers">
+<div loom-modal id="registry-layer-dialog" modal-title="search_layers">
   <div loom-registrylayers id="registry-layers"></div>
 </div>
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">

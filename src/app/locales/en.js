@@ -8,6 +8,8 @@
     'registry': 'Registry',
     'registry_layers': 'Registry of layers',
     'registry_layer_btn': 'Registry of layer',
+    'search_layers_btn': 'Search for Layers',
+    'search_layers' : 'Search for Layers',
     'map_layers': 'Layers',
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
