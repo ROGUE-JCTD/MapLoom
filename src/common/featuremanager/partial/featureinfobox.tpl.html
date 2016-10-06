@@ -52,10 +52,10 @@
 
     <div id="feature-info-box-bottom">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
-        <button type="button" ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
+        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'set_spatial_filter' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-filter">
         </button>
-        <button type="button" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
+        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'show_table' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-list">
             <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(featureManagerService.getSelectedLayer())"></div>
         </button>
@@ -68,7 +68,7 @@
         <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_media' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>-->
         <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
-        !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="featureManagerService.startAttributeEditing()"
+        !featureManagerService.getSelectedLayer().get('metadata').readOnly && !featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="featureManagerService.startAttributeEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_attributes' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-list-alt"></button>
         <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&

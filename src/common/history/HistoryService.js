@@ -192,7 +192,6 @@
               return;
             }
             service_.fetchingHistory = false;
-            console.log('History failed: ', reject);
             dialogService_.error(translate_.instant('error'), translate_.instant('history_failed'));
             deferredResponse.reject();
           });

@@ -171,13 +171,11 @@
                 handleConflicts(endTransactionFailure);
               } else {
                 dialogService_.error(translate_.instant('error'), translate_.instant('conflict_unknown_error'));
-                console.log('ERROR: EndTransaction failure: ', endTransactionFailure);
               }
             });
           }, function(reject) {
             // couldn't commit
             dialogService_.error(translate_.instant('error'), translate_.instant('conflict_unknown_error'));
-            console.log('ERROR: Failed to commit merge: ', reject);
           });
         }, function(reject) {
         });
@@ -185,7 +183,6 @@
         // couldn't resolve all conflicts
         dialogService_.error(translate_.instant('error'), translate_.instant('unable_to_resolve_conflicts',
             {value: conflictsInError}));
-        console.log('ERROR: ' + conflictsInError + ' conflicts could not be resolved.');
       }
     } else {
       var conflict = conflictList.pop();
@@ -206,11 +203,9 @@
             commitInternal(conflictList, conflictsInError);
           }, function(reject) {
             commitInternal(conflictList, conflictsInError + 1);
-            console.log('ERROR: Failed to add resolved conflicts to the tree: ', conflict, reject);
           });
         }, function(reject) {
           commitInternal(conflictList, conflictsInError + 1);
-          console.log('ERROR: Failed to checkout conflicted feature: ', conflict, reject);
         });
 
       } else {
@@ -254,11 +249,9 @@
             commitInternal(conflictList, conflictsInError);
           }, function(reject) {
             commitInternal(conflictList, conflictsInError + 1);
-            console.log('ERROR: Failed to resolve the conflict: ', conflict, reject);
           });
         }, function(reject) {
           commitInternal(conflictList, conflictsInError + 1);
-          console.log('ERROR: Failed to merge the conflicted feature: ', conflict, reject);
         });
       }
     }

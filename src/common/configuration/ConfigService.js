@@ -6,7 +6,7 @@
   module.factory('httpRequestInterceptor', function($cookieStore, $location) {
     return {
       request: function(config) {
-        if (goog.isDefAndNotNull(config) &&
+        if (goog.isDefAndNotNull(config) && config.url.indexOf($location.protocol() + '://' + $location.host()) > -1 &&
             (config.method.toLowerCase() === 'post' || config.method.toLowerCase() === 'put')) {
           config.headers['X-CSRFToken'] = service_.csrfToken;
         }
@@ -22,7 +22,11 @@
           }
           var configCopy = $.extend(true, {}, config);
           var proxy = service_.configuration.proxy;
-          if (goog.isDefAndNotNull(proxy)) {
+          var useProxy = service_.configuration.useProxy;
+          var localDomain = $location.protocol() + '://' + $location.host();
+          var serviceDomain = configCopy.url.split('/geoserver/wms')[0];
+          // Don't use a proxy if the geoserver is local
+          if (goog.isDefAndNotNull(proxy) && localDomain != serviceDomain && useProxy) {
             configCopy.url = proxy + encodeURIComponent(configCopy.url);
           }
           return configCopy;
@@ -44,15 +48,17 @@
 
     this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
+      var serverLocation = $location.protocol() + '://' + $location.host();
+
       this.configuration = {
         about: {
           title: $translate.instant('new_map'),
           abstract: ''
         },
         map: {
-          projection: 'EPSG:900913',
-          center: [-9707182.048613328, 1585691.7893914054],
-          zoom: 14,
+          projection: 'EPSG:4326',
+          center: [0, 0],
+          zoom: 1,
           layers: [
             {
               'opacity': 1,
@@ -70,16 +76,23 @@
         },
         sources: [
           {
-            'url': ('http://' + $location.host() + '/geoserver/wms'),
+            'url': (location.host + '/geoserver/wms/'),
             'restUrl': '/gs/rest',
             'ptype': 'gxp_wmscsource',
-            'name': 'local geoserver'
+            'name': 'Local GeoServer',
+            'elastic': true,
+            'alwaysAnonymous': true,
+            'lazy': true
           },
           {
             'ptype': 'gxp_osmsource',
             'name': 'OpenStreetMap'
           }
         ],
+        elasticLayerConfig: {
+          id: 0,
+          layersConfig: []
+        },
         currentLanguage: 'en',
         username: 'anonymous',
         userprofilename: 'Anonymous',
@@ -87,14 +100,19 @@
         authStatus: 401,
         id: 0,
         proxy: '/proxy/?url=',
+        useProxy: false,
         nominatimUrl: 'http://nominatim.openstreetmap.org',
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
-        fileserviceUploadUrl: '/api/fileservice/'
+        fileserviceUploadUrl: '/api/fileservice/',
+        registryEnabled: true,
+        serverLocation: serverLocation,
+        searchApiURL: serverLocation + '/registry/api/catalogs/'
       };
 
       if (goog.isDefAndNotNull($window.config)) {
         goog.object.extend(this.configuration, $window.config, {});
       }
+
       this.username = this.configuration.username;
       this.currentLanguage = this.configuration.currentLanguage;
       this.user_profile_name = this.configuration.userprofilename;
@@ -147,4 +165,3 @@
     };
   });
 }());
-

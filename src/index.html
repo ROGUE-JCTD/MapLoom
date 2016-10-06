@@ -30,6 +30,10 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
     {% get_current_language as language%}
 <script type="text/javascript">
+    var catalogList = JSON.parse("{{ CATALOGLIST|safe }}".replace(/'/g, '"'));
+    var registryEnabled = function(){
+      return "{{ REGISTRY }}".toLowerCase() === "true" || true ? true : false;
+    };
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
         username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
@@ -58,13 +62,14 @@
         }],
         localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
         localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
+        registryEnabled: "{{ REGISTRY }}",
+        catalogList: "{{ CATALOGLIST }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
-        };
-
+        registryEnabled: registryEnabled(),
+        catalogList: catalogList
+    };
     goog.object.extend( config, {{ config|safe }});
-
-    console.log('############ config: ', config);
 </script>
 <% } %>
 
@@ -120,7 +125,16 @@
               </div>
             </div>
           </div>
+
           <div class="panel" ng-show="layersPanel">
+            <div ng-show="registryEnabled" class="panel-heading" data-parent="#pulldown-content">
+              <span translate="registry">Registry</span>
+              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#registry-layer-dialog')"
+                   tooltip-placement="top" tooltip="{{'registry_layer_btn' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
+            </div>
+
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#layer-manager-panel">
               <span translate="map_layers">Map Layers</span>
@@ -133,6 +147,7 @@
               <div class="loom-layers"></div>
             </div>
           </div>
+
           <div class="panel" ng-show="syncPanel">
             <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#syncronization-panel">
@@ -203,9 +218,11 @@
   <div class="loom-timeline"></div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
+<div loom-modal id="registry-layer-dialog" modal-title="registry_layers">
+  <div loom-registrylayers id="registry-layers"></div>
+</div>
 <div loom-modal id="add-layer-dialog" modal-title="add_layers">
-  <div loom-addlayers id="add-layers">
-  </div>
+  <div loom-addlayers></div>
 </div>
 <div loom-modal id="add-server-dialog" modal-title="add_server">
   <div loom-add-server id="add-server">
@@ -269,6 +286,10 @@
 <div loom-modal id="saveMap" modal-title="{{ 'save_this_map' | translate}}">
     <div loom-save-map id="save-map">
     </div>
+</div>
+<div loom-modal id="enter-spatial-filter-radius-dialog" modal-title="{{'enter_radius' | translate}}">
+  <div loom-enterspatialfilterradius class="loom-enter-spatial-filter-radius">
+  </div>
 </div>
 
 <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
