@@ -54,6 +54,7 @@
               props.start_time = props.start_time * 1000;
               props.end_time = props.end_time * 1000;
               var storyBox = new Box(props);
+              storyBox.setId(f.id);
               boxes_[index].push(storyBox);
             });
           });
@@ -83,6 +84,10 @@
           if (a.get('end_time') !== undefined) {
             a.set('end_time', getTime(a.get('end_time')));
             clone.set('end_time', a.get('end_time') / 1000);
+          }
+          if (goog.isDefAndNotNull(a.getId())) {
+            clone.setId(a.getId());
+            clone.id = a.getId();
           }
           clones.push(clone);
         });

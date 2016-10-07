@@ -1,5 +1,5 @@
 (function() {
-  var module = angular.module('loom_story_service', ['ngCookies']);
+  var module = angular.module('loom_story_service', ['ngCookies', 'ui.bootstrap']);
   var service_ = null;
   var mapService_ = null;
   var configService_ = null;
@@ -395,13 +395,17 @@
           toastr.error('Your MapStory has failed to save.', 'Save Failed');
         }
       });
-
     };
 
     this.saveChapterView = function() {
       this.active_chapter.zoom = mapService_.getZoom();
       this.active_chapter.center = mapService_.getCenter();
-      toastr.success(translate_.instant('saveChapterView'), translate_.instant('saveViewTitle'));
+      toastr.success(translate_.instant('Your view has been set. Next, save your Chapter Info.'), translate_.instant('Current View Set'));
+    };
+
+    this.setDataPlayback = function(mode) {
+      this.active_chapter.viewer_playbackmode = mode;
+      toastr.success(translate_.instant('Your playback mode has been set to ' + mode + '. Next, save your Chapter Info.'), translate_.instant('Playback Mode Set'));
     };
 
     this.updateStoryID = function(id) {
