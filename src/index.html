@@ -71,8 +71,7 @@
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
-        nominatimSearchEnabled: nominatimSearchEnabled(),
-        catalogList: catalogList
+        nominatimSearchEnabled: nominatimSearchEnabled()
     };
     goog.object.extend( config, {{ config|safe }});
 </script>
