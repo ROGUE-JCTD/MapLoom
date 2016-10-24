@@ -138,8 +138,8 @@
 
   function handleConflicts(mergeFailure, transaction, dialogService, conflictService, translate,
                            ourName, theirName, scope, mergeBranch) {
-    var myDialog = dialogService.warn(translate('merge_conflicts'), translate('conflicts_encountered'),
-        [translate('abort'), translate('resolve_conflicts')], false);
+    var myDialog = dialogService.warn(translate.instant('merge_conflicts'), translate.instant('conflicts_encountered'),
+        [translate.instant('abort'), translate.instant('resolve_conflicts')], false);
 
     myDialog.then(function(button) {
       switch (button) {
