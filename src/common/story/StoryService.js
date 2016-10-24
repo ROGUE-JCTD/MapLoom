@@ -220,7 +220,6 @@
 
     this.historyClicked = function(commit) {
       commit.loading = true;
-      featureDiffService_.clear();
       $('.loom-history-popover').popover('hide');
       var lastCommitId = '0000000000000000000000000000000000000000';
       if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
