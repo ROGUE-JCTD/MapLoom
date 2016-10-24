@@ -993,7 +993,7 @@
                   }).error(function(data, status, headers, config) {
                   });
                 };
-                geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
+                geogigService_.isGeoGig(layer, server, fullConfig.Layer[0]).then(function() {
                   testReadOnly();
                 }, function() {
                   testReadOnly();

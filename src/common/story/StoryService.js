@@ -200,13 +200,13 @@
             } else {
               diffService_.setTitle(translate_.instant('summary_of_changes'));
             }
+            commit.feature = response.Feature.metadata;
+            mapService_.zoomToExtent(response.Feature.metadata.extent, null, null, 0.5);
           } else {
             dialogService_.open(translate_.instant('history'),
                 translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
           }
           commit.loading = false;
-          commit.feature = response.Feature.feature;
-          mapService_.zoomToExtent(response.Feature.feature.extent, null, null, 0.5);
         }, function(reject) {
           //failed to get diff
           dialogService_.error(translate_.instant('error'),
@@ -220,6 +220,7 @@
 
     this.historyClicked = function(commit) {
       commit.loading = true;
+      featureDiffService_.clear();
       $('.loom-history-popover').popover('hide');
       var lastCommitId = '0000000000000000000000000000000000000000';
       if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
@@ -245,12 +246,12 @@
           } else {
             diffService_.setTitle(translate_.instant('summary_of_changes'));
           }
+          commit.feature = response.Feature.metadata;
         } else {
           dialogService_.open(translate_.instant('history'),
               translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
         }
         commit.loading = false;
-        commit.feature = response.Feature.feature;
       }, function(reject) {
         //failed to get diff
         dialogService_.error(translate_.instant('error'),
