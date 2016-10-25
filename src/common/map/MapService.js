@@ -918,6 +918,7 @@
                   chapter: window.config.chapter_index,
                   serverId: server.id,
                   name: minimalConfig.name,
+                  jsonstyle: service_.styleStorageService.getSavedStyle(minimalConfig.name),
                   url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
                   title: fullConfig.Layer[0].Title,
                   abstract: fullConfig.Layer[0].Abstract,
