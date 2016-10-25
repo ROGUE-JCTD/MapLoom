@@ -918,6 +918,7 @@
                   chapter: window.config.chapter_index,
                   serverId: server.id,
                   name: minimalConfig.name,
+                  jsonstyle: service_.styleStorageService.getSavedStyle(minimalConfig.name),
                   url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
                   title: fullConfig.Layer[0].Title,
                   abstract: fullConfig.Layer[0].Abstract,
@@ -1166,7 +1167,8 @@
         is_published: map_config.is_published,
         chapter_index: map_config.chapter_index,
         story_id: map_config.id,
-        viewer_playbackmode: map_config.viewer_playbackmode || null
+        viewer_playbackmode: map_config.viewer_playbackmode || null,
+        stylestore: (window.config.stylestore || null)
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
