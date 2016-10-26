@@ -451,7 +451,7 @@
               }
               var geogigURL = metadata.url + '/geogig/repos/' + repoName;
               if (server.isVirtualService === true) {
-                geogigURL = server.url.replace('wms', 'geogig') + '/' + repoName;
+                geogigURL = server.url.replace('wms', 'geogig') + '/repos/' + repoName;
               }
               service_.getRepoInfo(geogigURL).then(function(info) {
                 http.get(geogigURL + '/repo/manifest').then(function() {

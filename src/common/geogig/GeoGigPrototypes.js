@@ -1,6 +1,6 @@
-var GeoGigRepo = function(_url, _uniqueId, _branch, _name) {
+var GeoGigRepo = function(_url, _uuid, _branch, _name) {
   this.url = _url;
-  this.uniqueId = _uniqueId;
+  this.uuid = _uuid;
   this.branch = _branch;
   this.name = _name;
   this.branches = [];
