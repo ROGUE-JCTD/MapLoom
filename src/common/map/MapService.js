@@ -324,11 +324,11 @@
       view.fit(extent, map.getSize());
     };
 
-    this.updateStyle = function(layer, chapter_index) {
+    this.updateStyle = function(layer) {
       var style = layer.get('style') || layer.get('metadata').style;
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
       if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
-        style.name = this.configuration.username + '-' + this.configuration.id + '-' + style.typeName + '-' + layer.get('metadata').title;
+        style.name = this.configuration.username + '-' + this.configuration.id + '-' + window.config.chapter_index + '-' + style.typeName + '-' + layer.get('metadata').title;
         var layerSource = layer.getSource();
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams) && goog.isDefAndNotNull(layer.get('styleName'))) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
@@ -897,8 +897,8 @@
                     legendUrl: style.LegendURL[0].OnlineResource
                   });
                   paramStyles = service_.configuration.username + '-' +
-                                service_.configuration.id + '-simple-' + style.Name +
-                                '-' + minimalConfig.name.split(':')[1]; //'admin-0-simple-line-lewisclark',
+                                service_.configuration.id + '-' + chapter_index + '-simple-' + style.Name +
+                                '-' + minimalConfig.name.split(':')[1];
                 }
               }
 
@@ -1193,7 +1193,7 @@
       goog.array.forEach(service_.getLayers(true, true), function(layer, key, obj) {
         var config = layer.get('metadata').config;
 
-        var jsonStyle = service_.styleStorageService.getSavedStyle(layer);
+        var jsonStyle = service_.styleStorageService.getSavedStyle(layer, map_config.chapter_index);
 
         if (!goog.isDefAndNotNull(config)) {
           console.log('Not saving layer: ', layer.get('metadata').name,
