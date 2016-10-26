@@ -1,32 +1,17 @@
-<div id="composerTopNav">
-    <span class="dropdown">
-        <img src="{{ application.icon }}" id="sidebarDropdown" data-toggle="dropdown"
-             aria-haspopup="true" aria-expanded="true" width="35px" height="35px"/>
-        <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
-            <li><a href="/" target="_blank">Home</a></li>
-            <li><a href="/search/" target="_blank">Explore</a></li>
-            <li><a href="/getstarted" target="_blank">Get Started</a></li>
-            <li><a href="/getskills" target="_blank">Get Involved</a></li>
-            <li><a href="/getinvolved" target="_blank">Get Skills</a></li>
-            <li><a href="/journal" target="_blank">Journal</a></li>
-        </ul>
-    </span>
-    <i class="fa fa-reorder pull-right" ng-click="toggleSidebar('mainMenu')"></i>
-    <span class="dropdown">
-        <button class="btn btn-profile pull-right" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-user icon-profile"></i>{{ storyService.username }}</button>
-        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-            <li><a ng-href="/storyteller/{{ storyService.username}}" target="_blank">{{ 'your_data' | translate }}</a></li>
-            <li class="modal-divider"></li>
-            <li><a ng-href="/storyteller/{{ storyService.username}}" target="_blank">{{ 'profile' | translate }}</a></li>
-            <li><a ng-href="/social/recent-activity" target="_blank">{{ 'recent_activity' | translate }}</a></li>
-            <li><a ng-href="/messages/inbox" target="_blank">{{ 'inbox' | translate }}</a></li>
-            <li class="modal-divider"></li>
-            <!--<li><a ng-href="{{ 'help_url' | translate }}" target="_blank">{{ 'help' | translate }}</a></li>-->
-            <li class="modal-divider"></li>
-            <li><a ng-href="/" target="_blank">{{ 'exit_composer' | translate }}</a></li>
-        </ul>
-    </span>
-
+<div id="composerTopNav" class="ng-scope" style="padding-bottom: 5px;">
+  <span id="topNavContentWrapper">
+    <p id="siteNameWrapper">
+      <i class="fa fa-home" href="/"></i> MapStory
+    </p>
+    <p id="usernameWrapper">
+      <small style="font-size: 12px;font-weight: 300;">
+        @{{ storyService.username }}
+      </small>
+    </p>
+  </span>
+  <span ng-class="{'menuOpen': isShown, 'menuClosed': !isShown}">
+      <i ng-class="{'fa fa-caret-left': isShown, 'fa fa-caret-right': !isShown}" ng-click="toggleSidebar('mainMenu')" style="padding: 15px;"></i>
+  </span>
 </div>
 
 <div id="composerIconNav" ng-hide="menuSection=='editSingleStoryLayer' + layerName || menuSection=='viewSingleLayerHistory' + layerName">
@@ -34,15 +19,11 @@
        tooltip="{{ 'composer_save_draft_tooltip' | translate }}"></i>
     <i class="fa fa-share-square-o" data-target="#mapSave" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right"
        tooltip="{{ 'composer_publish_tooltip' | translate }}"></i>
-    <!--<i class="fa fa-play-circle" id="previewMapStory" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'composer_preview_tooltip' | translate }}"></i>-->
     <i class="fa fa-tags" data-target="#mapProperties" data-toggle="modal" tooltip-append-to-body="true" tooltip-placement="right"
        tooltip="{{ 'composer_properties_tooltip' | translate }}"></i>
-    <!--<i class="fa fa-cloud-upload" data-target="" data-toggle="modal" id="uploadLayer"></i>-->
-    <!--<i class="fa fa-user" ng-href="" target="_blank" id="userProfile"></i>-->
 </div>
 
 <h2 ng-show="menuSection=='mainMenu'">
     <div class="topText">{{ 'application_name' | translate:'{ name: application.name }' }} > Chapters</div>
-    <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}"
-                               target="_blank">{{ storyService.title }}</a></div>
+    <div class="bottomText"><a id="mapstory-title" href="{{ storyService.id > 0 && '/story/' + storyService.id || '#'}}" target="_blank">{{ storyService.title }}</a></div>
 </h2>
