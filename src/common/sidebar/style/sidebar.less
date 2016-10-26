@@ -34,7 +34,14 @@
   .menuClosed {
     width: 10%;
     font-size: 25px;
-    vertical-align: 30%
+    vertical-align: 30%;
+
+    i {
+      &:hover {
+        color: #f59620;
+      }
+      float: right;
+    }
   }
 }
 
@@ -60,6 +67,53 @@
     text-align: center;
     border-radius: 50%;
     color: white;
+  }
+
+  #addChapterWrapper{
+    padding: 10px;
+    margin: 10px;
+    background: transparent;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+
+  #addChapterButtonWrapper{
+    display: inline-block;
+    width: 20%;
+    vertical-align: 150%;
+    padding: 10px 5px;
+    margin: 5px;
+    margin-left: 0;
+    background: #444;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+  }
+
+  #newChapterTextWrapper{
+    display: inline-block;
+    width: 70%;
+    vertical-align: 150%;
+    font-size: 16px;
+    padding: 5px;
+  }
+}
+
+#composerIconNav {
+  background: @background;
+  display: block;
+  height: 40px;
+  padding: 5px;
+
+  p {
+    font-size: 10px;
+    font-weight: 500;
+    color: #444;
+  }
+
+  i {
+    font-size: 20px;
+    color: #444;
   }
 }
 
@@ -92,21 +146,6 @@
   top: 0;
   width: 350px;
   z-index: 1;
-}
-
-.menu i {
-  color: @baseWhite;
-  font-size: 15px;
-}
-
-.menu i:hover {
-  color: @baseOrange;
-}
-
-.menuHidden i {
-  float: right;
-  font-size: 20px;
-  padding-right: 5px;
 }
 
 .menu small {

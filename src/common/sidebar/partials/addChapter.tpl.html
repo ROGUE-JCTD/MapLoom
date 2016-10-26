@@ -1,4 +1,12 @@
-<div class="menuItem">
-    <i class="fa fa-plus-square-o" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'add_new_chapter_tooltip' | translate }}"></i>
-    <a href="#" id="addChapter" ng-click="addChapter();">Add a new chapter</a>
+<div class="menuItem ng-scope" id="addChapterWrapper">
+  <a href="#" id="addChapter" ng-click="addChapter();">
+    <span class="ng-binding" id="addChapterButtonWrapper">
+      <div style="">
+        <i class="fa fa-plus" style=""></i>
+      </div>
+    </span>
+    <span id="newChapterTextWrapper" class="ng-binding">
+      New Chapter
+    </span>
+  </a>
 </div>
