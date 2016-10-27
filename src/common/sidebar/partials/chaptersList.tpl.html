@@ -1,7 +1,16 @@
-<div class="menuItem">
-    <i class="fa fa-ellipsis-h" ui-tree-handle=""></i>
+<div class="menuItem ng-scope">
+
     <a href="#" ng-click="storyService.update_active_config(chapter.id);updateMenuSection('selectedChapter' + chapter.id); updateTourStep(3)">
-        <h2>{{ chapter.chapter }}</h2>
-        <small>{{ storyService.configurations[chapter.id].about.title }}</small>
+        <span ui-tree-handle="" id="chapterWrapper" class="ng-binding">
+          {{ chapter.id + 1 }}
+        </span>
+        <span style="display: inline-block;width: 70%;" class="ng-binding">
+          <div style="font-size: 16px;">
+            {{ storyService.configurations[chapter.id].about.title }}
+          </div>
+          <div class="" style="border-top: 1px solid #666;padding: 3px 0;font-weight: 300;">
+            {{ storyService.configurations[chapter.id].about.abstract.substring(0,20) }}...
+          </div>
+        </span>
     </a>
 </div>

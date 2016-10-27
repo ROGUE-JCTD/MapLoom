@@ -1,0 +1,279 @@
+/* Menu Styles */
+
+#composerTopNav {
+  background: @baseGray;
+  padding: 3px 5px;
+
+  #topNavContentWrapper {
+    width: 80%;
+    display: inline-block;
+    font-size: 20px;
+    color: white;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  #siteNameWrapper {
+    margin: 0;
+    margin-top: 12px;
+    margin-bottom: -2px;
+  }
+
+  #usernameWrapper {
+    margin: 0;
+    line-height: 12px;
+  }
+
+  .menuOpen {
+    width: 10%;
+    display: inline-block;
+    font-size: 25px;
+    vertical-align: 30%
+  }
+
+  .menuClosed {
+    width: 10%;
+    font-size: 25px;
+    vertical-align: 30%;
+
+    i {
+      &:hover {
+        color: #f59620;
+      }
+      float: right;
+    }
+  }
+}
+
+.menuItem {
+  display: block;
+  padding: 10px;
+  margin: 10px;
+  background: @background;
+  border-radius: 4px;
+  box-shadow: 0 3px 0 #aaa;
+  &:hover {
+    background: #ccc;
+  }
+
+  #chapterWrapper{
+    display: inline-block;
+    width: 20%;
+    vertical-align: 150%;
+    padding: 10px 5px;
+    margin: 5px;
+    margin-left: 0;
+    background: #444;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+  }
+
+  #addChapterWrapper{
+    padding: 10px;
+    margin: 10px;
+    background: transparent;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+
+  #addChapterButtonWrapper{
+    display: inline-block;
+    width: 20%;
+    vertical-align: 150%;
+    padding: 10px 5px;
+    margin: 5px;
+    margin-left: 0;
+    background: #444;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+  }
+
+  #newChapterTextWrapper{
+    display: inline-block;
+    width: 70%;
+    vertical-align: 150%;
+    font-size: 16px;
+    padding: 5px;
+  }
+}
+
+#composerIconNav {
+  background: @background;
+  display: block;
+  height: 40px;
+  padding: 5px;
+
+  p {
+    font-size: 10px;
+    font-weight: 500;
+    color: #444;
+  }
+
+  i {
+    font-size: 20px;
+    color: #444;
+  }
+}
+
+.menu {
+  background: @accentWhite;
+  font-size: 1em;
+  height: 100%;
+  overflow-y: scroll;
+  width: 20%;
+}
+
+.menu a {
+  display: block;
+  padding: 6px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  color: @baseGray;;
+  text-decoration: none;
+  outline: 0
+}
+
+.menuHidden {
+  background: @accentWhite;
+  color: @baseGray;
+  left: -320px;
+  min-height: 100%;
+  position: absolute;
+  top: 0;
+  width: 350px;
+  z-index: 1;
+}
+
+.menu small {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  padding-left: 0;
+}
+
+.menu label {
+  color: @baseGray;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  margin-bottom: 5px;
+  max-width: 100%;
+}
+
+.menu .topText {
+  color: @baseGray;
+  display: inline;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 10px;
+  margin: 0;
+  padding: 10px 10px 5px;
+}
+
+.menu .topText a {
+  color: @baseGray;
+  display: inline;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.menu .bottomText {
+  color: @baseGray;
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 20px;
+  margin: 0;
+  padding: 0 10px 5px;
+}
+
+/* Composer Buttons */
+
+.btn-composer {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  background: @baseGray;
+  border: 0;
+  border-radius: 3px;
+  color: @baseWhite;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.428571429;
+  margin-bottom: 0;
+  padding: 6px;
+  text-align: center;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.btn-profile {
+  display: inline-block;
+  padding: 3px;
+  margin: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.428571429;
+  color: #fff;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #f59620;
+  border: 0;
+}
+
+.btn-profile i {
+  float: left;
+  padding: 0;
+}
+
+.btn-composer:hover, .btn-composer:focus, .btn-composer:active, .btn-composer.active, .open .dropdown-toggle.btn-composer {
+  background: @baseOrange;
+  border-color: @baseOrange;
+  color: @baseWhite;
+}
+
+.btn-storylayer {
+  background: @lightGray;
+  border: 0;
+  border-radius: 8px;
+  color: @accentWhite;
+  display: inline-block;
+  font-size: 10px;
+  height: 75px;
+  margin: 10px 0 10px 10px;
+  text-transform: uppercase;
+  width: 42%;
+}
+
+.btn-storylayer a {
+  border: 0;
+  color: @accentWhite;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.btn-storylayer i {
+  color: @baseWhite;
+  font-size: 2.5em;
+  padding: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-storylayer:hover, .btn-storylayer i:hover {
+  background: @baseGray;
+  color: @accentWhite;
+}
