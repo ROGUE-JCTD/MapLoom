@@ -225,8 +225,6 @@
         $scope.isShown = true;
 
         $scope.toggleSidebar = function() {
-          console.log('!DJA STORY SERVICE OBJECT:');
-          console.log($scope.storyService);
           $scope.isShown = !$scope.isShown;
           if ($scope.menuSection == 'mainMenuHidden') {
             $scope.updateMenuSection($scope.prev_menu_section);
