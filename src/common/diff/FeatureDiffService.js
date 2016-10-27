@@ -46,26 +46,11 @@
     this.replaceLayers = function(newLayers) {
       var featurePanel = this;
       var layers = featurePanel.map.getLayers();
+      layers.clear();
 
-      layers.forEach(function(layer) {
-        featurePanel.map.removeLayer(layer);
-      });
+      featurePanel.map.getLayerGroup().setLayers(layers);
 
       newLayers.forEach(function(layer) {
-        var layerChecker = featurePanel.map.getLayers();
-
-        /*
-          TODO: The initial layer removal iteration isn't removing all
-          layers, causing conflict when the layers are re-added. Revisit
-          why this is happening. In the meantime, this forEach ensures
-          that the layer being added doesn't already exist.
-         */
-
-        layerChecker.forEach(function(chkLyr) {
-          if (layer === chkLyr) {
-            featurePanel.map.removeLayer(chkLyr);
-          }
-        });
 
         if (!goog.isDefAndNotNull(layer.get('metadata').internalLayer) || !layer.get('metadata').internalLayer) {
           featurePanel.map.addLayer(layer);
@@ -529,6 +514,7 @@
                 assignAttributeTypes(service_.merged.attributes, true);
               }
             }
+            panel.map.updateSize();
             rootScope_.$broadcast('feature-diff-performed');
           }
         }

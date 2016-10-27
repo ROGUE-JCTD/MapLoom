@@ -34,6 +34,7 @@
               $timeout(function() {
                 scope.panel.map.setTarget(target);
                 mapService.zoomToExtent(featureDiffService.combinedExtent, false, scope.panel.map, 0.1);
+                scope.panel.map.updateSize();
                 $timeout(function() {
                   $(loadingtarget).fadeOut();
                 }, 500);
