@@ -646,7 +646,7 @@
       var returnResponse = q_.defer();
       deferredResponse.promise.then(function(resolve) {
         enabled_ = true;
-        rootScope_.$broadcast('endFeatureInsert', save);
+        rootScope_.$broadcast('endFeatureInsert', save, selectedLayer_, selectedItem_);
         returnResponse.resolve(resolve);
       }, function(reject) {
         returnResponse.reject(reject);
@@ -798,6 +798,8 @@
 
     this.endAttributeEditing = function(save, inserting, properties, coords) {
       //console.log('---- editFeatureDirective.saveEdits. feature: ', feature);
+      var selectedItemPropertiesChangedOld = [];
+      var selectedItemPropertiesChangedNew = [];
       var deferredResponse = q_.defer();
       if (inserting) {
         // create request
@@ -824,6 +826,8 @@
               property[1] = null;
             }
             if (properties[index][1] !== selectedItemProperties_[index][1]) {
+              selectedItemPropertiesChangedOld.push([selectedItemProperties_[index][0], selectedItemProperties_[index][1]]);
+              selectedItemPropertiesChangedNew.push([property[0], property[1]]);
               propertyXmlPartial += '<wfs:Property><wfs:Name>' + property[0] +
                   '</wfs:Name><wfs:Value>' + (property[1] === null ? '' : property[1]) + '</wfs:Value></wfs:Property>';
             }
@@ -867,7 +871,7 @@
       }
       var returnResponse = q_.defer();
       deferredResponse.promise.then(function(resolve) {
-        rootScope_.$broadcast('endAttributeEdit', save);
+        rootScope_.$broadcast('endAttributeEdit', save, selectedLayer_, selectedItemPropertiesChangedNew, selectedItemPropertiesChangedOld);
         returnResponse.resolve(resolve);
       }, function(reject) {
         returnResponse.reject(reject);
