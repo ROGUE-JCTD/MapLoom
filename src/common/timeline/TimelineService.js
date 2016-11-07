@@ -227,13 +227,6 @@
                 if (newTick !== null && !(newTick in timelineTicksMap_)) {
                   timelineTicksMap_[newTick] = 1;
                   addedTick = true;
-                  timelinePointsList.push({
-                    id: newDate + ':' + newTick,
-                    group: metadata.uniqueID,
-                    content: '',
-                    start: newTick,
-                    type: 'box'
-                  });
                 }
               } else {
                 //TODO: Need to make admin geoserver request and add resulting tick from there.
@@ -372,12 +365,6 @@
                 timelineTicksMap_[time] += 1;
               } else {
                 timelineTicksMap_[time] = 1;
-                var id_ = i + ':' + j;
-                timelinePointsList.push({id: id_,
-                  group: metadata.uniqueID,
-                  content: '',
-                  start: timeDimension[j],
-                  type: 'box' });
               }
             }
           }
