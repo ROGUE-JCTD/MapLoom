@@ -39,18 +39,7 @@
               }
             };
 
-            scope.getLegendUrl = function(layer) {
-              var url = null;
-              var server = serverService.getServerById(layer.get('metadata').serverId);
-              url = server.url + '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=' +
-                  layer.get('metadata').name + '&transparent=true&legend_options=fontColor:0xFFFFFF;' +
-                  'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
-              if (goog.isDefAndNotNull(layer.get('metadata').config.styles)) {
-                url += '&style=' + layer.get('metadata').config.styles;
-                //url += '&_ts=' + new Date().getTime();
-              }
-              return url;
-            };
+            scope.getLegendUrl = scope.mapService.getLegendUrl;
 
             scope.$on('layer-added', function() {
               if (legendOpen === false) {
