@@ -17,6 +17,7 @@
   var q_ = null;
   var mousePositionControl_ = null;
   var showTimeline_ = false;
+  var layerStyleTimeStamps = {};
 
   var select = null;
   var draw = null;
@@ -242,6 +243,24 @@
 
 
       return this;
+    };
+
+    this.getLegendUrl = function(layer) {
+      var url = null;
+      var _ts = new Date().getTime();
+      if (!layerStyleTimeStamps[layer.get('metadata').name] ||
+          _ts - layerStyleTimeStamps[layer.get('metadata').name] > 150) {
+        layerStyleTimeStamps[layer.get('metadata').name] = _ts;
+      }
+      var server = serverService_.getServerById(layer.get('metadata').serverId);
+      url = server.url + '?test=ab&request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=' +
+          layer.get('metadata').name + '&transparent=true&legend_options=fontColor:0xFFFFFF;' +
+          'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
+      if (goog.isDefAndNotNull(layer.get('metadata').config.styles)) {
+        url += '&style=' + layer.get('metadata').config.styles;
+        url += '&_ts=' + layerStyleTimeStamps[layer.get('metadata').name];
+      }
+      return url;
     };
 
     this.activateDragZoom = function() {
