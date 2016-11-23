@@ -1538,6 +1538,8 @@
       });
 
       console.log('====[[ loading config: ', service_.configuration);
+      var mapCenter = !window.config.map ? [0, 0] : service_.configuration.map.center;
+      var mapZoom = !window.config.map ? 3 : service_.configuration.map.zoom;
 
       var map = new ol.Map({
         //layers: do not add any layers to the map as they will be added once server is created and getcapabilities
@@ -1561,6 +1563,8 @@
           projection: service_.configuration.map.projection,
           center: service_.configuration.map.center,
           zoom: service_.configuration.map.zoom,
+          center: mapCenter,
+          zoom: mapZoom,
           minZoom: 3,
           maxZoom: 17,
           extent: [-26318797.579151887, -20057076.22203025, 30858545.563065078, 18491645.882749837]
