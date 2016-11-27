@@ -30,7 +30,12 @@
 <% if (!(typeof django === 'undefined') && (django)) { %>
     {% get_current_language as language%}
 <script type="text/javascript">
-    var catalogList = JSON.parse("{{ CATALOGLIST|safe }}".replace(/'/g, '"'));
+    var catalogList = [];
+    try {
+        catalogList = JSON.parse("{{ CATALOGLIST|safe }}".replace(/'/g, '"'));
+    } catch(err) {
+        console.warn('No catalogs in CATALOGLIST');
+    }
     var registryEnabled = function(){
       return "{{ REGISTRY }}".toLowerCase() === "true" || true ? true : false;
     };
