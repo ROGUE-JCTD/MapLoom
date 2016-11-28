@@ -1561,8 +1561,6 @@
         target: 'map',
         view: new ol.View({
           projection: service_.configuration.map.projection,
-          center: service_.configuration.map.center,
-          zoom: service_.configuration.map.zoom,
           center: mapCenter,
           zoom: mapZoom,
           minZoom: 3,
