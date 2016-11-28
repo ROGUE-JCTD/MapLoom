@@ -1,5 +1,6 @@
 (function() {
   angular.module('loom_addlayers', [
+    'loom_unifiedlayers_directive',
     'loom_registrylayers_directive',
     'loom_addlayers_directive',
     'loom_add_server_directive',

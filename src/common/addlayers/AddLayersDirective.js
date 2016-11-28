@@ -102,6 +102,12 @@
               });
             };
 
+            scope.populateLayersList = function() {
+              console.log('populateLayerList', scope.currentServerId);
+              console.log('by server id', serverService.getServerById(scope.currentServerId));
+              serverService.populateLayersConfig(serverService.getServerById(scope.currentServerId), true);
+            };
+
             scope.editServer = function(server) {
               $rootScope.$broadcast('server-edit', server);
             };
