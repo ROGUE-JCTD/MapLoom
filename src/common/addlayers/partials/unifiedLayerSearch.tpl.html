@@ -3,13 +3,18 @@
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 unified-split-view">
                 <div class="row">
                     <div class="col-xs-12">
-                        <div class="loom-map" style="mapStyle" zoom="previewZoom" center="previewCenter" loom-map map-id="unified-layer-map-preview" modal-id="unified-layer-dialog" layers="previewLayers"></div>
+                        <div class="filter-map loom-map" style="mapStyle" zoom="previewZoom" center="previewCenter" loom-map map-id="unified-layer-map-preview" modal-id="unified-layer-dialog" layers="previewLayers"></div>
                         <div>Zoom to limit the search to data that includes features in the displayed area.  Hover over layers in the list to preview them on the map above.</div>
                     </div>
                 </div> <!-- end of map section -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h3>Refine layer list</h3>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-xs-6">
@@ -17,8 +22,8 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input ng-model="keyword" type="text" class="form-control">
-                                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                                    <input ng-model="keyword" ng-keyup="searchOnEnter($event)" type="text" class="form-control">
+                                    <span ng-click="search()" class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                                 </div>
                             </div>
                         </div>
@@ -33,7 +38,7 @@
                 <div class="row">
                     <div class="col-xs-6">
                         <h4>OWNER</h4>
-                        <div class="owner-container">
+                        <div class="filter-list">
                             <span ng-repeat="owner in owners" class="filter-item" ng-click="toggleFilter(owner)">
                                 <i ng-hide="owner._checked" class="glyphicon glyphicon-unchecked"></i>
                                 <i ng-show="owner._checked" class="glyphicon glyphicon-check"></i>
@@ -41,9 +46,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-6 category-filter">
                         <h4>CATEGORY</h4>
-                        <div class="category-container">
+                        <div class="filter-list">
                             <span ng-repeat="category in categories" class="filter-item" ng-click="toggleFilter(category)">
                                 <i ng-hide="category._checked" class="glyphicon glyphicon-unchecked"></i>
                                 <i ng-show="category._checked" class="glyphicon glyphicon-check"></i>
@@ -55,16 +60,37 @@
 
             </div> <!-- end of filters -->
 
-            <div class="col-md-6">
+            <div class="col-md-6 unified-split-view">
+                <!-- start of layers list -->
+                <div class="layers-count">Showing {{ layers.length }} matching records.</div>
+                <div class="layers-list">
+                    <div class="search-status" ng-repeat="search in searches | filter:(search.state != 'finished')">
+                        {{ search.description }} 
+                    </div>
+                    <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" ng-repeat="layer in layers" ng-click="toggleLayer(layer)">
+                        <div class="layer-description">
+                            <label>{{ layer.title }}</label><br>
+                            {{ layer.abstract }}
+                        </div>
+                        <div class="layer-info">
+                            <div class="layer-date">{{ layer.date | date:'dd/MM/yyyy'}}</div>
+                            <div class="layer-source">{{ layer._origin }}</div>
+                        </div>
+                    </div>
+                </div>
+                <!--
+                <div class="layers-pager" style="border: solid 1px black">PAGER GOES HERE</div>
+                -->
             </div> <!-- end of layer list -->
         </div> <!-- end of the filters / layers list -->
 
 
     </div>
 
+</div>
+<div class="modal-footer">
     <!-- this is the list of layers to be added -->
-
-    <div class="container-fluid">
+    <div class="container-fluid text-left"><!-- text-left is required to offset the standard r-justify footer -->
         <div class="row" style="vertical-align:middle">
             <div class="col-md-7">
                     <h4>{{ getSelectedLayerCount() }} layers will be added to the map:</h4>
@@ -77,12 +103,9 @@
 
         <div class="row">
             <div class="col-xs-12">
-            This. Is. The. list. of. new. layers.
+                <div class="selected-layer" ng-repeat="(hashcode, layer) in selectedLayers"><span>{{ layer.title }}</span><i ng-click="removeLayer(layer)" class="glyphicon glyphicon-remove"></i></div>
             </div>
         </div>
     </div>
 
-</div>
-
-<div class="modal-footer">
 </div>
