@@ -45,11 +45,6 @@
             scope.pagination = {sizeDocuments: 1, pages: 1};
             scope.catalogList = [];
 
-            var server = serverService.getRegistryLayerConfig();
-            if (goog.isDefAndNotNull(server)) {
-              scope.currentServerId = 0;
-            }
-
             /** Layer definitions to be added to the map. */
             scope.selectedLayers = {};
 
@@ -138,6 +133,28 @@
               return item;
             };
 
+            /** Transform the model into a set of parameters appropriate
+             *  for searching against the local Geonode API.
+             */
+            scope.getGeonodeSearchParams = function() {
+              return {
+                text: scope.keyword,
+                category: getChecked(scope.categories, 'identifier'),
+                owner: getChecked(scope.owners, 'username')
+              };
+              /*
+              // check for a keyword search
+              if (scope.keyword !== '') {
+                params['title__icontains'] = scope.keyword;
+              }
+              // get the list of selected catagories, and owners
+              params['category__identifier__in'] = getChecked(scope.categories, 'identifier');
+              params['owner__username__in'] = getChecked(scope.owners, 'username');
+
+              return params;
+              */
+            };
+
             /** The unified search assumes maploom is being run within
              *  geonode.  It will first try search GeoNode before trying to
              *  Search the a WMS source.
@@ -185,7 +202,7 @@
             scope.getRegistrySearchParams = function() {
               var params = {};
               if (scope.keyword !== '') {
-                params['q_text'] = scope.keyword;
+                params['text'] = scope.keyword;
               }
               return params;
             };
@@ -262,10 +279,14 @@
               });
             };
 
+            var registryServerConf = {};
+            var geonodeServerConf = {};
+
             /** Iterate through all the available searches.
              */
             scope.search = function() {
-              scope.geonodeSearch();
+              console.log('Servers', serverService.getServers());
+              // scope.geonodeSearch();
               // refresh the list of catalogs, then search them
               /*
               scope.getCatalogs().then(function() {
@@ -280,7 +301,42 @@
               // search all catalogs
               // "/registry/api" end point should search all of the
               //  the catalogs at once.
-              scope.searchRegistryCatalog('Registry', scope.registryPrefix + '/api');
+              // scope.searchRegistryCatalog('Registry', scope.registryPrefix + '/api');
+              var filter_options = scope.getGeonodeSearchParams();
+              serverService.addSearchResultsForRegistry(registryServerConf, filter_options);
+              serverService.addSearchResultsForGeonode(geonodeServerConf, filter_options);
+            };
+
+            /** Sort a list of layer configurations based on the current
+             *  sort function.
+             *  TODO: Add more sort functions (date, title, ascent )
+             *
+             *  @param {Array} results array of layer configs.
+             *
+             */
+            scope.applySort = function(results) {
+              var sort_fn = function(a, b) {
+                return (a.title < b.title) ? -1 : 1;
+              };
+
+              return results.sort(sort_fn);
+            };
+
+
+            /** Aggregate the reuslts from the GeoServer and Registry searches
+             *  and return the list of matching layers appropriately sorted.
+             */
+            scope.getResults = function() {
+              //var sort = '';
+              var all_results = [];
+              if (registryServerConf.layersConfig) {
+                all_results = all_results.concat(registryServerConf.layersConfig);
+              }
+              if (geonodeServerConf.layersConfig) {
+                all_results = all_results.concat(geonodeServerConf.layersConfig);
+              }
+
+              return scope.applySort(all_results);
             };
 
             /** Remove a layer from the selected list.
