@@ -38,7 +38,6 @@
             scope.mapStyle = {width: '100%', height: mapHeight};
             */
             scope.layerConfig = {Title: 'Title'};
-            scope.selectedLayer = {};
 
             scope.pagination = {sizeDocuments: 1, pages: 1};
 
@@ -242,6 +241,9 @@
                 }
                 LayersService.addLayer(layer, server.id, server);
               }
+
+              // XXX: This is a dirty ugly hack.
+              $('#unified-layer-dialog').modal('hide');
             };
 
             /** Load the filter lists on startup */
