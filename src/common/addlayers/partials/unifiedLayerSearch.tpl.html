@@ -70,8 +70,8 @@
                     <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" 
                       ng-repeat="layer in layersConfig = getResults()" ng-click="toggleLayer(layer)">
                         <div class="layer-description">
-                            <label>{{ layer.title }}</label><br>
-                            {{ layer.abstract }}
+                            <label>{{ layer.Title }}</label><br>
+                            {{ layer.Abstract }}
                         </div>
                         <div class="layer-info">
                             <div class="layer-date">{{ layer.layerDate | date:'dd/MM/yyyy'}}</div>
@@ -98,13 +98,13 @@
             </div>
             <div class="col-md-5 text-right">
                 <button class="btn btn-link">Clear</button>
-                <button class="btn btn-primary">Add Layers</button>
+                <button class="btn btn-primary" ng-click="addLayers()">Add Layers</button>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-12">
-                <div class="selected-layer" ng-repeat="(hashcode, layer) in selectedLayers"><span>{{ layer.title }}</span><i ng-click="removeLayer(layer)" class="glyphicon glyphicon-remove"></i></div>
+                <div class="selected-layer" ng-repeat="(hashcode, layer) in selectedLayers"><span>{{ layer.Title }}</span><i ng-click="removeLayer(layer)" class="glyphicon glyphicon-remove"></i></div>
             </div>
         </div>
     </div>

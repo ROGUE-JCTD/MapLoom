@@ -143,7 +143,6 @@
               };
             };
 
-            var registryServerConf = {};
             /** Get the local geoserver configuration */
             var servers = {
               'registry' : null,
@@ -154,17 +153,18 @@
              */
             scope.search = function() {
               console.log('server', serverService.getServers());
+              console.log('registry url', configService.configuration.registryUrl);
               // init the server configs before searching them.
               if (servers['geoserver'] == null) {
                 // get the local GeoServer configuration.
                 servers['geoserver'] = serverService.getServerByName('Local Geoserver');
               }
               if (servers['registry'] == null) {
+                servers['registry'] = serverService.getRegistryLayerConfig();
+                console.log('REgistry', servers['registry']);
               }
               var filter_options = scope.getSearchParams();
-              serverService.addSearchResultsForRegistry(registryServerConf, filter_options);
-
-              console.log('My Servers', servers);
+              serverService.addSearchResultsForRegistry(servers['registry'], filter_options);
 
               // GeoNode searches apply to the local geoserver instance.
               serverService.addSearchResultsForGeonode(servers['geoserver'], filter_options);
@@ -192,8 +192,8 @@
             scope.getResults = function() {
               //var sort = '';
               var all_results = [];
-              if (registryServerConf.layersConfig) {
-                all_results = all_results.concat(registryServerConf.layersConfig);
+              if (servers.registry && servers.registry.layersConfig) {
+                all_results = all_results.concat(servers.registry.layersConfig);
               }
               if (servers.geoserver && servers.geoserver.layersConfig) {
                 all_results = all_results.concat(servers.geoserver.layersConfig);
@@ -256,11 +256,27 @@
                 LayersService.addLayer(config, scope.currentServerId);
               });
               */
+              /*
               for (var uuid in scope.selectedLayers) {
                 var layer = scope.selectedLayers[uuid];
                 console.log('selected layer', uuid, layer.serverId);
                 LayersService.addLayer(layer, layer.serverId);
                 console.log('added');
+              }
+              */
+              for (var serverName in servers) {
+                var server = servers[serverName];
+                if (server.layersConfig) {
+                  for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
+                    var layer = server.layersConfig[i];
+                    if (layer._checked === true) {
+                      if (serverName == 'registry') {
+                        layer['registry'] = true;
+                      }
+                      LayersService.addLayer(layer, server.id, server);
+                    }
+                  }
+                }
               }
             };
 
@@ -283,4 +299,3 @@
       }
   );
 })();
-
