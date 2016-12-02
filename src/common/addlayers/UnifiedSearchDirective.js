@@ -145,29 +145,33 @@
 
             /** Get the local geoserver configuration */
             var servers = {
-              'registry' : null,
-              'geoserver' : null
+              registry: null,
+              geoserver: null
             };
 
             /** Iterate through all the available searches.
              */
             scope.search = function() {
-              console.log('server', serverService.getServers());
-              console.log('registry url', configService.configuration.registryUrl);
-              // init the server configs before searching them.
-              if (servers['geoserver'] == null) {
-                // get the local GeoServer configuration.
-                servers['geoserver'] = serverService.getServerByName('Local Geoserver');
-              }
-              if (servers['registry'] == null) {
-                servers['registry'] = serverService.getRegistryLayerConfig();
-                console.log('REgistry', servers['registry']);
-              }
               var filter_options = scope.getSearchParams();
-              serverService.addSearchResultsForRegistry(servers['registry'], filter_options);
 
+              // init the server configs before searching them.
+              if (servers.geoserver == null) {
+                // get the local GeoServer configuration.
+                servers.geoserver = serverService.getServerByName('Local Geoserver');
+              }
               // GeoNode searches apply to the local geoserver instance.
-              serverService.addSearchResultsForGeonode(servers['geoserver'], filter_options);
+              serverService.addSearchResultsForGeonode(servers.geoserver, filter_options);
+
+              // check to see if registry is enabled
+              if (configService.configuration.registryEnabled) {
+                // ensure the service is enabled.
+                if (servers.registry == null) {
+                  // configure registry
+                  servers.registry = serverService.getRegistryLayerConfig();
+                }
+                serverService.addSearchResultsForRegistry(servers.registry, filter_options);
+              }
+
             };
 
             /** Sort a list of layer configurations based on the current
