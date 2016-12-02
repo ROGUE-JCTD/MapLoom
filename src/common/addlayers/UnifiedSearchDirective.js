@@ -176,14 +176,33 @@
               return item;
             };
 
+
+            /** Get an object that represents a date filter.
+             *
+             *  This may return either an empty object.
+             *  An object with either minYear, maxYear, or both.
+             */
+            function getDateFilter() {
+              var date_filter = {};
+              if (goog.isDefAndNotNull(scope.sliderValues)) {
+                if (scope.slider.minValue !== 0) {
+                  date_filter.minYear = sliderValues[scope.slider.minValue] + '-01-01';
+                }
+                if (scope.slider.maxValue !== scope.sliderValues.length - 1) {
+                  date_filter.maxYear = sliderValues[scope.slider.maxValue] + '-01-01T00:00:00';
+                }
+              }
+              return date_filter;
+            }
+
             /** Create a search object from objects in the model.
              */
             scope.getSearchParams = function() {
-              return {
+              return Object.assign(getDateFilter(), {
                 text: scope.keyword,
                 category: getChecked(scope.categories, 'identifier'),
                 owner: getChecked(scope.owners, 'username')
-              };
+              });
             };
 
             /** Get the local geoserver configuration */
@@ -196,6 +215,7 @@
              */
             scope.search = function() {
               var filter_options = scope.getSearchParams();
+              console.log('filter_options', filter_options);
 
               // init the server configs before searching them.
               if (servers.geoserver == null) {
