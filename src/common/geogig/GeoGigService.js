@@ -285,7 +285,7 @@
           typeName: split[1]
         };
       }
-      return null;
+      return '';
     };
 
     this.getFeatureType = function(layer) {
