@@ -239,8 +239,8 @@
                 var server = servers[layer._server];
                 if (layer._server == 'registry') {
                   layer.registry = true;
-                  LayersService.addLayer(layer, server.id, server);
                 }
+                LayersService.addLayer(layer, server.id, server);
               }
             };
 
