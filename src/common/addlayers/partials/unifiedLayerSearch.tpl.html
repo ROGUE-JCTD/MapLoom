@@ -32,6 +32,14 @@
                         <h4>DATE CREATED</h4>
                         <div class="date-container">
                           <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
+                          <div class="row">
+                            <div class="col-xs-6" ng-bind="sliderValues[slider.minValue]"></div>
+                            <div class="col-xs-6 text-right" ng-bind="sliderValues[slider.maxValue]"></div>
+                          </div>
+                          <!--
+                          <div class="year-range">{{ sliderMinValue }}</div>
+                          <div class="year-range text-right">{{ sliderMaxValue }}</div>
+                          -->
                         </div>
                     </div>
                 </div>
