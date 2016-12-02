@@ -839,6 +839,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (filterOptions.text !== null) {
         params['title__icontains'] = filterOptions.text;
       }
+      if (filterOptions.minYear && filterOptions.maxYear) {
+        params['date__range'] = filterOptions.minYear + ',' + filterOptions.maxYear;
+      } else if (filterOptions.minYear) {
+        params['date__gte'] = filterOptions.minYear;
+      } else if (filterOptions.maxYear) {
+        params['date__lte'] = filterOptions.maxYear;
+      }
       return params;
     };
 
