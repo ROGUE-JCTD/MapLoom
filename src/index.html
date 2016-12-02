@@ -42,6 +42,13 @@
     var nominatimSearchEnabled = function(){
       return "{{ NOMINATIM_SEARCH }}".toLowerCase() === "true" || true ? true : false;
     };
+    var trimUrl = function(url){
+        if (url[url.length - 1] == '/') {
+            return url.substring(0, url.length - 1);
+        }
+        return url;
+    };
+
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
         username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
@@ -68,16 +75,17 @@
         {% endif %}
         region: "north"
         }],
-        localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
-        localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
-        registryEnabled: "{{ REGISTRY }}",
+        localGeoServerBaseUrl: trimUrl("{{ GEOSERVER_BASE_URL }}"),
+        localCSWBaseUrl: trimUrl("{{ CATALOGUE_BASE_URL }}"),
         catalogList: "{{ CATALOGLIST }}",
         nominatimSearchEnabled: "{{ NOMINATIM_SEARCH }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
+        registryUrl: trimUrl("{{ REGISTRYURL }}"),
         nominatimSearchEnabled: nominatimSearchEnabled()
     };
+    console.log('CONFIG', config);
     goog.object.extend( config, {{ config|safe }});
 </script>
 <% } %>
@@ -150,6 +158,7 @@
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#unified-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+
               <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
             <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
