@@ -40,16 +40,10 @@
             scope.layerConfig = {Title: 'Title'};
             scope.selectedLayer = {};
 
-            scope.cart = [];
-            cartLayerId = [];
             scope.pagination = {sizeDocuments: 1, pages: 1};
-            scope.catalogList = [];
 
             /** Layer definitions to be added to the map. */
             scope.selectedLayers = {};
-
-            /** Layers returned from the current search parameters */
-            scope.layers = [];
 
             /** Get the list of categories for the filter list.
              */
@@ -100,19 +94,6 @@
                 }
               }
               return selected;
-            }
-
-            /** When an origin updates, the previous results from that
-             *  origin needs to be removed from the results list.
-             */
-            function removeLayersFromOrigin(origin) {
-              var new_layers = [];
-              for (var i = 0, ii = scope.layers.length; i < ii; i++) {
-                if (scope.layers[i]._origin != origin) {
-                  new_layers.push(scope.layers[i]);
-                }
-              }
-              scope.layers = new_layers;
             }
 
             /** Stack of searches, used just for UI display to
@@ -196,13 +177,15 @@
             scope.getResults = function() {
               //var sort = '';
               var all_results = [];
-              if (servers.registry && servers.registry.layersConfig) {
-                all_results = all_results.concat(servers.registry.layersConfig);
+              for (var server_name in servers) {
+                var server = servers[server_name];
+                if (server && server.layersConfig) {
+                  for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
+                    server.layersConfig[i]._server = server_name;
+                  }
+                  all_results = all_results.concat(server.layersConfig);
+                }
               }
-              if (servers.geoserver && servers.geoserver.layersConfig) {
-                all_results = all_results.concat(servers.geoserver.layersConfig);
-              }
-
               return scope.applySort(all_results);
             };
 
@@ -214,17 +197,13 @@
 
             /** Select a layer from the list */
             scope.toggleLayer = function(layer) {
-              if (layer._checked === true) {
-                layer._checked = false;
+              if (scope.isLayerSelected(layer)) {
                 scope.removeLayer(layer);
               } else {
-                // set the layer as "checked" using the
-                //   "internal" _checked
                 // copy the definition
                 var lyr = Object.assign({}, layer);
                 // add to selected layer.
                 scope.selectedLayers[layer.uuid] = lyr;
-                layer._checked = true;
               }
             };
 
@@ -255,31 +234,12 @@
             /** Add the selected layers to the map
              */
             scope.addLayers = function() {
-              /*
-              layersConfig.forEach(function(config) {
-                LayersService.addLayer(config, scope.currentServerId);
-              });
-              */
-              /*
               for (var uuid in scope.selectedLayers) {
                 var layer = scope.selectedLayers[uuid];
-                console.log('selected layer', uuid, layer.serverId);
-                LayersService.addLayer(layer, layer.serverId);
-                console.log('added');
-              }
-              */
-              for (var serverName in servers) {
-                var server = servers[serverName];
-                if (server.layersConfig) {
-                  for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
-                    var layer = server.layersConfig[i];
-                    if (layer._checked === true) {
-                      if (serverName == 'registry') {
-                        layer['registry'] = true;
-                      }
-                      LayersService.addLayer(layer, server.id, server);
-                    }
-                  }
+                var server = servers[layer._server];
+                if (layer._server == 'registry') {
+                  layer.registry = true;
+                  LayersService.addLayer(layer, server.id, server);
                 }
               }
             };
