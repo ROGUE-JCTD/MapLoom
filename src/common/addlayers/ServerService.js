@@ -677,6 +677,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     var createSearchLayerObjects = function(layerObjects, serverUrl) {
       var finalConfigs = [];
       //TODO: Update with handling multiple projections per layer if needed.
+      console.log('Layer Objects', layerObjects);
       for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
         var layerInfo = layerObjects[iLayer];
         var configTemplate = createSearchLayerObject(layerInfo, serverUrl);
@@ -722,12 +723,18 @@ var SERVER_SERVICE_USE_PROXY = true;
       return '/geoserver/wms';
     };
 
-    var addSearchResults = function(searchUrl, server, layerConfigCallback) {
+    var addSearchResults = function(searchUrl, searchParams, server, layerConfigCallback) {
       var layers_loaded = false;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      http_.get(searchUrl, config).then(function(xhr) {
+      config = Object.assign(config, {
+        url: searchUrl,
+        method: 'GET',
+        params: searchParams
+      });
+      //http_.get(searchUrl, config)
+      http_(config).then(function(xhr) {
         if (xhr.status === 200) {
           server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
           rootScope_.$broadcast('layers-loaded', server.id);
@@ -761,33 +768,35 @@ var SERVER_SERVICE_USE_PROXY = true;
       return createSearchLayerObjects(formattedResponse, serverUrl);
     };
 
-    this.applyESFilter = function(url, filter_options) {
-      if (filter_options.text !== null) {
-        url = url + '&q.text=' + filter_options.text;
+    this.applyESFilter = function(filter_options) {
+      var params = {};
+      if (goog.isDefAndNotNull(filter_options.text)) {
+        params['q.text'] = filter_options.text;
       }
-      if (filter_options.owner !== null) {
-        url = url + '&owner__username__in=' + configService_.username;
+      if (goog.isDefAndNotNull(filter_options.owner)) {
+        params['owner__username__in'] = filter_options.owner;
       }
       if (goog.isDefAndNotNull(filter_options.minYear) && goog.isDefAndNotNull(filter_options.maxYear)) {
-        url = url + '&q.time=' + encodeURIComponent('[' + filter_options.minYear + ' TO ' + filter_options.maxYear + ']');
+
+        params['q.time'] = '[' + filter_options.minYear + ' TO ' + filter_options.maxYear + ']';
       }
 
       if (goog.isDefAndNotNull(filter_options.mapPreviewCoordinatesBbox)) {
-        url = url + '&q.geo=' + encodeURIComponent(filter_options.mapPreviewCoordinatesBbox);
+        params['q.geo'] = filter_options.mapPreviewCoordinatesBbox;
       }
 
-      if (filter_options.histogramFlag === true) {
-        url = url + '&a.time.limit=1&a.time.gap=P1Y';
-      }
+      //if (filter_options.histogramFlag === true) {
+      //  url = url + '&a.time.limit=1&a.time.gap=P1Y';
+      //}
 
       //`size` & `from` should be outside of the query, either at the begining or the end
-      if (filter_options.size !== null) {
-        url += '&d.docs.limit=' + filter_options.size;
+      if (goog.isDefAndNotNull(filter_options.size)) {
+        params['d.docs.limit'] = filter_options.size;
       }
-      if (filter_options.docsPage > 0) {
-        url = url + '&d.docs.page=' + filter_options.docsPage;
+      if (goog.isDefAndNotNull(filter_options.docsPage)) {
+        params['d.docs.page'] = filter_options.docsPage;
       }
-      return url;
+      return params;
     };
 
     this.applyFavoritesFilter = function(url, filterOptions) {
@@ -800,10 +809,11 @@ var SERVER_SERVICE_USE_PROXY = true;
     this.populateLayersConfigElastic = function(server, filterOptions) {
       //var searchUrl = 'http://beta.mapstory.org/api/layers/search/?is_published=true&limit=100';
       var searchUrl = '/api/layers/search/?is_published=true&limit=100';
+      var searchParams = {};
       if (filterOptions !== null) {
-        searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+        searchParams = service_.applyESFilter(filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerConfigs);
+      return addSearchResults(searchUrl, searchParams, server, service_.reformatLayerConfigs);
     };
 
     this.populateLayersConfigInelastic = function(server, force, deferredResponse) {
@@ -863,19 +873,29 @@ var SERVER_SERVICE_USE_PROXY = true;
         return;
       }
       var searchUrl = configService_.configuration.serverLocation + catalog.search_url + '?';
-
+      var searchParams = {};
       if (filterOptions !== null) {
-        searchUrl = service_.applyESFilter(searchUrl, filterOptions);
+        searchParams = service_.applyESFilter(filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatLayerHyperConfigs);
+      return addSearchResults(searchUrl, searchParams, server, service_.reformatLayerHyperConfigs);
+    };
+
+    this.addSearchResultsForRegistry = function(server, filterOptions) {
+      var searchUrl = configService_.configuration.registryUrl + 'api?';
+      var searchParams = {};
+      if (filterOptions !== null) {
+        searchParams = service_.applyESFilter(filterOptions);
+      }
+      return addSearchResults(searchUrl, searchParams, server, service_.reformatLayerHyperConfigs);
     };
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
+      var searchParams = {};
       if (filterOptions !== null) {
-        searchUrl = this.applyFavoritesFilter(searchUrl, filterOptions);
+        searchParams = this.applyFavoritesFilter(searchUrl, filterOptions);
       }
-      return addSearchResults(searchUrl, server, service_.reformatConfigForFavorites);
+      return addSearchResults(searchUrl, searchParams, server, service_.reformatConfigForFavorites);
     };
 
     this.populateLayersConfig = function(server, force) {
