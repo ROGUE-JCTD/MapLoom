@@ -133,178 +133,41 @@
               return item;
             };
 
-            /** Transform the model into a set of parameters appropriate
-             *  for searching against the local Geonode API.
+            /** Create a search object from objects in the model.
              */
-            scope.getGeonodeSearchParams = function() {
+            scope.getSearchParams = function() {
               return {
                 text: scope.keyword,
                 category: getChecked(scope.categories, 'identifier'),
                 owner: getChecked(scope.owners, 'username')
               };
-              /*
-              // check for a keyword search
-              if (scope.keyword !== '') {
-                params['title__icontains'] = scope.keyword;
-              }
-              // get the list of selected catagories, and owners
-              params['category__identifier__in'] = getChecked(scope.categories, 'identifier');
-              params['owner__username__in'] = getChecked(scope.owners, 'username');
-
-              return params;
-              */
-            };
-
-            /** The unified search assumes maploom is being run within
-             *  geonode.  It will first try search GeoNode before trying to
-             *  Search the a WMS source.
-             *
-             *  WARNING! This is just a a starting point! This should get
-             *  more modernized with a proper Angular service provider.
-             */
-            scope.geonodeSearch = function() {
-              var search_params = {};
-              // check for a key word parameter
-              if (scope.keyword !== '') {
-                search_params['title__icontains'] = scope.keyword;
-              }
-              // get the list of selected catagories, and owners
-              search_params['category__identifier__in'] = getChecked(scope.categories, 'identifier');
-              search_params['owner__username__in'] = getChecked(scope.owners, 'username');
-
-              var search_item = scope.startSearch('Local search...');
-
-              // TODO: This should pull from a service or a model of some sort,
-              //       instead of doing a direct HTTP request.
-              $http({
-                url: '/api/layers/',
-                method: 'GET',
-                params: search_params
-              }).then(function(results) {
-                // clear out the previous local-geonode layers.
-                removeLayersFromOrigin('Exchange');
-                // tag each layer with an origin before adding it to
-                //  the results list.
-                for (var i = 0, ii = results.data.objects.length; i < ii; i++) {
-                  var lyr = Object.assign({_origin: 'Exchange'}, results.data.objects[i]);
-                  lyr.date = new Date(lyr.date);
-                  scope.layers.push(lyr);
-                }
-                search_item.state = 'finished';
-              }, function() {
-                search_item.state = 'error';
-              });
-            };
-
-            /** Create an object with the appropriate search parameters
-             *  for a search against a registry catalog.
-             */
-            scope.getRegistrySearchParams = function() {
-              var params = {};
-              if (scope.keyword !== '') {
-                params['text'] = scope.keyword;
-              }
-              return params;
-            };
-
-            /** Transform a result from registry into the same format
-             *  as the internal/GeoNode layer search results.
-             */
-            function transformRegistryLayer(regLayer) {
-              return {
-                '_origin' : 'Registry',
-                'title': regLayer['title'],
-                'abstract': regLayer['abstract'],
-                'date': new Date(regLayer['layer_date']),
-                'uuid': regLayer['layer_identifier']
-              };
-            }
-
-            /** Search a catalog in a registry.
-             */
-            scope.searchRegistryCatalog = function(catalogName, catalogUri) {
-              // create a new "search_item"
-              var search_item = scope.startSearch(catalogName + ' Search...');
-
-              // clear out the old registry layers.
-              removeLayersFromOrigin('Registry');
-
-              // kick off the search
-              $http({
-                method: 'GET',
-                url: catalogUri,
-                params: scope.getRegistrySearchParams()
-              }).then(function(results) {
-                if (results.data && results.data['a.matchDocs'] > 0) {
-                  var docs = results.data['d.docs'];
-                  for (var i = 0, ii = docs.length; i < ii; i++) {
-                    scope.layers.push(transformRegistryLayer(docs[i]));
-                  }
-                }
-                // indicate the item has finished.
-                search_item.state = 'finished';
-              }, function(err) {
-                // indicate there was an error with the search.
-                search_item.state = 'error';
-              });
-            };
-
-            /** Prefix for the registry URL,
-             *  TODO: This should come from the ConfigService.
-             */
-            scope.registryPrefix = '/registry';
-
-            /** List of catalogs from the registry. */
-            scope.catalogs = [];
-
-            /** Get the list of catalogs from the registry.
-             */
-            scope.getCatalogs = function() {
-              // TODO: This url should be configurable!
-              return $http({
-                method: 'GET',
-                url: scope.registryPrefix + '/catalog'
-              }).then(function(response) {
-                // clear out the old catalogs list.
-                scope.catalogs = [];
-                for (var i = 0, ii = response.data.length; i < ii; i++) {
-                  // add the prefix to the registry URL
-                  var catalog = response.data[i];
-                  // As of 30 November 2016 the search_url was a lie...
-                  //catalog.search_url = scope.registryPrefix + catalog.search_url;
-                  // So it is being set manually...
-                  catalog.search_url = scope.registryPrefix + '/catalog/' + catalog.name + '/api/';
-                  scope.catalogs.push(catalog);
-                }
-              });
             };
 
             var registryServerConf = {};
-            var geonodeServerConf = {};
+            /** Get the local geoserver configuration */
+            var servers = {
+              'registry' : null,
+              'geoserver' : null
+            };
 
             /** Iterate through all the available searches.
              */
             scope.search = function() {
-              console.log('Servers', serverService.getServers());
-              // scope.geonodeSearch();
-              // refresh the list of catalogs, then search them
-              /*
-              scope.getCatalogs().then(function() {
-                // for each catalog, execute a search.
-                for (var i = 0, ii = scope.catalogs.length; i < ii; i++) {
-                  var catalog = scope.catalogs[i];
-                  scope.searchRegistryCatalog(catalog.slug, catalog.search_url);
-                }
-              });
-              */
-
-              // search all catalogs
-              // "/registry/api" end point should search all of the
-              //  the catalogs at once.
-              // scope.searchRegistryCatalog('Registry', scope.registryPrefix + '/api');
-              var filter_options = scope.getGeonodeSearchParams();
+              console.log('server', serverService.getServers());
+              // init the server configs before searching them.
+              if (servers['geoserver'] == null) {
+                // get the local GeoServer configuration.
+                servers['geoserver'] = serverService.getServerByName('Local Geoserver');
+              }
+              if (servers['registry'] == null) {
+              }
+              var filter_options = scope.getSearchParams();
               serverService.addSearchResultsForRegistry(registryServerConf, filter_options);
-              serverService.addSearchResultsForGeonode(geonodeServerConf, filter_options);
+
+              console.log('My Servers', servers);
+
+              // GeoNode searches apply to the local geoserver instance.
+              serverService.addSearchResultsForGeonode(servers['geoserver'], filter_options);
             };
 
             /** Sort a list of layer configurations based on the current
@@ -332,8 +195,8 @@
               if (registryServerConf.layersConfig) {
                 all_results = all_results.concat(registryServerConf.layersConfig);
               }
-              if (geonodeServerConf.layersConfig) {
-                all_results = all_results.concat(geonodeServerConf.layersConfig);
+              if (servers.geoserver && servers.geoserver.layersConfig) {
+                all_results = all_results.concat(servers.geoserver.layersConfig);
               }
 
               return scope.applySort(all_results);
@@ -378,10 +241,26 @@
               return goog.isDefAndNotNull(scope.selectedLayers[layer.uuid]);
             };
 
-            /** Serach when enter is pressed */
+            /** Search when enter is pressed */
             scope.searchOnEnter = function(event) {
               if (event.keyCode == 13) {
                 scope.search();
+              }
+            };
+
+            /** Add the selected layers to the map
+             */
+            scope.addLayers = function() {
+              /*
+              layersConfig.forEach(function(config) {
+                LayersService.addLayer(config, scope.currentServerId);
+              });
+              */
+              for (var uuid in scope.selectedLayers) {
+                var layer = scope.selectedLayers[uuid];
+                console.log('selected layer', uuid, layer.serverId);
+                LayersService.addLayer(layer, layer.serverId);
+                console.log('added');
               }
             };
 
