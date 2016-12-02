@@ -565,7 +565,7 @@
 
       var fullConfig = null;
       if (goog.isDefAndNotNull(server)) {
-        fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
+        fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.uuid);
       }
 
       if (goog.isDefAndNotNull(minimalConfig.registryConfig)) {

@@ -171,7 +171,6 @@ var SERVER_SERVICE_USE_PROXY = true;
           }
         });
       }
-
       for (var index = 0; index < servers.length; index += 1) {
         if (servers[index].name.toLocaleLowerCase() === name.toLowerCase()) {
           server = servers[index];
@@ -526,13 +525,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
-    this.getFullLayerConfig = function(serverId, layerName) {
+    this.getFullLayerConfig = function(serverId, layerId) {
       //Issue WMS request to get full layer config for mapService
       var result = q_.defer();
       var layerConfig = null;
       var server = service_.getRegistryLayerConfig();
       if (server.id != serverId) {
-        result.resolve(service_.getLayerConfig(serverId, layerName));
+        result.resolve(service_.getLayerConfig(serverId, layerId));
         return result.promise;
       }
       var parser = new ol.format.WMSCapabilities();
@@ -562,13 +561,14 @@ var SERVER_SERVICE_USE_PROXY = true;
       return result.promise;
     };
 
-    this.getLayerConfig = function(serverId, layerName) {
+    this.getLayerConfig = function(serverId, layerId) {
       var layersConfig = service_.getLayersConfig(serverId);
       var layerConfig = null;
 
       for (var index = 0; index < layersConfig.length; index += 1) {
-        if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
-            layersConfig[index].Name === layerName.split(':')[1])) {
+        //if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
+        //    layersConfig[index].Name === layerName.split(':')[1])) {
+        if (layersConfig[index].uuid == layerId) {
           layerConfig = layersConfig[index];
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
             for (var code in layerConfig.CRS) {
@@ -634,7 +634,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return [layerInfo.min_x, layerInfo.min_y, layerInfo.max_x, layerInfo.max_y];
     };
 
-    var createHyperSearchLayerObject = function(layerInfo) {
+    var createHyperSearchLayerObject = function(layerInfo, serverId) {
       /* Temporaly script to delete ":" extra info in layerInfo.tile_url
       * before : http://localhost/registry/hypermap/layer/44/map/wmts/osm:placenames_capital/default_grid/1/1/0.png
       * after: http://localhost/registry/hypermap/layer/44/map/wmts/placenames_capital/default_grid/1/1/0.png
@@ -649,10 +649,17 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
       }
 
+      // prepend the registry url to the beginning of the
+      //   tile url
+      if (layerInfo.tile_url && configService_.configuration.registryUrl) {
+        layerInfo.tile_url = configService_.configuration.registryUrl + layerInfo.tile_url;
+      }
+
       return {
         add: true,
-        abstract: layerInfo.abstract,
+        Abstract: layerInfo.abstract,
         name: layerInfo.name,
+        Title: layerInfo.title,
         title: layerInfo.title,
         layerDate: layerInfo.layer_date,
         layerCategory: Array.isArray(layerInfo.layer_category) ? layerInfo.layer_category.join(', ') : null,
@@ -670,18 +677,28 @@ var SERVER_SERVICE_USE_PROXY = true;
         phone: layerInfo['ContactInformation/Phone'],
         classification: layerInfo['classificationRecord/classification'],
         license: layerInfo['license/copyright'],
-        registry: layerInfo.registry
+        registry: layerInfo.registry,
+        serverId: serverId
       };
     };
 
-    var createGeonodeSearchLayerObjects = function(layerInfo) {
+    var createGeonodeSearchLayerObjects = function(layerInfo, serverId) {
       var configs = [];
+      var serverUrl = '';
       for (var i = 0, ii = layerInfo.length; i < ii; i++) {
         var layer = layerInfo[i];
-        configs.push(Object.assign({add: true}, layer, {
-          layerDate: layer.date,
-          layerCategory: layer['category__gn_descrption']
-        }));
+        configs.push({
+          add: true,
+          serverId: serverId,
+          Abstract: layer.abstract,
+          extent: layer.extent,
+          Name: layer.typename,
+          Title: layer.title,
+          CRS: [layer.srid],
+          thumbnail_url: thumbnail(layer.thumbnail_url, layerName(layer.detail_url), serverUrl),
+          author: author(layer),
+          detail_url: layer.detail_url
+        });
       }
       return configs;
     };
@@ -724,6 +741,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       return config;
     };
 
+    /*
     var serverGeoserversearchUrl = function(searchUrl) {
       pathArray = searchUrl.split('/');
       protocol = pathArray[0];
@@ -733,6 +751,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
       return '/geoserver/wms';
     };
+    */
 
     var addSearchResults = function(searchUrl, searchParams, server, layerConfigCallback) {
       var layers_loaded = false;
@@ -747,7 +766,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       //http_.get(searchUrl, config)
       http_(config).then(function(xhr) {
         if (xhr.status === 200) {
-          server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
+          //server.layersConfig = layerConfigCallback(xhr.data, serverGeoserversearchUrl(searchUrl));
+          server.layersConfig = layerConfigCallback(xhr.data, server.id); //serverGeoserversearchUrl(searchUrl));
           rootScope_.$broadcast('layers-loaded', server.id);
           layers_loaded = true;
           server.populatingLayersConfig = false;
@@ -779,8 +799,8 @@ var SERVER_SERVICE_USE_PROXY = true;
       return createSearchLayerObjects(formattedResponse, serverUrl);
     };
 
-    this.reformatConfigForGeonode = function(response, serverUrl) {
-      return createGeonodeSearchLayerObjects(response.objects, serverUrl);
+    this.reformatConfigForGeonode = function(response, serverId) {
+      return createGeonodeSearchLayerObjects(response.objects, serverId);
     };
 
     this.applyESFilter = function(filter_options) {
@@ -897,7 +917,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForRegistry = function(server, filterOptions) {
-      var searchUrl = configService_.configuration.registryUrl + 'api?';
+      var searchUrl = configService_.configuration.registryUrl + '/api?';
       var searchParams = {};
       if (filterOptions !== null) {
         searchParams = service_.applyESFilter(filterOptions);
