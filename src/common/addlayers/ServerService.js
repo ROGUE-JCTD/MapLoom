@@ -656,7 +656,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         title: layerInfo.title,
         layerDate: layerInfo.layer_date,
         layerCategory: Array.isArray(layerInfo.layer_category) ? layerInfo.layer_category.join(', ') : null,
-        layerId: layerInfo.id,
+        uuid: layerInfo.layer_identifier,
         CRS: ['EPSG:4326'],
         tile_url: layerInfo.tile_url,
         detail_url: layerInfo.tile_url ? configService_.configuration.serverLocation + layerInfo.tile_url : null,
@@ -674,10 +674,21 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
     };
 
+    var createGeonodeSearchLayerObjects = function(layerInfo) {
+      var configs = [];
+      for (var i = 0, ii = layerInfo.length; i < ii; i++) {
+        var layer = layerInfo[i];
+        configs.push(Object.assign({add: true}, layer, {
+          layerDate: layer.date,
+          layerCategory: layer['category__gn_descrption']
+        }));
+      }
+      return configs;
+    };
+
     var createSearchLayerObjects = function(layerObjects, serverUrl) {
       var finalConfigs = [];
       //TODO: Update with handling multiple projections per layer if needed.
-      console.log('Layer Objects', layerObjects);
       for (var iLayer = 0; iLayer < layerObjects.length; iLayer += 1) {
         var layerInfo = layerObjects[iLayer];
         var configTemplate = createSearchLayerObject(layerInfo, serverUrl);
@@ -768,6 +779,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       return createSearchLayerObjects(formattedResponse, serverUrl);
     };
 
+    this.reformatConfigForGeonode = function(response, serverUrl) {
+      return createGeonodeSearchLayerObjects(response.objects, serverUrl);
+    };
+
     this.applyESFilter = function(filter_options) {
       var params = {};
       if (goog.isDefAndNotNull(filter_options.text)) {
@@ -799,11 +814,12 @@ var SERVER_SERVICE_USE_PROXY = true;
       return params;
     };
 
-    this.applyFavoritesFilter = function(url, filterOptions) {
+    this.applyFavoritesFilter = function(filterOptions) {
+      var params = {};
       if (filterOptions.text !== null) {
-        url += '&title__contains=' + filterOptions.text;
+        params['title__icontains'] = filterOptions.text;
       }
-      return url;
+      return params;
     };
 
     this.populateLayersConfigElastic = function(server, filterOptions) {
@@ -896,6 +912,15 @@ var SERVER_SERVICE_USE_PROXY = true;
         searchParams = this.applyFavoritesFilter(searchUrl, filterOptions);
       }
       return addSearchResults(searchUrl, searchParams, server, service_.reformatConfigForFavorites);
+    };
+
+    this.addSearchResultsForGeonode = function(server, filterOptions) {
+      var searchUrl = '/api/layers/';
+      var searchParams = {};
+      if (filterOptions !== null) {
+        searchParams = this.applyFavoritesFilter(filterOptions);
+      }
+      return addSearchResults(searchUrl, searchParams, server, service_.reformatConfigForGeonode);
     };
 
     this.populateLayersConfig = function(server, force) {

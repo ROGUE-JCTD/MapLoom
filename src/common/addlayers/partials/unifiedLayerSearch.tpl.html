@@ -67,13 +67,14 @@
                     <div class="search-status" ng-repeat="search in searches | filter:(search.state != 'finished')">
                         {{ search.description }} 
                     </div>
-                    <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" ng-repeat="layer in layers" ng-click="toggleLayer(layer)">
+                    <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" 
+                      ng-repeat="layer in layersConfig = getResults()" ng-click="toggleLayer(layer)">
                         <div class="layer-description">
                             <label>{{ layer.title }}</label><br>
                             {{ layer.abstract }}
                         </div>
                         <div class="layer-info">
-                            <div class="layer-date">{{ layer.date | date:'dd/MM/yyyy'}}</div>
+                            <div class="layer-date">{{ layer.layerDate | date:'dd/MM/yyyy'}}</div>
                             <div class="layer-source">{{ layer._origin }}</div>
                         </div>
                     </div>
