@@ -816,7 +816,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         params['q.time'] = '[' + filter_options.minYear + ' TO ' + filter_options.maxYear + ']';
       }
 
-      if (goog.isDefAndNotNull(filter_options.bbox)) {
+      if (goog.isDefAndNotNull(filter_options.bbox) && filter_options.bbox.length > 1) {
         var min_xy = filter_options.bbox[0];
         var max_xy = filter_options.bbox[2];
         var bbox_string = '[' + min_xy[1] + ',' + min_xy[0];
@@ -864,7 +864,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       if (goog.isDefAndNotNull(filterOptions.bbox)) {
         var min_xy = filterOptions.bbox[0];
         var max_xy = filterOptions.bbox[2];
-        params['extent'] = min_xy.concat(max_xy).join(',');
+        if (goog.isDefAndNotNull(min_xy) && goog.isDefAndNotNull(max_xy)) {
+          params['extent'] = min_xy.concat(max_xy).join(',');
+        }
       }
       return params;
     };

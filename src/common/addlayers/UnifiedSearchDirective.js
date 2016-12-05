@@ -116,22 +116,69 @@
               }
             });
 
-            scope.resetFilter = function(filterType) {
+
+            /** Uncheck all of the settings in a "_checked" type
+             *  filter list.
+             */
+            var checkNone = function(lookup) {
+              for (var i = 0, ii = lookup.length; i < ii; i++) {
+                lookup[i]._checked = false;
+              }
+            };
+
+            /** Clear a field element.
+             */
+            scope.clear = function(filterType, silent) {
               // reset the filterOptions
               switch (filterType) {
+                case 'all':
+                  var all = ['bbox', 'owner', 'category', 'keyword', 'date'];
+                  for (var i = 0, ii = all.length; i < ii; i++) {
+                    scope.clear(all[i], true);
+                  }
+                  break;
                 case 'bbox':
+                  scope.bbox = [];
+                  scope.mapPreviewChangeCount = 0;
+                  // TOD0: set map to max extent
                   break;
                 case 'owner':
+                  checkNone(scope.owners);
                   break;
                 case 'category':
+                  checkNone(scope.categories);
                   break;
                 case 'keyword':
+                  scope.keyword = '';
                   break;
                 case 'date':
+                  scope.slider.minValue = 0;
+                  scope.slider.maxValue = scope.sliderValues.length - 1;
+                  scope.$broadcast('changeSliderValues');
                   break;
               }
-              // reset the counter
-              // zoom to the full extent
+
+              // if silent has been set to true then
+              //   the search is not executed.
+              if (silent !== true) {
+                scope.search();
+              }
+            };
+
+            scope.isSet = function(filterType) {
+              switch (filterType) {
+                case 'bbox':
+                  return scope.bbox.length > 1;
+                case 'owner':
+                  return getChecked(scope.owners, 'username').length > 0;
+                case 'category':
+                  return getChecked(scope.categories, 'identifier').length > 0;
+                case 'keyword':
+                  return (scope.keyword !== '');
+                case 'date':
+                  var date_filter = getDateFilter();
+                  return (goog.isDefAndNotNull(date_filter.minYear) || goog.isDefAndNotNull(date_filter.maxYear));
+              }
             };
 
             scope.layerConfig = {Title: 'Title'};

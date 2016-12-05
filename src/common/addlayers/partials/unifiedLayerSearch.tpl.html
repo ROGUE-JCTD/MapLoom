@@ -12,13 +12,13 @@
                 </div> <!-- end of map section -->
                 <div class="row">
                     <div class="col-xs-12">
-                        <h3>Refine layer list</h3>
+                        <h3>Refine layer list <button class="btn btn-link" ng-click="clear('all')">Clear all</button></h3>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <h4>KEYWORD</h4>
+                        <h4>KEYWORD <button class="btn btn-link" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">Clear</button></h4>
                         <div class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="col-xs-6">
-                        <h4>DATE CREATED</h4>
+                        <h4>DATE CREATED <button class="btn btn-link" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">Clear</button></h4>
                         <div class="date-container">
                           <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
                           <div class="row">
@@ -45,7 +45,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-6">
-                        <h4>OWNER</h4>
+                        <h4>OWNER <button class="btn btn-link" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">Clear</button></h4>
                         <div class="filter-list">
                             <span ng-repeat="owner in owners" class="filter-item" ng-click="toggleFilter(owner)">
                                 <i ng-hide="owner._checked" class="glyphicon glyphicon-unchecked"></i>
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                     <div class="col-xs-6 category-filter">
-                        <h4>CATEGORY</h4>
+                        <h4>CATEGORY <button class="btn btn-link" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">Clear</button></h4>
                         <div class="filter-list">
                             <span ng-repeat="category in categories" class="filter-item" ng-click="toggleFilter(category)">
                                 <i ng-hide="category._checked" class="glyphicon glyphicon-unchecked"></i>
