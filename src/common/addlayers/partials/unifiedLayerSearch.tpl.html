@@ -12,24 +12,40 @@
                 </div> <!-- end of map section -->
                 <div class="row">
                     <div class="col-xs-12">
-                        <h3>Refine layer list <button class="btn btn-link" ng-click="clear('all')">Clear all</button></h3>
+                        <h3>Refine layer list <button class="btn btn-link clear-filter" ng-click="clear('all')">Clear All</button></h3>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <h4>KEYWORD <button class="btn btn-link" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">Clear</button></h4>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input ng-model="keyword" ng-keyup="searchOnEnter($event)" type="text" class="form-control">
-                                    <span ng-click="search()" class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
-                                </div>
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                KEYWORD
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">Clear</button>
                             </div>
                         </div>
+                        <div class="row"><div class="col-xs-12">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input ng-model="keyword" ng-keyup="searchOnEnter($event)" type="text" class="form-control">
+                                        <span ng-click="search()" class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div></div>
                     </div>
                     <div class="col-xs-6">
-                        <h4>DATE CREATED <button class="btn btn-link" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">Clear</button></h4>
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                DATE CREATED
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">Clear</button>
+                            </div>
+                        </div>
                         <div class="date-container">
                           <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
                           <div class="row">
@@ -45,7 +61,14 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-6">
-                        <h4>OWNER <button class="btn btn-link" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">Clear</button></h4>
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                OWNER 
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">Clear</button>
+                            </div>
+                        </div>
                         <div class="filter-list">
                             <span ng-repeat="owner in owners" class="filter-item" ng-click="toggleFilter(owner)">
                                 <i ng-hide="owner._checked" class="glyphicon glyphicon-unchecked"></i>
@@ -55,7 +78,14 @@
                         </div>
                     </div>
                     <div class="col-xs-6 category-filter">
-                        <h4>CATEGORY <button class="btn btn-link" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">Clear</button></h4>
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                CATEGORY 
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">Clear</button>
+                            </div>
+                        </div>
                         <div class="filter-list">
                             <span ng-repeat="category in categories" class="filter-item" ng-click="toggleFilter(category)">
                                 <i ng-hide="category._checked" class="glyphicon glyphicon-unchecked"></i>
