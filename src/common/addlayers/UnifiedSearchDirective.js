@@ -82,7 +82,6 @@
                 scope.sliderValues = sliderValues.slice();
                 changeSliderValues = false;
               }
-              console.log(scope.slider.minValue, scope.slider.maxValue);
               scope.sliderMinValue = scope.sliderValues[0]; //sliderValues[scope.slider.minValue];
             });
 
@@ -96,10 +95,45 @@
                 source: new ol.source.OSM()
               })
             ];
-            /*
-            var mapHeight = Math.round(480 / 2) + 'px';
-            scope.mapStyle = {width: '100%', height: mapHeight};
-            */
+
+            /** When the preview map is moved it sets an extent in
+             *  the scope to narrow the search.
+             */
+            scope.curentExtent = [];
+
+            /** Counter that filters out non-user instigated bbox changes. */
+            var mapPreviewChangeCount = 0;
+
+            /** When the map is moved, set a bbox filter */
+            scope.$on('moveendMap', function(event, coordinates) {
+              // Add 1 to avoid accidentally setting a filter
+              //  when the map is loaded.
+              mapPreviewChangeCount++;
+              if (mapPreviewChangeCount > 1) {
+                var target_crs = 'EPSG:4326';
+                scope.bbox = mapService.createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, mapService.getProjection(), target_crs)[0];
+                scope.search();
+              }
+            });
+
+            scope.resetFilter = function(filterType) {
+              // reset the filterOptions
+              switch (filterType) {
+                case 'bbox':
+                  break;
+                case 'owner':
+                  break;
+                case 'category':
+                  break;
+                case 'keyword':
+                  break;
+                case 'date':
+                  break;
+              }
+              // reset the counter
+              // zoom to the full extent
+            };
+
             scope.layerConfig = {Title: 'Title'};
 
             scope.pagination = {sizeDocuments: 1, pages: 1};
@@ -201,7 +235,8 @@
               return Object.assign(getDateFilter(), {
                 text: scope.keyword,
                 category: getChecked(scope.categories, 'identifier'),
-                owner: getChecked(scope.owners, 'username')
+                owner: getChecked(scope.owners, 'username'),
+                bbox: scope.bbox
               });
             };
 
@@ -215,7 +250,6 @@
              */
             scope.search = function() {
               var filter_options = scope.getSearchParams();
-              console.log('filter_options', filter_options);
 
               // init the server configs before searching them.
               if (servers.geoserver == null) {
