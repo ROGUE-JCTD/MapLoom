@@ -1,5 +1,6 @@
 (function() {
   angular.module('loom_addlayers', [
+    'loom_helpicon_directive',
     'loom_unifiedlayers_directive',
     'loom_registrylayers_directive',
     'loom_addlayers_directive',

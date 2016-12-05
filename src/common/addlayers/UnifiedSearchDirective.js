@@ -1,6 +1,8 @@
 (function() {
 
-  var module = angular.module('loom_unifiedlayers_directive', []);
+  var module = angular.module('loom_unifiedlayers_directive', [
+    'loom_helpicon_directive'
+  ]);
   //    'rzModule',
   //    'loom_addlayersfilter_directive'
 
