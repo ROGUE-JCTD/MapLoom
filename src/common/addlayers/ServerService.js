@@ -697,6 +697,24 @@ var SERVER_SERVICE_USE_PROXY = true;
       };
     };
 
+    /** Parse the layer's extent.
+     */
+    var layerExtent = function(layer) {
+      var wkt_format = new ol.format.WKT();
+      var extent = null;
+      // if the layer provides the extent, yay! easy.
+      if (layer.extent) {
+        extent = layer.extent;
+      // geonode publishes the extent as a wkt polygon,
+      //  this parses the polygon and gets the extent out.
+      } else if (layer.csw_wkt_geometry) {
+        // parse the representative geometry and get the extent
+        var feature = wkt_format.readFeature(layer.csw_wkt_geometry);
+        extent = feature.getGeometry().getExtent();
+      }
+      return extent;
+    };
+
     var createGeonodeSearchLayerObjects = function(layerInfo, serverId) {
       var configs = [];
       var serverUrl = '';
@@ -708,7 +726,7 @@ var SERVER_SERVICE_USE_PROXY = true;
           add: true,
           serverId: serverId,
           Abstract: layer.abstract,
-          extent: layer.extent,
+          extent: layerExtent(layer),
           Name: layerName(layer.detail_url),
           Title: layer.title,
           CRS: [layer.srid],

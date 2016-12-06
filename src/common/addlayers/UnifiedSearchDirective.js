@@ -1,9 +1,9 @@
 (function() {
 
   var module = angular.module('loom_unifiedlayers_directive', [
+    'rzModule',
     'loom_helpicon_directive'
   ]);
-  //    'rzModule',
   //    'loom_addlayersfilter_directive'
 
   module.directive('loomUnifiedlayers',
@@ -95,11 +95,35 @@
             /** Map Settings. */
             scope.previewCenter = [40, 30];
             scope.previewZoom = 1;
-            scope.previewLayers = [
-              new ol.layer.Tile({
-                source: new ol.source.OSM()
-              })
-            ];
+
+
+            /** Predefine the bbox styling function for the preview layer.
+             */
+            var bboxStyle = function() {
+              return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                  color: 'blue',
+                  width: 2
+                }),
+                fill: new ol.style.Fill({
+                  color: 'rgba(0, 0, 255, 0.05)'
+                })
+              });
+            };
+
+            scope.bboxes = new ol.source.Vector({});
+            scope.previewLayers = [];
+
+            /** Convert an extent array into an openlayers
+             *   geometry.
+             *
+             *  @param {Array} extent Array of [minx,miny,maxx,maxy].
+             *
+             * @return {ol.geom.Polygon}
+             */
+            var extentToPolygon = function(extent) {
+              return ol.geom.Polygon.fromExtent(extent).transform('EPSG:4326', 'EPSG:3857');
+            };
 
             /** When the preview map is moved it sets an extent in
              *  the scope to narrow the search.
@@ -121,6 +145,31 @@
               }
             });
 
+            /** Preview a bounding box on the map by drawing it
+             *  in a calming blue rectangle.
+             *
+             *  @param {LayerConfig} layer The layer definition from the server.
+             *
+             */
+            scope.previewBbox = function(layer) {
+              console.log('preview bbox', layer);
+              var extent = null;
+
+              if (layer.extent) {
+                extent = layer.extent;
+              }
+
+              if (extent !== null) {
+                scope.bboxes.addFeature(new ol.Feature(extentToPolygon(extent)));
+              }
+            };
+
+            /** Remove any bounding boxes on the map.
+             */
+            scope.clearBbox = function() {
+              console.log('clear features');
+              scope.bboxes.clear();
+            };
 
             /** Uncheck all of the settings in a "_checked" type
              *  filter list.
@@ -465,6 +514,18 @@
               $timeout(function() {
                 scope.$broadcast('rzSliderForceRender');
               });
+
+              // layers are set here because the map directive
+              //  does not initialize the map or listen properly
+              //  for changes to layers until it has been created,
+              //  which happens after the dialog is shown the first time.
+              scope.previewLayers = [
+                new ol.layer.Vector({
+                  layerId: 'bboxes',
+                  source: scope.bboxes,
+                  style: bboxStyle
+                })
+              ];
             });
 
           }

@@ -127,7 +127,8 @@
                         {{ search.description }} 
                     </div>
                     <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" 
-                      ng-repeat="layer in layersConfig = getResults()" ng-click="toggleLayer(layer)">
+                      ng-repeat="layer in layersConfig = getResults()" ng-click="toggleLayer(layer)"
+                      ng-mouseenter="previewBbox(layer)" ng-mouseleave="clearBbox()">
                         <div class="layer-description">
                             <label>{{ layer.Title }}</label><br>
                             {{ layer.Abstract }}
