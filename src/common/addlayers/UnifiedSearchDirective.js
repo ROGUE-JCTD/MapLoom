@@ -152,7 +152,6 @@
              *
              */
             scope.previewBbox = function(layer) {
-              console.log('preview bbox', layer);
               var extent = null;
 
               if (layer.extent) {
@@ -167,7 +166,6 @@
             /** Remove any bounding boxes on the map.
              */
             scope.clearBbox = function() {
-              console.log('clear features');
               scope.bboxes.clear();
             };
 
