@@ -556,6 +556,13 @@
               $('#unified-layer-dialog').modal('hide');
             };
 
+            /** Clear all selected layers from the selected
+             *  layers list.
+             */
+            scope.clearSelectedLayers = function() {
+              scope.selectedLayers = {};
+            };
+
             /** Load the filter lists on startup */
             function populateSearchFilters() {
               fetchCategories();
@@ -591,7 +598,7 @@
               ];
 
               // reset the selected layers list when the dialog is open.
-              scope.selectedLayers = {};
+              scope.clearSelectedLayers();
             });
 
           }
