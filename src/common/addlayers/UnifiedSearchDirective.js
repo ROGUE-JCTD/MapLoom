@@ -11,6 +11,9 @@
         return {
           templateUrl: 'addlayers/partials/unifiedLayerSearch.tpl.html',
           link: function(scope, element) {
+            /** How to sort the results */
+            scope.sortBy = ['Title', true];
+
             /** List of owners. */
             scope.owners = [];
 
@@ -328,11 +331,38 @@
              *
              */
             scope.applySort = function(results) {
+              var asc = -1, dsc = 1;
+              if (!scope.sortBy[1]) {
+                asc = 1;
+                dsc = -1;
+              }
+              // title is the default sort.
               var sort_fn = function(a, b) {
-                return (a.title < b.title) ? -1 : 1;
+                return (a.Title < b.Title) ? asc : dsc;
               };
 
+              // sorting by date is also supported.
+              if (scope.sortBy[0] == 'Date') {
+                sort_fn = function(a, b) {
+                  if (!goog.isDefAndNotNull(a.layerDate)) {
+                    return asc;
+                  } else if (!goog.isDefAndNotNull(b.layerDate)) {
+                    return dsc;
+                  }
+                  return (a.layerDate < b.layerDate) ? asc : dsc;
+                };
+              }
+
               return results.sort(sort_fn);
+            };
+
+            /** Change the sort settings.
+             *
+             *  @param {String}  field the field on which to sort.
+             *  @param {Boolean} asc   True for ascending, False for descending
+             */
+            scope.changeSort = function(field, asc) {
+              scope.sortBy = [field, asc];
             };
 
 

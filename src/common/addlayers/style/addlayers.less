@@ -439,6 +439,8 @@ rzslider .rz-pointer.rz-active:after {
     }
     .layer-description {
         width: 80%;
+        max-height: 100px;
+        overflow: hidden;
 
         label {
             cursor: pointer;
@@ -489,12 +491,6 @@ rzslider .rz-pointer.rz-active:after {
     padding-bottom: 6px;
 }
 
-.unified-search-modal {
-    .row-filter { 
-        margin-bottom: 10px;
-    }
-}
-
 .btn.clear-filter {
     color: black;
     font-size: 11px;
@@ -507,4 +503,20 @@ rzslider .rz-pointer.rz-active:after {
 .help-icon {
     padding-left: 1em;
     cursor: pointer;
+}
+
+
+.unified-search-modal {
+    .row-filter { 
+        margin-bottom: 10px;
+    }
+
+    .dropdown-menu {
+        text-align: left;
+        
+        a {
+            cursor: pointer;
+        }
+
+    }
 }

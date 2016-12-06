@@ -99,8 +99,29 @@
             </div> <!-- end of filters -->
 
             <div class="col-md-6 unified-split-view">
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="layers-count">
+                          Showing {{ getResults().length }} matching records.
+                        </div>
+                        <div class="sort-by">
+                            Sorted by {{ sortBy[0] }}, {{ sortBy[1] ? 'Ascending' : 'Descending' }}
+                        </div>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle"><i class="glyphicon glyphicon-sort-by-alphabet"></i> <span class="caret"></span> </button>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a ng-click="changeSort('Title', true)">by Title, Ascending</a></li>
+                                <li><a ng-click="changeSort('Title', false)">by Title, Descending</a></li>
+                                <li><a ng-click="changeSort('Date', true)">by Date, Ascending</a></li>
+                                <li><a ng-click="changeSort('Date', false)">by Date, Descending</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- start of layers list -->
-                <div class="layers-count">Showing {{ layers.length }} matching records.</div>
                 <div class="layers-list">
                     <div class="search-status" ng-repeat="search in searches | filter:(search.state != 'finished')">
                         {{ search.description }} 
