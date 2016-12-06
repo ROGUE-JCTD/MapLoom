@@ -248,6 +248,12 @@
               }
             };
 
+            /** Check to see if a particular filter has been set.
+             *
+             *  @param {String} filterType Name of the filter (bbox, owner, category, keyword, date)
+             *
+             * @return {Boolean} True when set, False when not set.
+             */
             scope.isSet = function(filterType) {
               switch (filterType) {
                 case 'bbox':
