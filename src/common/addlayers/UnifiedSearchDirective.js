@@ -171,6 +171,29 @@
               scope.bboxes.clear();
             };
 
+
+            /** The number of results allowed per page */
+            scope.pageSize = 8;
+
+            /** The current page being shown */
+            scope.currentPage = 0;
+
+            /** Maximum number pages, updated with results */
+            scope.maxPages = 0;
+
+            /** Array of "pages" that are valid. Handy for rendering the
+             *   pager in the template.
+             */
+            scope.pages = [];
+
+            /** Short cut for knowing the number of current results */
+            scope.resultsCount = 0;
+
+            /** Change the page */
+            scope.changePage = function(pageNumber) {
+              scope.currentPage = pageNumber;
+            };
+
             /** Uncheck all of the settings in a "_checked" type
              *  filter list.
              */
@@ -432,7 +455,23 @@
                   all_results = all_results.concat(server.layersConfig);
                 }
               }
-              return scope.applySort(all_results);
+
+              // update the current count of results.
+              scope.resultsCount = all_results.length;
+
+              // and the maximum number of pages.
+              scope.maxPages = Math.ceil(scope.resultsCount / scope.pageSize);
+
+              // setup the pages array.
+              scope.pages = [];
+              for (var page = 0; page < scope.maxPages; page++) {
+                scope.pages.push(page);
+              }
+
+              // sort and paginate the results
+              var start_record = scope.currentPage * scope.pageSize;
+              var end_record = (scope.currentPage + 1) * scope.pageSize;
+              return scope.applySort(all_results).slice(start_record, end_record);
             };
 
             /** Remove a layer from the selected list.

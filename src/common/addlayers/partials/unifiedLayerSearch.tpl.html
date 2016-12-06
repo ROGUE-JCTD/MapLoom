@@ -102,7 +102,7 @@
                 <div class="row">
                     <div class="col-xs-8">
                         <div class="layers-count">
-                          Showing {{ getResults().length }} matching records.
+                          Showing {{ (currentPage * pageSize) + 1}} - {{ (currentPage + 1) * pageSize }} of {{ resultsCount }} matching records.
                         </div>
                         <div class="sort-by">
                             Sorted by {{ sortBy[0] }}, {{ sortBy[1] ? 'Ascending' : 'Descending' }}
@@ -139,9 +139,13 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <div class="layers-pager" style="border: solid 1px black">PAGER GOES HERE</div>
-                -->
+                <div class="layers-pager">
+                    <ul class="pagination">
+                        <li><a href="#" ng-click="changePage(currentPage - 1)">Previous</a></li>
+                        <li ng-repeat="page in pages"><a href='#' ng-click="changePage(page)">{{ page + 1}}</a></li>
+                        <li><a href="#" ng-click="changePage(currentPage + 1)">Next</a></li>
+                    </ul>
+                </div>
             </div> <!-- end of layer list -->
         </div> <!-- end of the filters / layers list -->
 
