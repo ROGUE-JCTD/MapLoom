@@ -325,7 +325,6 @@
 
             /** Sort a list of layer configurations based on the current
              *  sort function.
-             *  TODO: Add more sort functions (date, title, ascent )
              *
              *  @param {Array} results array of layer configs.
              *
