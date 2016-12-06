@@ -410,6 +410,10 @@
 
             };
 
+            scope.filterAddedLayers = function(layerConfig, serverId) {
+              return LayersService.filterAddedLayers(layerConfig, serverId, layerConfig.name);
+            };
+
             /** Sort a list of layer configurations based on the current
              *  sort function.
              *
@@ -459,15 +463,20 @@
              *  and return the list of matching layers appropriately sorted.
              */
             scope.getResults = function() {
-              //var sort = '';
               var all_results = [];
               for (var server_name in servers) {
                 var server = servers[server_name];
                 if (server && server.layersConfig) {
+                  var layers = [];
                   for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
-                    server.layersConfig[i]._server = server_name;
+                    var layer = server.layersConfig[i];
+                    if (scope.filterAddedLayers(layer, server.serverId)) {
+                      layer._server = server_name;
+                      layers.push(layer);
+                    }
                   }
-                  all_results = all_results.concat(server.layersConfig);
+
+                  all_results = all_results.concat(layers);
                 }
               }
 
@@ -580,6 +589,9 @@
                   style: bboxStyle
                 })
               ];
+
+              // reset the selected layers list when the dialog is open.
+              scope.selectedLayers = {};
             });
 
           }

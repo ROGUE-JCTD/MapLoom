@@ -728,12 +728,14 @@ var SERVER_SERVICE_USE_PROXY = true;
           Abstract: layer.abstract,
           extent: layerExtent(layer),
           Name: layerName(layer.detail_url),
+          name: layerName(layer.detail_url),
           Title: layer.title,
           CRS: [layer.srid],
           thumbnail_url: thumbnail(layer.thumbnail_url, layerName(layer.detail_url), serverUrl),
           author: author(layer),
           detail_url: layer.detail_url,
-          source: server.name
+          source: server.name,
+          uuid: layer.uuid
         });
       }
       return configs;
