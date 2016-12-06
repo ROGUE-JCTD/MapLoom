@@ -1,37 +1,68 @@
-<div class="topText"><a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'application_name' | translate:'{ name: application.name }' }}</a> > <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a></div>
 <div class="bottomText">{{ storyService.active_chapter.about.title }}</div>
+<div class="topText"><a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'Index' | translate:'Index' }}</a> > <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a></div>
 
-<div class="menuItem">
-    <i class="fa fa-angle-left pull-left"></i>
-    <a href="#" ng-click="updateMenuSection('mainMenu'); updateTourStep(27)">Back to Chapters List</a>
+<div class="menuItem backbutton">
+  <a href="#" ng-click="updateMenuSection('mainMenu'); updateTourStep(27)">
+    <span class="ng-binding backbuttonarrow">
+      <div>
+        <i class="fa fa-arrow-left"></i>
+      </div>
+    </span>
+    <span class="backicon" class="ng-binding">
+      Back
+    </span>
+  </a>
 </div>
-<div class="menuItem">
+
+<div class="ng-scope menuItem layerOptions">
     <a href="#" ng-click="updateMenuSection('chapterInfo' + chapter.id); updateTourStep(4)" id="chapterInfoButton">
-        <i class="fa fa-info-circle" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'chapter_info_tooltip' | translate }}"></i>
+        <div class="badge badge-warning iconContainer">
+          <i class="fa fa-info">
+          </i>
+        </div><br>
         Chapter Info
     </a>
 </div>
-<div class="menuItem">
+
+<div class="ng-scope menuItem layerOptions">
     <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep(6)" id="storyLayersButton">
-        <i class="fa fa-clone" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayers_tooltip' | translate }}"></i>
+        <div class="badge badge-warning iconContainer">
+          <i class="fa fa-plus">
+          </i>
+        </div><br>
         StoryLayers ({{ mapService.getStoryLayers().length }})
     </a>
 </div>
-<div class="menuItem">
+
+<div class="ng-scope menuItem layerOptions">
     <a href="#" ng-click="updateMenuSection('storyBoxes' + chapter.id); updateTourStep(14)" id="storyBoxesButton">
-        <i class="fa fa-object-group" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storyboxes_tooltip' | translate }}"></i>
+        <div class="badge badge-warning iconContainer">
+          <i class="fa fa-object-group">
+          </i>
+        </div><br>
         StoryBoxes ({{ boxService.getBoxes(chapter.id).length }})
     </a>
 </div>
-<div class="menuItem">
+
+<div class="ng-scope menuItem layerOptions">
     <a href="#" ng-click="updateMenuSection('storyPins' + chapter.id); updateTourStep(20)" id="storyPinsButton">
-        <i class="fa fa-neuter" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storypins_tooltip' | translate }}"></i>
+        <div class="badge badge-warning iconContainer">
+          <i class="fa fa-neuter">
+          </i>
+        </div><br>
         StoryPins ({{ pinService.getPins(chapter.id).length }})
     </a>
 </div>
-<div class="menuItem">
-    <a href="#" ng-click="removeChapter()">
-        <i class="fa fa-trash-o"></i>
-        Delete this Chapter
-    </a>
+
+<div class="ng-scope deletebutton">
+   <a href="#" ng-click="removeChapter()">
+     <span class="ng-binding" id="delete-button-inner">
+       <div>
+         <i class="fa fa-trash-o"></i>
+       </div>
+     </span>
+     <span id="delete-icon-wrapper" class="ng-binding">
+       Delete chapter
+     </span>
+   </a>
 </div>
