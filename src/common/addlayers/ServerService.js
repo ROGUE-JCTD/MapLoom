@@ -668,8 +668,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       return {
         add: true,
         Abstract: layerInfo.abstract,
+        // both versions of this capitalization are required for
+        //  different parts of the app, this should get fixed at some point.
+        // @duck 7 December 2016
         Name: layerInfo.name,
+        name: layerInfo.name,
         Title: layerInfo.title,
+        title: layerInfo.title,
         layerDate: layerInfo.layer_date,
         layerCategory: Array.isArray(layerInfo.layer_category) ? layerInfo.layer_category.join(', ') : null,
         uuid: layerInfo.layer_identifier,

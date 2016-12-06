@@ -330,6 +330,9 @@
              *
              */
             scope.applySort = function(results) {
+              // this is a little trick that essentially
+              //  flips the order when returned by the sort
+              //  function.
               var asc = -1, dsc = 1;
               if (!scope.sortBy[1]) {
                 asc = 1;
