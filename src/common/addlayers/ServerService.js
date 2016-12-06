@@ -655,12 +655,21 @@ var SERVER_SERVICE_USE_PROXY = true;
         layerInfo.tile_url = configService_.configuration.registryUrl + layerInfo.tile_url;
       }
 
+      // likely, if the server is not defined then this
+      //  is just from a registry search where there is no
+      //  server definition.
+      var server = {name: 'Registry'};
+      try {
+        server = service_.getServerById(serverId);
+      } catch (err) {
+        // swallow the error for the 'undefined' server Id.
+      }
+
       return {
         add: true,
         Abstract: layerInfo.abstract,
-        name: layerInfo.name,
+        Name: layerInfo.name,
         Title: layerInfo.title,
-        title: layerInfo.title,
         layerDate: layerInfo.layer_date,
         layerCategory: Array.isArray(layerInfo.layer_category) ? layerInfo.layer_category.join(', ') : null,
         uuid: layerInfo.layer_identifier,
@@ -678,6 +687,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         classification: layerInfo['classificationRecord/classification'],
         license: layerInfo['license/copyright'],
         registry: layerInfo.registry,
+        source: layerInfo.registry ? 'Registry' : server.name,
         serverId: serverId
       };
     };
@@ -685,6 +695,8 @@ var SERVER_SERVICE_USE_PROXY = true;
     var createGeonodeSearchLayerObjects = function(layerInfo, serverId) {
       var configs = [];
       var serverUrl = '';
+      var server = service_.getServerById(serverId);
+
       for (var i = 0, ii = layerInfo.length; i < ii; i++) {
         var layer = layerInfo[i];
         configs.push({
@@ -697,7 +709,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           CRS: [layer.srid],
           thumbnail_url: thumbnail(layer.thumbnail_url, layerName(layer.detail_url), serverUrl),
           author: author(layer),
-          detail_url: layer.detail_url
+          detail_url: layer.detail_url,
+          source: server.name
         });
       }
       return configs;
