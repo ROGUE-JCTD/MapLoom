@@ -191,6 +191,12 @@
 
             /** Change the page */
             scope.changePage = function(pageNumber) {
+              // clamp the page range
+              if (pageNumber < 0) {
+                pageNumber = 0;
+              } else if (pageNumber >= scope.maxPages) {
+                pageNumber = scope.maxPages - 1;
+              }
               scope.currentPage = pageNumber;
             };
 
@@ -392,6 +398,9 @@
                 }
                 serverService.addSearchResultsForRegistry(servers.registry, filter_options);
               }
+
+              // reset the current page to 0 when a new search starts.
+              scope.currentPage = 0;
 
             };
 

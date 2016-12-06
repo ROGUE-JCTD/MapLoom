@@ -99,7 +99,12 @@
             </div> <!-- end of filters -->
 
             <div class="col-md-6 unified-split-view">
-                <div class="row">
+                <div class="row" ng-hide="resultsCount > 0">
+                    <div class="col-xs-12">
+                        <i>Results appear here after searching.</i>
+                    </div>
+                </div>
+                <div class="row" ng-show="resultsCount > 0">
                     <div class="col-xs-8">
                         <div class="layers-count">
                           Showing {{ (currentPage * pageSize) + 1}} - {{ (currentPage + 1) * pageSize }} of {{ resultsCount }} matching records.
@@ -139,10 +144,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="layers-pager">
+                <div class="layers-pager" ng-show="maxPages > 0">
                     <ul class="pagination">
                         <li><a href="#" ng-click="changePage(currentPage - 1)">Previous</a></li>
-                        <li ng-repeat="page in pages"><a href='#' ng-click="changePage(page)">{{ page + 1}}</a></li>
+                        <li ng-repeat="page in pages" ng-class="(page == currentPage) ? 'active' : ''">
+                          <a href='#' ng-click="changePage(page)">
+                            {{ page + 1}}
+                          </a>
+                        </li>
                         <li><a href="#" ng-click="changePage(currentPage + 1)">Next</a></li>
                     </ul>
                 </div>
