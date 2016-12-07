@@ -14,6 +14,23 @@
             /** How to sort the results */
             scope.sortBy = ['Title', true];
 
+            /** The text description for the number of layers to be added to the map. */
+            scope.addLayersText = '';
+
+            /** Text describing the number of layers found from the search. */
+            scope.pagingTitle = '';
+
+            scope.availableSorts = [
+              ['Title', true],
+              ['Title', false],
+              ['Date', true],
+              ['Date', false]
+            ];
+
+            /** These are used for label output, req'd for translation support */
+            scope.sortField = 'Title';
+            scope.sortAscending = 'Ascending';
+
             /** List of owners. */
             scope.owners = [];
 
@@ -403,9 +420,8 @@
                 serverService.addSearchResultsForRegistry(servers.registry, filter_options);
               }
 
-              // reset the current page to 0 when a new search starts.
+              // reset the results list to the first 'page'.
               scope.currentPage = 0;
-
             };
 
             scope.filterAddedLayers = function(layerConfig, serverId) {
@@ -454,8 +470,10 @@
              */
             scope.changeSort = function(field, asc) {
               scope.sortBy = [field, asc];
-            };
 
+              scope.sortField = $translate.instant(field);
+              scope.sortAscending = $translate.instant(asc ? 'ascending' : 'descending');
+            };
 
             /** Aggregate the reuslts from the GeoServer and Registry searches
              *  and return the list of matching layers appropriately sorted.
@@ -493,13 +511,32 @@
               // sort and paginate the results
               var start_record = scope.currentPage * scope.pageSize;
               var end_record = (scope.currentPage + 1) * scope.pageSize;
+
+              // whenever the results change, update the paging information.
+              scope.updatePagingTitle();
+
               return scope.applySort(all_results).slice(start_record, end_record);
+            };
+
+            scope.updateAddLayersText = function() {
+              scope.addLayersText = $translate.instant('layers_to_be_added', {value: scope.getSelectedLayerCount()});
+            };
+
+            /** Update a translated version of the 'paging' subtitle
+             */
+            scope.updatePagingTitle = function() {
+              scope.pagingTitle = $translate.instant('paging_subtitle', {
+                firstRecord: (scope.currentPage * scope.pageSize) + 1,
+                lastRecord: (scope.currentPage + 1) * scope.pageSize,
+                totalRecords: scope.resultsCount
+              });
             };
 
             /** Remove a layer from the selected list.
              */
             scope.removeLayer = function(layer) {
               delete scope.selectedLayers[layer.uuid];
+              scope.updateAddLayersText();
             };
 
             /** Select a layer from the list */
@@ -511,7 +548,9 @@
                 var lyr = Object.assign({}, layer);
                 // add to selected layer.
                 scope.selectedLayers[layer.uuid] = lyr;
+                scope.updateAddLayersText();
               }
+
             };
 
             /** Count the number of selected layers
@@ -559,6 +598,7 @@
              */
             scope.clearSelectedLayers = function() {
               scope.selectedLayers = {};
+              scope.updateAddLayersText();
             };
 
             /** Load the filter lists on startup */
@@ -569,6 +609,7 @@
 
             // TODO: Find a way to make this happen only on open.
             populateSearchFilters();
+            scope.updateAddLayersText();
 
             /* Resize the dialog on startup */
             onResize();

@@ -7,12 +7,12 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="filter-map loom-map" style="mapStyle" zoom="previewZoom" center="previewCenter" loom-map map-id="unified-layer-map-preview" modal-id="unified-layer-dialog" layers="previewLayers"></div>
-                        <div>Zoom to limit the search to data that includes features in the displayed area.  Hover over layers in the list to preview them on the map above.</div>
+                        <div>{{ 'map_help' | translate }}</div>
                     </div>
                 </div> <!-- end of map section -->
                 <div class="row">
                     <div class="col-xs-12">
-                        <h3>Refine layer list <button class="btn btn-link clear-filter" ng-click="clear('all')">Clear All</button></h3>
+                        <h3>{{ 'refine_layers_subtitle' | translate }}<button class="btn btn-link clear-filter" ng-click="clear('all')">{{ 'clear_all' | translate }}</button></h3>
                     </div>
                 </div>
 
@@ -20,10 +20,10 @@
                     <div class="col-xs-6">
                         <div class="row">
                             <div class="col-xs-9 filter-heading">
-                                KEYWORD <span loom-helpicon></span>
+                                {{ 'keywords' | translate | uppercase }} <span loom-helpicon help="keyword_help"></span>
                             </div>
                             <div class="col-xs-3 text-right">
-                                <button class="btn btn-link clear-filter" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">Clear</button>
+                                <button class="btn btn-link clear-filter" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">{{ 'clear' | translate }}</button>
                             </div>
                         </div>
                         <div class="row"><div class="col-xs-12">
@@ -40,10 +40,10 @@
                     <div class="col-xs-6">
                         <div class="row">
                             <div class="col-xs-9 filter-heading">
-                                DATE CREATED <span loom-helpicon></span>
+                                {{ 'date_created' | translate | uppercase }} <span loom-helpicon help='keyword_help'></span>
                             </div>
                             <div class="col-xs-3 text-right">
-                                <button class="btn btn-link clear-filter" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">Clear</button>
+                                <button class="btn btn-link clear-filter" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">{{ 'clear' | translate }}</button>
                             </div>
                         </div>
                         <div class="date-container">
@@ -63,10 +63,10 @@
                     <div class="col-xs-6">
                         <div class="row">
                             <div class="col-xs-9 filter-heading">
-                                OWNER <span loom-helpicon></span>
+                                {{ 'owner' | translate | uppercase }} <span loom-helpicon help='owner_help'></span>
                             </div>
                             <div class="col-xs-3 text-right">
-                                <button class="btn btn-link clear-filter" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">Clear</button>
+                                <button class="btn btn-link clear-filter" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">{{ 'clear' | translate }}</button>
                             </div>
                         </div>
                         <div class="filter-list">
@@ -80,10 +80,10 @@
                     <div class="col-xs-6 category-filter">
                         <div class="row">
                             <div class="col-xs-9 filter-heading">
-                                CATEGORY <span loom-helpicon help="http://yahoo.com"></span>
+                                {{ 'category' | translate | uppercase }} <span loom-helpicon help="category_help">
                             </div>
                             <div class="col-xs-3 text-right">
-                                <button class="btn btn-link clear-filter" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">Clear</button>
+                                <button class="btn btn-link clear-filter" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">{{ 'clear' | translate }}</button>
                             </div>
                         </div>
                         <div class="filter-list">
@@ -101,26 +101,25 @@
             <div class="col-md-6 unified-split-view">
                 <div class="row" ng-hide="resultsCount > 0">
                     <div class="col-xs-12">
-                        <i>Results appear here after searching.</i>
+                        <i>{{ 'search_no_results' | translate }}</i>
                     </div>
                 </div>
                 <div class="row" ng-show="resultsCount > 0">
                     <div class="col-xs-8">
                         <div class="layers-count">
-                          Showing {{ (currentPage * pageSize) + 1}} - {{ (currentPage + 1) * pageSize }} of {{ resultsCount }} matching records.
+                          {{ pagingTitle }}
                         </div>
                         <div class="sort-by">
-                            Sorted by {{ sortBy[0] }}, {{ sortBy[1] ? 'Ascending' : 'Descending' }}
+                            {{ 'sorted_by' | translate }} {{ sortField | translate }}, {{ sortAscending | translate}}
                         </div>
                     </div>
                     <div class="col-xs-4 text-right">
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle"><i class="glyphicon glyphicon-sort-by-alphabet"></i> <span class="caret"></span> </button>
                             <ul class="dropdown-menu pull-right">
-                                <li><a ng-click="changeSort('Title', true)">by Title, Ascending</a></li>
-                                <li><a ng-click="changeSort('Title', false)">by Title, Descending</a></li>
-                                <li><a ng-click="changeSort('Date', true)">by Date, Ascending</a></li>
-                                <li><a ng-click="changeSort('Date', false)">by Date, Descending</a></li>
+                                <li ng-repeat="sort in availableSorts">
+                                  <a ng-click="changeSort(sort[0], sort[1])">by {{ sort[0] | translate }}, {{ (sort[1] ? 'Ascending' : 'Descending') | translate }}</a></li>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -146,13 +145,13 @@
                 </div>
                 <div class="layers-pager" ng-show="maxPages > 0">
                     <ul class="pagination">
-                        <li><a href="#" ng-click="changePage(currentPage - 1)">Previous</a></li>
+                        <li><a href="#" ng-click="changePage(currentPage - 1)">{{ 'previous' | translate }}</a></li>
                         <li ng-repeat="page in pages" ng-class="(page == currentPage) ? 'active' : ''">
                           <a href='#' ng-click="changePage(page)">
                             {{ page + 1}}
                           </a>
                         </li>
-                        <li><a href="#" ng-click="changePage(currentPage + 1)">Next</a></li>
+                        <li><a href="#" ng-click="changePage(currentPage + 1)">{{ 'next' | translate }}</a></li>
                     </ul>
                 </div>
             </div> <!-- end of layer list -->
@@ -167,11 +166,11 @@
     <div class="container-fluid text-left"><!-- text-left is required to offset the standard r-justify footer -->
         <div class="row" style="vertical-align:middle">
             <div class="col-md-7">
-                    <h4>{{ getSelectedLayerCount() }} layers will be added to the map:</h4>
+                    <h4>{{ addLayersText }}</h4>
             </div>
             <div class="col-md-5 text-right">
-                <button class="btn btn-link" ng-click="clearSelectedLayers()">Clear</button>
-                <button class="btn btn-primary" ng-click="addLayers()">Add Layers</button>
+                <button class="btn btn-link" ng-click="clearSelectedLayers()">{{ 'clear' | translate }}</button>
+                <button class="btn btn-primary" ng-click="addLayers()">{{ 'add_layers' | translate }}</button>
             </div>
         </div>
 
