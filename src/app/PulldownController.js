@@ -23,7 +23,7 @@
           $scope.pulldownService = pulldownService;
           $scope.registryEnabled = configService.configuration.registryEnabled;
           $scope.nominatimSearchEnabled = configService.configuration.nominatimSearchEnabled;
-
+          $scope.unifiedLayerDialog = configService.configuration.unifiedLayerDialog;
         }
 
         function updateScopeVariables() {

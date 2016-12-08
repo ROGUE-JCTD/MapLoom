@@ -86,7 +86,8 @@
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
         registryUrl: trimUrl("{{ REGISTRYURL }}"),
-        nominatimSearchEnabled: nominatimSearchEnabled()
+        nominatimSearchEnabled: nominatimSearchEnabled(),
+        unifiedLayerDialog: unifiedDialogEnabled()
     };
     console.log('CONFIG', config);
     goog.object.extend( config, {{ config|safe }});
@@ -148,7 +149,7 @@
 
           <div class="panel" ng-show="layersPanel">
             <div ng-show="registryEnabled && !unifiedLayerDialog" class="panel-heading" data-parent="#pulldown-content">
-              <span translate="registry">Registry</span>
+              <span translate="registry">Registry</span><span>*{{unifiedLayerDialog}}*</span>
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#registry-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'registry_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
