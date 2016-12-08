@@ -7,13 +7,10 @@
         return {
           templateUrl: 'addlayers/partials/helpicon.tpl.html',
           scope: {
-            helpLink: '@help'
+            helpKey: '@help'
           },
           link: function(scope, element, attrs) {
-            scope.showHelp = function() {
-              console.info('This should probably show a tooltip.');
-              console.info('Setting @help to HTML or a URL should do it.');
-            };
+            scope.helpText = $translate.instant(scope.helpKey);
           }
         };
       }
