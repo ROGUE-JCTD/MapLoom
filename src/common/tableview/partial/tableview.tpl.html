@@ -102,9 +102,9 @@
       <button type="button" class="btn btn-default table-btn" ng-click="goToMap()" ng-show="!tableviewform.$visible && selectedRow != null" tooltip="{{'go_to_map' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-globe"></i>
       </button>
-      <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
+<!--       <button type="button" class="btn btn-default table-btn" ng-click="showHeatmap()" tooltip="{{'show_heatmap' | translate}}" tooltip-append-to-body="true">
         <i class="glyphicon glyphicon-fire"></i>
-      </button>
+      </button> -->
       <button type="button" ng-click="showStatistics()" class="btn btn-default table-btn" tooltip-append-to-body="true"  ng-class="{disabled: !selectedAttribute}"
          tooltip-placement="top" tooltip="{{'statistics_view' | translate}}" tooltip-append-to-body="true">
         <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingStatistics()"></div>
