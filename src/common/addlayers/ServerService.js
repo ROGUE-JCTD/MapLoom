@@ -796,7 +796,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       server.layersConfig = [];
       server.populatingLayersConfig = true;
       var config = createAuthorizationConfigForServer(server);
-      config = Object.assign(config, {
+      goog.object.extend(config, {
         url: searchUrl,
         method: 'GET',
         params: searchParams
@@ -996,7 +996,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       var searchUrl = '/api/favorites/?content_type=42&limit=100';
       var searchParams = {};
       if (filterOptions !== null) {
-        searchParams = this.applyFavoritesFilter(searchUrl, filterOptions);
+        searchParams = this.applyFavoritesFilter(filterOptions);
       }
       return addSearchResults(searchUrl, searchParams, server, service_.reformatConfigForFavorites);
     };
