@@ -383,12 +383,14 @@
             /** Create a search object from objects in the model.
              */
             scope.getSearchParams = function() {
-              return Object.assign(getDateFilter(), {
+              var params = {}
+              goog.object.extend(params, getDateFilter(), {
                 text: scope.keyword,
                 category: getChecked(scope.categories, 'identifier'),
                 owner: getChecked(scope.owners, 'username'),
                 bbox: scope.bbox
               });
+              return params;
             };
 
             /** Get the local geoserver configuration */
@@ -397,26 +399,39 @@
               geoserver: null
             };
 
-            /** Iterate through all the available searches.
+            /** Setup the search servers.
              */
-            scope.search = function() {
-              var filter_options = scope.getSearchParams();
+            scope.configureServers = function() {
 
               // init the server configs before searching them.
               if (servers.geoserver == null) {
                 // get the local GeoServer configuration.
                 servers.geoserver = serverService.getServerByName('Local Geoserver');
               }
-              // GeoNode searches apply to the local geoserver instance.
-              serverService.addSearchResultsForGeonode(servers.geoserver, filter_options);
 
-              // check to see if registry is enabled
               if (configService.configuration.registryEnabled) {
                 // ensure the service is enabled.
                 if (servers.registry == null) {
                   // configure registry
                   servers.registry = serverService.getRegistryLayerConfig();
                 }
+              }
+            };
+
+            /** Iterate through all the available searches.
+             */
+            scope.search = function() {
+              var filter_options = scope.getSearchParams();
+
+              // init the server configs as necessary.
+              scope.configureServers();
+
+              // GeoNode searches apply to the local geoserver instance.
+              serverService.addSearchResultsForGeonode(servers.geoserver, filter_options);
+
+              // check to see if registry is enabled
+              if (configService.configuration.registryEnabled) {
+                // then search the registry!
                 serverService.addSearchResultsForRegistry(servers.registry, filter_options);
               }
 
@@ -545,7 +560,8 @@
                 scope.removeLayer(layer);
               } else {
                 // copy the definition
-                var lyr = Object.assign({}, layer);
+                var lyr = {}; //Object.assign({}, layer);
+                goog.object.extend(lyr, layer);
                 // add to selected layer.
                 scope.selectedLayers[layer.uuid] = lyr;
                 scope.updateAddLayersText();

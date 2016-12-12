@@ -294,7 +294,7 @@ describe('addLayers/ServerService', function() {
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
         var geoserver_config = serverService.getServerByUrl('http://server/geoserver/wms');
-        serverService.addSearchResultsForFavorites(geoserver_config, {});;
+        serverService.addSearchResultsForFavorites(geoserver_config, {});
         $httpBackend.flush();
         // The GeoServer server is usually configured in server id 1 or 2.
         expect(serverService.reformatConfigForFavorites).toHaveBeenCalledWith([], geoserver_config.id);
