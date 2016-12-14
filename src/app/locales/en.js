@@ -328,7 +328,29 @@
     'spatial_filter': 'Spatial Filter',
     'enter_spatial_filter_radius': 'Enter the spatial filter\'s radius, in meters',
     'add_spatial_filter': 'Add Spatial Filter',
-    'enter_radius': 'Enter Radius'
+    'enter_radius': 'Enter Radius',
+
+    'paging_subtitle' : 'Showing {{ firstRecord }} - {{ lastRecord }} of {{ totalRecords }} matching records',
+    'sorted_by' : 'Sorted by ',
+    'ascending' : 'Ascending',
+    'descending' : 'Descending',
+    'date' : 'Date',
+    'category' : 'Category',
+    'date_created' : 'Date Created',
+    'next' : 'Next',
+    'previous' : 'Previous',
+    'clear' : 'Clear',
+    'clear_all' : 'Clear all',
+
+    'refine_layers_subtitle' : 'Refine layer list',
+
+    'layers_to_be_added' : '{{ value }} layers will be added to the map',
+
+    'map_help' : 'Zoom to limit the search to data that includes features in the displayed area.  Hover over layers in the list to preview them on the map above.',
+    'keyword_help' : 'Keywords will search titles and descriptions for matches.',
+    'date_help' : 'Filter layers by their creation date.',
+    'owner_help' : 'Filter layers by the user who owns it.',
+    'category_help' : 'Filter the layer by its metadata category.'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

@@ -323,7 +323,29 @@
     'standard_deviation': 'Desviacion Estandar',
     'count': 'Cuentas',
     'populated_count': 'Llenado Cuentas',
-    'unique_values': 'Valor Único'
+    'unique_values': 'Valor Único',
+
+    'paging_subtitle' : 'Mostrando {{ firstRecord }} - {{ lastRecord }} de {{ totalRecords }} registros',
+    'sorted_by' : 'Ordenado por ',
+    'ascending' : 'Ascendente',
+    'descending' : 'Descendente',
+    'date' : 'Fecha',
+    'category' : 'Categoría',
+    'date_created' : 'Fecha de Creacion',
+    'next' : 'Siguiente',
+    'previous' : 'Anterior',
+    'clear' : 'Limpiar todos',
+    'owner' : 'Poseedor',
+
+    'refine_layers_subtitle' : 'Filtrar Capas',
+
+    'layers_to_be_added' : 'Se añadirán {{ value }} capas al mapa.',
+
+    'map_help' : 'Zoom para limitar la búsqueda a datos que incluyan funciones en el área visualizada. Coloca el cursor sobre las capas de la lista para obtener una vista previa de ellas en el mapa anterior.',
+    'keyword_help' : 'Las palabras clave buscarán títulos y descripciones de los partidos.',
+    'date_help' : 'Filtrar capas por su fecha de creación.',
+    'owner_help' : 'Filtrar capas por su poseedor',
+    'category_help' : 'Filtrar caps por su Categoría'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

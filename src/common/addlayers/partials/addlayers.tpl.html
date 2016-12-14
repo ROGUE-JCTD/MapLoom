@@ -50,7 +50,7 @@
     </div>
     <button type="button" style="margin-left:-15px;" ng-if="currentServer.lazy && currentServer.layersConfig.length===0 && !currentServer.populatingLayersConfig"
             tooltip="This server is configured to lazily load layers." tooltip-placement="right"
-            class="btn btn-default" ng-click="serverService.populateLayersConfig(serverService.getServerById(currentServerId), true)">
+            class="btn btn-default" ng-click="populateLayersList()">
       <i class="glyphicon glyphicon-save"></i>
       <span>{{'fetch_layers_from_server' | translate}}</span>
     </button>

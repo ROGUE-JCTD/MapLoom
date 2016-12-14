@@ -380,3 +380,153 @@ rzslider .rz-pointer.rz-active:after {
   margin-top: 9px;
   margin-bottom: -9px;
 }
+
+/** CSS for unified search dialog */
+
+@split_height: 630px;
+
+@media (min-width: 992px) {
+    .unified-split-view {
+        height: @split_height;
+    }
+}
+
+#unified-layer-map-preview {
+    height: 300px;
+    width: 100%;
+}
+
+.layers-list {
+    overflow: auto;
+    height: @split_height - 55px;
+}
+
+.filter-list {
+    height: 125px;
+    overflow: auto;
+}
+
+.filter-item {
+    width: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.category-filter {
+    .filter-item {
+        width: 100%;
+    }
+}
+
+/** Styling for the layer entries */
+.layers-count {
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+@border-accent-color: #155481;
+@layer-highlight-color: #B2D4F2;
+
+.layer {
+    padding-bottom: 5px;
+    padding-top: 5px;
+   
+    /* this is the matching 'blue' to the modal header. */
+    border-bottom: solid 2px @border-accent-color;
+
+    .layer-description,.layer-info {
+        display:inline-block;
+    }
+    .layer-description {
+        width: 80%;
+        max-height: 100px;
+        overflow: hidden;
+
+        label {
+            cursor: pointer;
+            font-size: 20px;
+        }
+    }
+    .layer-info {
+        width: 19%;
+        text-align: right;
+        vertical-align: top;
+        overflow: hidden;
+    }
+}
+
+.layer.selected {
+    background-color: @layer-highlight-color;
+}
+
+.selected-layer {
+    display: inline-block;
+    padding: 5px;
+    border: solid 1px @border-accent-color;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
+
+    span {
+        padding-right: 10px;
+        vertical-align: top;
+        color: @border-accent-color;
+    }
+
+    i {
+        color: @border-accent-color;
+        cursor: pointer;
+    }
+}
+
+.date-container {
+    rzslider {
+        margin-top: 5px;
+    }
+}
+
+.filter-heading {
+    font-size: 15px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.btn.clear-filter {
+    color: black;
+    font-size: 11px;
+}
+
+.btn.clear-filter.disabled {
+    color: #777;
+}
+
+.help-icon {
+    padding-left: 1em;
+    cursor: pointer;
+}
+
+
+.unified-search-modal {
+    .row-filter { 
+        margin-bottom: 10px;
+    }
+
+    .dropdown-menu {
+        text-align: left;
+        
+        a {
+            cursor: pointer;
+        }
+
+    }
+
+
+    .layers-pager {
+        text-align: center;
+        padding-top: 2px;
+
+        .pagination {
+            margin: 0;
+        }
+    }
+}

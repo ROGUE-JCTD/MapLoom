@@ -39,9 +39,19 @@
     var registryEnabled = function(){
       return "{{ REGISTRY }}".toLowerCase() === "true" || true ? true : false;
     };
+    var unifiedDialogEnabled = function(){
+        return "{{ UNIFIED_LAYER_DIALOG }}".toLowerCase() === "true" || true ? true: false;
+    };
     var nominatimSearchEnabled = function(){
       return "{{ NOMINATIM_SEARCH }}".toLowerCase() === "true" || true ? true : false;
     };
+    var trimUrl = function(url){
+        if (url[url.length - 1] == '/') {
+            return url.substring(0, url.length - 1);
+        }
+        return url;
+    };
+
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
         username: {% if user.is_authenticated %} "{{ user.username }}" {% else %} undefined {% endif %},
@@ -68,16 +78,18 @@
         {% endif %}
         region: "north"
         }],
-        localGeoServerBaseUrl: "{{ GEOSERVER_BASE_URL }}",
-        localCSWBaseUrl: "{{ CATALOGUE_BASE_URL }}",
-        registryEnabled: "{{ REGISTRY }}",
+        localGeoServerBaseUrl: trimUrl("{{ GEOSERVER_BASE_URL }}"),
+        localCSWBaseUrl: trimUrl("{{ CATALOGUE_BASE_URL }}"),
         catalogList: "{{ CATALOGLIST }}",
         nominatimSearchEnabled: "{{ NOMINATIM_SEARCH }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
-        nominatimSearchEnabled: nominatimSearchEnabled()
+        registryUrl: trimUrl("{{ REGISTRYURL }}"),
+        nominatimSearchEnabled: nominatimSearchEnabled(),
+        unifiedLayerDialog: unifiedDialogEnabled()
     };
+    console.log('CONFIG', config);
     goog.object.extend( config, {{ config|safe }});
 </script>
 <% } %>
@@ -136,22 +148,34 @@
           </div>
 
           <div class="panel" ng-show="layersPanel">
-            <div ng-show="registryEnabled" class="panel-heading" data-parent="#pulldown-content">
-              <span translate="registry">Registry</span>
+            <div ng-show="registryEnabled && !unifiedLayerDialog" class="panel-heading" data-parent="#pulldown-content">
+              <span translate="registry">Registry</span><span>*{{unifiedLayerDialog}}*</span>
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#registry-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'registry_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
               <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
 
-            <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+            <div ng-show="!unifiedLayerDialog" class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
                  data-target="#layer-manager-panel">
               <span translate="map_layers">Map Layers</span>
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#add-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+
               <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
             </div>
+
+            <div ng-show="unifiedLayerDialog" class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content"
+                 data-target="#layer-manager-panel">
+              <span translate="map_layers">Map Layers</span>
+              <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#unified-layer-dialog')"
+                   tooltip-placement="top" tooltip="{{'add_layer_btn' | translate}}" tooltip-append-to-body="true"
+                   class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
+
+              <div id="server-loading" class="loom-loading pull-right" spinner-radius="20" spinner-width="3" spinner-hidden="!serversLoading"></div>
+            </div>
+
             <div id="layer-manager-panel" class="panel-collapse collapse pulldown-panel">
               <div class="loom-layers"></div>
             </div>
@@ -227,6 +251,9 @@
   <div class="loom-timeline"></div>
 </div>
 <!--modal titles are in a lower case underscore separated format so that they can be translated-->
+<div loom-modal id="unified-layer-dialog" modal-title="add_layers">
+  <div loom-unifiedlayers></div>
+</div>
 <div loom-modal id="registry-layer-dialog" modal-title="search_layers">
   <div loom-registrylayers id="registry-layers"></div>
 </div>
