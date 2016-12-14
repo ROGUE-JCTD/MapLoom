@@ -266,7 +266,7 @@
     };
 
     this.dumpTileCache = function(layerToDump) {
-      var layers = this.getLayers(); //Note: does not get hidden or imagery layers
+      var layers = this.getLayers(true, true);
       forEachArrayish(layers, function(layer) {
         if (goog.isDefAndNotNull(layer.getSource)) {
           var metadata = layer.get('metadata');
