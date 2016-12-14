@@ -49,6 +49,9 @@
     this.$get = function($window, $http, $cookies, $location, $translate) {
       service_ = this;
       var serverLocation = $location.protocol() + '://' + $location.host();
+      if ($location.port() != 80) {
+        serverLocation += ':' + $location.port();
+      }
 
       this.configuration = {
         about: {

@@ -8,6 +8,7 @@
           template: '<div id="{{mapId}}" ng-style="style"></div>',
           scope: {
             mapId: '@',
+            modalId: '@',
             layers: '=',
             center: '=',
             style: '=',
@@ -39,7 +40,7 @@
               });
 
             };
-            $('#registry-layer-dialog').on('shown.bs.modal', function() {
+            $('#' + scope.modalId).on('shown.bs.modal', function() {
               if (map === undefined) {
                 createMap();
               }
