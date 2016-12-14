@@ -383,7 +383,7 @@
             /** Create a search object from objects in the model.
              */
             scope.getSearchParams = function() {
-              var params = {}
+              var params = {};
               goog.object.extend(params, getDateFilter(), {
                 text: scope.keyword,
                 category: getChecked(scope.categories, 'identifier'),
