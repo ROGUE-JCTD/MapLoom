@@ -23,10 +23,9 @@
     <!--<button ng-if="!advFilters" type="button" class="filter-button btn btn-default table-btn" ng-click="toggleAdvancedFilters()"-->
             <!--translate="advanced_filters" ng-disabled="tableviewform.$visible">-->
     <!--</button>-->
-  <button id="spatial-filter-button" ng-if="spatialFilter.geometryGML" type="button" class="filter-button btn btn-default table-btn" ng-click="toggleSpatialFilters()"
+  <button id="spatial-filter-button" ng-if="spatialFilter.geometryGML.length > 0" type="button" class="filter-button btn btn-default table-btn" ng-click="toggleSpatialFilters()"
           translate="spatial_filter" ng-disabled="tableviewform.$visible" data-toggle="button">
   </button>
-  {{ spatialFilter.layerName }}
   <form editable-form name="tableviewform" onaftersave="saveTable()">
     <div class="panel panel-default">
       <table class="table-striped table-hover" ng-class="{sortable: isSortable}">

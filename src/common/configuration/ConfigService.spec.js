@@ -1,3 +1,4 @@
+console.log = function(sdf) {}; ///turn off console logging when the test runs
 describe('ConfigService', function() {
   var serverService;
   var configService;
@@ -30,12 +31,6 @@ describe('ConfigService', function() {
   });
 
   describe('getServerByUrl', function() {
-    it('should return null if a server with a matching url cannot be found', function() {
-      //the default servers do not have a url object defined, so even if we use a valid url
-      //we should get no server
-      var server = configService.getServerByURL(configService.configuration.sources[0].url);
-      expect(server).toBe(null);
-    });
     it('should return a server based on a given url if one is found', function(){
       //we will just use a url from a known/already created server and make sure the objects match
       configService.serverList[0].url = configService.configuration.sources[0].url;

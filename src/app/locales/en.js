@@ -5,6 +5,11 @@
     'projection_not_supported': 'Projection not supported',
     'notifications_tab': 'Notifications',
     'no_notifications': 'No notifications',
+    'registry': 'Registry',
+    'registry_layers': 'Registry of layers',
+    'registry_layer_btn': 'Registry of layer',
+    'search_layers_btn': 'Search for Layers',
+    'search_layers' : 'Search for Layers',
     'map_layers': 'Layers',
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
@@ -320,7 +325,10 @@
     'unique_values': 'Unique Values',
     'fetch_layers_from_server': 'Fetch Layers from Server',
     'set_spatial_filter': 'Use this feature in a spatial filter',
-    'spatial_filter': 'Spatial Filter'
+    'spatial_filter': 'Spatial Filter',
+    'enter_spatial_filter_radius': 'Enter the spatial filter\'s radius, in meters',
+    'add_spatial_filter': 'Add Spatial Filter',
+    'enter_radius': 'Enter Radius'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
