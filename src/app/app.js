@@ -8,7 +8,8 @@
     'pascalprecht.translate',
     'loom_translations_en',
     'loom_translations_es',
-    'xeditable'
+    'xeditable',
+    'ngFileSaver'
   ]);
 
   module.run(function run(editableOptions) {

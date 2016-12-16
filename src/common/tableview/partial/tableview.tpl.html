@@ -113,6 +113,11 @@
         <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingStatistics()"></div>
         <i class="glyphicon glyphicon-stats"></i>
       </button>
+      <button type="button" ng-click="downloadCSV()" class="btn btn-default table-btn" tooltip-append-to-body="true"
+         tooltip-placement="top" tooltip="{{'download_csv' | translate}}" tooltip-append-to-body="true">
+        <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingCSV()"></div>
+        <i class="glyphicon glyphicon-download-alt"></i>
+      </button>
     </div>
 
     <!--<div id="table-page-nav">-->
