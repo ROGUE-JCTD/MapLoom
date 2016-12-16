@@ -350,7 +350,8 @@
     'keyword_help' : 'Keywords will search titles and descriptions for matches.',
     'date_help' : 'Filter layers by their creation date.',
     'owner_help' : 'Filter layers by the user who owns it.',
-    'category_help' : 'Filter the layer by its metadata category.'
+    'category_help' : 'Filter the layer by its metadata category.',
+    'download_csv': 'Download CSV'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
