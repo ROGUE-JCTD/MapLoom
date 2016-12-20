@@ -4,8 +4,8 @@ var conf = {
   'userprofilename':'bobby',
   'userprofileemail':'bobby@bob.com',
   'proxy':'/proxy/?url=',
-  'nominatimUrl':'http://nominatim.openstreetmap.org',
-  'printService':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/pdf/',
+  'nominatimUrl':'//nominatim.openstreetmap.org',
+  'printService':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/pdf/',
   'rest':'/maps/',
   'ajaxLoginUrl':'/account/ajax_login',
   'homeUrl':'/',
@@ -17,8 +17,8 @@ var conf = {
       'region':'north'
     }
   ],
-  'localGeoServerBaseUrl':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/',
-  'localCSWBaseUrl':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw',
+  'localGeoServerBaseUrl':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/',
+  'localCSWBaseUrl':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw',
   'csrfToken':'au2a6uZO9A42lmsYLOGwkhUfgLFJxgY2',
   'tools':[
     {
@@ -84,7 +84,7 @@ var conf = {
         'opacity':1,
         'args':[
           'bluemarble',
-          'http://maps.opengeo.org/geowebcache/service/wms',
+          '//maps.opengeo.org/geowebcache/service/wms',
           {
             'layers':[
               'bluemarble'
@@ -146,7 +146,7 @@ var conf = {
               'legend':{
                 'height':'20',
                 'width':'20',
-                'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…%2Fpng&width=20&height=20&layer=estaciones_temporales_de_primeros_auxilios',
+                'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…%2Fpng&width=20&height=20&layer=estaciones_temporales_de_primeros_auxilios',
                 'format':'image/png'
               },
               'name':'estaciones_temporales_de_primeros_auxilios'
@@ -172,12 +172,12 @@ var conf = {
           'fixedWidth':0,
           'metadataURLs':[
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=24ad7ac3-df59-4a61-b09a-836a27d96b9e',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=24ad7ac3-df59-4a61-b09a-836a27d96b9e',
               'type':'FGDC',
               'format':'text/xml'
             },
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=24ad7ac3-df59-4a61-b09a-836a27d96b9e',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=24ad7ac3-df59-4a61-b09a-836a27d96b9e',
               'type':'TC211',
               'format':'text/xml'
             }
@@ -275,7 +275,7 @@ var conf = {
               'legend':{
                 'height':'20',
                 'width':'20',
-                'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…egendGraphic&format=image%2Fpng&width=20&height=20&layer=incidentes_copeco',
+                'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…egendGraphic&format=image%2Fpng&width=20&height=20&layer=incidentes_copeco',
                 'format':'image/png'
               },
               'name':'incidentes_copeco'
@@ -301,12 +301,12 @@ var conf = {
           'fixedWidth':0,
           'metadataURLs':[
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=1bf7e5bc-e3be-4a44-bc2a-d6ff96d815e7',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=1bf7e5bc-e3be-4a44-bc2a-d6ff96d815e7',
               'type':'FGDC',
               'format':'text/xml'
             },
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=1bf7e5bc-e3be-4a44-bc2a-d6ff96d815e7',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=1bf7e5bc-e3be-4a44-bc2a-d6ff96d815e7',
               'type':'TC211',
               'format':'text/xml'
             }
@@ -404,7 +404,7 @@ var conf = {
               'legend':{
                 'height':'20',
                 'width':'20',
-                'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…gendGraphic&format=image%2Fpng&width=20&height=20&layer=puestos_de_control',
+                'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…gendGraphic&format=image%2Fpng&width=20&height=20&layer=puestos_de_control',
                 'format':'image/png'
               },
               'name':'puestos_de_control'
@@ -430,12 +430,12 @@ var conf = {
           'fixedWidth':0,
           'metadataURLs':[
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=6771c2ef-25c1-4878-8e0e-2847ef2b92b6',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=6771c2ef-25c1-4878-8e0e-2847ef2b92b6',
               'type':'FGDC',
               'format':'text/xml'
             },
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=6771c2ef-25c1-4878-8e0e-2847ef2b92b6',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=6771c2ef-25c1-4878-8e0e-2847ef2b92b6',
               'type':'TC211',
               'format':'text/xml'
             }
@@ -533,7 +533,7 @@ var conf = {
               'legend':{
                 'height':'20',
                 'width':'20',
-                'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…t=image%2Fpng&width=20&height=20&layer=zonas_de_aterrizaje_de_helicopteros',
+                'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms?request=Ge…t=image%2Fpng&width=20&height=20&layer=zonas_de_aterrizaje_de_helicopteros',
                 'format':'image/png'
               },
               'name':'zonas_de_aterrizaje_de_helicopteros'
@@ -559,12 +559,12 @@ var conf = {
           'fixedWidth':0,
           'metadataURLs':[
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=7f6dec65-39ee-4ac7-8e76-ed2ca9b9363f',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=7f6dec65-39ee-4ac7-8e76-ed2ca9b9363f',
               'type':'FGDC',
               'format':'text/xml'
             },
             {
-              'href':'http://ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=7f6dec65-39ee-4ac7-8e76-ed2ca9b9363f',
+              'href':'//ec2-174-129-197-156.compute-1.amazonaws.com/catalogue/csw?outputsche…&version=2.0.2&elementsetname=full&id=7f6dec65-39ee-4ac7-8e76-ed2ca9b9363f',
               'type':'TC211',
               'format':'text/xml'
             }
@@ -653,7 +653,7 @@ var conf = {
     },
     '2':{
       'title':'Local Geoserver',
-      'url':'http://ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms',
+      'url':'//ec2-174-129-197-156.compute-1.amazonaws.com/geoserver/wms',
       'baseParams':{
         'VERSION':'1.1.1',
         'REQUEST':'GetCapabilities',

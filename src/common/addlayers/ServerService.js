@@ -299,7 +299,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                 // remove the 'wms endpoint'
                 var serverBaseUrl = urlRemoveLastRoute(server.url);
                 var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
-                serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
+                serverAuthenticationUrl = serverAuthenticationUrl.replace('//', '//null:null@');
                 ignoreNextScriptError = true;
                 $.ajax({
                   url: serverAuthenticationUrl,
@@ -410,7 +410,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                   // remove the 'wms endpoint'
                   var serverBaseUrl = urlRemoveLastRoute(server.url);
                   var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
-                  serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
+                  serverAuthenticationUrl = serverAuthenticationUrl.replace('//', '//null:null@');
                   ignoreNextScriptError = true;
                   $.ajax({
                     url: serverAuthenticationUrl,
@@ -636,8 +636,8 @@ var SERVER_SERVICE_USE_PROXY = true;
 
     var createHyperSearchLayerObject = function(layerInfo, serverId) {
       /* Temporaly script to delete ":" extra info in layerInfo.tile_url
-      * before : http://localhost/registry/hypermap/layer/44/map/wmts/osm:placenames_capital/default_grid/1/1/0.png
-      * after: http://localhost/registry/hypermap/layer/44/map/wmts/placenames_capital/default_grid/1/1/0.png
+      * before : //localhost/registry/hypermap/layer/44/map/wmts/osm:placenames_capital/default_grid/1/1/0.png
+      * after:   //localhost/registry/hypermap/layer/44/map/wmts/placenames_capital/default_grid/1/1/0.png
       */
       if (layerInfo.tile_url) {
         var tile_url_splited = layerInfo.tile_url.split(':');
@@ -910,7 +910,6 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.populateLayersConfigElastic = function(server, filterOptions) {
-      //var searchUrl = 'http://beta.mapstory.org/api/layers/search/?is_published=true&limit=100';
       var searchUrl = '/api/layers/search/?is_published=true&limit=100';
       var searchParams = {};
       if (filterOptions !== null) {

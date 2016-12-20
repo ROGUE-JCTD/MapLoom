@@ -46,10 +46,12 @@
       return "{{ NOMINATIM_SEARCH }}".toLowerCase() === "true" || true ? true : false;
     };
     var trimUrl = function(url){
+        // remove any trailing "/"s from the URLs
         if (url[url.length - 1] == '/') {
-            return url.substring(0, url.length - 1);
+            url = url.substring(0, url.length - 1);
         }
-        return url;
+        // strip any schema off of the URL
+        return url.substring(url.indexOf('//'));
     };
 
     config =  {
@@ -59,8 +61,8 @@
         userprofilename: {% if user.is_authenticated %} "{{ user.get_full_name }}" {% else %} undefined {% endif %},
         userprofileemail: {% if user.is_authenticated %} "{{ user.email }}" {% else %} undefined {% endif %},
         proxy: "/proxy/?url=",
-        nominatimUrl: "http://nominatim.openstreetmap.org",
-        printService: "{{GEOSERVER_BASE_URL}}pdf/",
+        nominatimUrl: "//nominatim.openstreetmap.org",
+        printService: trimUrl("{{GEOSERVER_BASE_URL}}pdf")+'/',
         /* The URL to a REST map configuration service.  This service
          * provides listing and, with an authenticated user, saving of
          * maps on the server for sharing and editing.
@@ -89,8 +91,14 @@
         nominatimSearchEnabled: nominatimSearchEnabled(),
         unifiedLayerDialog: unifiedDialogEnabled()
     };
-    console.log('CONFIG', config);
     goog.object.extend( config, {{ config|safe }});
+    // clean up any of the sources URLs
+    for (var src_key in config.sources) {
+        if (goog.isDefAndNotNull(config.sources[src_key].url)) {
+            config.sources[src_key].url = trimUrl(config.sources[src_key].url);
+        }
+    }
+    console.log('CONFIG', config);
 </script>
 <% } %>
 

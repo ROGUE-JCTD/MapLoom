@@ -514,7 +514,7 @@
           //TODO: translate
           deferredResponse.reject('epsgCode could not be converted to valid number');
         } else {
-          var url = 'http://epsg.io/' + epsgCodeAsNumber + '.js';
+          var url = '//epsg.io/' + epsgCodeAsNumber + '.js';
           httpService_.get(url).then(function(response) {
             if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.data) && response.data.indexOf('proj4.defs(') === 0) {
               try {
@@ -703,7 +703,7 @@
 
           var parms = {
             //url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
-            url: 'http://api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
+            url: '//api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
             crossOrigin: true
           };
           var mbsource = new ol.source.TileJSON(parms);
