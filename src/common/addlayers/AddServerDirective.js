@@ -62,11 +62,11 @@
 
             scope.getPlaceholder = function() {
               if (scope.type === 'WMS') {
-                return 'http://url/geoserver/wms';
+                return '//url/geoserver/wms';
               } else if (scope.type === 'TMS') {
-                return 'http://url/1.0.0/';
+                return '//url/1.0.0/';
               } else if (scope.type === 'MapBox') {
-                return 'http://api.tiles.mapbox.com/v4';
+                return '//api.tiles.mapbox.com/v4';
               }
             };
 
@@ -112,7 +112,7 @@
 
                         var serverBaseUrl = urlRemoveLastRoute(scope.server.url);
                         var serverAuthenticationUrl = serverBaseUrl + '/rest/settings.json';
-                        serverAuthenticationUrl = serverAuthenticationUrl.replace('http://', 'http://null:null@');
+                        serverAuthenticationUrl = serverAuthenticationUrl.replace('//', '//null:null@');
                         ignoreNextScriptError = true;
                         $.ajax({
                           url: serverAuthenticationUrl,

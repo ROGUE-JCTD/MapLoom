@@ -175,7 +175,7 @@ describe('addLayers/ServerService', function() {
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        var geoserver_config = serverService.getServerByUrl('http://server/geoserver/wms');
+        var geoserver_config = serverService.getServerByUrl('//server/geoserver/wms');
         serverService.populateLayersConfigElastic(geoserver_config, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], geoserver_config.id);
@@ -293,7 +293,7 @@ describe('addLayers/ServerService', function() {
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        var geoserver_config = serverService.getServerByUrl('http://server/geoserver/wms');
+        var geoserver_config = serverService.getServerByUrl('//server/geoserver/wms');
         serverService.addSearchResultsForFavorites(geoserver_config, {});
         $httpBackend.flush();
         // The GeoServer server is usually configured in server id 1 or 2.
