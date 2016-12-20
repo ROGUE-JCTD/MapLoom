@@ -219,6 +219,8 @@
               mapService_.dumpTileCache(metadata.uniqueID);
               nextLayer(nextIndex);
             }
+          } else {
+            nextLayer(nextIndex);
           }
         };
         processLayer(layers[0], 1);
