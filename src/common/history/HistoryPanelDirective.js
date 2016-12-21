@@ -4,8 +4,8 @@
   module.directive('loomHistoryPanel',
       function($rootScope, $timeout, $translate, diffService, dialogService, historyService, pulldownService) {
         return {
-          restrict: 'C',
-          replace: true,
+          //restrict: 'C',
+          //replace: true,
           templateUrl: 'history/partial/historypanel.tpl.html',
           link: function(scope, element, attrs) {
             scope.loadingDiff = false;
@@ -47,7 +47,10 @@
             }
 
             scope.getCommitAuthor = function(commit) {
-              return commit.author['name'].length > 0 ? commit.author['name'] : $translate.instant('anonymous');
+              if (goog.isDefAndNotNull(commit.author) && goog.isDefAndNotNull(commit.author['name'])) {
+                return commit.author['name'].length > 0 ? commit.author['name'] : $translate.instant('anonymous');
+              }
+              return $translate.instant('anonymous');
             };
 
             scope.getCommitTime = function(commit) {
