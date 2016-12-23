@@ -345,7 +345,15 @@
     'keyword_help' : 'Las palabras clave buscarán títulos y descripciones de los partidos.',
     'date_help' : 'Filtrar capas por su fecha de creación.',
     'owner_help' : 'Filtrar capas por su poseedor',
-    'category_help' : 'Filtrar caps por su Categoría'
+    'category_help' : 'Filtrar caps por su Categoría',
+
+
+    'measure' : 'Medida',
+    'measure_tools' : 'Longitud o Área',
+    'measure_area' : 'Área',
+    'measure_line' : 'Longitud',
+    'measure_stop' : 'Deja de medir',
+    'measure_units' : 'Unidades'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

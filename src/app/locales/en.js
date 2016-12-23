@@ -351,7 +351,14 @@
     'date_help' : 'Filter layers by their creation date.',
     'owner_help' : 'Filter layers by the user who owns it.',
     'category_help' : 'Filter the layer by its metadata category.',
-    'download_csv': 'Download CSV'
+    'download_csv': 'Download CSV',
+
+    'measure' : 'Measure',
+    'measure_tools' : 'Measure tools',
+    'measure_area' : 'Area',
+    'measure_line' : 'Length',
+    'measure_stop' : 'Stop measuring',
+    'measure_units' : 'Units'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

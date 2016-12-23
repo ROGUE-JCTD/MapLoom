@@ -155,6 +155,16 @@
             </div>
           </div>
 
+
+            <div ng-show="true" class="panel">
+                <div class="panel-heading" data-toggle="collapse" data-parent="#pulldown-content" data-target="#measure-panel-content">
+                    <span translate="Measure">Measure</span>
+                </div>
+                <div id="measure-panel-content" class="panel-collapse collapse pulldown-panel">
+                    <div loom-measurepanel></div>
+                </div>
+            </div>
+
           <div class="panel" ng-show="layersPanel">
             <div ng-show="registryEnabled && !unifiedLayerDialog" class="panel-heading" data-parent="#pulldown-content">
               <span translate="registry">Registry</span><span>*{{unifiedLayerDialog}}*</span>
