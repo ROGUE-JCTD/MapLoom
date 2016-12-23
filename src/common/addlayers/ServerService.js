@@ -735,7 +735,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           author: author(layer),
           detail_url: layer.detail_url,
           source: server.name,
-          uuid: layer.uuid
+          uuid: layer.uuid,
+          geogig_link: layer.geogig_link
         });
       }
       return configs;
