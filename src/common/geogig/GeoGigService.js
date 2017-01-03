@@ -415,8 +415,15 @@
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
         if (!goog.isDefAndNotNull(metadata.isGeoGig)) {
+          var splitGeogig = null;
           if (goog.isDefAndNotNull(fullConfig.Identifier) && goog.isDefAndNotNull(fullConfig.Identifier[0])) {
-            var splitGeogig = fullConfig.Identifier[0].replace('geoserver://', '').split(':');
+            splitGeogig = fullConfig.Identifier[0].replace('geoserver://', '').split(':');
+          } else if (goog.isDefAndNotNull(fullConfig.geogig_link)) {
+            var repo_name = fullConfig.geogig_link.split('/').pop();
+            var native_name = fullConfig.name.split(':').pop();
+            splitGeogig = [repo_name, native_name];
+          }
+          if (splitGeogig !== null) {
             if (goog.isArray(splitGeogig) && (splitGeogig.length === 2 || splitGeogig.length === 3)) {
               var repoName = splitGeogig[0];
               var nativeName = splitGeogig[1];

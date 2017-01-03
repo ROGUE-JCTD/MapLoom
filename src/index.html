@@ -167,7 +167,7 @@
 
           <div class="panel" ng-show="layersPanel">
             <div ng-show="registryEnabled && !unifiedLayerDialog" class="panel-heading" data-parent="#pulldown-content">
-              <span translate="registry">Registry</span><span>*{{unifiedLayerDialog}}*</span>
+              <span translate="registry">Registry</span>
               <div ng-show="addLayers" stop-event='click' ng-controller="modalToggle" ng-click="toggleModal('#registry-layer-dialog')"
                    tooltip-placement="top" tooltip="{{'registry_layer_btn' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-plus-sign panel-header-button pull-right"></div>
@@ -223,8 +223,8 @@
                    tooltip-placement="top" tooltip="{{'history_summary' | translate}}" tooltip-append-to-body="true"
                    class="glyphicon glyphicon-list-alt pull-right panel-header-button"></div>
             </div>
-            <div id="history-panel" class="loom-history-panel panel-collapse collapse pulldown-panel">History goes
-              here.
+            <div id="history-panel" class="panel-collapse collapse pulldown-panel">
+                <div loom-history-panel></div>
             </div>
           </div>
           <div class="panel" ng-show="diffPanel" ng-controller="LoomDiffController">
