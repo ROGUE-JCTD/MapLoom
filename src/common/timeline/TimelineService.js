@@ -198,7 +198,7 @@
       });
 
       $rootScope.$on('endFeatureInsert', function(event, save, layer, newFeature) {
-        if (goog.isDefAndNotNull(save) && save === true) {
+        if (goog.isDefAndNotNull(save) && save === true && goog.isDefAndNotNull(layer) && goog.isDefAndNotNull(newFeature)) {
           var metadata = layer.get('metadata');
           var timeDimension = service_.getTimeDimension(layer);
           var addedTick = false;
