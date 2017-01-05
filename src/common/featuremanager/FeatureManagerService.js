@@ -1029,22 +1029,6 @@
           }
         };
 
-        var toRad = function(x) {
-          return x * Math.PI / 180;
-        };
-
-        var haversineDistance = function(lat1, lon1, lat2, lon2) {
-
-          var R = 6371; // km
-          var dLon = toRad(lon2 - lon1),
-              dLat = toRad(lat2 - lat1),
-              lat1Rad = toRad(lat1),
-              lat2Rad = toRad(lat2);
-          var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-          var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          return R * c;
-        };
-
         goog.array.forEach(layers, function(layer, index) {
           if (!layer.get('metadata').editable) {
             return;
@@ -1064,34 +1048,8 @@
           });
         });
 
-        if (goog.isDefAndNotNull(mapService_.pinLayer)) {
-          var layerInfo = {};
-          var pins = mapService_.pinLayer.getSource().getFeatures();
-          var pinsNearby = [];
-          if (pins && pins.length > 0) {
-            var numPins = pins.length;
-            for (var iPin = 0; iPin < numPins; iPin += 1) {
-              var pin = pins[iPin];
-              var pinGeom = pin.get('geometry');
-              var coords = ol.proj.transform(pinGeom.getCoordinates(), 'EPSG:3857', 'EPSG:4326');
-              var clickCoords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-              var distanceToCoord = haversineDistance(coords[1], coords[0], clickCoords[1], clickCoords[0]);
-              if (distanceToCoord <= pinCaptureDistance_) {
-                pinsNearby.push(pin);
-              }
-            }
-            if (pinsNearby.length > 0) {
-              layerInfo.features = pinsNearby;
-              layerInfo.layer = mapService_.pinLayer;
-              goog.array.insert(infoPerLayer, layerInfo);
-              getFeatureInfoCompleted(true);
-            }
-
-          }
-        }
-
       }
-    });
+    }
   }
 
   function getItemType(item) {
