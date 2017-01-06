@@ -1,5 +1,4 @@
 <h2>{{ layerService.getTitle(storyService.active_layer) }}</h2>
-<div class="topText"><a href="#" ng-click="updateMenuSection('mainMenu')">{{ 'Index' | translate:'Index' }}</a> > <a href="#" ng-click="updateMenuSection('selectedChapter' + chapter.id)">{{ chapter.chapter }}</a></div>
 
 <button class="btn-storylayer" ng-click="storyService.startFeatureAdd(); toggleSidebar('editSingleStoryLayer' + layerName)" ng-disabled="storyService.isNotEditable()"><i class="fa fa-plus"></i>Add Feature</button>
 <button class="btn-storylayer" ng-click="storyService.startFeatureEdit(); toggleSidebar('editSingleStoryLayer' + layerName)" ng-disabled="storyService.isNotEditable()"><i class="fa fa-edit"></i>Edit Feature</button>
