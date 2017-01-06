@@ -1049,7 +1049,7 @@
         });
 
       }
-    }
+    });
   }
 
   function getItemType(item) {
