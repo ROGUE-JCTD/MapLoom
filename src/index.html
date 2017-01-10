@@ -98,7 +98,21 @@
             config.sources[src_key].url = trimUrl(config.sources[src_key].url);
         }
     }
-    console.log('CONFIG', config);
+
+    // scrub any layers that are of type gxp_olsource,
+    //  as they are not supported by maploom.
+    // They enter config as "OpenLayers.Layer" type
+    function scrubMapLayers() {
+        var map_layers = [];
+        for (var i = 0, ii = config.map.layers.length; i < ii; i++) {
+            var layer = config.map.layers[i];
+            if (layer.type != 'OpenLayers.Layer') {
+                map_layers.push(layer);
+            }
+        }
+        return map_layers;
+    }
+    config.map.layers = scrubMapLayers();
 </script>
 <% } %>
 
