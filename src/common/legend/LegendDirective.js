@@ -40,17 +40,31 @@
             };
 
             scope.getLegendUrl = function(layer) {
-              var url = null;
               var server = serverService.getServerById(layer.get('metadata').serverId);
+              var domain = '';
               if (goog.isDefAndNotNull(server.virtualServiceUrl)) {
                 domain = server.virtualServiceUrl;
               } else {
                 domain = server.url;
               }
-              url = domain + '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=' +
-                  layer.get('metadata').name + '&transparent=true&legend_options=fontColor:0xFFFFFF;' +
-                  'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
-              return url;
+
+              var params = {
+                request: 'GetLegendGraphic',
+                format: 'image/png',
+                width: '20', height: '20',
+                transparent: 'true',
+                legend_options: 'fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;',
+                layer: layer.get('metadata').name
+              };
+
+              // parse the server url
+              var uri = new goog.Uri(domain);
+              // mix in the paramters
+              for (var key in params) {
+                uri.setParameterValue(key, params[key]);
+              }
+              // kick back the URL as a formatted string.
+              return uri.toString();
             };
 
             scope.$on('layer-added', function() {
