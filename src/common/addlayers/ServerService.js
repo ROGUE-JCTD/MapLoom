@@ -525,13 +525,13 @@ var SERVER_SERVICE_USE_PROXY = true;
       }
     };
 
-    this.getFullLayerConfig = function(serverId, layerId) {
+    this.getFullLayerConfig = function(serverId, minimalConfig) {
       //Issue WMS request to get full layer config for mapService
       var result = q_.defer();
       var layerConfig = null;
       var server = service_.getRegistryLayerConfig();
       if (server.id != serverId) {
-        result.resolve(service_.getLayerConfig(serverId, layerId));
+        result.resolve(service_.getLayerConfig(serverId, minimalConfig));
         return result.promise;
       }
       var parser = new ol.format.WMSCapabilities();
@@ -561,14 +561,17 @@ var SERVER_SERVICE_USE_PROXY = true;
       return result.promise;
     };
 
-    this.getLayerConfig = function(serverId, layerId) {
+    this.getLayerConfig = function(serverId, layerConf) {
       var layersConfig = service_.getLayersConfig(serverId);
       var layerConfig = null;
+      var layerId = layerConf.uuid;
+      var layerName = layerConf.Name ? layerConf.Name : layerConf.name;
 
       for (var index = 0; index < layersConfig.length; index += 1) {
         //if (layersConfig[index].Name === layerName || (typeof layerName.split != 'undefined' &&
         //    layersConfig[index].Name === layerName.split(':')[1])) {
-        if (layersConfig[index].uuid == layerId) {
+        if ((goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].uuid === layerId) ||
+            (!goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].Name === layerName)) {
           layerConfig = layersConfig[index];
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
             for (var code in layerConfig.CRS) {
