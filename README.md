@@ -5,6 +5,7 @@ MapLoom is a web client that leverages GeoGig to allow users to edit geographic 
 
 ## Details
 
+
 MapLoom has been built using [OpenLayers 3](http://ol3js.org), Angular, and Bootstrap.  
 
 License: The MapLoom source code is licensed under the [BSD 3 clause](http://opensource.org/licenses/BSD-3-Clause) license.
