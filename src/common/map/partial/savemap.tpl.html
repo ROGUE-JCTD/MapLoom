@@ -14,11 +14,22 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate }}</button>
-  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+  <div class="row">
+    <div class="col-xs-6 text-left">
+      <div class="loom-version">
+        <button class="btn btn-default btn-link" tooltip="MapLoom Version: {{ version_string }} ({{ build_date }})" >
+            <i class="glyphicon glyphicon-info-sign"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <button type="button" class="btn btn-default" data-dismiss="modal">{{'close_btn' | translate }}</button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
           ng-click="mapService.save(true)" ng-show="mapService.id" >{{'save_copy_btn' | translate}}</button>
-  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
           ng-click="mapService.save()">{{'save_btn' | translate}}</button>
+    </div>
+  </div>
 </div>
 
 
