@@ -43,7 +43,7 @@
                 }
               });
 
-              var geom = WKT.read(repoFeature.geometry);
+              var geom = WKT.read(repoFeature.geometry[0]);
               if (goog.isDefAndNotNull(crs)) {
                 geom.transform(crs, mapService.map.getView().getProjection());
               }
