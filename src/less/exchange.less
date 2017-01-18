@@ -1,0 +1,121 @@
+/*
+ * Theme file for matching Boundlessgeo Exchange
+ *  User Interface Theming.
+ *
+ */
+
+/** Localized Theme Variables 
+ */
+
+@dark-header-bg: rgba(0,0,0,.85);
+@heading-bg: rgba(0,0,0, .65);
+@save-color: #ff8f4c;
+
+/** Lato is the new font used by recent versions of GeoNode
+ */
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 700;
+  src: local('Lato Bold'), local('Lato-Bold'), url(/static/geonode/fonts/lato_bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 300;
+  src: local('Lato Light'), local('Lato-Light'), url(/static/geonode/fonts/lato_light.ttf) format('truetype');
+}
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(/static/geonode/fonts/lato_regular.ttf) format('truetype');
+}
+
+body {
+    font-family: Lato,sans-serif;
+    font-size: 16px;
+}
+
+#pulldown {
+    .panel {
+        background-color: transparent;
+    }
+
+    .map-title-text {
+        color: white;
+        font-weight: bold;
+        font-style: normal;
+    }
+
+    .glyphicon {
+        color: white;
+    }
+
+    .btn-group, .input-group-btn, .btn {
+        .glyphicon {
+            color: black;
+            background-color: white;
+        }
+    }
+
+    .layer-visible-button {
+        background-color: white !important;
+    }
+
+    .panel-heading {
+        background-color: @heading-bg;
+        border-bottom: solid 1px white;
+    }
+
+    .measure-content, .notification-panel-heading, .layer-heading {
+        background-color: rgba(0,0,0, 0.75) !important;
+    }
+        
+}
+
+#legend-container, #legend-title-heading, #legend-container .legend-item-header { 
+    background-color: @heading-bg !important;
+}
+
+#refreshButton {
+    color: #B1D83B !important;
+}
+
+#saveButton {
+    color: @save-color !important;
+}
+
+#saveMap .btn-primary {
+    background-color: @save-color;
+    border-color: #333;
+    color: #333;
+}
+
+.modal {
+    .modal-header {
+        background-color: @dark-header-bg;
+    }
+
+    .modal-body, .modal-footer {
+        background-color: white;
+    }
+
+    .modal-footer {
+        border-top: solid 1px black;
+    }
+}
+
+.ol-scale-line,
+.ol-control button, 
+#zoom-to-world,
+#toggle-fullscreen,
+#switch-coords,
+#legend-btn
+{
+    background-color: @dark-header-bg;
+
+    &:hover {
+        background-color: rgba(100, 100, 100, .85);
+    }
+}
