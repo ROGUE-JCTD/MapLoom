@@ -9,6 +9,12 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-COMPATIBLE" content="IE-Edge">
+  <script type="text/javascript">
+    window.MAPLOOM_VERSION = {
+        "version_string": "<%= version %>",
+        "build_date": "<%= grunt.template.today("yyyy-mm-dd") %>"
+    };
+  </script>
 
 <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
     <% if (!(typeof django === 'undefined') && (django)) { %>
