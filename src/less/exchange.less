@@ -10,6 +10,7 @@
 @dark-header-bg: rgba(0,0,0,.85);
 @heading-bg: rgba(0,0,0, .65);
 @save-color: #ff8f4c;
+@panel-bg: rgba(0,0,0, 0.75);
 
 /** Lato is the new font used by recent versions of GeoNode
  */
@@ -50,12 +51,12 @@ body {
 
     .glyphicon {
         color: white;
+        background: none !important;
     }
 
     .btn-group, .input-group-btn, .btn {
         .glyphicon {
             color: black;
-            background-color: white;
         }
     }
 
@@ -69,7 +70,7 @@ body {
     }
 
     .measure-content, .notification-panel-heading, .layer-heading {
-        background-color: rgba(0,0,0, 0.75) !important;
+        background-color: @panel-bg !important;
     }
         
 }
@@ -117,5 +118,32 @@ body {
 
     &:hover {
         background-color: rgba(100, 100, 100, .85);
+    }
+}
+
+#SyncList .list-group-item {
+    background: none;
+}
+
+#SyncList {
+}
+
+#syncronization-panel {
+    background-color: @panel-bg !important;
+}
+
+.sync-list-button {
+    background: transparent;
+    color: white;
+    border: none;
+
+    .glyphicon {
+        color: white !important;
+    }
+
+    &:hover {
+        text-decoration: underline;
+        background: transparent;
+        color: white;
     }
 }
