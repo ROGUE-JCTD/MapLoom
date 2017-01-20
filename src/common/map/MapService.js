@@ -1487,17 +1487,24 @@
       }
 
       var source = new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
         loader: function(extent, resolution, projection) {
           tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
-            var features = new ol.format.GeoJSON().readFeatures(response);
-            source.addFeatures(features);
+            try {
+              var features = new ol.format.GeoJSON().readFeatures(response);
+              source.addFeatures(features);
+            } catch (err) {
+              console.log('Error parsing heat map features', err);
+            }
           }, function(reject) {
-            dialogService_.open(translate_.instant('error'), translate_.instant('error'));
+            console.error('Error loading heat map tile');
+            //dialogService_.open(translate_.instant('error'), translate_.instant('error'));
           });
         },
-        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({ maxZoom: 19 })),
-        projection: 'EPSG:3857'
+        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({ maxZoom: 19 })) //,
+      });
+
+      source.on('addfeature', function(event) {
+        event.feature.set('weight', 5);
       });
 
       var vector = new ol.layer.Heatmap({
@@ -1506,15 +1513,11 @@
           title: 'heatmap:' + heatmapLayerTitle,
           heatmapLayer: true,
           uniqueID: sha1(heatmapLayerName),
+          bbox: {crs: 'EPSG:3857'},
           editable: false
         },
-        source: source,
-        style: new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: 'rgba(0, 0, 255, 1.0)',
-            width: 2
-          })
-        })
+        projection: 'EPSG:3857',
+        source: source
       });
 
       this.map.addLayer(vector);

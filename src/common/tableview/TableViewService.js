@@ -287,7 +287,8 @@
           ' xsi:schemaLocation="http://www.opengis.net/wfs' +
           ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
           '<wfs:Query typeName="' + metadata.name + '"' +
-          ' srsName="' + metadata.projection + '"' +
+          ' srsName="' + 'EPSG:3857' + '"' +
+          //' srsName="' + metadata.projection + '"' +
           '>';
 
       var spatialFilter = '';
@@ -319,6 +320,10 @@
         xml += '<ogc:Filter>';
         xml += spatialFilter;
         xml += '</ogc:Filter>';
+      } else if (bboxStr) {
+        xml += '<ogc:Filter>';
+        xml += bboxStr;
+        xml += '</ogc:Filter>';
       }
 
       xml += '</wfs:Query>' + '</wfs:GetFeature>';
@@ -333,6 +338,7 @@
       var metadata = layer.get('metadata');
       var postURL = metadata.url + '/wfs/WfsDispatcher';
       var xmlData = service_.getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
+
       http_.post(postURL, xmlData, {
         headers: {
           'Content-Type': 'text/xml;charset=utf-8'
