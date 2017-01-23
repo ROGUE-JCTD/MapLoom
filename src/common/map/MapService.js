@@ -1441,19 +1441,20 @@
      *
      */
     this.trackInHash = function() {
+      // get the real parent window
+      var real_window = getRealWindow();
       // get the new hash setting.
       var hash_string = getHashString(this.map);
       // There are a set of bugs in WebKit that make this
       //  slightly more difficult when using iframes.  This code
       //  adapts to the browser.
-      var href = window.location.href.replace(window.location.hash, '');
+      var href = real_window.location.href.replace(real_window.location.hash, '');
       href += '#' + hash_string;
 
-      var real_window = getRealWindow();
 
       if (history.pushState) {
         browserService_.url(href);
-        real_window.history.replaceState(null, window.document.title, href);
+        real_window.history.replaceState(null, real_window.document.title, href);
       } else {
         // set the hash.
         real_window.location.hash = hash_string;
