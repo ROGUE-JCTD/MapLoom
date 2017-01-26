@@ -639,6 +639,35 @@ var SERVER_SERVICE_USE_PROXY = true;
       return [layerInfo.min_x, layerInfo.min_y, layerInfo.max_x, layerInfo.max_y];
     };
 
+    /** Properly resolve a tile_url.  While these are usually
+     *   relative the registry server, this handles all that normalization.
+     *
+     *  @param {String} tileUrl from the registry search.
+     *
+     * @return {String} proper url.
+     */
+    var cleanTileUrl = function(tileUrl) {
+      // this is definitely an absolute URL if it starts with http
+      if (tileUrl.substring(0, 4).toLowerCase() == 'http') {
+        return trimUrl.substring(trimUrl.indexOf('//'));
+      }
+
+      // double-slash is short hand for schemaless http,
+      //  this should be considered an absolute URL as well.
+      if (tileUrl.substring(0, 2) == '//') {
+        return tileUrl;
+      }
+
+      // if those two tests fail then the URL needs adjusted.
+
+      var new_url = '' + configService_.configuration.registryUrl;
+      if (new_url[new_url.length - 1] == '/') {
+        new_url = new_url.substring(0, new_url.length - 1);
+      }
+
+      return new_url + tileUrl;
+    };
+
     var createHyperSearchLayerObject = function(layerInfo, serverId) {
       /* Temporaly script to delete ":" extra info in layerInfo.tile_url
       * before : //localhost/registry/hypermap/layer/44/map/wmts/osm:placenames_capital/default_grid/1/1/0.png
@@ -656,8 +685,8 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       // prepend the registry url to the beginning of the
       //   tile url
-      if (layerInfo.tile_url && configService_.configuration.registryUrl) {
-        layerInfo.tile_url = configService_.configuration.registryUrl + layerInfo.tile_url;
+      if (layerInfo.tile_url) {
+        layerInfo.tile_url = cleanTileUrl(layerInfo.tile_url);
       }
 
       // likely, if the server is not defined then this
@@ -685,7 +714,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         uuid: layerInfo.layer_identifier,
         CRS: ['EPSG:4326'],
         tile_url: layerInfo.tile_url,
-        detail_url: layerInfo.tile_url ? configService_.configuration.serverLocation + layerInfo.tile_url : null,
+        detail_url: layerInfo.tile_url ? layerInfo.tile_url : null,
         author: author(layerInfo),
         domain: domain(layerInfo),
         type: 'mapproxy_tms',
