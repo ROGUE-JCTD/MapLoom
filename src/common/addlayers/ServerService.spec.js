@@ -12,9 +12,6 @@ describe('addLayers/ServerService', function() {
     $httpBackend = _$httpBackend_;
   }));
 
-  afterEach(function() {
-  });
-
   describe('#reformatLayerConfigs', function() {
     describe('no layers', function() {
       it('returns an empty array', function() {
