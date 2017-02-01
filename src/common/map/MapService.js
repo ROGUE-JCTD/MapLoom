@@ -221,22 +221,12 @@
       //  used in the application at the time of writing)
       //
       var win = getRealWindow();
-
-      // IE compatibility.
-      var evt_fn = null, event_name = 'hashchange';
+      var hash_listener = this.trackWindowHash.bind(this);
       if (win.addEventListener) {
-        evt_fn = win.addEventListener;
+        win.addEventListener('hashchange', hash_listener);
       } else if (win.attachEvent) {
-        evt_fn = win.attachEvent;
-        event_name = 'onhashchange';
+        win.attachEvent('onhashchange', hash_listener);
       }
-      // set the hash change function.
-      if (evt_fn !== null) {
-        evt_fn(event_name, this.trackWindowHash.bind(this));
-      } else {
-        console.error('This browser window does not seem to supprot either addEventListener or attachEvent!');
-      }
-
 
       // now that we have a map, lets try to add layers and servers
       service_.loadLayers();
@@ -1445,20 +1435,10 @@
       var real_window = getRealWindow();
       // get the new hash setting.
       var hash_string = getHashString(this.map);
-      // There are a set of bugs in WebKit that make this
-      //  slightly more difficult when using iframes.  This code
-      //  adapts to the browser.
-      var href = real_window.location.href.replace(real_window.location.hash, '');
-      href += '#' + hash_string;
 
-
-      if (history.pushState) {
-        browserService_.url(href);
-        real_window.history.replaceState(null, real_window.document.title, href);
-      } else {
-        // set the hash.
-        real_window.location.hash = hash_string;
-      }
+      // the key to this working is to use the 'real window',
+      //  it avoids issues with both angular and WebKit quirks.
+      real_window.location.hash = hash_string;
     };
 
     /** Normalize clean up of the hash string.
@@ -1512,6 +1492,7 @@
     this.trackWindowHash = function(defaultView) {
       // get the new hash
       var window_hash = cleanHashString(getRealWindow().location.hash);
+
       // compare to the new hash.
       var current_hash = getHashString(this.map);
 
