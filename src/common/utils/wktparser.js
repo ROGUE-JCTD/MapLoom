@@ -136,6 +136,10 @@ var readFeaturesFromString = function(str) {
 
 var WKT = {
   read: function(str) {
+    // if an array comes in, return the first feature.
+    if (Array.isArray(str)) {
+      return read(str[0]);
+    }
     return read(str);
   }
 };
