@@ -12,9 +12,6 @@ describe('addLayers/ServerService', function() {
     $httpBackend = _$httpBackend_;
   }));
 
-  afterEach(function() {
-  });
-
   describe('#reformatLayerConfigs', function() {
     describe('no layers', function() {
       it('returns an empty array', function() {
@@ -110,6 +107,7 @@ describe('addLayers/ServerService', function() {
     describe('result has one layer', function() {
       var layers = { 'd.docs': [] };
       beforeEach(function() {
+        configService.configuration.registryUrl = 'http://server.registry/registry/';
         layers['d.docs'] = [
           {
             type: 'Layer',
@@ -155,6 +153,44 @@ describe('addLayers/ServerService', function() {
           CRS: ['EPSG:4326']
         }));
       });
+      it('should add the registry path to a relative tile_url', function() {
+        var relative_url = '/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png';
+        layers['d.docs'][0].tile_url = relative_url;
+
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
+          detail_url: 'http://server.registry/registry' + relative_url
+        }));
+      });
+
+      it('should add the registry path to an absolute tile_url', function() {
+        var relative_url = '/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png';
+        var server_url = '//server.registry/registry';
+        layers['d.docs'][0].tile_url = 'http:' + server_url + relative_url;
+
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
+          detail_url: server_url + relative_url
+        }));
+      });
+
+      it('should add the registry path to a schemaless tile_url', function() {
+        var relative_url = '/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png';
+        var server_url = '//server.registry/registry';
+        layers['d.docs'][0].tile_url = server_url + relative_url;
+
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
+          detail_url: server_url + relative_url
+        }));
+      });
+
+      it('should handle a relative registry path with the tile_url', function() {
+        configService.configuration.registryUrl = '/registry/';
+        layers['d.docs'][0].tile_url = '/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png';
+
+        expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
+          detail_url: '/registry/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png' 
+        }));
+      });
+
     });
   });
   describe('#populateLayersConfigElastic', function() {
