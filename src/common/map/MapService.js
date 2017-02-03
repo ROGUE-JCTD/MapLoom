@@ -1500,9 +1500,11 @@
       if (window_hash != current_hash) {
         // update the view
         var view = getHashView(window_hash, this.map.getView());
-        var map_view = this.map.getView();
-        map_view.setCenter(view.center);
-        map_view.setResolution(view.resolution);
+        if (goog.isDefAndNotNull(view.center) && goog.isDefAndNotNull(view.center[0])) {
+          var map_view = this.map.getView();
+          map_view.setCenter(view.center);
+          map_view.setResolution(view.resolution);
+        }
       }
     };
 
