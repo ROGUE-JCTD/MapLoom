@@ -312,8 +312,8 @@
              *
              */
             function onResize() {
-              var height = $(window).height();
-              element.children('.modal-body').css('max-height', (height - 200).toString() + 'px');
+              //var height = $(window).height();
+              //element.children('.modal-body').css('max-height', (height - 200).toString() + 'px');
             }
 
             /** Toggle boolean filters to be either "on" or "off"
@@ -604,7 +604,12 @@
                 }
                 LayersService.addLayer(layer, server.id, server);
               }
+              scope.close();
+            };
 
+            /** Close the dialog.
+             */
+            scope.close = function() {
               // XXX: This is a dirty ugly hack.
               $('#unified-layer-dialog').modal('hide');
             };

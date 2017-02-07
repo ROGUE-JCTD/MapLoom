@@ -1474,7 +1474,7 @@
 
       for (var i = 0, ii = components.length; i < ii; i++) {
         // location starts with 'l='
-        if (components[i].substring(0, 2) == 'l=') {
+        if (components[i].substring(0, 2) === 'l=') {
           var loc = components[i].substring(2).split(',');
           return {
             center: [parseFloat(loc[0]), parseFloat(loc[1])],
@@ -1499,9 +1499,16 @@
       // if the hash are different, then do something...
       if (window_hash != current_hash) {
         // update the view
-        var view = getHashView(window_hash, this.map.getView());
-        if (goog.isDefAndNotNull(view.center) && goog.isDefAndNotNull(view.center[0])) {
-          var map_view = this.map.getView();
+        var map_view = this.map.getView();
+
+        var default_view = {
+          center: map_view.getCenter(),
+          resolution: map_view.getZoom()
+        };
+
+
+        var view = getHashView(window_hash, default_view);
+        if (view.resolution > 0) {
           map_view.setCenter(view.center);
           map_view.setResolution(view.resolution);
         }
