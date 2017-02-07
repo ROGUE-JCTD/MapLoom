@@ -50,11 +50,26 @@
               if (scope.isConflictPanel) {
                 return '---------------------';
               }
-              if (goog.isDefAndNotNull(attribute) && goog.isDefAndNotNull(attribute.commit)) {
+
+              var author = null;
+              if (goog.isDefAndNotNull(attribute) &&
+                  goog.isDefAndNotNull(attribute.commit) && attribute.commit.length > 0 &&
+                  goog.isDefAndNotNull(attribute.commit[0].author)) {
+                             author = attribute.commit[0].author;
+              }
+
+              if (goog.isDefAndNotNull(author)) {
                 var returnString = '';
-                returnString += attribute.commit.author.name + ' - ';
-                var date = new Date(attribute.commit.author.timestamp);
-                returnString += date.toLocaleDateString() + ' @ ' + date.toLocaleTimeString();
+                if (goog.isDefAndNotNull(author.name)) {
+                  returnString += author.name;
+                } else {
+                  returnString += $translate.instant('anonymous');
+                }
+                if (goog.isDefAndNotNull(author.timestamp)) {
+                  returnString += ' - ';
+                  var date = new Date(author.timestamp);
+                  returnString += date.toLocaleDateString() + ' @ ' + date.toLocaleTimeString();
+                }
                 return returnString;
               }
               return '';
