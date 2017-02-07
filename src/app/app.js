@@ -195,6 +195,10 @@
         $scope.menuSection = 'mainMenu';
         $scope.storyLayers = mapService.getStoryLayers();
 
+        $scope.redirect = function(address) {
+          window.top.location.href = address;
+        };
+
         $scope.updateMenuSection = function(updateMenuSection) {
           if (updateMenuSection == 'mainMenuHidden') {
             $scope.prev_menu_section = $scope.menuSection;

@@ -1,10 +1,11 @@
 <div id="composerTopNav" class="ng-scope" style="padding-bottom: 5px;">
   <span id="topNavContentWrapper">
     <p id="siteNameWrapper">
-      <i class="fa fa-home" href="/"></i> {{ application.name }}
+      <i class="fa fa-home" ng-click="redirect('/')" href></i> {{ application.name }}
     </p>
     <p id="usernameWrapper">
-      <small style="font-size: 12px;font-weight: 300;">
+      <small style="cursor:pointer" ng-click="redirect('/storyteller/' + storyService.username)"
+             style="font-size: 12px;font-weight: 300;">
         @{{ storyService.username }}
       </small>
     </p>
