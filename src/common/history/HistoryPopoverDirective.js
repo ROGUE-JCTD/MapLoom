@@ -22,6 +22,8 @@
               }
               return $translate.instant('anonymous');
             };
+            scope.safeName = safeName;
+
             var safeEmail = function(author) {
               if (goog.isDefAndNotNull(author)) {
                 if (goog.isDefAndNotNull(author.email) && author.email.length > 0) {
@@ -30,6 +32,8 @@
               }
               return $translate.instant('no_email');
             };
+            scope.safeEmail = safeEmail;
+
             var prettyTime = function(meta) {
               if (goog.isDefAndNotNull(meta) && goog.isDefAndNotNull(meta.timestamp)) {
                 var date = new Date(meta.timestamp);
@@ -37,6 +41,8 @@
               }
               return '';
             };
+            scope.prettyTime = prettyTime;
+
             var prettyMessage = function() {
               if (goog.isDefAndNotNull(scope.commit.message)) {
                 return scope.commit.message;
