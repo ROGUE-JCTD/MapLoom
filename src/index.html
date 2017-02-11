@@ -49,7 +49,10 @@
         return "{{ UNIFIED_LAYER_DIALOG }}".toLowerCase() === "true" || true ? true: false;
     };
     var nominatimSearchEnabled = function(){
-      return "{{ NOMINATIM_SEARCH }}".toLowerCase() === "true" || true ? true : false;
+      return "{{ NOMINATIM_ENABLED }}".toLowerCase() === "true";
+    };
+    var geoquerySearchEnabled = function(){
+      return "{{ GEOQUERY_ENABLED }}".toLowerCase() === "true";
     };
     var trimUrl = function(url){
         // remove any trailing "/"s from the URLs
@@ -59,6 +62,22 @@
         // strip any schema off of the URL
         return url.substring(url.indexOf('//'));
     };
+    var searchEnabled = function(){
+      var search = "{{ NOMINATIM_ENABLED }}".toLowerCase() === "true" || "{{ GEOQUERY_ENABLED }}".toLowerCase() === "true";
+      if (search == false) {
+        console.warn('No search endpoint activated - the search bar will be disabled');
+      }
+      return search;
+    };
+    var getSearchUrl = function(){
+      if ("{{ NOMINATIM_ENABLED }}".toLowerCase() === "true") {
+        return "{{ NOMINATIM_URL }}";
+      } else if ("{{ GEOQUERY_ENABLED }}".toLowerCase() === "true") {
+        return "{{ GEOQUERY_URL }}";
+      } else {
+        return '//nominatim.openstreetmap.org';
+      }
+    };
 
     config =  {
         authStatus: {% if user.is_authenticated %} 200{% else %} 401{% endif %},
@@ -67,7 +86,7 @@
         userprofilename: {% if user.is_authenticated %} "{{ user.get_full_name }}" {% else %} undefined {% endif %},
         userprofileemail: {% if user.is_authenticated %} "{{ user.email }}" {% else %} undefined {% endif %},
         proxy: "/proxy/?url=",
-        nominatimUrl: "//nominatim.openstreetmap.org",
+        searchUrl: getSearchUrl(),
         printService: trimUrl("{{GEOSERVER_BASE_URL}}pdf")+'/',
         /* The URL to a REST map configuration service.  This service
          * provides listing and, with an authenticated user, saving of
@@ -89,14 +108,15 @@
         localGeoServerBaseUrl: trimUrl("{{ GEOSERVER_BASE_URL }}"),
         localCSWBaseUrl: trimUrl("{{ CATALOGUE_BASE_URL }}"),
         catalogList: "{{ CATALOGLIST }}",
-        nominatimSearchEnabled: "{{ NOMINATIM_SEARCH }}",
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
         registryUrl: trimUrl("{{ REGISTRYURL }}"),
+        searchEnabled: searchEnabled(),
         nominatimSearchEnabled: nominatimSearchEnabled(),
         unifiedLayerDialog: unifiedDialogEnabled(),
-        previewLayerConf: {{ MAP_PREVIEW_LAYER|safe }}
+        previewLayerConf: {{ MAP_PREVIEW_LAYER|safe }},
+        geoquerySearchEnabled: geoquerySearchEnabled()
     };
     goog.object.extend( config, {{ config|safe }});
     // clean up any of the sources URLs
@@ -154,7 +174,7 @@
           <!--<span ng-class="{'hidden': !notificationsPanel}" class="loom-notification-badge pull-right"></span>-->
         </div>
       </div>
-      <div ng-show="nominatimSearchEnabled" class="loom-search"></div>
+      <div ng-show="searchEnabled" class="loom-search"></div>
       <div id="pulldown-menu" class="panel-group in">
         <div id="pulldown-content">
           <div class="panel" ng-show="notificationsPanel" ng-controller="LoomNotificationController">
