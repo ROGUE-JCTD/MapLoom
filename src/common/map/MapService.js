@@ -1499,7 +1499,6 @@
       // if the hash are different, then do something...
       if (window_hash != current_hash) {
         // update the view
-
         var map_view = this.map.getView();
 
         var default_view = {
