@@ -465,7 +465,38 @@
       this.currentPage = 0;
     };
 
+    this.getCSV_Safari = function() {
+      if (confirm('Safari does not support table filters. Proceeding will download all features.')) {
+        var metadata = this.selectedLayer.get('metadata');
+        var url = metadata.url + '/wfs/WfsDispatcher?';
+        var args = {
+          'typename' : metadata.name,
+          'version' : '1.0.0',
+          'service' : 'WFS',
+          'request' : 'GetFeature',
+          'outputFormat' : 'csv'
+        };
+
+        var params = [];
+        for (var key in args) {
+          params.push(key + '=' + encodeURIComponent(args[key]));
+        }
+
+        url += params.join('&');
+
+        window.open(url);
+      }
+    };
+
     this.getCSV = function() {
+      if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+        this.getCSV_Safari();
+        // return a fulfilled promise
+        var deferred = q_.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
+
       var metadata = this.selectedLayer.get('metadata');
       var postURL = metadata.url + '/wfs/WfsDispatcher';
       var layerName = metadata.name.replace(/:/g, '_');
