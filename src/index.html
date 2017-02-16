@@ -101,7 +101,9 @@
     // clean up any of the sources URLs
     for (var src_key in config.sources) {
         if (goog.isDefAndNotNull(config.sources[src_key].url)) {
-            config.sources[src_key].url = trimUrl(config.sources[src_key].url);
+            if (config.sources[src_key].ptype != 'gxp_arcrestsource') {
+                config.sources[src_key].url = trimUrl(config.sources[src_key].url);
+            }
         }
     }
 
