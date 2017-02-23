@@ -407,36 +407,116 @@
               if (servers.geoserver == null) {
                 // get the local GeoServer configuration.
                 servers.geoserver = serverService.getServerByName('Local Geoserver');
+                servers.geoserver.layersConfig = [];
               }
 
-              if (configService.configuration.registryEnabled) {
-                // ensure the service is enabled.
-                if (servers.registry == null) {
-                  // configure registry
-                  servers.registry = serverService.getRegistryLayerConfig();
-                }
+              // ensure the service is enabled.
+              if (servers.registry == null) {
+                // configure registry
+                servers.registry = serverService.getRegistryLayerConfig();
               }
             };
 
-            /** Iterate through all the available searches.
+            /** Get the search results and process them into
+             *  the registry configuration and the geoserver
+             *  configuration as appropriate.
+             */
+            scope.handleSearchResults = function(response) {
+              // check to ensure the data.objects exists
+              var layers_by_index = {
+                'exchange': [],
+                'registry': []
+              };
+              if (response.data && response.data.objects) {
+                // reset the current layers list for both servers.
+                servers.geoserver.layersConfig = [];
+                servers.exchange.layersConfig = [];
+
+                // sort the layers into the appropriate 'bins',
+                //  registry layers are really from the registry index,
+                //  exchange layers are really from the local geoserver/geonode
+                //    instance.
+                var layers = response.data.objects;
+                for (var i = 0, ii = layers.length; i < ii; i++) {
+                  var layer = layers[i];
+                  var index_name = 'exchange';
+                  if (goog.isDefAndNotNull(layer.registry_url)) {
+                    index_name = 'registry';
+                  }
+                  layers_by_index[index_name].push(layer);
+                }
+
+                // convert the results from the search using the appropriate
+                //  utilty functions.
+                servers.geoserver.layersConfig = serverService.createGeonodeSearchLayerObjects(layers_by_index['exchange'], servers.geoserver.id);
+                servers.registry.layersConfig = serverService.createHyperSearchLayerObjects(layers_by_index['registry'], servers.registry.id);
+
+              }
+            };
+
+            /** Rename various parameters from the applyFavoritesFilter.
+             *
+             *  The "applyFavoritesFilter" function was designed for a slightly 
+             *  different API.  It's close enough for most parameters but this
+             *  patches it the rest of the way.
+             *
+             *  @param params The object containing the search parameters.
+             */
+            scope.tweakSearchParams = function(params) {
+              var new_params = {};
+              goog.object.extend(new_params, params);
+
+              // this is actually a multifield text search instead
+              //  of just a title search.
+              new_params['q'] = params['title__icontains'];
+              delete new_params['title__icontains'];
+
+              // category has a different name as well.
+              if (goog.isDefAndNotNull('category__identifier__in')) {
+                new_params['category__in'] = params['category__identifier__in'];
+                delete new_params['category__identifier__in'];
+              }
+
+              // TODO: Owner-searching is missing and will need to be
+              //       restored once the API supports it.
+
+              return new_params;
+            };
+
+            /** This will execute a "unified" search against
+             *   the /api/base/search API.
+             *
+             *  Previous versions would cycle through multiple search
+             *  services.  This now will hit the single end point and 
+             *  bucket the results as necessary.
              */
             scope.search = function() {
+              // get the basic search parameters.
               var filter_options = scope.getSearchParams();
 
               // init the server configs as necessary.
               scope.configureServers();
-
-              // GeoNode searches apply to the local geoserver instance.
-              serverService.addSearchResultsForGeonode(servers.geoserver, filter_options);
-
-              // check to see if registry is enabled
-              if (configService.configuration.registryEnabled) {
-                // then search the registry!
-                serverService.addSearchResultsForRegistry(servers.registry, filter_options);
-              }
-
               // reset the results list to the first 'page'.
               scope.currentPage = 0;
+
+              // minimally, the number of layers should be limited to 100
+              //   leaving out limit will result in 0 layers returned from the service.
+              var params = {
+                limit: 100
+              };
+
+              // add the search parameters to the params object.
+              goog.object.extend(params, serverService.applyFavoritesFilter(filter_options));
+
+              // tweak the params...
+              params = scope.tweakSearchParams(params);
+
+              // execute the search.
+              $http({
+                url: '/api/base/search/',
+                method: 'GET',
+                params: params
+              }).then(scope.handleSearchResults);
             };
 
             scope.filterAddedLayers = function(layerConfig, serverId) {
