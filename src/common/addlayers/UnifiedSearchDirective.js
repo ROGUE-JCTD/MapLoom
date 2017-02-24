@@ -431,7 +431,7 @@
               if (response.data && response.data.objects) {
                 // reset the current layers list for both servers.
                 servers.geoserver.layersConfig = [];
-                servers.exchange.layersConfig = [];
+                servers.registry.layersConfig = [];
 
                 // sort the layers into the appropriate 'bins',
                 //  registry layers are really from the registry index,
