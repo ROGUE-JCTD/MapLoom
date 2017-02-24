@@ -139,7 +139,8 @@
              * @return {ol.geom.Polygon}
              */
             var extentToPolygon = function(extent) {
-              return ol.geom.Polygon.fromExtent(extent).transform('EPSG:4326', 'EPSG:3857');
+              // ensure the extent polygon is in the map's projection
+              return ol.geom.Polygon.fromExtent(extent).transform('EPSG:4326', mapService.getProjection());
             };
 
             /** When the preview map is moved it sets an extent in
@@ -636,6 +637,7 @@
             onResize();
 
             $(window).resize(onResize);
+
 
             /** This bit bootstraps the slider.
              *  XXX: This is another ugly jquery/angular hack.
