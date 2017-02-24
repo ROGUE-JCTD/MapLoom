@@ -95,7 +95,8 @@
         registryEnabled: registryEnabled(),
         registryUrl: trimUrl("{{ REGISTRYURL }}"),
         nominatimSearchEnabled: nominatimSearchEnabled(),
-        unifiedLayerDialog: unifiedDialogEnabled()
+        unifiedLayerDialog: unifiedDialogEnabled(),
+        previewLayerConf: {{ MAP_PREVIEW_LAYER|safe }}
     };
     goog.object.extend( config, {{ config|safe }});
     // clean up any of the sources URLs
