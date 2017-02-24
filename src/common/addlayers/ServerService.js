@@ -776,6 +776,9 @@ var SERVER_SERVICE_USE_PROXY = true;
       return configs;
     };
 
+    // export for use in UnifiedSearchDirective
+    this.createGeonodeSearchLayerObjects = createGeonodeSearchLayerObjects;
+
     var createSearchLayerObjects = function(layerObjects, serverUrl) {
       var finalConfigs = [];
       //TODO: Update with handling multiple projections per layer if needed.
@@ -802,6 +805,9 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       return finalConfigs;
     };
+
+    // export this for use in UnifiedSearchDirective
+    this.createHyperSearchLayerObjects = createHyperSearchLayerObjects;
 
     var createAuthorizationConfigForServer = function(server) {
       var config = {};

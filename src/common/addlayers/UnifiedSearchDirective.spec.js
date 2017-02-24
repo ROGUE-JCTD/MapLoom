@@ -38,20 +38,6 @@ describe('unifiedSearchDirective', function() {
     });
   });
   describe('#search', function() {
-    describe('#localSearch', function() {
-      it('calls addSearchResultsForGeonode', function() {
-        var spy = spyOn(serverService, 'addSearchResultsForGeonode');
-        compiledElement.scope().search();
-        expect(spy).toHaveBeenCalled();
-      });
-    });
-    describe('#registrySearch', function() {
-      it('calls addSearchResultsForRegistry', function() {
-        var spy = spyOn(serverService, 'addSearchResultsForRegistry');
-        compiledElement.scope().search();
-        expect(spy).toHaveBeenCalled();
-      });
-    });
   });
   describe('#resetCategoryFilters', function() {
     beforeEach(function() {
