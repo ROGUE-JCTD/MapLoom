@@ -456,11 +456,11 @@
 
             /** Rename various parameters from the applyFavoritesFilter.
              *
-             *  The "applyFavoritesFilter" function was designed for a slightly 
+             *  The "applyFavoritesFilter" function was designed for a slightly
              *  different API.  It's close enough for most parameters but this
              *  patches it the rest of the way.
              *
-             *  @param params The object containing the search parameters.
+             *  @param {Object} params The object containing the search parameters.
              */
             scope.tweakSearchParams = function(params) {
               var new_params = {};
@@ -487,7 +487,7 @@
              *   the /api/base/search API.
              *
              *  Previous versions would cycle through multiple search
-             *  services.  This now will hit the single end point and 
+             *  services.  This now will hit the single end point and
              *  bucket the results as necessary.
              */
             scope.search = function() {
