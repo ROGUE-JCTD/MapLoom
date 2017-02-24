@@ -3,7 +3,7 @@
   var module = angular.module('loom_map_directive', []);
 
   module.directive('loomMap',
-      function($rootScope, serverService, mapService, geogigService, $translate, dialogService) {
+      function($rootScope, configService, serverService, mapService, geogigService, $translate, dialogService) {
         return {
           template: '<div id="{{mapId}}" ng-style="style"></div>',
           scope: {
@@ -18,20 +18,44 @@
             var map;
             var firstExtent = null;
 
+            var getPreviewLayer = function(previewConf) {
+              // create the source first.
+              var source = null;
+              if (previewConf.source.ptype == 'gxp_arcrestsource') {
+                source = new ol.source.TileArcGISRest({
+                  url: previewConf.source.url
+                });
+              }
+
+              if (source !== null) {
+                return new ol.layer.Tile({
+                  source: source
+                });
+              }
+              return null;
+            };
+
             var createMap = function() {
               map = new ol.Map({
-                layers: [
-                  new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                  })
-                ],
                 target: scope.mapId,
                 view: new ol.View({
+                  projection: configService.configuration.map.projection,
                   center: scope.center,
                   zoom: scope.zoom
                 }),
                 logo: false
               });
+
+              // configure preview layer
+              var preview_conf = configService.configuration.previewLayerConf;
+              if (preview_conf !== '') {
+                var preview_layer = getPreviewLayer(preview_conf);
+                map.addLayer(preview_layer);
+              } else {
+                map.addLayer(new ol.layer.Tile({
+                  source: new ol.source.OSM()
+                }));
+              }
 
               firstExtent = map.getView().calculateExtent(map.getSize());
 
