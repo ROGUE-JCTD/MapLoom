@@ -398,6 +398,14 @@ var SERVER_SERVICE_USE_PROXY = true;
       } else {
         service_.getServerByPtype('gxp_osmsource').defaultServer = true;
       }
+
+      if (!goog.isDefAndNotNull(service_.getServerByPtype('gxp_oshsource'))) {
+        config = {ptype: 'gxp_oshsource', name: 'OSH', defaultServer: true};
+        service_.addServer(config);
+      } else {
+        service_.getServerByPtype('gxp_oshsource').defaultServer = true;
+      }
+
       if (goog.isDefAndNotNull(service_.getServerLocalGeoserver())) {
         service_.getServerLocalGeoserver().defaultServer = true;
       }
@@ -654,6 +662,54 @@ var SERVER_SERVICE_USE_PROXY = true;
               server.populatingLayersConfig = false;
             }
           }
+        } else if (server.ptype === 'gxp_oshsource') {
+
+          server.layersConfig = [
+            {Title: 'Loading...', Name: 'null'}
+          ];
+          server.defaultServer = true;
+
+          if (!goog.isDefAndNotNull(server.name)) {
+            server.name = 'Open SensorHub';
+          }
+
+          http_({
+            url: '/api/sensors/',
+            method: 'GET',
+            headers: {
+              'X-CSRFToken': configService_.csrfToken
+            }
+          }).success(function(data, status, headers, config) {
+            server.layersConfig = [];
+
+
+            for (var i = 0; i < data['objects'].length; i++) {
+              server.layersConfig.push({
+                Title: data['objects'][i]['name'],
+                Name: data['objects'][i]['offering_id'],
+                Abstract: data['objects'][i]['description'],
+                sourceParams: {
+                  url: data['objects'][i]['server']['url'],
+                  observable_props: data['objects'][i]['observable_props'],
+                  selected_observable_props: data['objects'][i]['selected_observable_props'],
+                  start_time: data['objects'][i]['user_start_time'],
+                  end_time: data['objects'][i]['user_end_time']
+                }
+              });
+            }
+            deferredResponse.resolve(server);
+          }).error(function(data, status, headers, config) {
+            if (status == 403 || status == 401) {
+              dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));
+              deferredResponse.reject();
+            } else {
+              dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_failed',
+                  {value: status}));
+              deferredResponse.reject();
+            }
+          });
+
+          //deferredResponse.resolve(server);
         } else {
           deferredResponse.reject();
         }

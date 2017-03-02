@@ -636,6 +636,146 @@
           } else {
             console.log('====[ Error: could not create base layer.');
           }
+        } else if (server.ptype === 'gxp_oshsource') {
+          //currently we assume only one layer per 'server'
+
+          layer = fullConfig;
+
+          var obs_props = fullConfig.sourceParams.observable_props.split(',');
+          var sel_props = fullConfig.sourceParams.selected_observable_props.split(',');
+
+          var schema = [];
+          for (var i = 0; i < obs_props.length; i++) {
+            var enabled = false;
+            for (var k = 0; k < sel_props.length; k++) {
+              if (sel_props[k] == obs_props[i]) {
+                enabled = true;
+                break;
+              }
+            }
+            var clean_prop_name = obs_props[i].split('/');
+            clean_prop_name = clean_prop_name[clean_prop_name.length - 1];
+            schema.push({
+              _type: 'osh',
+              _name: clean_prop_name,
+              visible: enabled
+            });
+          }
+
+          var latLonDataSource = new OSH.DataReceiver.LatLonAlt('android-GPS', {
+            protocol: 'ws',
+            service: 'SOS',
+            endpointUrl: 'sensiasoft.net:8181/sensorhub/sos',
+            offeringID: 'urn:android:device:060693280a28e015-sos',
+            observedProperty: 'http://sensorml.com/ont/swe/property/Location',
+            startTime: '2015-02-16T07:58:00Z',
+            endTime: '2015-02-16T08:09:00Z',
+            replaySpeed: '3',
+            syncMasterTime: true,
+            bufferingTime: 1000,
+            timeShift: -16000
+          });
+
+          var rotationDataSource = new OSH.DataReceiver.OrientationQuaternion('android-GPS', {
+            protocol: 'ws',
+            service: 'SOS',
+            endpointUrl: 'sensiasoft.net:8181/sensorhub/sos',
+            offeringID: 'urn:android:device:060693280a28e015-sos',
+            observedProperty: 'http://sensorml.com/ont/swe/property/OrientationQuaternion',
+            startTime: '2015-02-16T07:58:00Z',
+            endTime: '2015-02-16T08:09:00Z',
+            replaySpeed: '3',
+            syncMasterTime: true,
+            bufferingTime: 1000,
+            timeShift: -16000
+          });
+
+          var entity = {
+            id: 'test1',
+            name: 'markerTest',
+            dataSources: [latLonDataSource, rotationDataSource]
+          };
+
+          var dataSourceController = new OSH.DataReceiver.DataReceiverController({
+            replayFactor: 1.0
+          });
+
+          var olMapView = new OSH.UI.OpenLayerView('main-container', [], { map: this.map });
+
+          dataSourceController.addEntity(entity);
+
+          olMapView.addViewItem({
+            name: entity.name,
+            entityId: entity.id,
+            styler: new OSH.UI.Styler.PointMarker({
+              locationFunc: {
+                dataSourceIds: [latLonDataSource.getId()],
+                handler: function(rec) {
+                  return {
+                    x: rec.lon,
+                    y: rec.lat,
+                    z: rec.alt
+                  };
+                }
+              },
+              orientationFunc: {
+                dataSourceIds: [rotationDataSource.getId()],
+                handler: function(rec) {
+                  return {
+                    heading: rec.heading + 100
+                  };
+                }
+              },
+              icon: '/static/maploom/assets/cameralook.png',
+              iconFunc: {
+                dataSourceIds: [latLonDataSource.getId()],
+                handler: function(rec, timeStamp, options) {
+                  if (options.selected) {
+                    return '/static/maploom/assets/cameralook.png';
+                  } else {
+                    return '/static/maploom/assets/cameralook.png';
+                  }
+                }
+              }
+            }),
+            contextMenuId: 'giggityfuck'
+          });
+
+          var treeItems = [];
+          treeItems.push({
+            entity: entity,
+            path: 'Body Cams',
+            treeIcon: '/static/maploom/assets/cameralook.png',
+            contextMenuId: 'jerkogg'
+          });
+
+          new OSH.UI.EntityTreeView('layerpanel-group', treeItems, { css: 'tree-container' });
+
+          dataSourceController.connectAll();
+
+
+          /*var dataProviderController = new OSH.DataReceiver.DataReceiverController({
+            bufferingTime: 2 * 1000, // 2 seconds
+            synchronizedTime: false, // does not sync the data
+            replayFactor: 3
+          });
+          dataProviderController.addDataSource(latLondataSource);
+          dataProviderController.connectAll();*/
+
+          layer = new ol.layer.Tile({
+            metadata: {
+              serverId: server.id,
+              name: minimalConfig.name,
+              title: fullConfig.Title,
+              editable: true,
+              schema: schema
+            }
+          });
+
+          //do stuff with sensor data
+
+          //console.log('====[ Error: could not create base layer.');
+
         } else if (server.ptype === 'gxp_mapquestsource') {
           var source = new ol.source.MapQuest(fullConfig.sourceParams);
 
