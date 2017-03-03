@@ -689,6 +689,13 @@ var SERVER_SERVICE_USE_PROXY = true;
         layerInfo.tile_url = cleanTileUrl(layerInfo.tile_url);
       }
 
+      // clean up legend url's as well.
+      if (layerInfo.legend_url) {
+        layerInfo.legend_url = cleanTileUrl(layerInfo.legend_url);
+      }
+
+      // add a legend url as available
+
       // likely, if the server is not defined then this
       //  is just from a registry search where there is no
       //  server definition.
@@ -714,6 +721,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         uuid: layerInfo.layer_identifier,
         CRS: ['EPSG:4326'],
         tile_url: layerInfo.tile_url,
+        legend_url: layerInfo.legend_url ? layerInfo.legend_url : null,
         detail_url: layerInfo.tile_url ? layerInfo.tile_url : null,
         author: author(layerInfo),
         domain: domain(layerInfo),

@@ -11,7 +11,7 @@
                 <div class="legend-panel-title pull-left" id="legend-title-text" translate="legend_title"></div>
                 <i class="glyphicon glyphicon-remove legend-panel-title pull-right" ng-click="toggleLegend()"></i>
             </div>
-            <div class="panel in legend-panel-body" ng-repeat="layer in mapService.getLayers();">
+            <div class="panel in legend-panel-body" ng-repeat="layer in getLayers()">
                 <div class="panel-heading legend-item-header" data-toggle="collapse"
                     data-target="{{'#' + layer.get('metadata').uniqueID + 'legend'}}">{{layer.get('metadata').title}}
                 </div>
