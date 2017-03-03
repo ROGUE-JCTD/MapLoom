@@ -741,16 +741,6 @@
             contextMenuId: 'giggityfuck'
           });
 
-          var treeItems = [];
-          treeItems.push({
-            entity: entity,
-            path: 'Body Cams',
-            treeIcon: '/static/maploom/assets/cameralook.png',
-            contextMenuId: 'jerkogg'
-          });
-
-          new OSH.UI.EntityTreeView('layerpanel-group', treeItems, { css: 'tree-container' });
-
           dataSourceController.connectAll();
 
 

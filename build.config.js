@@ -9,6 +9,8 @@ module.exports = {
    */
   build_dir: 'build',
   compile_dir: 'bin',
+  ricos_dest_dir: '../../.virtualenvs/geonode/lib/python2.7/site-packages/maploom/static/maploom/',
+  ricos_dest_dir2: '../../.virtualenvs/geonode/lib/python2.7/site-packages/maploom/templates/maps/',
 
   /**
    * This is a collection of file patterns that refer to our app code (the
@@ -65,11 +67,15 @@ module.exports = {
       'vendor/jquery/jquery.min.js',
       'vendor/jquery-sortable/source/js/jquery-sortable-min.js',
       'vendor/angular/angular.js',
+      'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/osh-js/js/osh.js',
+      //'vendor/tree/tree.js',
+
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
-      'vendor/bootstrap/dist/js/bootstrap.js',
+
       'vendor/bootstrap-filestyl/src/bootstrap-filestyle.js',
       'vendor/moment/min/moment.min.js',
       'vendor/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
@@ -86,6 +92,7 @@ module.exports = {
       'vendor/proj4/dist/proj4-src.js',
       'vendor/mgrs/dist/mgrs.js',
 
+
       //-- files for image gallery
       //'vendor/blueimp-gallery/js/blueimp-gallery.js',
       //'vendor/blueimp-gallery/js/blueimp-gallery-fullscreen.js',
@@ -101,6 +108,8 @@ module.exports = {
     ],
     css: [
       'vendor/ol3/ol.css',
+      //'vendor/tree/tree.css',
+      //'vendor/osh-js/css/osh.css',
 
       //-- files for image gallery
       //'vendor/blueimp-gallery/css/blueimp-gallery.css',
@@ -113,11 +122,14 @@ module.exports = {
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
       'vendor/angular-xeditable/dist/css/xeditable.css'
+
     ],
     assets: [
       'src/assets/*',
       'vendor/blueimp-gallery/img/*',
-      'vendor/blueimp-bootstrap-image-gallery/img/*'
+      'vendor/blueimp-bootstrap-image-gallery/img/*',
+      'vendor/osh-js/css/images/*',
+      //'vendor/tree/images/tree/*'
     ],
     fonts: [
       'vendor/bootstrap/fonts/*'
