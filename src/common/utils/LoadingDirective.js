@@ -7,6 +7,7 @@
           restrict: 'C',
           templateUrl: 'utils/partial/loading.tpl.html',
           scope: {
+            spinnerText: '@text',
             spinnerHidden: '='
           },
           link: function(scope, element, attrs) {
@@ -36,6 +37,16 @@
             var spinner = element.find('.spinner');
             spinner.css('width', scope.spinnerRadius + 'px');
             spinner.css('height', scope.spinnerRadius + 'px');
+
+            var text = element.find('.spinner-text');
+            // when the text exists, push it to the left to make it legible.
+            if (goog.isDefAndNotNull(scope.spinnerText) && scope.spinnerText.length > 0) {
+              text.css('padding-left', (scope.spinnerRadius + 2) + 'px');
+              text.css('padding-top', (scope.spinnerWidth) + 'px');
+            // else, don't waste the browser's time with rendering it.
+            } else {
+              text.css('display', 'none');
+            }
           }
         };
       });
