@@ -1,6 +1,6 @@
 {
   "name": "MapLoom",
-  "version": "1.5.46",
+  "version": "1.5.47",
   "devDependencies": {},
   "dependencies": {
     "bootstrap": "3.0.0",
