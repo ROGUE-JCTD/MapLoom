@@ -227,6 +227,8 @@
     'mgrs': 'MGRS',
     'other': 'Other',
     'search': 'Search',
+    'searching': 'Searching...',
+    'search_prompt': 'Please use any of the settings on the left to start a search.',
     'search_locations': 'Search Locations',
     'search_table': 'Search All Fields',
     'search_results': 'Search Results',
