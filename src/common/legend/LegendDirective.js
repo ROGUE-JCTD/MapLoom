@@ -39,7 +39,70 @@
               }
             };
 
+            /** Registry layers may or may not have a legend available
+             *  when there is one, return the URL, otherwise return null.
+             */
+            var getRegistryLegend = function(layer) {
+              var legend = null;
+              if (layer.get('metadata').registry) {
+                var conf = layer.get('metadata').registryConfig;
+                if (goog.isDefAndNotNull(conf.legend_url)) {
+                  return conf.legend_url;
+                }
+              }
+
+              return legend;
+            };
+
+            /** Test whether the layer *should* have a legend available.
+             *
+             *  @param {Object} layer The configuration for the layer from
+             *                        mapService.getLayers()
+             */
+            scope.hasLegend = function(layer) {
+              // handle the special case of registry layers.
+              if (layer.get('metadata').registry) {
+                return goog.isDefAndNotNull(getRegistryLegend(layer));
+              }
+
+              // ignore background layers, such as OSM.
+              if (layer.get('metadata').config.group == 'background') {
+                return false;
+              }
+
+              try {
+                serverService.getServerById(layer.get('metadata').serverId);
+              } catch (err) {
+                // if the server id throws an error, there's no legend to be had.
+                return false;
+              }
+
+              return true;
+            };
+
+            /** Launder the available layers for legending.
+             */
+            scope.getLayers = function() {
+              var map_layers = mapService.getLayers(true, true);
+              var legend_layers = [];
+
+              for (var i = 0, ii = map_layers.length; i < ii; i++) {
+                if (scope.hasLegend(map_layers[i])) {
+                  legend_layers.push(map_layers[i]);
+                }
+              }
+
+              return legend_layers;
+            };
+
             scope.getLegendUrl = function(layer) {
+              // don't bother with the rest if the layer has no legend.
+              if (!scope.hasLegend(layer)) {
+                return '';
+              } else if (layer.get('metadata').registry) {
+                return getRegistryLegend(layer);
+              }
+
               var server = serverService.getServerById(layer.get('metadata').serverId);
               var domain = '';
               if (goog.isDefAndNotNull(server.virtualServiceUrl)) {
