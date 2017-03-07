@@ -358,7 +358,8 @@
     'measure_area' : 'Area',
     'measure_line' : 'Length',
     'measure_stop' : 'Stop measuring',
-    'measure_units' : 'Units'
+    'measure_units' : 'Units',
+    'bounding_box' : 'Bounding Box'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
