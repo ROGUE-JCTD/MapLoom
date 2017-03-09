@@ -35,11 +35,22 @@
               return null;
             };
 
+            // define the 'world' in extent
+            var world_bounds = [
+              -180, -85, 180, 85
+            ];
+
+            // get the map's projection, so the preview map matches.
+            var map_proj = configService.configuration.map.projection;
+            // transform the global extent to the map's projection.
+            var working_bounds = ol.proj.transformExtent(world_bounds, 'EPSG:4326', map_proj);
+
             var createMap = function() {
               map = new ol.Map({
                 target: scope.mapId,
                 view: new ol.View({
-                  projection: configService.configuration.map.projection,
+                  projection: map_proj,
+                  extent: working_bounds,
                   center: scope.center,
                   zoom: scope.zoom
                 }),
