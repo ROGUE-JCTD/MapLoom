@@ -1111,7 +1111,7 @@ var SERVER_SERVICE_USE_PROXY = true;
             var configMapLayers = configService_.configuration.map.layers;
             var lyrsCfg = [];
             // get gxp_arcsource server index
-            for (var i = 0; i < configSources.length; i++) {
+            for (var i in configSources) {
               if (configSources[i]['ptype'] === 'gxp_arcrestsource') {
                 esriIndex = i;
               }
