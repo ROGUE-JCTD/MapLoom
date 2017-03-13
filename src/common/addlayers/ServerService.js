@@ -1086,6 +1086,10 @@ var SERVER_SERVICE_USE_PROXY = true;
             {Title: 'BingCollinsBart', Name: 'CollinsBart', sourceParams: {imagerySet: 'collinsBart'}},
             {Title: 'BingSurvey', Name: 'Survey', sourceParams: {imagerySet: 'ordnanceSurvey'}}
           ];
+
+          for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
+            server.layersConfig[i].sourceParams.key = server.apiKey;
+          }
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_mapquestsource') {
           server.defaultServer = true;
