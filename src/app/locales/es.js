@@ -230,6 +230,8 @@
     'mgrs': 'MGRS',
     'other': 'Otro',
     'search': 'Búsqueda',
+    'searching': 'Buscando...',
+    'search_prompt' : 'Por favor, utilice cualquiera de las opciones de la izquierda para iniciar una búsqueda.',
     'search_locations': 'Ubicaciones de Búsqueda',
     'search_table': 'Buscar Todos Los Campos',
     'search_results': 'Resultados de la Búsqueda',

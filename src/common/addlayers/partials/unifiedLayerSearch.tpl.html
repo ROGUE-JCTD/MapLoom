@@ -114,12 +114,23 @@
             </div> <!-- end of filters -->
 
             <div class="col-md-6 unified-split-view">
-                <div class="row" ng-hide="resultsCount > 0">
+                <div class="row" ng-show="searchState == 'no-search'">
+                    <div class="col-xs-12">
+                        <span loom-helpicon help=""></span> Please use any of the settings on the left to start a search.
+
+                    </div>
+                </div>
+                <div class="row" ng-show="searchState == 'started'">
+                    <div class="col-xs-12">
+                        <div class="loom-loading" text="{{ 'searching' | translate }}"></div>
+                    </div>
+                </div>
+                <div class="row" ng-show="searchState == 'finished' && resultsCount == 0">
                     <div class="col-xs-12">
                         <i>{{ 'search_no_results' | translate }}</i>
                     </div>
                 </div>
-                <div class="row" ng-show="resultsCount > 0">
+                <div class="row" ng-show="searchState == 'finished' && resultsCount > 0">
                     <div class="col-xs-8">
                         <div class="layers-count">
                           {{ pagingTitle }}

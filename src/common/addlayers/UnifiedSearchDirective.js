@@ -31,6 +31,15 @@
             scope.sortField = 'Title';
             scope.sortAscending = 'Ascending';
 
+            /** Track the overall progress of the searches.
+            *
+             *  States:
+             *   - 'no-search': A search has not been executed.
+             *   - 'started'  : A search has started.
+             *   - 'finished' : A serach has finished.
+             */
+            scope.searchState = 'no-search';
+
             /** List of owners. */
             scope.owners = [];
 
@@ -428,6 +437,10 @@
                 'exchange': [],
                 'registry': []
               };
+
+              // change the scope to finished, even if partially finished.
+              scope.searchState = 'finished';
+
               if (response.data && response.data.objects) {
                 // reset the current layers list for both servers.
                 servers.geoserver.layersConfig = [];
@@ -494,6 +507,9 @@
             scope.search = function() {
               // get the basic search parameters.
               var filter_options = scope.getSearchParams();
+
+              // indicate to the user that a search has started.
+              scope.searchState = 'started';
 
               // init the server configs as necessary.
               scope.configureServers();
