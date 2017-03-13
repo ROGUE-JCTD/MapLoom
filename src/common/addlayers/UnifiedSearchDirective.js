@@ -239,7 +239,7 @@
                 case 'bbox':
                   scope.bbox = [];
                   scope.mapPreviewChangeCount = 0;
-                  // TOD0: set map to max extent
+                  scope.$emit('resetMap');
                   break;
                 case 'owner':
                   checkNone(scope.owners);
