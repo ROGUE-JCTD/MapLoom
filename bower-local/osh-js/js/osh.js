@@ -5448,128 +5448,6 @@ OSH.UI.DiscoveryView.Type = {
  * @class
  * @type {OSH.UI.View}
  * @augments OSH.UI.View
- * @param {string} divId The divId to attach the view
- * @param {Array} entityItems The entity items array
- * @param {Object} options the {@link OSH.View} options
- * @example
- var entityTreeView = new OSH.UI.EntityTreeView(entityTreeDialog.popContentDiv.id,
-     [{
-        entity : androidEntity,
-        path: "Sensors/Toulouse",
-        treeIcon : "images/android_icon.png",
-        contextMenuId: stackContextMenuId
-     }],
-     {
-         css: "tree-container"
-     }
- );
- */
-OSH.UI.EntityTreeView = OSH.UI.View.extend({
-    initialize:function(divId,entityItems,options) {
-        this._super(divId,[],options);
-
-        this.entityItems = entityItems;
-        this.initTree(options);
-    },
-
-    /**
-     *
-     * @param options
-     * @instance
-     * @memberof OSH.UI.EntityTreeView
-     */
-    initTree:function(options) {
-        this.tree = createTree(this.divId,'white',null);
-
-        // iterates over entities to create treeNode
-        for(var i = 0;i < this.entityItems.length;i++) {
-            var currentItem = this.entityItems[i];
-            var entity = currentItem.entity;
-            var path = currentItem.path;
-            var treeIcon = currentItem.treeIcon;
-            var contextMenuId = currentItem.contextMenuId;
-
-            if(path.endsWith("/")) {
-                path = path.substring(0,path.length-1);
-            }
-            
-            // create intermediary folders or append to them as needed 
-            var folder = path.split("/");
-            var nbNodes = folder.length;
-            var currentNode = this.tree;
-            var pos = 0;
-            while(nbNodes > 0) {
-                var existingChildNode = null;
-                
-                // scan child nodes to see if folder already exists
-                for (n=0; n<currentNode.childNodes.length; n++) {
-                    var node = currentNode.childNodes[n];
-                    if (node.text === folder[pos]) {
-                        existingChildNode = node;
-                        break;
-                    }
-                }
-                
-                // if folder already exists, just use it as parent in next iteration
-                // otherwise create a new node to use as new parent
-                if (existingChildNode == null) {
-                    if (currentNode === this.tree)
-                        currentNode = this.tree.createNode(folder[pos],false,'',this.tree,null,null);
-                    else
-                        currentNode = currentNode.createChildNode(folder[pos],false,'',null,null);    
-                } else {
-                    currentNode = existingChildNode;
-                }
-                
-                pos++;
-                nbNodes--;
-            }
-            
-            var entityNode;
-            if(currentNode === this.tree) {
-                entityNode = this.tree.createNode(entity.name,false,treeIcon,this.tree,entity,contextMenuId);
-            } else {
-                entityNode = currentNode.createChildNode(entity.name,false,treeIcon,entity,contextMenuId);
-            }
-            currentItem.node = entityNode;
-        }
-
-        //Rendering the tree
-        this.tree.drawTree();
-    },
-
-    /**
-     *
-     * @param dataSourcesIds
-     * @param entityId
-     * @instance
-     * @memberof OSH.UI.EntityTreeView
-     */
-    selectDataView: function (dataSourcesIds, entityId) {
-        
-        // when an entity is selected we find the corresponding node in the tree
-        // we expand all its ancestors and we mark it as selected
-        if (typeof(entityId) != "undefined") {
-            for(var i = 0;i < this.entityItems.length;i++) {
-                var currentItem = this.entityItems[i];
-                if (currentItem.entity.id === entityId) {
-                    this.tree.selectNode(currentItem.node, false);
-                    var node = currentItem.node.parent
-                    while (node != this.tree) {
-                        this.tree.expandNode(node);
-                        node = node.parent;
-                    }
-                }
-                    
-            }
-        }
-    }
-});
-/**
- * @classdesc
- * @class
- * @type {OSH.UI.View}
- * @augments OSH.UI.View
  */
 OSH.UI.OpenLayerView = OSH.UI.View.extend({
     initialize: function (divId, viewItems, options) {
@@ -5946,6 +5824,67 @@ OSH.UI.OpenLayerView = OSH.UI.View.extend({
         }
 
         return id;
+    },
+
+    /**
+     *
+     * @param properties
+     * @returns {string}
+     * @instance
+     * @memberof OSH.UI.OpenLayerView
+     */
+    createMarkerFromStyler: function (styler) {
+
+         if (!(styler.getId() in this.stylerToObj)) {
+
+              var properties = {
+                   lat: styler.location.y,
+                   lon: styler.location.x,
+                   orientation: styler.orientation.heading,
+                   color: styler.color,
+                   icon: styler.icon,
+                   name: this.names[styler.getId()]
+              }
+
+              //create marker
+              var marker = new ol.geom.Point(ol.proj.transform([properties.lon, properties.lat], 'EPSG:4326', 'EPSG:900913'));
+              var markerFeature = new ol.Feature({
+                   geometry: marker,
+                   name: 'Marker' //TODO
+              });
+
+              if (properties.icon != null) {
+                   var iconStyle = new ol.style.Style({
+                        image: new ol.style.Icon(({
+                             opacity: 0.75,
+                             src: properties.icon,
+                             rotation: properties.orientation * Math.PI / 180
+                        }))
+                   });
+                   markerFeature.setStyle(iconStyle);
+              }
+
+
+              //TODO:for selected marker event
+              //this.marker.on('click',this.onClick.bind(this));
+              //var vectorMarkerLayer =
+              //    new ol.layer.Vector({
+              //        title: properties.name,
+              //        source: new ol.source.Vector({
+              //            features: [markerFeature]
+              //        })
+              //    });
+
+              //this.map.addLayer(vectorMarkerLayer);
+
+              var id = "view-marker-" + OSH.Utils.randomUUID();
+              markerFeature.setId(id);
+              this.markers[id] = markerFeature;
+              this.stylerToObj[styler.getId()] = id;
+              return id;
+         } else {
+              return this.stylerToObj[styler.getId()];
+         }
     },
 
     /**
