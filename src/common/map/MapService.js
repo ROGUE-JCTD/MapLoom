@@ -1163,6 +1163,87 @@
       });
     };
 
+    /* Angular's utility methods were not sophisticated enough
+     * to do a 'parent window' URL parsing so this utility
+     * function is needed to parse an arbitrary query string.
+     */
+    this.parseQueryString = function(qstring) {
+      var working_str = '' + qstring;
+      if (working_str.indexOf('?') >= 0) {
+        working_str = working_str.split('?')[1];
+      }
+      if (working_str.indexOf('#') >= 0) {
+        working_str = working_str.split('#')[0];
+      }
+
+      var params = {};
+      var opts = working_str.split('&');
+      for (var i = 0, ii = opts.length; i < ii; i++) {
+        var kvp = opts[i].split('=');
+        var v = decodeURIComponent(kvp[1]);
+        // handle it when there are multiple values.
+        if (goog.isDefAndNotNull(params[kvp[0]])) {
+          params[kvp[0]].push(v);
+        } else {
+          params[kvp[0]] = [v];
+        }
+      }
+
+      return params;
+    };
+
+    /* Parse the URL and see if the user entered
+     * any of registry layers in.
+     *
+     * All registry layers will be pulled from registry
+     * then configure them.
+     */
+    this.loadRegistryLayersFromUrl = function() {
+      // angular's "location" was not working
+      // to parse the appropriate frame.  So this code gets
+      // a little old-school and uses window.location.search.
+      var params = this.parseQueryString(window.location.search);
+      var registry_server = serverService_.getRegistryLayerConfig();
+
+      // this function handles adding registry layers
+      var got_registry_layer = function(response) {
+        // check to see the layer returned.
+        if (response.data['a.matchDocs'] >= 1) {
+          // since this was caled using a UUID search,
+          // the first response should be the object we need.
+          var layer_defn = response.data['d.docs'][0];
+          //service_.addLayer(layer_defn);
+          var layer_objs = serverService_.createHyperSearchLayerObjects([layer_defn], registry_server.id);
+          if (layer_objs.length > 0) {
+            var layer_conf = {};
+            goog.object.extend(layer_conf, layer_objs[0]);
+            goog.object.extend(layer_conf, {
+              registry: true,
+              registryConfig: layer_objs[0],
+              name: layer_conf.title,
+              source: registry_server.id
+            });
+            service_.addVirtualLayer(layer_conf, layer_objs[0], registry_server);
+            layer_conf.add = false;
+          }
+        }
+      };
+
+      // check if there are any layers requested by the user
+      //  and then configure them if they are registry layers.
+      if (goog.isDefAndNotNull(params.layer)) {
+        for (var i = 0, ii = params.layer.length; i < ii; i++) {
+          var layer = params.layer[i].split(':');
+          if (layer[0] == 'registry') {
+            // add the registry layer!
+            var registry_url = '/registry';
+            var layer_url = registry_url + '/api?q.uuid=' + layer[1];
+            httpService_.get(layer_url).then(got_registry_layer);
+          }
+        }
+      }
+    };
+
     this.loadLayers = function() {
       console.log('=======[[ using configService_.configuration: ', configService_.configuration);
       if (goog.isDefAndNotNull(configService_.configuration) &&
@@ -1331,6 +1412,9 @@
             }
           }
         });
+
+
+        this.loadRegistryLayersFromUrl();
 
         //TODO: once all servers were added, async, then add any missing ones.
       } else {
