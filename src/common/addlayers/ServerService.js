@@ -633,7 +633,7 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.addSearchResultsForFavorites = function(server, filterOptions) {
-      var searchUrl = '/api/favorites/?content_type=42&limit=100';
+      var searchUrl = '/api/favorites/?type=layer&limit=100';
       if (filterOptions !== null) {
         searchUrl = applyFavoritesFilter(searchUrl, filterOptions);
       }
