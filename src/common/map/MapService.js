@@ -23,6 +23,7 @@
   var modify = null;
 
   var editableLayers_ = null;
+  var templateCache = null;
 
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
@@ -123,7 +124,7 @@
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
+                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q, $templateCache) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -138,6 +139,7 @@
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
       q_ = $q;
+      templateCache = $templateCache;
 
       // create map on init so that other components can use map on their init
       //this.configuration = configService_.configuration;
@@ -638,7 +640,6 @@
           }
         } else if (server.ptype === 'gxp_oshsource') {
           //currently we assume only one layer per 'server'
-
           layer = fullConfig;
 
           var obs_props = fullConfig.sourceParams.observable_props.split(',');
@@ -671,7 +672,7 @@
             name: fullConfig.Title.name,
             dataSources: []
           };
-
+          var overlay = null;
 
           for (i = 0; i < sel_props.length; i++) {
             clean_prop_name = sel_props[i].split('/');
@@ -697,6 +698,8 @@
               timeShift: -16000
             };
 
+
+
             if (clean_prop_name.indexOf('Location') != -1) {
               entity.dataSources.push(new OSH.DataReceiver.LatLonAlt(name, dataSrcOptions));
             } else if (clean_prop_name.indexOf('Quaternion') != -1 ||
@@ -704,6 +707,49 @@
               entity.dataSources.push(new OSH.DataReceiver.OrientationQuaternion(name, dataSrcOptions));
             } else if (clean_prop_name.indexOf('Orientation') != -1) {
               entity.dataSources.push(new OSH.DataReceiver.EulerOrientation(name, dataSrcOptions));
+            } else if (clean_prop_name.indexOf('Video') != -1) {
+              var videoRcv = new OSH.DataReceiver.VideoMjpeg(name, dataSrcOptions);
+              entity.dataSources.push(videoRcv);
+
+              /*var popup = '<div id="popup" class="ol-popup" style="min-width:286px; position:absolute;">' +
+                  '<a href="#" id="popup-closer" class="ol-popup-closer"></a>' +
+                  '<div id="popup-content"></div>' +
+                  '</div>';*/
+              var template = templateCache.get('osh/partial/oshvideopopup.tpl.html');
+
+              $('body').append(template);
+              var container = document.getElementById('popup');
+              var content = document.getElementById('popup-content');
+
+              content.innerHTML = 'waiting for data...';
+              overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+                element: container
+              }));
+
+              overlay.setPosition(undefined);
+
+              this.map.addOverlay(overlay);
+
+              // video view
+              /*var soloVideoDialog = new OSH.UI.DialogView(content, {
+                draggable: false,
+                css: 'video-dialog',
+                name: 'UAV Video',
+                show: true,
+                dockable: true,
+                closeable: true,
+                canDisconnect: false,
+                swapId: 'toggle-fullscreen-border'
+              });*/
+
+              var videoView = new OSH.UI.MjpegView(content, {
+                dataSourceId: videoRcv.getId(),
+                entityId: entity.id,
+                css: 'video',
+                cssSelected: 'video-selected',
+                useWorker: true
+              });
+              videoView.imgTag.setAttribute('width', '128px');
             }
           }
           var dataSourceController = new OSH.DataReceiver.DataReceiverController({ replayFactor: 4.0 });
@@ -711,7 +757,7 @@
 
           var markerStyler = new OSH.UI.Styler.PointMarker({
             locationFunc: {
-              dataSourceIds: [entity.dataSources[0].getId()],
+              dataSourceIds: [entity.dataSources[1].getId()],
               handler: function(rec) {
                 return {
                   x: rec.lon,
@@ -721,7 +767,7 @@
               }
             },
             orientationFunc: {
-              dataSourceIds: [entity.dataSources[1].getId()],
+              dataSourceIds: [entity.dataSources[2].getId()],
               handler: function(rec) {
                 return {
                   heading: rec.heading + 100
@@ -730,7 +776,7 @@
             },
             icon: '/static/maploom/assets/cameralook.png',
             iconFunc: {
-              dataSourceIds: [entity.dataSources[0].getId()],
+              dataSourceIds: [entity.dataSources[1].getId()],
               handler: function(rec, timeStamp, options) {
                 if (options.selected) {
                   return '/static/maploom/assets/cameralook.png';
@@ -741,7 +787,7 @@
             }
           });
 
-          var olMapView = new OSH.UI.OpenLayerView('main-container', [], { map: this.map });
+          var olMapView = new OSH.UI.OpenLayerView(null, [], { map: this.map });
           olMapView.addViewItem({
             name: entity.name,
             entityId: entity.id,
@@ -749,10 +795,9 @@
             contextMenuId: 'null'
           });
 
-
           var markerId = olMapView.createMarkerFromStyler(markerStyler);
           var markerFeature = olMapView.markers[markerId];
-
+          //markerFeature.on('click', function() { alert('yo'); });
           layer = new ol.layer.Vector({
             title: entity.name,
             source: new ol.source.Vector({
@@ -765,13 +810,18 @@
               bbox: { extent: fullConfig.bounds, crs: 'EPSG:900913' },
               editable: false,
               feat: markerFeature,
+              popup: overlay,
               schema: schema
             }
           });
 
           //update the bounding box extents as the lat long changes
-          markerStyler.addFn([entity.dataSources[0].getId()], function(rec) {
+          markerStyler.addFn([entity.dataSources[1].getId()], function(rec) {
+            var coords = ol.proj.transform([rec.lon, rec.lat], 'EPSG:4326', 'EPSG:900913');
             this.get('metadata').bbox.extent = this.get('metadata').feat.getGeometry().getExtent();
+            this.get('metadata').popup.setPosition(coords);
+            //var cont = document.getElementById('popup-content');
+            //cont.innerHTML = 'lat: ' + rec.lat + ' lon: ' + rec.lon;
           }.bind(layer));
 
           dataSourceController.connectAll();
