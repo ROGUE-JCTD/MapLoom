@@ -442,8 +442,10 @@
     this.performFeatureDiff = function(feature, newCommit, oldCommit, panel) {
       var diffOptions = new GeoGigFeatureDiffOptions();
       diffOptions.all = true;
-      diffOptions.newTreeish = newCommit;
-      diffOptions.oldTreeish = oldCommit;
+      // when new or old commits are null/undefined, use the shorthand
+      // for either the HEAD or the 0th point in the tree.
+      diffOptions.newTreeish = goog.isDefAndNotNull(newCommit) ? newCommit : 'HEAD';
+      diffOptions.oldTreeish = goog.isDefAndNotNull(oldCommit) ? oldCommit : '00000000';
       diffOptions.path = feature.id;
       panel.active = true;
       geogigService_.command(repoId_, 'featurediff', diffOptions).then(function(response) {
