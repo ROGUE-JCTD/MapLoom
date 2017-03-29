@@ -214,16 +214,12 @@
             };
 
             scope.goToMap = function() {
-              var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
-                  tableViewService.selectedLayer.get('metadata').projection,
-                  mapService.map.getView().getProjection());
-
-              mapService.zoomToExtent(projectedgeom.getExtent());
+              var geom = transformGeometry(scope.selectedRow.feature.geometry, null, null);
+              mapService.zoomToExtent(geom.getExtent());
 
               var item = {layer: tableViewService.selectedLayer, features: [scope.selectedRow.feature]};
               $('#table-view-window').modal('hide');
               featureManagerService.show(item);
-
             };
 
             scope.showHeatmap = function() {
