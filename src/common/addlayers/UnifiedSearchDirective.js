@@ -457,7 +457,10 @@
                   if (goog.isDefAndNotNull(layer.registry_url)) {
                     index_name = 'registry';
                   }
-                  layers_by_index[index_name].push(layer);
+                  // ensure that maps and documents are excluded from the search results.
+                  if (index_name == 'registry' || layer.type_exact == 'layer') {
+                    layers_by_index[index_name].push(layer);
+                  }
                 }
 
                 // convert the results from the search using the appropriate
