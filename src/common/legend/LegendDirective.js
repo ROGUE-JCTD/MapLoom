@@ -66,7 +66,8 @@
               }
 
               // ignore background layers, such as OSM.
-              if (layer.get('metadata').config.group == 'background') {
+              var conf = layer.get('metadata').config;
+              if (conf && conf.group == 'background') {
                 return false;
               }
 
