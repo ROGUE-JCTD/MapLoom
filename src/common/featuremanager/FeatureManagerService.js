@@ -80,7 +80,7 @@
           exclusiveModeService_.addMode = false;
           mapService_.removeDraw();
           mapService_.addSelect();
-          mapService_.addModify();
+          //mapService_.addModify();
           mapService_.selectFeature(event.feature);
         }
       });
