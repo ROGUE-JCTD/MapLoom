@@ -112,11 +112,13 @@
         id: 0,
         proxy: '/proxy/?url=',
         useProxy: false,
-        nominatimUrl: '//nominatim.openstreetmap.org',
+        searchUrl: '//nominatim.openstreetmap.org',
         fileserviceUrlTemplate: '/api/fileservice/view/{}',
         fileserviceUploadUrl: '/api/fileservice/',
         registryEnabled: true,
+        searchEnabled: true,
         nominatimSearchEnabled: false,
+        geoquerySearchEnabled: false,
         serverLocation: serverLocation,
         searchApiURL: serverLocation + '/registry/api/catalogs/'
       };
