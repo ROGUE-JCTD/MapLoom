@@ -10,17 +10,6 @@
     <a href="#" ng-click="updateMenuSection('storyLayers' + chapter.id); updateTourStep()">Back to StoryLayers List</a>
 </div>
 
-
-<button class="btn-storylayer ng-scope layer-edit-button" id="addFeatureButton"
-        ng-click="storyService.startFeatureAdd(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
-        ng-disabled="storyService.isNotEditable()">
-        <i class="fa fa-plus layer-edit-button-inner"></i>Add Feature
-</button>
-<button class="btn-storylayer ng-scope layer-edit-button" id="editFeatureButton"
-        ng-click="storyService.startFeatureEdit(); toggleSidebar('editStoryLayer' + chapter.id + storyLayers.id)"
-        ng-disabled="storyService.isNotEditable()">
-        <i class="fa fa-edit layer-edit-button-inner"></i>Edit Feature
-</button>
 <button class="btn-storylayer ng-scope layer-edit-button" id="editStoryLayerStyleButton"
         ng-click="updateMenuSection('editStoryLayerStyle' + chapter.id + storyLayers.id)">
         <i class="fa fa-paint-brush layer-edit-button-inner"></i>Style Layer
@@ -30,12 +19,7 @@
         ng-disabled="storyService.isNotEditable()">
         <i class="fa fa-list-alt layer-edit-button-inner"></i>View Table
 </button>
-<button class="btn-storylayer ng-scope layer-edit-button" id="viewStoryLayerHistoryButton"
-        ng-disabled="storyService.hasNoHistory()"
-        ng-click="storyService.getHistory();updateMenuSection('viewLayerHistory' + chapter.id + storyLayers.id)"
-        disabled="disabled">
-        <i class="fa fa-hourglass layer-edit-button-inner"></i>View History
-</button>
+
 <button class="btn-storylayer ng-scope layer-edit-button" id="editStoryLayerMaskingButton"
         ng-click="updateMenuSection('editStoryLayerMasking' + chapter.id + storyLayers.id)">
         <i class="fa fa-low-vision layer-edit-button-inner"></i>Masking
@@ -44,5 +28,3 @@
         ng-click="removeLayer()">
         <i class="fa fa-minus-circle layer-edit-button-inner"></i>Remove Layer
 </button>
-
-<!-- <h5 class="text-right"><a href="http://wiki.mapstory.org/wiki/Versioned_Editing" target="_blank">Editing Help</a></h5>-->
