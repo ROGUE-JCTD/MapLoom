@@ -226,6 +226,10 @@
           $scope.locations = data.objects;
         });
 
+        $http.get('/api/categories/').success(function(data) {
+          $scope.categories = data.objects;
+        });
+
         $scope.isShown = true;
 
         $scope.toggleSidebar = function() {

@@ -14,14 +14,7 @@
                 <div class="">
                     <select class="form-control" id="id_category" name="category" ng-model="storyService.category">
                         <option value="" selected="selected">---------</option>
-                        <option value="1">Biography</option>
-                        <option value="13">Crisis</option>
-                        <option value="3">Culture & Ideas</option>
-                        <option value="6">Geopolitics</option>
-                        <option value="2">Health</option>
-                        <option value="11">Human Settlement</option>
-                        <option value="9">Nature & Environment</option>
-                        <option value="19">Science & Industry</option>
+                        <option ng-repeat="category in categories" value="{{category.id}}">{{category.gn_description}}</option>
                     </select>
                     <p class="help-block">high-level geographic data thematic classification to assist in the grouping and search of available geographic data sets.</p>
                 </div>
