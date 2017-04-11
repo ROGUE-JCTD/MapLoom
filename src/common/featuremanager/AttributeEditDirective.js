@@ -14,6 +14,11 @@
               scope.isSaving = false;
               var tempProperties = {};
               var attributeTypes = featureManagerService.getSelectedLayer().get('metadata').schema;
+
+              if (attributeTypes.ogc_fid) {
+                delete attributeTypes.ogc_fid;
+              }
+
               if (goog.isDefAndNotNull(attributeTypes)) {
                 goog.array.forEach(properties, function(property, index, arr) {
                   var prop;
