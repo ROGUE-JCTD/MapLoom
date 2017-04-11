@@ -342,16 +342,18 @@
     <% if (!(typeof django === 'undefined') && (django)) { %>
 {% endverbatim %}
 <% } %>
-<script type="text/javascript">
-    (function() {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = '//api.usersnap.com/load/'+
-            'bbadd6c6-bbf7-4426-a52c-965ebb008963.js';
-    var x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-    })();
-</script>
+{% if  USER_SNAP %}
+  <script type="text/javascript">
+      (function() {
+      var s = document.createElement("script");
+      s.type = "text/javascript";
+      s.async = true;
+      s.src = '//api.usersnap.com/load/'+
+              'bbadd6c6-bbf7-4426-a52c-965ebb008963.js';
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+      })();
+  </script>
+{% endif %}
 </body>
 </html>
