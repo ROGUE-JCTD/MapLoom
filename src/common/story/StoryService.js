@@ -417,9 +417,9 @@
 
     this.getSaveURL = function() {
       if (goog.isDefAndNotNull(this.id) && this.id) {
-        return '/maps/' + this.id + '/save';
+        return '/story/' + this.id + '/save';
       } else {
-        return '/maps/new/story';
+        return '/story';
       }
     };
 
