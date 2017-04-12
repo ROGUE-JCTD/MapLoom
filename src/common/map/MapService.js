@@ -1128,7 +1128,7 @@
       if (goog.isDefAndNotNull(id) && id) {
         return '/maps/' + id + '/data';
       } else {
-        return '/maps/new/data';
+        return '/story/chapter/new';
       }
     };
 
