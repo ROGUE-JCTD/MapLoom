@@ -227,7 +227,10 @@
         });
 
         $http.get('/api/categories/').success(function(data) {
-          $scope.categories = data.objects;
+          function isActive(category) {
+            return category.is_choice;
+          }
+          $scope.categories = data.objects.filter(isActive);
         });
 
         $scope.isShown = true;
