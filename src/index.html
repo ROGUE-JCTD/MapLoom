@@ -342,7 +342,9 @@
     <% if (!(typeof django === 'undefined') && (django)) { %>
 {% endverbatim %}
 <% } %>
-{% if  USER_SNAP %}
+<% if (!(typeof django === 'undefined') && (django)) { %>
+{% if USER_SNAP %}
+<% } %>
   <script type="text/javascript">
       (function() {
       var s = document.createElement("script");
@@ -354,6 +356,8 @@
       x.parentNode.insertBefore(s, x);
       })();
   </script>
+<% if (!(typeof django === 'undefined') && (django)) { %>
 {% endif %}
+<% } %>
 </body>
 </html>
