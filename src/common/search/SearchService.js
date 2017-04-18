@@ -166,8 +166,11 @@
               results.push({
                 location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
                 boundingbox: convertLatLonToBbox(result.geometry.coordinates),
-                // In the future we want to add another property and have it pull right and be smaller text
-                name: result.properties.name + '(' + result.properties.featureDesignationName + ')'
+                name: result.properties.name,
+                cc: result.properties.cc,
+                source: result.properties.source,
+                featureDesignationName: result.properties.featureDesignationName,
+                featureDesignationCode: result.properties.featureDesignationCode
               });
             });
             promise.resolve(results);

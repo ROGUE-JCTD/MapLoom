@@ -2,7 +2,7 @@
   var module = angular.module('loom_search_directive', []);
 
   module.directive('loomSearch',
-      function($timeout, $translate, searchService, dialogService, mapService) {
+      function($timeout, $translate, searchService, dialogService, mapService, configService) {
         return {
           restrict: 'C',
           replace: true,
@@ -42,6 +42,7 @@
             };
 
             scope.performSearch = function() {
+              scope.config = configService.configuration;
               if (scope.displayingResults()) {
                 scope.searchQuery = '';
                 scope.clearResults();
@@ -84,6 +85,10 @@
 
             scope.resultClicked = function(result) {
               zoomToResult(result);
+            };
+
+            scope.isExpanded = function(id) {
+              return $(id).attr('class') == 'in';
             };
           }
         };
