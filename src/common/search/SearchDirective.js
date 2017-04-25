@@ -2,13 +2,12 @@
   var module = angular.module('loom_search_directive', []);
 
   module.directive('loomSearch',
-      function($timeout, $translate, searchService, dialogService, mapService, configService) {
+      function($rootScope, $timeout, $translate, searchService, dialogService, mapService, configService) {
         return {
-          restrict: 'C',
           replace: true,
           templateUrl: 'search/partial/search.tpl.html',
           // The linking function will add behavior to the template
-          link: function(scope) {
+          link: function(scope, element) {
             scope.searchQuery = '';
             scope.searchInProgress = false;
             scope.searchResults = [];
@@ -88,7 +87,7 @@
             };
 
             scope.isExpanded = function(id) {
-              return $(id).attr('class') == 'in';
+              return $(id).hasClass('in');
             };
           }
         };

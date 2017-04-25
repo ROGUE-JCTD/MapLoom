@@ -6,6 +6,7 @@
   var configService_ = null;
   var mapService_ = null;
   var searchlayer_ = null;
+  var service_ = null;
 
   module.provider('searchService', function() {
     this.$get = function($rootScope, $http, $q, $translate, configService, mapService) {
@@ -13,6 +14,7 @@
       q_ = $q;
       configService_ = configService;
       mapService_ = mapService;
+      service_ = this;
 
       searchlayer_ = new ol.layer.Vector({
         metadata: {
@@ -46,7 +48,7 @@
 
     // algorithm taken from http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates#Java
     // from the "Boundingcoordinates" method
-    convertLatLonToBbox = function(coordinates) {
+    this.convertLatLonToBbox = function(coordinates) {
       // This is the distance in km of the radius of the "greater circle"
       // that is, distance to an imagined point at the edge of our view
       // unit is in km
@@ -165,7 +167,7 @@
             forEachArrayish(response.data.features, function(result) {
               results.push({
                 location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
-                boundingbox: convertLatLonToBbox(result.geometry.coordinates),
+                boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
                 name: result.properties.name,
                 cc: result.properties.cc,
                 source: result.properties.source,
