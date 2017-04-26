@@ -3,25 +3,18 @@
 
     <div class="col-sm-12">
         <div class="col-sm-6">
-            <a href="/getstarted" target="_blank" id="start-tour">
-                <h3>Take a Tour</h3>
-            </a>
+            <p>
+                <a href="/getstarted" target="_blank" id="start-tour" class="btn-composer">
+                    Take a Tour
+                </a>
+            </p>
         </div>
         <div class="col-sm-6">
-            <a href="#" id="start-composing" data-dismiss="modal" data-target="#mapProperties" data-toggle="modal">
-                <h3>Compose Story</h3>
-            </a>
+            <p>
+                <a href="#" id="start-composing" data-dismiss="modal" data-target="#mapProperties" data-toggle="modal" class="btn-composer">
+                    Compose Story
+                </a>
+            </p>
         </div>
-        <div class="text-center" ng-show="recentDrafts.length">
-            <h5>Recent Drafts</h5>
-            <div ng-repeat="draft in recentDrafts" class="recent-drafts">
-                <p class="pointer" ng-click="redirect('/story/' + draft.id + '/draft')">{{ draft.title }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal-footer">
-    <div align="center">
-        <small><a class="pointer" ng-click="redirect('/')">Return to {{ application.name }} Home</a></small>
     </div>
 </div>
