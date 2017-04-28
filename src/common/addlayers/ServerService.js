@@ -747,6 +747,14 @@ var SERVER_SERVICE_USE_PROXY = true;
       // if the layer provides the extent, yay! easy.
       if (layer.extent) {
         extent = layer.extent;
+      // registry returns layers with a four-property
+      //  definition for the bounding box and is reliably populated
+      //  as accurate.
+      } else if (goog.isDefAndNotNull(layer.bbox_bottom)) {
+        extent = [
+          layer.bbox_left, layer.bbox_bottom,
+          layer.bbox_right, layer.bbox_top
+        ];
       // geonode publishes the extent as a wkt polygon,
       //  this parses the polygon and gets the extent out.
       } else if (layer.csw_wkt_geometry) {
