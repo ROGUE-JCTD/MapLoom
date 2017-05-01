@@ -361,7 +361,8 @@
     'measure_line' : 'Length',
     'measure_stop' : 'Stop measuring',
     'measure_units' : 'Units',
-    'bounding_box' : 'Bounding Box'
+    'bounding_box' : 'Bounding Box',
+    'too_many_filters' : 'You may have too many filters selected.  Try removing one of the following:'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);
