@@ -2,15 +2,17 @@
   var module = angular.module('loom_search_directive', []);
 
   module.directive('loomSearch',
-      function($rootScope, $timeout, $translate, searchService, dialogService, mapService, configService) {
+      function($timeout, $translate, searchService, dialogService, mapService, configService) {
         return {
+          restrict: 'C',
           replace: true,
           templateUrl: 'search/partial/search.tpl.html',
           // The linking function will add behavior to the template
-          link: function(scope, element) {
+          link: function(scope) {
             scope.searchQuery = '';
             scope.searchInProgress = false;
             scope.searchResults = [];
+            scope.searchExpanded = false;
 
             function zoomToResult(result) {
               var boxMin = ol.proj.transform([result.boundingbox[2], result.boundingbox[0]], 'EPSG:4326',
@@ -32,7 +34,7 @@
 
             scope.clearResults = function() {
               scope.searchResults = [];
-              $('#search-results-panel').collapse('hide');
+              scope.searchExpanded = false;
               searchService.clearSearchLayer();
             };
 
@@ -50,7 +52,7 @@
               if (scope.searchInProgress === true) {
                 return;
               }
-              $('#search-results-panel').collapse('hide');
+              scope.searchExpanded = false;
               if (goog.string.removeAll(goog.string.collapseWhitespace(scope.searchQuery), ' ') !== '') {
                 scope.searchInProgress = true;
                 searchService.performSearch(scope.searchQuery).then(function(results) {
@@ -60,11 +62,13 @@
                   } else if (results.length === 1) {
                     zoomToResult(results[0]);
                     searchService.populateSearchLayer(results);
+                    scope.searchExpanded = true;
                   } else {
                     $timeout(function() {
-                      $('#search-results-panel').collapse('show');
+                      scope.searchExpanded = true;
                     }, 10);
                     searchService.populateSearchLayer(results);
+                    scope.searchExpanded = true;
                   }
                   scope.searchInProgress = false;
                 }, function(_status) {
@@ -86,8 +90,20 @@
               zoomToResult(result);
             };
 
-            scope.isExpanded = function(id) {
-              return $(id).hasClass('in');
+            scope.isExpanded = function(result) {
+              return (result._open === true);
+            };
+
+            scope.toggleOpen = function(result) {
+              result._open = (result._open === false);
+            };
+
+            scope.getClassSearchExpanded = function() {
+              if (scope.searchExpanded === true) {
+                return 'in';
+              } else {
+                return 'collapse';
+              }
             };
           }
         };
