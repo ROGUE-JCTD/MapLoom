@@ -1,0 +1,26 @@
+<div id ="osh-info-popup">
+  <div class="info-box-title-row row">
+    <div class="info-box-back"><i  class="glyphicon glyphicon-chevron-left"></i></div>
+    <div class="info-box-title ellipsis">{{ oshInfoBox.oshService.getCurrentSelectedEntity().name }}</div>
+    <!--<div  class="info-box-title ellipsis">
+      OSH Android<br>ItemID</div>-->
+    <div class="info-box-close" ng-click="oshInfoBox.oshService.hideOverlay()"><i class="glyphicon glyphicon-remove" ></i></div>
+
+  </div>
+  <div>
+    <div id="pic-carousel-container" ng-click="oshInfoBox.oshService.expandVideo()">
+      <carousel id="feature-info-box-carousel" interval="2000">
+        <div id="osh-info-box-video-content">
+        </div>
+      </carousel>
+    </div>
+    <div id="osh-info-box-properties" class="feature-info-box" style="height:64px;">
+      <span ng-repeat="data in oshInfoBox.oshService.getData()" >
+        <span ng-repeat="(key, value) in data track by key">
+          <span ng-if="value != null" class="info-box-attribute">{{key}}:</span>
+          <span ng-if="value != null" class="info-box-attribute-value">{{ value }}</span>
+        </span>
+      </span>
+    </div>
+  </div>
+</div>

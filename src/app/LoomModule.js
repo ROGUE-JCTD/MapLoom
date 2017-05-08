@@ -19,6 +19,7 @@
     'loom_pulldown_controller',
     'loom_feature_manager',
     'loom_merge',
+    'loom_osh',
     'loom_sync',
     'loom_legend',
     'loom_statistics',

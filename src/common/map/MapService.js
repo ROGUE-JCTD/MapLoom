@@ -11,6 +11,7 @@
   var dialogService_ = null;
   var pulldownService_ = null;
   var tableViewService_ = null;
+  var oshService_ = null;
   var translate_ = null;
   var dragZoomActive = false;
   var rootScope_ = null;
@@ -23,7 +24,7 @@
   var modify = null;
 
   var editableLayers_ = null;
-  var templateCache = null;
+  //var templateCache = null;
 
   var createVectorEditLayer = function() {
     return new ol.layer.Vector({
@@ -124,7 +125,7 @@
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q, $templateCache) {
+                         $cookieStore, $cookies, configService, dialogService, tableViewService, oshService, $rootScope, $q, $templateCache) {
       service_ = this;
       httpService_ = $http;
       cookieStoreService_ = $cookieStore;
@@ -138,8 +139,9 @@
       rootScope_ = $rootScope;
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
+      oshService_ = oshService;
       q_ = $q;
-      templateCache = $templateCache;
+      //templateCache = $templateCache;
 
       // create map on init so that other components can use map on their init
       //this.configuration = configService_.configuration;
@@ -156,6 +158,7 @@
       }
 
       this.map = this.createMap();
+      oshService_.init(this.map);
 
       // now that we have a map, lets try to add layers and servers
       service_.loadLayers();
@@ -669,10 +672,21 @@
           //plus add them to the map
           var entity = {
             id: fullConfig.Name,
-            name: fullConfig.Title.name,
-            dataSources: []
+            name: fullConfig.Title,
+            dataSources: [],
+            getDataSourceIndex: function(name) {
+              for (var ds = 0; ds < this.dataSources.length; ds++) {
+                if (this.dataSources[ds].name == name) {
+                  return ds;
+                }
+              }
+              return -1;
+            }
           };
-          var overlay = null;
+
+          //declaration for an overlay  if there is video this variable will be initialized
+          //var overlay = null;
+          //var uuid = OSH.Utils.randomUUID();
 
           for (i = 0; i < sel_props.length; i++) {
             clean_prop_name = sel_props[i].split('/');
@@ -701,46 +715,29 @@
 
 
             if (clean_prop_name.indexOf('Location') != -1) {
-              entity.dataSources.push(new OSH.DataReceiver.LatLonAlt(name, dataSrcOptions));
-            } else if (clean_prop_name.indexOf('Quaternion') != -1 ||
-                    clean_prop_name.indexOf('Imu') != -1) {
-              entity.dataSources.push(new OSH.DataReceiver.OrientationQuaternion(name, dataSrcOptions));
+              entity.dataSources.push(new OSH.DataReceiver.LatLonAlt(offering + 'LatLonAlt', dataSrcOptions));
+            } else if (clean_prop_name.indexOf('Quaternion') != -1 || clean_prop_name.indexOf('Imu') != -1) {
+              entity.dataSources.push(new OSH.DataReceiver.OrientationQuaternion(offering + 'OrientationQuaternion', dataSrcOptions));
             } else if (clean_prop_name.indexOf('Orientation') != -1) {
-              entity.dataSources.push(new OSH.DataReceiver.EulerOrientation(name, dataSrcOptions));
+              entity.dataSources.push(new OSH.DataReceiver.EulerOrientation(offering + 'EulerOrientation', dataSrcOptions));
             } else if (clean_prop_name.indexOf('Video') != -1) {
-              var videoRcv = new OSH.DataReceiver.VideoMjpeg(name, dataSrcOptions);
+              var videoRcv = new OSH.DataReceiver.VideoMjpeg(offering + 'VideoMjpeg', dataSrcOptions);
               entity.dataSources.push(videoRcv);
 
-              /*var popup = '<div id="popup" class="ol-popup" style="min-width:286px; position:absolute;">' +
-                  '<a href="#" id="popup-closer" class="ol-popup-closer"></a>' +
-                  '<div id="popup-content"></div>' +
-                  '</div>';*/
-              var template = templateCache.get('osh/partial/oshvideopopup.tpl.html');
-
+              /*var template = templateCache.get('osh/partial/oshinfobox.tpl.html');
               $('body').append(template);
-              var container = document.getElementById('popup');
-              var content = document.getElementById('popup-content');
 
-              content.innerHTML = 'waiting for data...';
-              overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+              var container = document.getElementById('osh-info-box');
+              container.setAttribute('id', 'osh-info-box-' + uuid);
+
+              var content = document.getElementById('osh-info-box-content');
+              content.setAttribute('id', 'osh-info-box-content-' + uuid);
+
+              overlay = new ol.Overlay({
                 element: container
-              }));
-
+              });
               overlay.setPosition(undefined);
-
               this.map.addOverlay(overlay);
-
-              // video view
-              /*var soloVideoDialog = new OSH.UI.DialogView(content, {
-                draggable: false,
-                css: 'video-dialog',
-                name: 'UAV Video',
-                show: true,
-                dockable: true,
-                closeable: true,
-                canDisconnect: false,
-                swapId: 'toggle-fullscreen-border'
-              });*/
 
               var videoView = new OSH.UI.MjpegView(content, {
                 dataSourceId: videoRcv.getId(),
@@ -749,15 +746,26 @@
                 cssSelected: 'video-selected',
                 useWorker: true
               });
-              videoView.imgTag.setAttribute('width', '128px');
+              videoView.imgTag.setAttribute('width', 'auto');*/
             }
           }
+
+          //var popup_container = document.getElementById('osh-info-box-' + uuid);
+          /*var closer = document.getElementById('popup-closer');
+          closer.onclick = function() {
+            overlay.setPosition(undefined);
+            $(popup_container).css('visibility', 'hidden');
+            closer.blur();
+            return false;
+          };*/
+
           var dataSourceController = new OSH.DataReceiver.DataReceiverController({ replayFactor: 4.0 });
           dataSourceController.addEntity(entity);
 
-          var markerStyler = new OSH.UI.Styler.PointMarker({
-            locationFunc: {
-              dataSourceIds: [entity.dataSources[1].getId()],
+          stylerOps = { icon: '/static/maploom/assets/cameralook.png' };
+          if (entity.getDataSourceIndex(fullConfig.Name + 'LatLonAlt') != -1) {
+            stylerOps.locationFunc = {
+              dataSourceIds: [entity.dataSources[entity.getDataSourceIndex(fullConfig.Name + 'LatLonAlt')].getId()],
               handler: function(rec) {
                 return {
                   x: rec.lon,
@@ -765,18 +773,10 @@
                   z: rec.alt
                 };
               }
-            },
-            orientationFunc: {
-              dataSourceIds: [entity.dataSources[2].getId()],
-              handler: function(rec) {
-                return {
-                  heading: rec.heading + 100
-                };
-              }
-            },
-            icon: '/static/maploom/assets/cameralook.png',
-            iconFunc: {
-              dataSourceIds: [entity.dataSources[1].getId()],
+            };
+
+            stylerOps.iconFunc = {
+              dataSourceIds: [entity.dataSources[entity.getDataSourceIndex(fullConfig.Name + 'LatLonAlt')].getId()],
               handler: function(rec, timeStamp, options) {
                 if (options.selected) {
                   return '/static/maploom/assets/cameralook.png';
@@ -784,8 +784,23 @@
                   return '/static/maploom/assets/cameralook.png';
                 }
               }
-            }
-          });
+            };
+          }
+          if (entity.getDataSourceIndex(fullConfig.Name + 'OrientationQuaternion') != -1) {
+            stylerOps.orientationFunc = {
+              dataSourceIds: [entity.dataSources[entity.getDataSourceIndex(fullConfig.Name + 'OrientationQuaternion')].getId()],
+              handler: function(rec) {
+                return {
+                  heading: rec.heading + 100
+                };
+              }
+            };
+          }
+
+
+
+          var markerStyler = new OSH.UI.Styler.PointMarker(stylerOps);
+
 
           var olMapView = new OSH.UI.OpenLayerView(null, [], { map: this.map });
           olMapView.addViewItem({
@@ -797,7 +812,9 @@
 
           var markerId = olMapView.createMarkerFromStyler(markerStyler);
           var markerFeature = olMapView.markers[markerId];
-          //markerFeature.on('click', function() { alert('yo'); });
+
+          oshService_.addEntity(markerId, entity);
+
           layer = new ol.layer.Vector({
             title: entity.name,
             source: new ol.source.Vector({
@@ -810,20 +827,17 @@
               bbox: { extent: fullConfig.bounds, crs: 'EPSG:900913' },
               editable: false,
               feat: markerFeature,
-              popup: overlay,
+              //popup: overlay,
               schema: schema
             }
           });
 
-          //update the bounding box extents as the lat long changes
-          markerStyler.addFn([entity.dataSources[1].getId()], function(rec) {
-            var coords = ol.proj.transform([rec.lon, rec.lat], 'EPSG:4326', 'EPSG:900913');
-            this.get('metadata').bbox.extent = this.get('metadata').feat.getGeometry().getExtent();
-            this.get('metadata').popup.setPosition(coords);
-            //var cont = document.getElementById('popup-content');
-            //cont.innerHTML = 'lat: ' + rec.lat + ' lon: ' + rec.lon;
-          }.bind(layer));
-
+          if (entity.getDataSourceIndex(fullConfig.Name + 'LatLonAlt') != -1) {
+            //update the bounding box extents as the lat long changes
+            markerStyler.addFn([entity.dataSources[entity.getDataSourceIndex(fullConfig.Name + 'LatLonAlt')].getId()], function(rec) {
+              this.get('metadata').bbox.extent = this.get('metadata').feat.getGeometry().getExtent();
+            }.bind(layer));
+          }
           dataSourceController.connectAll();
 
         } else if (server.ptype === 'gxp_mapquestsource') {
