@@ -50,7 +50,7 @@
       </span>
     </div>
 
-    <div id="feature-info-box-bottom">
+    <div id="feature-info-box-bottom" ng-if="!featureManagerService.getSelectedLayer().get('metadata').searchLayer && !featureManagerService.getSelectedLayer().get('metadata').searchResults">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
         <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'set_spatial_filter' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-filter">

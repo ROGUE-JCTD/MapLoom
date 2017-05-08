@@ -986,6 +986,10 @@
           if (goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
             validRequestCount++;
           }
+          // include special case for search layer and results
+          else if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            validRequestCount++;
+          }
         });
 
         //This function is called each time a get feature info request returns (call is made below).
@@ -1026,9 +1030,40 @@
           });
         }
 
+        var coordinatesWithinRange = function(coords1, coords2, range) {
+          if (coords1.length != coords2.length) {
+            return false;
+          }
+          for (var i = 0; i < coords1.length; i++) {
+            if (Math.abs(coords1[i] - coords2[i]) > range) {
+              return false;
+            }
+          }
+          return true;
+        };
+
         //Get the feature info for each layer that supports it
         goog.array.forEach(layers, function(layer, index) {
           var source = layer.getSource();
+          if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            var layerInfo = {};
+            layerInfo.features = [];
+            // 8 is the radius of the circle used for search result points
+            var resolution = view.getResolution() * 8;
+            goog.array.forEach(source.getFeatures(), function(feature) {
+              if (coordinatesWithinRange(feature.getGeometry().getCoordinates(), evt.coordinate, resolution)) {
+                layerInfo.features.push(feature);
+              }
+            });
+
+            if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
+              layerInfo.layer = layers[index];
+              goog.array.insert(infoPerLayer, layerInfo);
+            }
+
+            getFeatureInfoCompleted();
+            return;
+          }
           if (!goog.isDefAndNotNull(source.getGetFeatureInfoUrl)) {
             return;
           }
