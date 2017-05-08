@@ -136,6 +136,73 @@
                 featureManagerService.hide();
               }
             };
+
+            scope.pinFeature = function() {
+              var searchResults;
+              mapService.map.getLayers().forEach(function(layer) {
+                if (layer.get('metadata').searchResults) {
+                  searchResults = layer;
+                }
+              });
+              // create pinned features layer if it does not exist yet
+              if (!goog.isDefAndNotNull(searchResults)) {
+                searchResults = new ol.layer.Vector({
+                  metadata: {
+                    title: $translate.instant('pinned_search'),
+                    internalLayer: true,
+                    searchResults: true
+                  },
+                  source: new ol.source.Vector({
+                    parser: null
+                  }),
+                  style: function(feature, resolution) {
+                    return [new ol.style.Style({
+                      image: new ol.style.Circle({
+                        radius: 8,
+                        fill: new ol.style.Fill({
+                          color: '#FF0000'
+                        }),
+                        stroke: new ol.style.Stroke({
+                          color: '#000000'
+                        })
+                      })
+                    })];
+                  }
+                });
+                // add the search results to the map
+                mapService.map.addLayer(searchResults);
+              }
+              // add a clone of the selected feature to the pinned search result
+              var olFeature =
+                  featureManagerService.getSelectedLayer().getSource().getFeatureById(
+                      featureManagerService.getSelectedItem().getId()
+                  );
+              var searchFeature = olFeature.clone();
+              // copy the properties and id manually, not captured in a clone
+              searchFeature.setId('P_' + olFeature.getId());
+              searchFeature.properties = olFeature.properties;
+
+              searchResults.getSource().addFeature(searchFeature);
+            };
+
+            scope.unpinFeature = function() {
+              var searchResults;
+              mapService.map.getLayers().forEach(function(layer) {
+                if (layer.get('metadata').searchResults) {
+                  searchResults = layer;
+                }
+              });
+              // sanity check
+              if (!goog.isDefAndNotNull(searchResults)) {
+                return;
+              }
+              // remove the selected feature to the pinned search result
+              var olFeature =
+                  featureManagerService.getSelectedLayer().getSource().getFeatureById(
+                      featureManagerService.getSelectedItem().getId()
+                  );
+              searchResults.getSource().removeFeature(olFeature);
+            };
           }
         };
       }

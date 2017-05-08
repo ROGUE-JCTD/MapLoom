@@ -477,11 +477,17 @@
       var layers = [];
 
       this.map.getLayers().forEach(function(layer) {
+        var searchLayer = false;
+        if (layer.get('metadata').internalLayer) {
+          if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            searchLayer = true;
+          }
+        }
 
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer) &&
+            (searchLayer || !(layer.get('metadata').internalLayer)) &&
             !(layer.get('metadata').spatialFilterLayer)) {
 
           // if it is imagery

@@ -19,6 +19,7 @@
       searchlayer_ = new ol.layer.Vector({
         metadata: {
           title: $translate.instant('search_results'),
+          internalLayer: true,
           searchLayer: true
         },
         source: new ol.source.Vector({
@@ -229,13 +230,11 @@
       mapService_.map.addLayer(searchlayer_);
       forEachArrayish(results, function(result) {
         var olFeature = new ol.Feature();
-        olFeature.properties = result;
+        // properly assign feature data (removing hashkey metadata)
+        olFeature.properties = angular.copy(result);
         if (result.name.length > 25) {
-          // id is set twice to be handled correctly by featureInfoBox service
-          olFeature.id = result.name.substring(0, 25) + '...';
           olFeature.setId(result.name.substring(0, 25) + '...');
         } else {
-          olFeature.id = result.name;
           olFeature.setId(result.name);
         }
         olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',

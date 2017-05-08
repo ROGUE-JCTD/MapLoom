@@ -956,6 +956,18 @@
       }
       return deferredResponse.promise;
     };
+
+    this.coordinatesWithinRange = function(coords1, coords2, range) {
+      if (coords1.length != coords2.length) {
+        return false;
+      }
+      for (var i = 0, ii = coords1.length; i < ii; i++) {
+        if (Math.abs(coords1[i] - coords2[i]) > range) {
+          return false;
+        }
+      }
+      return true;
+    };
   });
 
   //-- Private functions
@@ -974,6 +986,7 @@
         var view = mapService_.map.getView();
         var layers = mapService_.getLayers(false, true);
         var validRequestCount = 0;
+        var searchRequestCount = 0;
         var completedRequestCount = 0;
 
         var infoPerLayer = [];
@@ -987,8 +1000,8 @@
             validRequestCount++;
           }
           // include special case for search layer and results
-          else if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
-            validRequestCount++;
+          if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            searchRequestCount++;
           }
         });
 
@@ -997,7 +1010,7 @@
         var getFeatureInfoCompleted = function() {
           completedRequestCount++;
 
-          if (completedRequestCount === validRequestCount) {
+          if (completedRequestCount === (validRequestCount + searchRequestCount)) {
             if (infoPerLayer.length > 0) {
               clickPosition_ = evt.coordinate;
               service_.show(infoPerLayer, evt.coordinate);
@@ -1030,18 +1043,6 @@
           });
         }
 
-        var coordinatesWithinRange = function(coords1, coords2, range) {
-          if (coords1.length != coords2.length) {
-            return false;
-          }
-          for (var i = 0; i < coords1.length; i++) {
-            if (Math.abs(coords1[i] - coords2[i]) > range) {
-              return false;
-            }
-          }
-          return true;
-        };
-
         //Get the feature info for each layer that supports it
         goog.array.forEach(layers, function(layer, index) {
           var source = layer.getSource();
@@ -1051,7 +1052,7 @@
             // 8 is the radius of the circle used for search result points
             var resolution = view.getResolution() * 8;
             goog.array.forEach(source.getFeatures(), function(feature) {
-              if (coordinatesWithinRange(feature.getGeometry().getCoordinates(), evt.coordinate, resolution)) {
+              if (service_.coordinatesWithinRange(feature.getGeometry().getCoordinates(), evt.coordinate, resolution)) {
                 layerInfo.features.push(feature);
               }
             });

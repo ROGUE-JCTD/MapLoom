@@ -82,5 +82,13 @@
                 </button>
       </div>
     </div>
+    <div id="feature-info-box-search" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchLayer">
+      <button type="button" ng-click="pinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'pin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-pushpin">
+      </button>
+    </div>
+    <div id="feature-info-box-search-results" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchResults">
+        <button type="button" ng-click="unpinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'unpin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-remove">
+        </button>
+    </div>
   </div>
 </div>
