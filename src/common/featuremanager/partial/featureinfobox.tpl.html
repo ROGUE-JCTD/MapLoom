@@ -50,7 +50,7 @@
       </span>
     </div>
 
-    <div id="feature-info-box-bottom">
+    <div id="feature-info-box-bottom" ng-if="!featureManagerService.getSelectedLayer().get('metadata').searchLayer && !featureManagerService.getSelectedLayer().get('metadata').searchResults">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
         <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'set_spatial_filter' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-filter">
@@ -81,6 +81,14 @@
           <div class="loom-loading" spinner-radius="10" spinner-width="2" spinner-hidden="!deletingFeature"></div>
                 </button>
       </div>
+    </div>
+    <div id="feature-info-box-search" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchLayer">
+      <button type="button" ng-click="pinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'pin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-pushpin">
+      </button>
+    </div>
+    <div id="feature-info-box-search-results" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchResults">
+        <button type="button" ng-click="unpinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'unpin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-remove">
+        </button>
     </div>
   </div>
 </div>
