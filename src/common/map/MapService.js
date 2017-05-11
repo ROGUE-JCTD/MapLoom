@@ -478,7 +478,7 @@
 
       this.map.getLayers().forEach(function(layer) {
         var searchLayer = false;
-        if (layer.get('metadata').internalLayer) {
+        if (goog.isDefAndNotNull(layer.get('metadata')) && layer.get('metadata').internalLayer) {
           if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
             searchLayer = true;
           }
