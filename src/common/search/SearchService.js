@@ -150,17 +150,13 @@
           geoqueryUrl = geoqueryUrl.substr(0, geoqueryUrl.length - 1);
         }
         httpService_({
-          method: 'GET',
-          url: geoqueryUrl + '/wfs',
+          method: 'JSONP',
+          url: geoqueryUrl + '/geClientQueryAction.do',
           params: {
-            request: 'GetFeature',
-            service: 'WFS',
-            version: '1.1.0',
-            typename: 'all',
-            filter: '<PropertyIsEqualTo><PropertyName>query</PropertyName><Literal>' +
-                address + '</Literal></PropertyIsEqualTo>',
-            bbox: currentView.toString(),
-            outputFormat: 'json'
+            query: address,
+            useBBOX: false,
+            output: 'jsonp',
+            callback: 'JSON_CALLBACK'
           }
         }).then(function(response) {
           if (goog.isDefAndNotNull(response.data.features) && goog.isArray(response.data.features)) {
