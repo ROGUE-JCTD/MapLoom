@@ -166,15 +166,29 @@
           if (goog.isDefAndNotNull(response.data.features) && goog.isArray(response.data.features)) {
             var results = [];
             forEachArrayish(response.data.features, function(result) {
-              results.push({
-                location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
-                boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
-                name: result.properties.name,
-                cc: result.properties.cc,
-                source: result.properties.source,
-                featureDesignationName: result.properties.featureDesignationName,
-                featureDesignationCode: result.properties.featureDesignationCode
-              });
+              if (result.properties.featureDesignationCode) {
+                results.push({
+                  location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
+                  boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
+                  name: result.properties.name,
+                  cc: result.properties.cc,
+                  source: result.properties.source,
+                  featureDesignationName: result.properties.featureDesignationName,
+                  featureDesignationCode: result.properties.featureDesignationCode
+                });
+              } else if (result.properties.classification) {
+                results.push({
+                  location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
+                  boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
+                  name: result.properties.name,
+                  cc: result.properties.cc,
+                  source: result.properties.source,
+                  record_status: result.properties.record_status,
+                  classification: result.properties.classification,
+                  be: result.properties.be,
+                  suffix: result.properties.suffix
+                });
+              }
             });
             promise.resolve(results);
           } else {
@@ -228,14 +242,14 @@
       searchlayer_.getSource().clear();
       mapService_.map.removeLayer(searchlayer_);
       mapService_.map.addLayer(searchlayer_);
-      forEachArrayish(results, function(result) {
+      forEachArrayish(results, function(result, index) {
         var olFeature = new ol.Feature();
         // properly assign feature data (removing hashkey metadata)
         olFeature.properties = angular.copy(result);
         if (result.name.length > 25) {
-          olFeature.setId(result.name.substring(0, 25) + '...');
+          olFeature.setId(result.name.substring(0, 25) + '...' + index);
         } else {
-          olFeature.setId(result.name);
+          olFeature.setId(result.name + index);
         }
         olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',
             mapService_.map.getView().getProjection())));
