@@ -28,7 +28,6 @@ describe('search/SearchService', function() {
         boundingbox: [51.2867602, 51.6918741, -0.510375, 0.3340155],
         name: 'London'
       }];
-      // the only thing we can really compare is the location
       var feature_location = ol.proj.transform(
         mock_results[0].location, 'EPSG:4326', mapService.map.getView().getProjection()
       );
@@ -36,6 +35,10 @@ describe('search/SearchService', function() {
       // make sure the location matches after populating it
       expect(feature_location).toEqual(
         mapService.map.getLayers().item(0).getSource().getFeatures()[0].getGeometry().getCoordinates()
+      );
+      // make sure the ID is the name + index
+      expect('London0').toEqual(
+        mapService.map.getLayers().item(0).getSource().getFeatures()[0].getId()
       );
       // replace with a new search layer
       mock_results = [{
@@ -54,6 +57,10 @@ describe('search/SearchService', function() {
       searchService.populateSearchLayer(mock_results);
       expect(feature_location).toEqual(
         mapService.map.getLayers().item(0).getSource().getFeatures()[0].getGeometry().getCoordinates()
+      );
+      // make sure the ID is the name + index
+      expect('notLondon0').toEqual(
+        mapService.map.getLayers().item(0).getSource().getFeatures()[0].getId()
       );
     });
   });
