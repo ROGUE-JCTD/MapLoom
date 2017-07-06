@@ -839,6 +839,16 @@
             }
           }
 
+          var bbox;
+          if (goog.isArray(fullConfig.BoundingBox)) {
+            bbox = {extent: fullConfig.BoundingBox[0]};
+          } else if (goog.isArray(fullConfig.extent)) {
+            bbox = {
+              extent: fullConfig.extent,
+              crs: fullConfig.CRS[0]
+            };
+          }
+
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -850,7 +860,7 @@
               workspace: nameSplit.length > 1 ? nameSplit[0] : '',
               readOnly: false,
               editable: false,
-              bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
+              bbox: bbox,
               projection: service_.getCRSCode(fullConfig.CRS),
               savedSchema: minimalConfig.schema,
               dimensions: fullConfig.Dimension
