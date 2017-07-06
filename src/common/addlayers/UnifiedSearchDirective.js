@@ -234,13 +234,28 @@
               }
             };
 
+            /** List of all filters available in the UI
+             */
+            scope.allFilters = ['bbox', 'owner', 'category', 'keyword', 'date'];
+
+            /** Convert a filter name to its translatable name
+             */
+            scope.getFilterLabel = function(filterName) {
+              if (filterName === 'bbox') {
+                return 'bounding_box';
+              } else if (filterName === 'keyword') {
+                return 'keywords';
+              }
+              return filterName;
+            };
+
             /** Clear a field element.
              */
             scope.clear = function(filterType, silent) {
               // reset the filterOptions
               switch (filterType) {
                 case 'all':
-                  var all = ['bbox', 'owner', 'category', 'keyword', 'date'];
+                  var all = scope.allFilters;
                   for (var i = 0, ii = all.length; i < ii; i++) {
                     scope.clear(all[i], true);
                   }
@@ -282,7 +297,10 @@
             scope.isSet = function(filterType) {
               switch (filterType) {
                 case 'bbox':
-                  return scope.bbox.length > 1;
+                  if (scope.bbox) {
+                    return scope.bbox.length > 1;
+                  }
+                  return false;
                 case 'owner':
                   return getChecked(scope.owners, 'username').length > 0;
                 case 'category':

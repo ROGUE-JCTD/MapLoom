@@ -356,7 +356,8 @@
     'measure_line' : 'Longitud',
     'measure_stop' : 'Deja de medir',
     'measure_units' : 'Unidades',
-    'bounding_box' : 'Cuadro Delimitador'
+    'bounding_box' : 'Cuadro Delimitador',
+    'too_many_filters' : 'Es posible que tenga demasiados filtros seleccionados. Prueba a eliminar una de las siguientes:'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);
