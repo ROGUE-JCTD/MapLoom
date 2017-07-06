@@ -6,6 +6,7 @@
   var configService_ = null;
   var mapService_ = null;
   var searchlayer_ = null;
+  var service_ = null;
 
   module.provider('searchService', function() {
     this.$get = function($rootScope, $http, $q, $translate, configService, mapService) {
@@ -13,11 +14,13 @@
       q_ = $q;
       configService_ = configService;
       mapService_ = mapService;
+      service_ = this;
 
       searchlayer_ = new ol.layer.Vector({
         metadata: {
           title: $translate.instant('search_results'),
-          internalLayer: true
+          internalLayer: true,
+          searchLayer: true
         },
         source: new ol.source.Vector({
           parser: null
@@ -46,7 +49,7 @@
 
     // algorithm taken from http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates#Java
     // from the "Boundingcoordinates" method
-    convertLatLonToBbox = function(coordinates) {
+    this.convertLatLonToBbox = function(coordinates) {
       // This is the distance in km of the radius of the "greater circle"
       // that is, distance to an imagined point at the edge of our view
       // unit is in km
@@ -147,28 +150,41 @@
           geoqueryUrl = geoqueryUrl.substr(0, geoqueryUrl.length - 1);
         }
         httpService_({
-          method: 'GET',
-          url: geoqueryUrl + '/wfs',
+          method: 'JSONP',
+          url: geoqueryUrl + '/geClientQueryAction.do',
           params: {
-            request: 'GetFeature',
-            service: 'WFS',
-            version: '1.1.0',
-            typename: 'all',
-            filter: '<PropertyIsEqualTo><PropertyName>query</PropertyName><Literal>' +
-                address + '</Literal></PropertyIsEqualTo>',
-            bbox: currentView.toString(),
-            outputFormat: 'json'
+            query: address,
+            useBBOX: false,
+            output: 'jsonp',
+            callback: 'JSON_CALLBACK'
           }
         }).then(function(response) {
           if (goog.isDefAndNotNull(response.data.features) && goog.isArray(response.data.features)) {
             var results = [];
             forEachArrayish(response.data.features, function(result) {
-              results.push({
-                location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
-                boundingbox: convertLatLonToBbox(result.geometry.coordinates),
-                // In the future we want to add another property and have it pull right and be smaller text
-                name: result.properties.name + '(' + result.properties.featureDesignationName + ')'
-              });
+              if (result.properties.featureDesignationCode) {
+                results.push({
+                  location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
+                  boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
+                  name: result.properties.name,
+                  cc: result.properties.cc,
+                  source: result.properties.source,
+                  featureDesignationName: result.properties.featureDesignationName,
+                  featureDesignationCode: result.properties.featureDesignationCode
+                });
+              } else if (result.properties.classification) {
+                results.push({
+                  location: [parseFloat(result.geometry.coordinates[0]), parseFloat(result.geometry.coordinates[1])],
+                  boundingbox: service_.convertLatLonToBbox(result.geometry.coordinates),
+                  name: result.properties.name,
+                  cc: result.properties.cc,
+                  source: result.properties.source,
+                  record_status: result.properties.record_status,
+                  classification: result.properties.classification,
+                  be: result.properties.be,
+                  suffix: result.properties.suffix
+                });
+              }
             });
             promise.resolve(results);
           } else {
@@ -222,8 +238,15 @@
       searchlayer_.getSource().clear();
       mapService_.map.removeLayer(searchlayer_);
       mapService_.map.addLayer(searchlayer_);
-      forEachArrayish(results, function(result) {
+      forEachArrayish(results, function(result, index) {
         var olFeature = new ol.Feature();
+        // properly assign feature data (removing hashkey metadata)
+        olFeature.properties = angular.copy(result);
+        if (result.name.length > 25) {
+          olFeature.setId(result.name.substring(0, 25) + '...' + index);
+        } else {
+          olFeature.setId(result.name + index);
+        }
         olFeature.setGeometry(new ol.geom.Point(ol.proj.transform(result.location, 'EPSG:4326',
             mapService_.map.getView().getProjection())));
         searchlayer_.getSource().addFeature(olFeature);

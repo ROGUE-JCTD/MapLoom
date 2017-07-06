@@ -608,5 +608,19 @@ describe('FeatureManagerService', function() {
         httpBackend.verifyNoOutstandingRequest();
       });
     });
+
+    describe('coordinatesWithinRange', function() {
+      it('should determine if a set of coordinates is within a range of another set of coordinates', function() {
+        // mock coordinates that are at max 7 apart
+        var mock_coords1 = [50, 50];
+        var mock_coords2 = [45, 57];
+
+        // With range > 7, expect it to be true
+        expect(featureMgrService.coordinatesWithinRange(mock_coords1, mock_coords2, 8)).toBe(true);
+
+        // With range < 7, expect it to be false
+        expect(featureMgrService.coordinatesWithinRange(mock_coords1, mock_coords2, 6)).toBe(false);
+      });
+    });
   });
 });

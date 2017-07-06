@@ -477,11 +477,17 @@
       var layers = [];
 
       this.map.getLayers().forEach(function(layer) {
+        var searchLayer = false;
+        if (goog.isDefAndNotNull(layer.get('metadata')) && layer.get('metadata').internalLayer) {
+          if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            searchLayer = true;
+          }
+        }
 
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer) &&
+            (searchLayer || !(layer.get('metadata').internalLayer)) &&
             !(layer.get('metadata').spatialFilterLayer)) {
 
           // if it is imagery
@@ -833,6 +839,16 @@
             }
           }
 
+          var bbox;
+          if (goog.isArray(fullConfig.BoundingBox)) {
+            bbox = {extent: fullConfig.BoundingBox[0]};
+          } else if (goog.isArray(fullConfig.extent)) {
+            bbox = {
+              extent: fullConfig.extent,
+              crs: fullConfig.CRS[0]
+            };
+          }
+
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -844,7 +860,7 @@
               workspace: nameSplit.length > 1 ? nameSplit[0] : '',
               readOnly: false,
               editable: false,
-              bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
+              bbox: bbox,
               projection: service_.getCRSCode(fullConfig.CRS),
               savedSchema: minimalConfig.schema,
               dimensions: fullConfig.Dimension
