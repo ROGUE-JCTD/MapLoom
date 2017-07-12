@@ -362,8 +362,8 @@
     'measure_stop' : 'Stop measuring',
     'measure_units' : 'Units',
     'bounding_box' : 'Bounding Box',
-    
-    'too_many_filters' : 'You may have too many filters selected.  Try removing one of the following:'
+
+    'too_many_filters' : 'You may have too many filters selected.  Try removing one of the following:',
     'pin_feature' : 'Pin Feature',
     'unpin_feature' : 'Unpin Feature',
     'pinned_search' : 'Pinned Search'
