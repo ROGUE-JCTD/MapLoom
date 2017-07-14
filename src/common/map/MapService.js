@@ -773,7 +773,7 @@
           } else {
             serviceSource = new ol.source.XYZ({
               attributions: [attribution],
-              maxZoom: 16,
+              maxZoom: 19,
               metadata: metadata,
               url: serviceUrl
             });
