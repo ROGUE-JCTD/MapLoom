@@ -441,12 +441,10 @@ var SERVER_SERVICE_USE_PROXY = true;
       var url = server.url;
       var namespace = 'geonode';
       var name = layerName;
-      
-      if(layerName.indexOf(':') !== -1){
+      if (layerName.indexOf(':') !== -1) {
         namespace = layerName.split(':')[0];
         name = layerName.split(':')[1];
       }
-      
       if (sourceServer.isVirtualService === true) {
         url = sourceServer.virtualServiceUrl;
         url += '?request=GetCapabilities';
