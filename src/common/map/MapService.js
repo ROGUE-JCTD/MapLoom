@@ -370,7 +370,7 @@
             }
           }, function errorCallback(response) {
             console.log('Style Create Error Response ', response);
-            if (response.status === 403) {
+            if (response.status === 403 || response.status === 500 ) {
               httpService_({
                 url: '/gs/rest/styles/' + style.name + '.xml',
                 method: 'PUT',
