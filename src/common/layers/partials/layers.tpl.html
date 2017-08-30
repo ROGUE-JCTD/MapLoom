@@ -7,7 +7,7 @@
          data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').uniqueID}}">
       <div class="row">
         <div class="layer-title ellipsis" ng-class="{'placeholder-layer-title': layer.get('metadata').placeholder}">
-          <i ng-show="isGeogig(layer)" class="fa fa-code-fork"></i>&nbsp;{{layer.get('metadata').title}}
+          <i ng-show="isGeogig(layer)" class="fa fa-code-fork"></i>&nbsp;{{layer.get('metadata').name ? layer.get('metadata').name : layer.get('metadata').title}}
         </div>
         <div class="layer-buttons">
           <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
