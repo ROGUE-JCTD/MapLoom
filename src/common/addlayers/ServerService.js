@@ -574,11 +574,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         var lName = layersConfig[index].name || layersConfig[index].Name || '';
         if (layersConfig[index].name === layerName || (lName.includes(layerName))) {
 	        hasConfig = true;
-	      }
-	      if (goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].uuid === layerId || !goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].Name === layerName) {
-       	   hasConfig = true;
-	      }
-         if(hasConfig){ 
+	 }
+	if (goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].uuid === layerId || !goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].Name === layerName) {
+       	  hasConfig = true;
+	 }
+        if (hasConfig) { 
           layerConfig = layersConfig[index];
           if (goog.isDefAndNotNull(layerConfig.CRS)) {
             for (var code in layerConfig.CRS) {
