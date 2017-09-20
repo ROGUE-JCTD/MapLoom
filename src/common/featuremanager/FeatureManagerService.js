@@ -1113,7 +1113,7 @@
     var wfsRequestTypePartial;
     var commitMsg;
     if (postType === wfsPostTypes_.INSERT) {
-      var featureType = selectedLayer_.get('metadata').name.split(':')[1];
+      var featureType = selectedLayer_.get('metadata').name.split(':')[1] || selectedLayer_.get('metadata').name;
       commitMsg = translate_.instant('added_1_feature', {'layer': selectedLayer_.get('metadata').nativeName});
       wfsRequestTypePartial = '<wfs:Insert handle="' + commitMsg +
           '"><feature:' + featureType + ' xmlns:feature="' + selectedLayer_.get('metadata').workspaceURL + '">' +
