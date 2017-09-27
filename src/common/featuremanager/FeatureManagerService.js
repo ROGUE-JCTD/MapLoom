@@ -115,11 +115,20 @@
     };
 
     this.getMediaUrl = function(mediaItem) {
-      var url = mediaItem;
-      // if the item doesn't start with 'http' then assume the item can be found in the fileservice and so convert it to
+      /*jshint -W061 */
+      var url = eval(mediaItem);
+      // if the item doesn't start with 'http' then assume the item is base64 encoded or can be found in the fileservice and so convert it to
       // a url. This means if the item is, say, at https://mysite.com/mypic.jpg, leave it as is
       if (goog.isString(mediaItem) && mediaItem.indexOf('http') === -1) {
-        url = configService_.configuration.fileserviceUrlTemplate.replace('{}', mediaItem);
+        try {
+          if (url.indexOf('data:image') != -1) {
+
+          } else if (window.atob(url)) {
+            url = 'data:image/jpeg;base64,'.concat(url);
+          }
+        } catch (err) {
+          url = configService_.configuration.fileserviceUrlTemplate.replace('{}', url);
+        }
       }
       return url;
     };
