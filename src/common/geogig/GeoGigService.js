@@ -300,7 +300,7 @@
         // TODO: Use the OpenLayers parser once it is done
         var x2js = new X2JS();
         var json = x2js.xml_str2json(response.data);
-        var schema = [];
+        var schema = {};
         if (goog.isDefAndNotNull(json.schema)) {
           var savedSchema = layer.get('metadata').savedSchema;
           forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {

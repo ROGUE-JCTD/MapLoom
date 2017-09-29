@@ -223,7 +223,7 @@
       var type = this.merged.attributes[index].type;
       this.merged.attributes[index] = $.extend(true, {}, panel.attributes[index]);
       this.merged.attributes[index].type = type;
-      assignAttributeTypes(this.merged.attributes, true);
+      this.merged.attributes = assignAttributeTypes(this.merged.attributes, true);
     };
 
     this.choose = function(panel) {
@@ -391,6 +391,7 @@
             service_.performFeatureDiff(feature, merged_, ancestor_, service_.merged);
             break;
         }
+
         service_.title = feature.id;
         rootScope_.$broadcast('feature-diff-feature-set');
       };
@@ -482,7 +483,7 @@
         panel.olFeature = olFeature;
         ol.extent.extend(service_.combinedExtent, geom.getExtent());
         diffsNeeded_ -= 1;
-        assignAttributeTypes(panel.attributes, false);
+        panel.attributes = assignAttributeTypes(panel.attributes, false);
         if (diffsNeeded_ === 0) {
           if (diffsInError_ > 0) {
             dialogService_.error(translate_.instant('error'), translate_.instant('feature_diff_error'));
@@ -513,10 +514,10 @@
                     service_.updateChangeType(service_.merged.attributes[i]);
                   }
                 }
-                assignAttributeTypes(service_.merged.attributes, true);
+                service_.merged.attributes = assignAttributeTypes(service_.merged.attributes, true);
               } else {
                 service_.choose(service_.left);
-                assignAttributeTypes(service_.merged.attributes, true);
+                service_.merged.attributes = assignAttributeTypes(service_.merged.attributes, true);
               }
             }
             rootScope_.$broadcast('feature-diff-performed');
@@ -653,6 +654,29 @@
         properties[propertyIndex].editable = editable;
       }
     }
+    if (!_.isNil(service_.layer.get('exchangeMetadata')) &&
+        !_.isNil(service_.layer.get('exchangeMetadata').attributes) &&
+        !_.isEmpty(service_.layer.get('exchangeMetadata').attributes)) {
+      properties = _.chain(properties)
+          .sortBy(function(attr) {
+            return _.find(service_.layer.get('exchangeMetadata').attributes, { 'attribute': attr.attributename }).display_order;
+          })
+          .map(function(attr) {
+            var exchangeAttribute = _.find(service_.layer.get('exchangeMetadata').attributes, { 'attribute': attr.attributename });
+            if (!_.isNil(exchangeAttribute) && _.isArray(exchangeAttribute.options) && !_.isEmpty(exchangeAttribute.options)) {
+              attr.type = 'simpleType';
+              attr.enum = _.map(exchangeAttribute.options, function(option) {
+                return {
+                  _value: option.value,
+                  _label: option.value + ' - ' + option.label
+                };
+              });
+            }
+            return attr;
+          })
+          .value();
+    }
+    return properties;
   }
 
 }());

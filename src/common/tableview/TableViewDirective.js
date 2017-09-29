@@ -341,6 +341,8 @@
               for (var row in scope.rows) {
                 var feature = scope.rows[row].feature;
                 scope.rows[row].modified = false;
+                scope.rows[row].valid = true;
+                scope.rows[row].errors = {};
                 for (var prop in feature.properties) {
                   // allow editing of photos
                   //if (prop === 'photos' || prop === 'fotos') {
@@ -350,17 +352,25 @@
                     scope.rows[row].modified = true;
                   }
                   if (feature.properties[prop] !== '' && feature.properties[prop] !== null) {
-                    if (scope.restrictions[prop].type === 'int') {
-                      if (!validateInteger(feature.properties[prop])) {
-                        numErrors++;
-                      }
-                    } else if (scope.restrictions[prop].type === 'double') {
-                      if (!validateDouble(feature.properties[prop])) {
-                        numErrors++;
+                    if (!_.isNil(scope.restrictions[prop])) {
+                      if (scope.restrictions[prop].type === 'int') {
+                        if (!validateInteger(feature.properties[prop])) {
+                          numErrors++;
+                          addError(scope.rows[row], prop, 'int');
+                        }
+                      } else if (scope.restrictions[prop].type === 'double') {
+                        if (!validateDouble(feature.properties[prop])) {
+                          numErrors++;
+                          addError(scope.rows[row], prop, 'double');
+                        }
                       }
                     }
-                  } else if (scope.restrictions[prop].nillable === 'false') {
-                    numErrors++;
+                  } else {
+                    var exchangeMetadataAttribute = getExchangeMetadataAttribute(prop);
+                    if (scope.restrictions[prop].nillable === 'false' || (goog.isDefAndNotNull(exchangeMetadataAttribute) && exchangeMetadataAttribute.required)) {
+                      numErrors++;
+                      addError(scope.rows[row], prop, 'required');
+                    }
                   }
                 }
                 if (scope.rows[row].modified) {
@@ -375,6 +385,14 @@
               } else {
                 return false;
               }
+            }
+
+            function addError(row, prop, error) {
+              row.valid = false;
+              if (_.isNil(row.errors[prop]) || !_.isArray(row.errors[prop])) {
+                row.errors[prop] = [];
+              }
+              row.errors[prop].push(error);
             }
 
             function getWfsFeaturesXml() {
@@ -512,6 +530,58 @@
               var loading = tableViewService.selectedLayer.get('metadata').isLoadingCSV;
               return goog.isDefAndNotNull(loading) && loading === true;
             };
+
+            scope.getAttributeLabel = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute) &&
+                  goog.isDefAndNotNull(exchangeMetadataAttribute.attribute_label) &&
+                  exchangeMetadataAttribute.attribute_label.length > 0) {
+                return exchangeMetadataAttribute.attribute_label;
+              }
+
+              return property;
+            };
+
+            scope.isAttributeReadonly = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute)) {
+                return exchangeMetadataAttribute.readonly;
+              }
+
+              return false;
+            };
+
+            scope.attributeHasErrors = function(row, property) {
+              return !_.isNil(row.errors) && !_.isEmpty(row.errors[property]);
+            };
+
+            scope.getAttributeValue = function(property, value) {
+              if (_.isArray(scope.restrictions[property].type)) {
+                var option = _.find(scope.restrictions[property].type, { _value: value });
+                if (option && option._label) {
+                  return option._label;
+                }
+              }
+
+              return value;
+            };
+
+            function getExchangeMetadataAttribute(property) {
+              var exchangeMetadata = tableViewService.selectedLayer.get('exchangeMetadata');
+
+              if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
+                for (var index in exchangeMetadata.attributes) {
+                  if (goog.isDefAndNotNull(exchangeMetadata.attributes[index]) &&
+                      exchangeMetadata.attributes[index].attribute === property) {
+                    return exchangeMetadata.attributes[index];
+                  }
+                }
+              }
+
+              return null;
+            }
           }
         };
       });

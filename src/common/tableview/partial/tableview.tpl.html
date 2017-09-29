@@ -41,13 +41,19 @@
           </tr>
           <tr>
             <th>{{'feature_id' | translate}}</th>
-            <th ng-repeat="attr in attributes" class="pointer" ng-click="selectAttribute(attr)" ng-class="{selectedAttribute: attr.selected}">{{attr.name}}</th>
+            <th ng-repeat="attr in attributes" class="pointer" ng-click="selectAttribute(attr)" ng-class="{selectedAttribute: attr.selected}">{{getAttributeLabel(attr.name)}}</th>
           </tr>
         </thead>
         <tr ng-repeat="row in rows" ng-class="{selectedRow: row.selected}" ng-click="selectFeature(row)">
           <td>{{row.feature.id}}</td>
-          <td ng-repeat="attr in attributes track by $index" ng-class="{'table-editing': tableviewform.$visible}">
-            <div ng-switch on="restrictions[attr.name].type" ng-class="{'wide-table-element': advFilters}">
+          <td ng-repeat="attr in attributes track by $index" ng-class="{'table-editing': tableviewform.$visible, 'has-error': attributeHasErrors(row, attr.name)}">
+            <div ng-switch on="restrictions[attr.name].type" ng-class="{'wide-table-element': advFilters}" ng-if="isAttributeReadonly(attr.name)">
+              <span ng-switch-when="datetime">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy @ h:mm a"}}</span>
+              <span ng-switch-when="date">{{row.feature.properties[attr.name] | date:"MM/dd/yyyy"}}</span>
+              <span ng-switch-when="time">{{row.feature.properties[attr.name] | date:"h:mm a"}}</span>
+              <span ng-switch-default>{{getAttributeValue(attr.name, row.feature.properties[attr.name])}}</span>
+            </div>
+            <div ng-switch on="restrictions[attr.name].type" ng-class="{'wide-table-element': advFilters}" ng-if="!isAttributeReadonly(attr.name)">
               <span ng-switch-when="" editable-text="row.feature.properties[attr.name]" e-form="tableviewform"
                     e-style="width:160px">{{row.feature.properties[attr.name]}}</span>
               <span ng-switch-when="noEdit">{{row.feature.properties[attr.name]}}</span>
@@ -71,21 +77,10 @@
                                     default-date="false" seperate-time="false" date="false"></datetimepicker>
                 </div>
               <div ng-switch-default class="input-group">
-                <span ng-if="!tableviewform.$visible">{{row.feature.properties[attr.name]}}</span>
-                <div ng-if="tableviewform.$visible" class="input-group-btn" ng-class="{'dropup': $last}">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a ng-click="selectValue(row.feature.properties, attr.name, null)">&nbsp;</a>
-                    </li>
-                    <li ng-repeat="enum in restrictions[attr.name].type">
-                      <a ng-click="selectValue(row.feature.properties, attr.name, $index)">{{enum._value}}</a>
-                    </li>
-                  </ul>
-                </div>
-                <input ng-if="tableviewform.$visible" ng-model="row.feature.properties[attr.name]" type="text" class="table-dropdown form-control" disabled/>
+                <span ng-if="!tableviewform.$visible">{{getAttributeValue(attr.name, row.feature.properties[attr.name])}}</span>
+                <select ng-if="tableviewform.$visible" ng-model="row.feature.properties[attr.name]" ng-options="enum._value as (enum._label) ? enum._label : enum._value for enum in restrictions[attr.name].type" class="form-control" style="width:160px">
+                  <option></option>
+                </select>
               </div>
             </div>
           </td>

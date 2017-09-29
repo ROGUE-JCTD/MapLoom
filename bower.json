@@ -25,6 +25,7 @@
     "bootstrap-filestyl": "git://github.com/markusslima/bootstrap-filestyle.git#1.2.1",
     "angularjs-slider": "~2.13.0",
     "components-font-awesome": "4.6.3",
-    "angular-file-saver": "1.0.1"
+    "angular-file-saver": "1.0.1",
+    "lodash": "4.17.4"
   }
 }

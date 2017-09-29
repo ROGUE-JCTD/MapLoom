@@ -45,6 +45,31 @@
                 }
               }
 
+              var selectedLayer = featureManagerService.getSelectedLayer();
+              if (goog.isDefAndNotNull(selectedLayer) && goog.isDefAndNotNull(selectedLayer.get('exchangeMetadata')) &&
+                  goog.isDefAndNotNull(selectedLayer.get('exchangeMetadata').attributes)) {
+                scope.properties = _.sortBy(scope.properties, function(prop) {
+                  return _.find(selectedLayer.get('exchangeMetadata').attributes, { 'attribute': prop[0] }).display_order;
+                });
+                _.chain(selectedLayer.get('exchangeMetadata').attributes)
+                    .filter(function(attribute) {
+                      return _.isArray(attribute.options) && !_.isEmpty(attribute.options);
+                    })
+                    .each(function(attribute) {
+                      var property = _.find(scope.properties, { 0: attribute.attribute });
+                      if (property) {
+                        property.type = 'simpleType';
+                        property.enum = _.map(attribute.options, function(option) {
+                          return {
+                            _value: option.value,
+                            _label: option.value + ' - ' + option.label
+                          };
+                        });
+                      }
+                    })
+                    .commit();
+              }
+
               if (geometry.type.toLowerCase() == 'point') {
                 if (projection === 'EPSG:4326') {
                   scope.coordDisplay = {value: coordinateDisplays.DMS};
@@ -73,6 +98,62 @@
                 });
               });
             });
+
+            scope.isAttributeVisible = function(property) {
+              var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
+
+              // if there is no schema, show the attribute. only filter out if there is schema and attr is set to hidden
+              if (!goog.isDefAndNotNull(schema) || !schema.hasOwnProperty(property)) {
+                return true;
+              }
+
+              return schema[property].visible;
+            };
+
+            scope.getAttributeLabel = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute) &&
+                  goog.isDefAndNotNull(exchangeMetadataAttribute.attribute_label) &&
+                  exchangeMetadataAttribute.attribute_label.length > 0) {
+                return exchangeMetadataAttribute.attribute_label;
+              }
+
+              return property;
+            };
+
+            scope.isAttributeReadonly = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute)) {
+                return exchangeMetadataAttribute.readonly;
+              }
+
+              return false;
+            };
+
+            scope.isAttributeRequired = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+              var schema = featureManagerService.getSelectedLayer().get('metadata').schema;
+
+              return (!_.isNil(schema) && schema.hasOwnProperty(property) && schema[property].nillable === 'false') ||
+                  (!_.isNil(exchangeMetadataAttribute) && exchangeMetadataAttribute.required);
+            };
+
+            function getExchangeMetadataAttribute(property) {
+              var exchangeMetadata = featureManagerService.getSelectedLayer().get('exchangeMetadata');
+
+              if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
+                for (var index in exchangeMetadata.attributes) {
+                  if (goog.isDefAndNotNull(exchangeMetadata.attributes[index]) &&
+                      exchangeMetadata.attributes[index].attribute === property) {
+                    return exchangeMetadata.attributes[index];
+                  }
+                }
+              }
+
+              return null;
+            }
 
             scope.translate = function(value) {
               return $translate.instant(value);
@@ -141,7 +222,7 @@
 
             scope.validateField = function(property, key) {
               property.valid = true;
-              if (property[key] !== '' && property[key] !== null) {
+              if (property[key] !== '' && property[key] !== null && property[key] !== undefined) {
                 switch (property.type) {
                   case 'xsd:int':
                     property.valid = validateInteger(property[key]);
@@ -156,8 +237,8 @@
                     property.valid = validateDouble(property[key]);
                     break;
                 }
-              } else if (property.nillable === 'false') {
-                property.valid = false;
+              } else {
+                property.valid = !scope.isAttributeRequired(property[0]);
               }
             };
 
