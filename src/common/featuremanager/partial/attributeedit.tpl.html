@@ -33,21 +33,10 @@
           <datetimepicker ng-switch-when="xsd:dateTime" date-object="prop[1]" default-date="inserting"></datetimepicker>
           <datetimepicker ng-switch-when="xsd:date" date-object="prop[1]" default-date="inserting" time="false"></datetimepicker>
           <datetimepicker ng-switch-when="xsd:time" date-object="prop[1]" default-date="inserting" date="false"></datetimepicker>
-          <div ng-switch-when="simpleType" class="input-group"  ng-class="{'has-error': !prop.valid}">
-            <div class="input-group-btn" ng-class="{'dropup': $last}">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a ng-click="selectValue(prop, null)">&nbsp;</a>
-                </li>
-                <li ng-repeat="enum in prop.enum">
-                  <a ng-click="selectValue(prop, $index)">{{enum._value}}</a>
-                </li>
-              </ul>
-          </div>
-            <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateField(prop, 1)" disabled/>
+          <div ng-switch-when="simpleType" ng-class="{'has-error': !prop.valid}">
+            <select ng-model="prop[1]" ng-options="enum._value as (enum._label) ? enum._label : enum._value for enum in prop.enum" ng-change="validateField(prop, 1)" class="form-control">
+              <option></option>
+            </select>
           </div>
           <div ng-switch-when="xsd:int" ng-class="{'has-error': !prop.valid}">
             <input ng-model="prop[1]" type="text" class="form-control" ng-change="validateField(prop, 1)"/>
