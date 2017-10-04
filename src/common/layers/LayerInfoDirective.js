@@ -14,6 +14,7 @@
               scope.featureType = null;
               scope.abstract = null;
               scope.srs = null;
+              scope.style = null;
               scope.serverName = null;
               scope.keywords = null;
               scope.repoName = null;
@@ -40,6 +41,9 @@
               }
               if (goog.isDefAndNotNull(metadata.abstract)) {
                 scope.abstract = metadata.abstract;
+              }
+              if (goog.isDefAndNotNull(metadata.styles[0])) {
+                scope.style = metadata.styles[0];
               }
               if (goog.isDefAndNotNull(metadata.projection)) {
                 scope.srs = metadata.projection;

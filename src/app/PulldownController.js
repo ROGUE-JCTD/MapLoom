@@ -24,6 +24,7 @@
           $scope.registryEnabled = configService.configuration.registryEnabled;
           $scope.searchEnabled = configService.configuration.searchEnabled;
           $scope.unifiedLayerDialog = configService.configuration.unifiedLayerDialog;
+          $scope.stylingEnabled = configService.configuration.stylingEnabled;
         }
 
         function updateScopeVariables() {

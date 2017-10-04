@@ -45,6 +45,9 @@
     var registryEnabled = function(){
       return "{{ REGISTRY }}".toLowerCase() === "true" || true ? true : false;
     };
+    var stylingEnabled = function(){
+      return "{{ LOOM_STYLING_ENABLED }}".toLowerCase() === "true" ? true : false;
+    };
     var unifiedDialogEnabled = function(){
         return "{{ UNIFIED_LAYER_DIALOG }}".toLowerCase() === "true" || true ? true: false;
     };
@@ -111,6 +114,7 @@
         csrfToken: "{{ csrf_token }}",
         tools: [{ptype: "gxp_getfeedfeatureinfo"}],
         registryEnabled: registryEnabled(),
+        stylingEnabled: stylingEnabled(),
         registryUrl: trimUrl("{{ REGISTRYURL }}"),
         searchEnabled: searchEnabled(),
         nominatimSearchEnabled: nominatimSearchEnabled(),

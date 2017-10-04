@@ -86,6 +86,14 @@ module.exports = {
       'vendor/proj4/dist/proj4-src.js',
       'vendor/mgrs/dist/mgrs.js',
       'vendor/angular-file-saver/dist/angular-file-saver.bundle.min.js',
+      'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
+      'vendor/story-tools/dist/story-tools-core.js',
+      'vendor/story-tools/dist/story-tools-core-tpls.js',
+      'vendor/story-tools/dist/story-tools-core-ng.js',
+      'vendor/story-tools/dist/story-tools-edit.js',
+      'vendor/story-tools/dist/story-tools-edit-ng.js',
+      'vendor/story-tools/dist/story-tools-edit-tpls.js',
+      'vendor/story-tools/dist/ows.js',
 
       //-- files for image gallery
       //'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -112,6 +120,8 @@ module.exports = {
       //'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
       'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css',
       'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
+      'vendor/story-tools/dist/story-tools-edit.css',
+      'vendor/angular-bootstrap-colorpicker/css/colorpicker.min.css',
 
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',

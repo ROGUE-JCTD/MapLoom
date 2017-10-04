@@ -4,7 +4,7 @@
 
   module.directive('loomLayers',
       function($rootScope, mapService, serverService, historyService, featureManagerService,
-               dialogService, $translate, tableViewService) {
+               dialogService, $translate, tableViewService, configService) {
         return {
           restrict: 'C',
           replace: true,
@@ -67,6 +67,27 @@
                 }
               }
               return false;
+            };
+
+            scope.isLoadingStyle = function(layer) {
+              var loadingStyle = layer.get('metadata').loadingStyle;
+              return goog.isDefAndNotNull(loadingStyle) && loadingStyle === true;
+            };
+
+            scope.getLayerStyle = function(layer) {
+              var loading = layer.get('metadata').loadingStyle || true;
+              if (goog.isDefAndNotNull(loading) && loading) {
+                layer.get('metadata').loadingStyle = true;
+                $rootScope.$broadcast('getLayerStyle', layer);
+              }
+            };
+
+            scope.saveLayerStyle = function(layer) {
+              if (configService.configuration.stylingEnabled) {
+                if (goog.isDefAndNotNull(layer.get('metadata').styles)) {
+                  mapService.updateStyle(layer);
+                }
+              }
             };
 
             scope.isLoadingTable = function(layer) {
