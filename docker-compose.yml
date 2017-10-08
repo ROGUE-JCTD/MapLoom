@@ -1,0 +1,8 @@
+version: '3.1'
+services:
+
+  maploom-build:
+    build: .
+    image: quay.io/mapstory/maploom-build
+    volumes:
+      - ./:/usr/src/app
