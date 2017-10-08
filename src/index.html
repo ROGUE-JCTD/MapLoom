@@ -203,9 +203,11 @@
                         </div>
                     </div>
                 </div>
+                {% if FEATURE_MULTIPLE_STORY_CHAPTERS %}
                 <div id="addChapter" ng-show="menuSection=='mainMenu'">
                     <ng-include src="'sidebar/partials/addChapter.tpl.html'"></ng-include>
                 </div>
+                {% endif %}
 
                 <div id="getSkills" ng-show="menuSection=='mainMenu'">
                     <ng-include src="'sidebar/partials/getSkills.tpl.html'"></ng-include>
