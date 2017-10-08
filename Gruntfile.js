@@ -221,7 +221,8 @@ module.exports = function ( grunt ) {
        */
       compile_js: {
         options: {
-          banner: '<%= meta.banner %>'
+          banner: '<%= meta.banner %>',
+          separator: ';\n'
         },
         src: [
           '<%= vendor_files.js %>',
