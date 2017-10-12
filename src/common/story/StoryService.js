@@ -449,8 +449,6 @@
       this.active_chapter = this.configurations[index];
       this.active_index = index;
 
-      console.log(' !DJA: ACTIVE CONFIG ----- >', this.active_chapter);
-
       mapService_.updateActiveMap(this.active_index, this.active_chapter);
       rootScope_.$broadcast('chapter-switch', this.active_index);
     };
