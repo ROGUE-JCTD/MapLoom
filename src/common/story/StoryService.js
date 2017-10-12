@@ -104,12 +104,12 @@
       });
 
       rootScope_.$on('chapter-switch', function(event, active_index) {
-        if (goog.isDefAndNotNull(service_.configurations[active_index].zoom) && goog.isDefAndNotNull(service_.configurations[active_index].center)) {
+        if (goog.isDefAndNotNull(service_.configurations[active_index].map.zoom) && goog.isDefAndNotNull(service_.configurations[active_index].map.center)) {
           var pan = ol.animation.pan({source: mapService_.map.getView().getCenter()});
           var zoom = ol.animation.zoom({resolution: mapService_.map.getView().getResolution()});
           mapService_.map.beforeRender(pan, zoom);
-          mapService_.map.getView().setCenter(service_.configurations[active_index].center);
-          mapService_.map.getView().setZoom(service_.configurations[active_index].zoom);
+          mapService_.map.getView().setCenter(service_.configurations[active_index].map.center);
+          mapService_.map.getView().setZoom(service_.configurations[active_index].map.zoom);
         } else {
           mapService_.zoomToLargestStoryLayer();
         }
