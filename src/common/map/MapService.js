@@ -360,7 +360,7 @@
             url: '/geoserver/rest/styles/' + layer.get('metadata').styles[0] + '.xml',
             method: 'PUT',
             data: xml,
-            headers: {'Content-Type': 'application/vnd.ogc.sld+xml; charset=UTF-8'}
+            headers: {'Content-Type': 'application/vnd.ogc.sld+xml;'}
           }).then(function(result) {
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
               layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
