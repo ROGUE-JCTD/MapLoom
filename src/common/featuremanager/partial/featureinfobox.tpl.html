@@ -56,7 +56,8 @@
                 ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'set_spatial_filter' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-filter">
         </button>
-        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
+        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').wmsOnly &&
+        !featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'show_table' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-list">
             <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(featureManagerService.getSelectedLayer())"></div>
         </button>
@@ -76,8 +77,9 @@
         !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="featureManagerService.startGeometryEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_geometry' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
-        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').readOnly"
-                ng-click="deleteFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
+        <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
+        !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="deleteFeature()"
+                tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-trash">
           <div class="loom-loading" spinner-radius="10" spinner-width="2" spinner-hidden="!deletingFeature"></div>
                 </button>

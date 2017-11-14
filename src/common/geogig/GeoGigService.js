@@ -297,6 +297,11 @@
           '&request=DescribeFeatureType&typeName=' + workspaceRoute.typeName;
 
       http.get(url).then(function(response) {
+        if (response.data == null || response.data.indexOf('ows:ExceptionReport') >= 0) {
+          layer.get('metadata').wmsOnly = true;
+          deferredResponse.reject(response);
+          return;
+        }
         // TODO: Use the OpenLayers parser once it is done
         var x2js = new X2JS();
         var json = x2js.xml_str2json(response.data);
