@@ -116,7 +116,12 @@
 
     this.getMediaUrl = function(mediaItem) {
       /*jshint -W061 */
-      var url = eval(mediaItem);
+      var url;
+      try {
+        url = eval(mediaItem);
+      } catch (err) {
+        url = mediaItem;
+      }
       // if the item doesn't start with 'http' then assume the item is base64 encoded or can be found in the fileservice and so convert it to
       // a url. This means if the item is, say, at https://mysite.com/mypic.jpg, leave it as is
       if (goog.isString(mediaItem) && mediaItem.indexOf('http') === -1) {
