@@ -24,6 +24,14 @@ $ npm install
 $ bower install
 $ grunt watch
 ```
+Alternatively, the quick setup script will perform the installation steps.
+
+```sh
+$ git clone git://github.com/ROGUE-JCTD/MapLoom
+$ cd MapLoom
+$ ./quick-setup.sh
+```
+
 You can then open `file:///path/to/MapLoom/build/index.html` in your browser.
 
 ```clean-build``` will ensure that all modules all pulled down again and is recommended when you pull the source where other might have added new dependancies.
