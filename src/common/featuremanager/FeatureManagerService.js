@@ -336,7 +336,7 @@
           // note that another service may make a fake feature selection on a layer not in mapservice.
           // checking to make sure it had a geometry before making assumptions about edit layer etc
           if (goog.isDefAndNotNull(selectedItem_.geometry)) {
-            mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
+            mapService_.addToEditLayer(selectedItem_.geometry, mapService_.map.getView().getProjection());
             position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
                 clickPosition_);
           }
