@@ -572,7 +572,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       for (var index = 0; index < layersConfig.length; index += 1) {
         var hasConfig = false;
         var lName = layersConfig[index].name || layersConfig[index].Name || '';
-        if (layersConfig[index].name === layerName || (lName.includes(layerName))) {
+        if (layersConfig[index].name === layerName || (lName.indexOf(layerName) >= 0)) {
           hasConfig = true;
         }
         if (goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].uuid === layerId || !goog.isDefAndNotNull(layersConfig[index].uuid) && layersConfig[index].Name === layerName) {
