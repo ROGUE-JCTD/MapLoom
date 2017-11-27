@@ -81,7 +81,9 @@
           </div>
         </div>
           <div class="container" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
-          <label id="style-label" for="styleRow">Style Name:&nbsp;{{ layer.get('metadata').styles.0 }}</label>
+          <label id="style-label" class="ellipsis" for="styleRow">
+              {{ layer.get('metadata').styles.0 }}
+          </label>
           <a type="button" ng-click="saveLayerStyle(layer)" id="save-style-button"
                class="btn btn-sm btn-default pull-right" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'save_layer_style' | translate}}" style="margin-top: 4px;">
