@@ -40,6 +40,24 @@
   }
 }
 
+#style-label {
+  padding-top: 10px;
+  width: 100%;
+}
+#styleRow {
+  margin-left: 0px;
+  margin-right: 0px;
+
+  overflow: auto;
+  max-height: 186px;
+  .list-group-item {
+    border: 1px solid lighten(@attributeListColor, 10%);
+    color: @attributeListFontColor;
+    background-color:@attributeListColor;
+  }
+}
+
+
 #attribute-label {
   padding-top: 10px;
 }
@@ -90,4 +108,38 @@
   .modal-footer {
     border-top: none;
   }
+}
+
+.style-editor-item button,
+.style-editor-item .controls input {
+  padding: 5px 5px;
+}
+
+.style-editor-item {
+  padding-top: 10px;
+}
+
+#layerpanel-group {
+  max-height: 700px;
+}
+
+div.carousel-inner>.item>.item {
+  height: 33px;
+}
+
+#styleRow {
+  max-height: 500px;
+  padding-top: 10px;
+}
+
+.carousel-control .icon-prev, .carousel-control .icon-next, .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right {
+  top: 12%;
+  left: 30%;
+}
+
+
+.simple, .unique, .choropleth, .graduated {
+
+  background-color: #285172;
+  background-image: none;
 }

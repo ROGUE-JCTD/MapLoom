@@ -1,0 +1,195 @@
+/*
+ * Theme file for matching Boundlessgeo Exchange
+ *  User Interface Theming.
+ *
+ */
+
+/** Localized Theme Variables 
+ */
+
+@dark-header-bg: rgb(38, 44, 58);
+@heading-bg: rgba(38, 50, 67, 0.8);
+@save-color: #ff8f4c;
+@panel-bg: rgba(0,0,0, 0.75);
+
+/** Lato is the new font used by recent versions of GeoNode
+ */
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 700;
+  src: local('Lato Bold'), local('Lato-Bold'), url(/static/geonode/fonts/lato_bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 300;
+  src: local('Lato Light'), local('Lato-Light'), url(/static/geonode/fonts/lato_light.ttf) format('truetype');
+}
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(/static/geonode/fonts/lato_regular.ttf) format('truetype');
+}
+
+body {
+    font-family: Lato,sans-serif;
+    font-size: 16px;
+}
+
+#pulldown {
+    .panel {
+        background-color: transparent;
+    }
+
+    .map-title-text {
+        color: white;
+        font-weight: bold;
+        font-style: normal;
+    }
+
+    .glyphicon {
+        color: white;
+        background: none !important;
+    }
+
+    .btn-group, .input-group-btn, .btn {
+        .glyphicon {
+            color: black;
+        }
+    }
+
+    .layer-visible-button {
+        background-color: white !important;
+    }
+
+    .panel-heading {
+        background-color: @heading-bg;
+        border-bottom: solid 1px white;
+    }
+
+    .measure-content, .notification-panel-heading, .layer-heading {
+        background-color: @panel-bg !important;
+    }
+        
+}
+
+#legend-container, #legend-title-heading, #legend-container .legend-item-header { 
+    background-color: @heading-bg !important;
+}
+
+#refreshButton {
+    color: #B1D83B !important;
+}
+
+#saveButton {
+    color: @save-color !important;
+}
+
+#saveMap .btn-primary {
+    background-color: @save-color;
+    border-color: #333;
+    color: #333;
+}
+
+#saveMap .loom-version button {
+    color: black;
+}
+
+.bottom-fade {
+    background: none !important;
+}
+
+.modal {
+    .modal-header {
+        background-color: @dark-header-bg !important;
+    }
+
+    .modal-body, .modal-footer {
+        background-color: white !important;
+    }
+
+    .modal-footer {
+        border-top: solid 1px black !important;
+    }
+}
+
+.ol-scale-line,
+.ol-control button, 
+#zoom-to-world,
+#toggle-fullscreen,
+#switch-coords,
+#legend-btn
+{
+    background-color: @dark-header-bg;
+
+    &:hover {
+        background-color: rgba(100, 100, 100, .85);
+    }
+}
+
+#SyncList .list-group-item {
+    background: none;
+}
+
+#SyncList {
+}
+
+#syncronization-panel,
+#exclusive-mode-container {
+    background-color: @panel-bg !important;
+}
+
+.sync-list-button {
+    background: transparent;
+    color: white;
+    border: none;
+
+    .glyphicon {
+        color: white !important;
+    }
+
+    &:hover {
+        text-decoration: underline;
+        background: transparent;
+        color: white;
+    }
+}
+
+.well {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3 !important;
+}
+
+.close {
+    color: white !important;
+    opacity: 0.8;
+}
+
+.close:hover {
+    opacity: 1.0;
+}
+
+.difflist .diff-list-buttons .btn-xs {
+    background: none;
+}
+
+.diff-summary {
+    background-color: @panel-bg !important;
+    border: none;
+}
+
+.diff-summary .summary-text {
+    color: white !important;
+}
+
+.panelContainer .panelRow .loom-feature-panel {
+    background: none;
+}
+
+.panelContainer .panelRow .loom-feature-panel .geom-author,
+.panelContainer .panelRow .loom-feature-panel .info-box-author {
+    background: none !important;
+    border: solid 1px #777 !important;
+}

@@ -11,7 +11,6 @@
           },
           replace: true,
           link: function(scope, element) {
-            console.log('attribute', scope.attribute);
             scope.dirty = false;
 
             if (scope.typeRestriction === 'int' || scope.typeRestriction === 'double') {

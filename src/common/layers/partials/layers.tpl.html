@@ -7,7 +7,7 @@
          data-parent="#layerpanel-group" data-target="#{{layer.get('metadata').uniqueID}}">
       <div class="row">
         <div class="layer-title ellipsis" ng-class="{'placeholder-layer-title': layer.get('metadata').placeholder}">
-          {{layer.get('metadata').title}}
+          <i ng-show="isGeogig(layer)" class="fa fa-code-fork"></i>&nbsp;{{layer.get('metadata').title ? layer.get('metadata').title : layer.get('metadata').name}}
         </div>
         <div class="layer-buttons">
           <span ng-click="featureManagerService.startFeatureInsert(layer)" tooltip-append-to-body="true"
@@ -43,6 +43,12 @@
               <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(layer)"></div>
               <i class="glyphicon glyphicon-list"></i>
             </a>
+              <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="stylingEnabled && layer.get('metadata').editable"
+                class="btn btn-sm btn-default" tooltip-append-to-body="true"
+                tooltip-placement="top" tooltip="{{'style_layer' | translate}}">
+               <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingStyle(layer)"></div>
+               <i class="glyphicon glyphicon-tint"></i>
+             </a>
             <a type="button" ng-click="showHeatmap(layer)" ng-show="layer.get('metadata').editable == true"
                class="btn btn-sm btn-default" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'show_heatmap' | translate}}">
@@ -74,23 +80,19 @@
             </a>
           </div>
         </div>
-        <!-- <label id="attribute-label" for="attributeRow" ng-show="layer.get('metadata').editable">{{'attributes' |
-          translate}}</label>
-
-        <div id="attributeRow" class="row" ng-show="layer.get('metadata').editable">
-          <ul class="list-group">
-            <li class="list-group-item" ng-repeat="attribute in getAttrList(layer)">
-              <div class="attribute-value ellipsis">{{attribute._name}}</div>
-              <div class="layer-buttons">
-              <span ng-click="toggleAttributeVisibility(attribute)"
-                    class="btn btn-xs btn-default layer-visible-button"
-                    ng-class="{'layer-visible': attribute.visible}">
-                <i class="glyphicon" ng-class="{'glyphicon-eye-close': !attribute.visible, 'glyphicon-eye-open': attribute.visible}"></i>
-              </span>
-              </div>
-            </li>
-          </ul>
-        </div>-->
+          <div class="container" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
+          <label id="style-label" class="ellipsis" for="styleRow">
+              {{ layer.get('metadata').styles.0 }}
+          </label>
+          <a type="button" ng-click="saveLayerStyle(layer)" id="save-style-button"
+               class="btn btn-sm btn-default pull-right" tooltip-append-to-body="true"
+               tooltip-placement="top" tooltip="{{'save_layer_style' | translate}}" style="margin-top: 4px;">
+              <i class="glyphicon glyphicon-floppy-save"></i>
+          </a>
+          </div>
+          <div id="styleRow" class="container" ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
+              <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="layer.get('metadata').editable"></style-editor>
+          </div>
       </div>
     </div>
   </div>

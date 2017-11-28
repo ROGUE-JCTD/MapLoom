@@ -21,6 +21,10 @@
           $scope.addLayers = pulldownService.addLayers;
           $scope.serversLoading = pulldownService.serversLoading;
           $scope.pulldownService = pulldownService;
+          $scope.registryEnabled = configService.configuration.registryEnabled;
+          $scope.searchEnabled = configService.configuration.searchEnabled;
+          $scope.unifiedLayerDialog = configService.configuration.unifiedLayerDialog;
+          $scope.stylingEnabled = configService.configuration.stylingEnabled;
         }
 
         function updateScopeVariables() {

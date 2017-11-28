@@ -254,7 +254,6 @@
             hasValidDate = false;
           }
         };
-        updateDate();
 
         var handleInvalidDate = function(e) {
           e.stopPropagation();
@@ -321,6 +320,7 @@
           }
           updateDateTime();
         };
+        dateObjectChanged();
 
         scope.$watch('dateObject', dateObjectChanged);
 

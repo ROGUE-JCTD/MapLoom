@@ -2,7 +2,7 @@
   var module = angular.module('loom_search_directive', []);
 
   module.directive('loomSearch',
-      function($timeout, $translate, searchService, dialogService, mapService) {
+      function($timeout, $translate, searchService, dialogService, mapService, configService) {
         return {
           restrict: 'C',
           replace: true,
@@ -12,6 +12,7 @@
             scope.searchQuery = '';
             scope.searchInProgress = false;
             scope.searchResults = [];
+            scope.searchExpanded = false;
 
             function zoomToResult(result) {
               var boxMin = ol.proj.transform([result.boundingbox[2], result.boundingbox[0]], 'EPSG:4326',
@@ -33,7 +34,7 @@
 
             scope.clearResults = function() {
               scope.searchResults = [];
-              $('#search-results-panel').collapse('hide');
+              scope.searchExpanded = false;
               searchService.clearSearchLayer();
             };
 
@@ -42,6 +43,7 @@
             };
 
             scope.performSearch = function() {
+              scope.config = configService.configuration;
               if (scope.displayingResults()) {
                 scope.searchQuery = '';
                 scope.clearResults();
@@ -50,7 +52,7 @@
               if (scope.searchInProgress === true) {
                 return;
               }
-              $('#search-results-panel').collapse('hide');
+              scope.searchExpanded = false;
               if (goog.string.removeAll(goog.string.collapseWhitespace(scope.searchQuery), ' ') !== '') {
                 scope.searchInProgress = true;
                 searchService.performSearch(scope.searchQuery).then(function(results) {
@@ -60,11 +62,13 @@
                   } else if (results.length === 1) {
                     zoomToResult(results[0]);
                     searchService.populateSearchLayer(results);
+                    scope.searchExpanded = true;
                   } else {
                     $timeout(function() {
-                      $('#search-results-panel').collapse('show');
+                      scope.searchExpanded = true;
                     }, 10);
                     searchService.populateSearchLayer(results);
+                    scope.searchExpanded = true;
                   }
                   scope.searchInProgress = false;
                 }, function(_status) {
@@ -84,6 +88,22 @@
 
             scope.resultClicked = function(result) {
               zoomToResult(result);
+            };
+
+            scope.isExpanded = function(result) {
+              return (result._open === true);
+            };
+
+            scope.toggleOpen = function(result) {
+              result._open = (result._open === false);
+            };
+
+            scope.getClassSearchExpanded = function() {
+              if (scope.searchExpanded === true) {
+                return 'in';
+              } else {
+                return 'collapse';
+              }
             };
           }
         };

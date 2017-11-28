@@ -1,20 +1,18 @@
+dist: trusty
+sudo: required
+
 language: node_js
+
 node_js:
-  - "0.10"
-  
-before_install:
-  - mkdir travis-phantomjs
-  - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
-  - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
+  - "8"
 
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - npm install --quiet -g grunt-cli karma bower
-  - bower install
-  - grunt
-  - grunt karmaconfig
-
-script: grunt karma
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- npm install --quiet -g grunt-cli karma bower
+- bower install
+- grunt
+- grunt karmaconfig
+script: grunt test
+after_success:
+- grunt deploy

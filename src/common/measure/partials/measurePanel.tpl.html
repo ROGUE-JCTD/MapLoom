@@ -1,0 +1,38 @@
+<div class="panel-heading measure-content">
+    <label>{{ 'measure_tools' | translate }}</label><br>
+    <div class="measure-controls text-center">
+        <div class="btn-group">
+            <button class="btn btn-default" tooltip="{{ 'measure_line' | translate }}" 
+                ng-class="{'btn-primary' : (measureType == 'line')}"
+                ng-click="startMeasuring('line')">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-default" tooltip="{{ 'measure_area' | translate }}" 
+                ng-class="{'btn-primary' : (measureType == 'area')}"
+                ng-click="startMeasuring('area')">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-default" ng-class="{'disabled': !isMeasuring}" 
+               tooltip="{{ 'measure_stop' | translate }}" ng-click="stopMeasuring()">
+                <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <label>{{ 'measure_units' | translate }}</label><br>
+    <div class="measure-report text-center">
+        <div class="btn-group">
+            <button class="btn btn-default" ng-repeat="unit in unitTypes" 
+              ng-click="changeUnits(unit.type)" ng-class="{'btn-primary' : (unit.type == units)}">
+              {{ unit.label }}
+            </button>
+        </div>
+    </div>
+
+    <div ng-show="measureLabel > 0">
+        <label>{{ 'measure_'+measureType | translate }}</label>
+        <div class="measure-read-out"> 
+            {{ measureLabel | number }} <em>{{ unitsLabel }}</em>
+        </div>
+    </div>
+</div>

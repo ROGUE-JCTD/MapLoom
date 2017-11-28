@@ -50,11 +50,26 @@
               if (scope.isConflictPanel) {
                 return '---------------------';
               }
-              if (goog.isDefAndNotNull(attribute) && goog.isDefAndNotNull(attribute.commit)) {
+
+              var author = null;
+              if (goog.isDefAndNotNull(attribute) &&
+                  goog.isDefAndNotNull(attribute.commit) && attribute.commit.length > 0 &&
+                  goog.isDefAndNotNull(attribute.commit[0].author)) {
+                             author = attribute.commit[0].author;
+              }
+
+              if (goog.isDefAndNotNull(author)) {
                 var returnString = '';
-                returnString += attribute.commit.author.name + ' - ';
-                var date = new Date(attribute.commit.author.timestamp);
-                returnString += date.toLocaleDateString() + ' @ ' + date.toLocaleTimeString();
+                if (goog.isDefAndNotNull(author.name)) {
+                  returnString += author.name;
+                } else {
+                  returnString += $translate.instant('anonymous');
+                }
+                if (goog.isDefAndNotNull(author.timestamp)) {
+                  returnString += ' - ';
+                  var date = new Date(author.timestamp);
+                  returnString += date.toLocaleDateString() + ' @ ' + date.toLocaleTimeString();
+                }
                 return returnString;
               }
               return '';
@@ -99,10 +114,18 @@
                   break;
               }
 
-              if (featureDiffService.schema[property.attributename]._nillable === 'false' &&
-                  (property[key] === '' || property[key] === null)) {
+              if (scope.isAttributeRequired(property.attributename) &&
+                  (property[key] === '' || _is.Nil(property[key]))) {
                 property.valid = false;
               }
+            };
+
+            scope.isAttributeRequired = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+              var schema = featureDiffService.schema;
+
+              return (!_.isNil(schema) && schema.hasOwnProperty(property) && schema[property].nillable === 'false') ||
+                  (!_.isNil(exchangeMetadataAttribute) && exchangeMetadataAttribute.required);
             };
 
             scope.$on('feature-diff-performed', updateVariables);
@@ -113,6 +136,44 @@
             scope.$on('hide-authors', function() {
               scope.authorsShown = false;
             });
+
+            scope.isAttributeVisible = function(property) {
+              var schema = featureDiffService.layer.get('metadata').schema;
+
+              // if there is no schema, show the attribute. only filter out if there is schema and attr is set to hidden
+              if (!goog.isDefAndNotNull(schema) || !schema.hasOwnProperty(property)) {
+                return true;
+              }
+
+              return schema[property].visible;
+            };
+
+            scope.getAttributeLabel = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute) &&
+                  goog.isDefAndNotNull(exchangeMetadataAttribute.attribute_label) &&
+                  exchangeMetadataAttribute.attribute_label.length > 0) {
+                return exchangeMetadataAttribute.attribute_label;
+              }
+
+              return property;
+            };
+
+            function getExchangeMetadataAttribute(property) {
+              var exchangeMetadata = featureDiffService.layer.get('exchangeMetadata');
+
+              if (!_.isNil(exchangeMetadata) && !_.isNil(exchangeMetadata.attributes)) {
+                for (var index in exchangeMetadata.attributes) {
+                  if (!_.isNil(exchangeMetadata.attributes[index]) &&
+                      exchangeMetadata.attributes[index].attribute === property) {
+                    return exchangeMetadata.attributes[index];
+                  }
+                }
+              }
+
+              return null;
+            }
           }
         };
       }

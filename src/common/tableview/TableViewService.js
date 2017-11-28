@@ -5,14 +5,19 @@
   var service_ = null;
   var q_ = null;
 
+  var FileSaver_;
+  var Blob_;
+
   var searching = false;
   var searchText = '';
 
   module.provider('tableViewService', function() {
-    this.$get = function($q, $http) {
+    this.$get = function($q, $http, FileSaver, Blob) {
       http_ = $http;
       service_ = this;
       q_ = $q;
+      FileSaver_ = FileSaver;
+      Blob_ = Blob;
       return this;
     };
 
@@ -25,7 +30,10 @@
     this.currentPage = 0;
     this.totalPages = 0;
     this.totalFeatures = 0;
-    this.spatialFilter = {};
+    this.spatialFilter = {
+      active: false,
+      geometryGML: []
+    };
 
     this.nextPage = function() {
       this.currentPage++;
@@ -75,7 +83,6 @@
           break;
         case 'exactMatch':
           if (filter.text !== '') {
-            console.log('getting filter xml, exact match', resType);
             if (resType === 'xsd:dateTime' || resType === 'xsd:date') {
               var dateStringSansTime = filter.text.split('T')[0];
 
@@ -203,7 +210,8 @@
       }
     };
 
-    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header) {
+    this.getFeaturesPostPayloadXML = function(layer, filters, bbox, resultsPerPage, currentPage, exclude_header, format) {
+      var outputFormat = format || 'JSON';
       var paginationParamsStr = '';
       if (goog.isDefAndNotNull(resultsPerPage) && goog.isDefAndNotNull(currentPage)) {
         paginationParamsStr = ' maxFeatures="' + resultsPerPage + '" startIndex="' +
@@ -271,7 +279,7 @@
       }
 
       xml += '<wfs:GetFeature service="WFS" version="' + settings.WFSVersion + '"' +
-          ' outputFormat="JSON"' +
+          ' outputFormat="' + outputFormat + '"' +
           paginationParamsStr +
           ' xmlns:wfs="http://www.opengis.net/wfs"' +
           ' xmlns:ogc="http://www.opengis.net/ogc"' +
@@ -279,14 +287,21 @@
           ' xsi:schemaLocation="http://www.opengis.net/wfs' +
           ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
           '<wfs:Query typeName="' + metadata.name + '"' +
-          ' srsName="' + metadata.projection + '"' +
+          ' srsName="' + 'EPSG:3857' + '"' +
+          //' srsName="' + metadata.projection + '"' +
           '>';
 
       var spatialFilter = '';
-      if (this.spatialFilter.active) {
+      if (this.spatialFilter.active && (this.spatialFilter.geometryGML.length > 0)) {
+        spatialFilter += '<Or>';
+
         var geometryColumn = getGeometryColumn(metadata.schema);
-        var geometry = this.spatialFilter.geometryGML;
-        spatialFilter = getSpatialFilterXML(geometry, geometryColumn);
+
+        this.spatialFilter.geometryGML.forEach(function(geometryGML) {
+          spatialFilter += getSpatialFilterXML(geometryGML, geometryColumn);
+        });
+
+        spatialFilter += '</Or>';
       }
 
       if (xmlFilterBody) {
@@ -301,9 +316,13 @@
           }
         }
         xml += '</ogc:Filter>';
-      } else if (this.spatialFilter.active) {
+      } else if (this.spatialFilter.active && (this.spatialFilter.geometryGML.length > 0)) {
         xml += '<ogc:Filter>';
         xml += spatialFilter;
+        xml += '</ogc:Filter>';
+      } else if (bboxStr) {
+        xml += '<ogc:Filter>';
+        xml += bboxStr;
         xml += '</ogc:Filter>';
       }
 
@@ -314,12 +333,12 @@
 
     //TODO: add bbox to filters.geom instead
     this.getFeaturesWfs = function(layer, filters, bbox, resultsPerPage, currentPage) {
-      //console.log('---- tableviewservice.getFeaturesWfs: ', layer, filters, bbox, resultsPerPage, currentPage);
       var deferredResponse = q_.defer();
 
       var metadata = layer.get('metadata');
       var postURL = metadata.url + '/wfs/WfsDispatcher';
       var xmlData = service_.getFeaturesPostPayloadXML(layer, filters, bbox, resultsPerPage, currentPage);
+
       http_.post(postURL, xmlData, {
         headers: {
           'Content-Type': 'text/xml;charset=utf-8'
@@ -327,7 +346,6 @@
       }).success(function(data, status, headers, config) {
         deferredResponse.resolve(data);
       }).error(function(data, status, headers, config) {
-        console.log('post error', data, status, headers, config);
         deferredResponse.reject(status);
       });
       return deferredResponse.promise;
@@ -341,17 +359,23 @@
       var xmlData;
       xmlData = service_.getFeaturesPostPayloadXML(service_.selectedLayer, metadata.filters, null,
           service_.resultsPerPage, service_.currentPage);
-      console.log('xmldata', xmlData);
       http_.post(postURL, xmlData, {headers: {
         'Content-Type': 'text/xml;charset=utf-8'
       }}).success(function(data, status, headers, config) {
-        console.log('post success', data, status, headers, config);
         var getRestrictions = function() {
           if (metadata.readOnly || !metadata.editable) {
             service_.readOnly = true;
             return;
           }
           service_.readOnly = false;
+
+          function convertExchangeOptionToSchemaOption(option) {
+            return {
+              _value: option.value,
+              _label: option.label
+            };
+          }
+
           for (var attrIndex in service_.attributeNameList) {
             var attr = service_.attributeNameList[attrIndex];
             var attrRestriction = {type: '', nillable: true};
@@ -384,6 +408,15 @@
 
             attrRestriction.nillable = metadata.schema[attr.name]._nillable;
 
+            // Use the Exchange metadata options if it exists
+            if (!_.isNil(service_.selectedLayer) && !_.isNil(service_.selectedLayer.get('exchangeMetadata')) &&
+                !_.isNil(service_.selectedLayer.get('exchangeMetadata').attributes)) {
+              var exchangeAttribute = _.find(service_.selectedLayer.get('exchangeMetadata').attributes, { 'attribute': attr.name });
+              if (!_.isNil(exchangeAttribute) && _.isArray(exchangeAttribute.options) && !_.isEmpty(exchangeAttribute.options)) {
+                attrRestriction.type = _.map(exchangeAttribute.options, convertExchangeOptionToSchemaOption);
+              }
+            }
+
             service_.restrictionList[attr.name] = attrRestriction;
           }
         };
@@ -403,6 +436,22 @@
             service_.attributeNameList.push({name: propName, filter: metadata.filters[propName]});
           }
         }
+        // Filter out hidden attributes
+        service_.attributeNameList = _.filter(service_.attributeNameList, function(prop) {
+          // if there is no schema, show the attribute. only filter out if there is schema and attr is set to hidden
+          if (!goog.isDefAndNotNull(metadata.schema) || !metadata.schema.hasOwnProperty(prop.name)) {
+            return true;
+          }
+
+          return metadata.schema[prop.name].visible;
+        });
+        // Use the Exchange metadata display_order if it exists
+        if (!_.isNil(service_.selectedLayer) && !_.isNil(service_.selectedLayer.get('exchangeMetadata')) &&
+            !_.isNil(service_.selectedLayer.get('exchangeMetadata').attributes)) {
+          service_.attributeNameList = _.sortBy(service_.attributeNameList, function(prop) {
+            return _.find(service_.selectedLayer.get('exchangeMetadata').attributes, { 'attribute': prop.name }).display_order;
+          });
+        }
         service_.totalFeatures = data.totalFeatures;
         service_.totalPages = Math.ceil(service_.totalFeatures / service_.resultsPerPage);
         getRestrictions();
@@ -417,21 +466,13 @@
         }
         deferredResponse.resolve();
       }).error(function(data, status, headers, config) {
-        console.log('post error', data, status, headers, config);
         deferredResponse.reject(status);
       });
-
-      /*http_.get(url).then(function(response) {
-      }, function(reject) {
-        deferredResponse.reject(reject);
-      });*/
-
       return deferredResponse.promise;
     };
 
-    this.setSpatialFilter = function(geometryGML, layerName) {
+    this.setSpatialFilter = function(geometryGML) {
       this.spatialFilter.geometryGML = geometryGML;
-      this.spatialFilter.layerName = layerName;
     };
 
     this.getSpatialFilter = function() {
@@ -455,6 +496,52 @@
       searching = false;
       searchText = '';
       this.currentPage = 0;
+    };
+
+    this.getCSV_Safari = function() {
+      if (confirm('Safari does not support table filters. Proceeding will download all features.')) {
+        var metadata = this.selectedLayer.get('metadata');
+        var url = metadata.url + '/wfs/WfsDispatcher?';
+        var args = {
+          'typename' : metadata.name,
+          'version' : '1.0.0',
+          'service' : 'WFS',
+          'request' : 'GetFeature',
+          'outputFormat' : 'csv'
+        };
+
+        var params = [];
+        for (var key in args) {
+          params.push(key + '=' + encodeURIComponent(args[key]));
+        }
+
+        url += params.join('&');
+
+        window.open(url);
+      }
+    };
+
+    this.getCSV = function() {
+      if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+        this.getCSV_Safari();
+        // return a fulfilled promise
+        var deferred = q_.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      var metadata = this.selectedLayer.get('metadata');
+      var postURL = metadata.url + '/wfs/WfsDispatcher';
+      var layerName = metadata.name.replace(/:/g, '_');
+      var xmlData = service_.getFeaturesPostPayloadXML(this.selectedLayer, metadata.filters, null, null, null, false, 'CSV');
+      return http_.post(postURL, xmlData, {
+        headers: {
+          'Content-Type': 'text/xml;charset=utf-8'
+        }
+      }).then(function(data) {
+        var blob = new Blob_([data.data], { type: data.headers('Content-type') });
+        FileSaver_.saveAs(blob, layerName + '.csv');
+      });
     };
   });
 }());

@@ -88,7 +88,6 @@
                     }
                   }, function(reject) {
                     //failed to get diff
-                    console.log('Failed to get diff: ', reject);
                     dialogService.error($translate.instant('error'),
                         $translate.instant('diff_unknown_error'), [$translate.instant('btn_ok')]);
                     scope.isLoading = false;
@@ -101,7 +100,6 @@
                 }
               }, function(reject) {
                 // failed to get log
-                console.log('Failed to get log: ', reject);
                 dialogService.error($translate.instant('error'),
                     $translate.instant('diff_unknown_error'), [$translate.instant('btn_ok')]);
                 scope.isLoading = false;

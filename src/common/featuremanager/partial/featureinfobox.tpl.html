@@ -41,21 +41,23 @@
       <span class="info-box-attribute" ng-show="!isShowingAttributes()" translate="no_attributes"></span>
       <span ng-repeat="prop in featureManagerService.getSelectedItemProperties()">
         <div ng-if="!featureManagerService.isMediaPropertyName(prop[0])" ng-show="isAttributeVisible(prop[0])">
-          <span class="info-box-attribute">{{prop[0]}}</span>
+          <span class="info-box-attribute">{{getAttributeLabel(prop[0])}}</span>
             <span ng-switch on="isUrl(prop[1])">
               <a ng-switch-when="true" class="info-box-attribute-value" target="_blank" href="{{prop[1]}}">{{prop[1]}}</a>
-              <span ng-switch-default class="info-box-attribute-value">{{prop[1]}}</span>
+              <span ng-switch-default class="info-box-attribute-value">{{getAttributeValue(prop[0], prop[1])}}</span>
             </span>
         </div>
       </span>
     </div>
 
-    <div id="feature-info-box-bottom">
+    <div id="feature-info-box-bottom" ng-if="!featureManagerService.getSelectedLayer().get('metadata').searchLayer && !featureManagerService.getSelectedLayer().get('metadata').searchResults">
       <div id="feature-info-box-button-group" class="btn-group pull-right">
-        <button type="button" ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
+        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer && featureManagerService.getSelectedItem().geometry"
+                ng-click="setAsSpatialFilter()" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'set_spatial_filter' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-filter">
         </button>
-        <button type="button" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
+        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').wmsOnly &&
+        !featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="showTable(featureManagerService.getSelectedLayer())" tooltip-append-to-body="true" tooltip-placement="top"
                 tooltip="{{'show_table' | translate}}" class="btn btn-sm btn-default glyphicon glyphicon-list">
             <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(featureManagerService.getSelectedLayer())"></div>
         </button>
@@ -68,19 +70,28 @@
         <!--<button type="button" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'show_media' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-camera"></button>-->
         <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
-        !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="featureManagerService.startAttributeEditing()"
+        !featureManagerService.getSelectedLayer().get('metadata').readOnly && !featureManagerService.getSelectedLayer().get('metadata').spatialFilterLayer" ng-click="featureManagerService.startAttributeEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_attributes' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-list-alt"></button>
         <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
         !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="featureManagerService.startGeometryEditing()"
                 tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'edit_geometry' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-edit"></button>
-        <button type="button" ng-if="!featureManagerService.getSelectedLayer().get('metadata').readOnly"
-                ng-click="deleteFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
+        <button type="button" ng-if="featureManagerService.getSelectedLayer().get('metadata').editable &&
+        !featureManagerService.getSelectedLayer().get('metadata').readOnly" ng-click="deleteFeature()"
+                tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{'delete_feature' | translate}}"
                 class="btn btn-sm btn-default glyphicon glyphicon-trash">
           <div class="loom-loading" spinner-radius="10" spinner-width="2" spinner-hidden="!deletingFeature"></div>
                 </button>
       </div>
+    </div>
+    <div id="feature-info-box-search" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchLayer">
+      <button type="button" ng-click="pinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'pin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-pushpin">
+      </button>
+    </div>
+    <div id="feature-info-box-search-results" ng-if="featureManagerService.getSelectedItemLayer().layer.get('metadata').searchResults">
+        <button type="button" ng-click="unpinFeature()" tooltip-append-to-body="true" tooltip-placement="top" tooltip="{{ 'unpin_feature' | translate }}" class="btn btn-sm btn-default glyphicon glyphicon-remove">
+        </button>
     </div>
   </div>
 </div>

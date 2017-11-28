@@ -3,8 +3,7 @@
   var module = angular.module('loom_feature_info_box_directive', []);
 
   module.directive('loomFeatureInfoBox',
-      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService) {
-        //console.log('---- loom_feature_info_box_directive');
+      function($translate, featureManagerService, mapService, historyService, dialogService, tableViewService, $rootScope) {
 
         return {
           replace: false,
@@ -57,6 +56,47 @@
               return schema[property].visible;
             };
 
+            scope.getAttributeLabel = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute) &&
+                  goog.isDefAndNotNull(exchangeMetadataAttribute.attribute_label) &&
+                  exchangeMetadataAttribute.attribute_label.length > 0) {
+                return exchangeMetadataAttribute.attribute_label;
+              }
+
+              return property;
+            };
+
+            function getExchangeMetadataAttribute(property) {
+              var exchangeMetadata = featureManagerService.getSelectedLayer().get('exchangeMetadata');
+
+              if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
+                for (var index in exchangeMetadata.attributes) {
+                  if (goog.isDefAndNotNull(exchangeMetadata.attributes[index]) &&
+                      exchangeMetadata.attributes[index].attribute === property) {
+                    return exchangeMetadata.attributes[index];
+                  }
+                }
+              }
+
+              return null;
+            }
+
+            scope.getAttributeValue = function(property, value) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (!_.isNil(exchangeMetadataAttribute) &&
+                  !_.isNil(exchangeMetadataAttribute.options) &&
+                  !_.isEmpty(exchangeMetadataAttribute.options)) {
+                var option = _.find(exchangeMetadataAttribute.options, { value: value });
+                if (option && option.label) {
+                  return option.value + ' - ' + option.label;
+                }
+              }
+
+              return value;
+            };
 
             scope.showFeatureHistory = function() {
               if (!scope.loadingHistory) {
@@ -128,10 +168,81 @@
 
             scope.setAsSpatialFilter = function() {
               var feature = mapService.editLayer.getSource().getFeatures()[0];
-              var geometryGML = featureManagerService.getGeometryGML3FromFeature(feature);
-              var layerName = featureManagerService.getSelectedLayer().get('metadata')['title'];
-              tableViewService.setSpatialFilter(geometryGML, layerName);
-              featureManagerService.hide();
+              feature.setId(featureManagerService.getSelectedItem().id);
+
+              if (feature.getGeometry().getType() === 'Point') {
+                $rootScope.$broadcast('enterSpatialFilterRadius', feature);
+              } else {
+                mapService.addToSpatialFilterLayer(feature);
+                featureManagerService.hide();
+              }
+            };
+
+            scope.pinFeature = function() {
+              var searchResults;
+              mapService.map.getLayers().forEach(function(layer) {
+                if (layer.get('metadata').searchResults) {
+                  searchResults = layer;
+                }
+              });
+              // create pinned features layer if it does not exist yet
+              if (!goog.isDefAndNotNull(searchResults)) {
+                searchResults = new ol.layer.Vector({
+                  metadata: {
+                    title: $translate.instant('pinned_search'),
+                    internalLayer: true,
+                    searchResults: true
+                  },
+                  source: new ol.source.Vector({
+                    parser: null
+                  }),
+                  style: function(feature, resolution) {
+                    return [new ol.style.Style({
+                      image: new ol.style.Circle({
+                        radius: 8,
+                        fill: new ol.style.Fill({
+                          color: '#FF0000'
+                        }),
+                        stroke: new ol.style.Stroke({
+                          color: '#000000'
+                        })
+                      })
+                    })];
+                  }
+                });
+                // add the search results to the map
+                mapService.map.addLayer(searchResults);
+              }
+              // add a clone of the selected feature to the pinned search result
+              var olFeature =
+                  featureManagerService.getSelectedLayer().getSource().getFeatureById(
+                      featureManagerService.getSelectedItem().getId()
+                  );
+              var searchFeature = olFeature.clone();
+              // copy the properties and id manually, not captured in a clone
+              searchFeature.setId('P_' + olFeature.getId());
+              searchFeature.properties = olFeature.properties;
+
+              searchResults.getSource().addFeature(searchFeature);
+            };
+
+            scope.unpinFeature = function() {
+              var searchResults;
+              mapService.map.getLayers().forEach(function(layer) {
+                if (layer.get('metadata').searchResults) {
+                  searchResults = layer;
+                }
+              });
+              // sanity check
+              if (!goog.isDefAndNotNull(searchResults)) {
+                return;
+              }
+              // remove the selected feature to the pinned search result
+              var olFeature =
+                  featureManagerService.getSelectedLayer().getSource().getFeatureById(
+                      featureManagerService.getSelectedItem().getId()
+                  );
+              searchResults.getSource().removeFeature(olFeature);
             };
           }
         };

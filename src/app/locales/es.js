@@ -5,6 +5,11 @@
     'projection_not_supported': 'Proyección no soportado',
     'notifications_tab': 'Notificaciones',
     'no_notifications': 'Ninguna notificación',
+    'registry': 'Registro',
+    'registry_layers': 'Registro de Capas',
+    'registry_layer_btn': 'Registro de Capa',
+    'search_layers_btn': 'Búsqueda de Capas',
+    'search_layers' : 'Búsqueda de Capas',
     'map_layers': 'Capas',
     'add_layer_btn': 'Añadir Capa',
     'add_layers': 'Añadir Capas',
@@ -225,6 +230,8 @@
     'mgrs': 'MGRS',
     'other': 'Otro',
     'search': 'Búsqueda',
+    'searching': 'Buscando...',
+    'search_prompt' : 'Por favor, utilice cualquiera de las opciones de la izquierda para iniciar una búsqueda.',
     'search_locations': 'Ubicaciones de Búsqueda',
     'search_table': 'Buscar Todos Los Campos',
     'search_results': 'Resultados de la Búsqueda',
@@ -318,7 +325,42 @@
     'standard_deviation': 'Desviacion Estandar',
     'count': 'Cuentas',
     'populated_count': 'Llenado Cuentas',
-    'unique_values': 'Valor Único'
+    'unique_values': 'Valor Único',
+
+    'paging_subtitle' : 'Mostrando {{ firstRecord }} - {{ lastRecord }} de {{ totalRecords }} registros',
+    'sorted_by' : 'Ordenado por ',
+    'ascending' : 'Ascendente',
+    'descending' : 'Descendente',
+    'date' : 'Fecha',
+    'category' : 'Categoría',
+    'date_created' : 'Fecha de Creacion',
+    'next' : 'Siguiente',
+    'previous' : 'Anterior',
+    'clear' : 'Limpiar todos',
+    'owner' : 'Poseedor',
+
+    'refine_layers_subtitle' : 'Filtrar Capas',
+
+    'layers_to_be_added' : 'Se añadirán {{ value }} capas al mapa.',
+
+    'map_help' : 'Zoom para limitar la búsqueda a datos que incluyan funciones en el área visualizada. Coloca el cursor sobre las capas de la lista para obtener una vista previa de ellas en el mapa anterior.',
+    'keyword_help' : 'Las palabras clave buscarán títulos y descripciones de los partidos.',
+    'date_help' : 'Filtrar capas por su fecha de creación.',
+    'owner_help' : 'Filtrar capas por su poseedor',
+    'category_help' : 'Filtrar caps por su Categoría',
+
+
+    'measure' : 'Medida',
+    'measure_tools' : 'Longitud o Área',
+    'measure_area' : 'Área',
+    'measure_line' : 'Longitud',
+    'measure_stop' : 'Deja de medir',
+    'measure_units' : 'Unidades',
+    'bounding_box' : 'Cuadro Delimitador',
+    'too_many_filters' : 'Es posible que tenga demasiados filtros seleccionados. Prueba a eliminar una de las siguientes:',
+    'style_layer': 'Style Layer',
+    'style_name': 'Style Name',
+    'save_layer_style': 'Save Layer Style'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

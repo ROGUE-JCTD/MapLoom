@@ -192,7 +192,6 @@
           var pushOptions = new GeoGigPushOptions();
           pushOptions.ref = link.getLocalBranch() + ':' + link.getRemoteBranch();
           pushOptions.remoteName = link.getRemote().name;
-          console.log(pushOptions);
           transaction.command('push', pushOptions).then(function() {
             transaction.finalize().then(function() {
               syncing = false;
@@ -252,7 +251,6 @@
             syncing = false;
             result.reject(pullFailed);
             transaction.abort();
-            console.log('ERROR: Pull failure: ', pullOptions, pullFailed);
           }
         });
       }, function(beginTransactionFailed) {

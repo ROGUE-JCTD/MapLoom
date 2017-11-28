@@ -57,9 +57,8 @@ describe('MapService', function() {
     });
 
     it('should have the same CRS as the config service', function() {
-      var actualProjection = map.getView().getProjection().code_; 
-      var expectedProjection = configService.configuration.map.projection;  
-
+      var actualProjection = map.getView().getProjection().code_;
+      var expectedProjection = configService.configuration.map.projection;
       expect(expectedProjection).toBe(actualProjection);
     });
 
@@ -153,9 +152,8 @@ describe('MapService', function() {
     it('should expect to have at least one default layer after it is called', function() {
       //we should have at least the one openstreetmap default layer
       expect(mapService.map.getLayers().values_.length).toBeGreaterThan(0);
-
-      //ensure the number of servers loaded is equal to the number in the configService minus the default wms endpoint
-      expect(serverService.getServers().length).toBe(configService.configuration.sources.length-1);
+      //ensure the number of servers loaded is equal to the number in the configService
+      expect(serverService.getServers().length).toBe(configService.configuration.sources.length);
     });
   });
 
@@ -231,7 +229,9 @@ describe('MapService', function() {
       //we needs this spy so we can force a return of the promise
       //this way the call to loadLayers completes and gets a valid default layer added
       spyOn(serverService, 'addServer').and.returnValue(defer.promise);
-      mapService.loadLayers();
+      // map layers *should* already be loaded, adding the map
+      //  layers again was causing a test failure.
+      // mapService.loadLayers();
     });
 
     it('should get all layers if including editable and hidden layers', function() {

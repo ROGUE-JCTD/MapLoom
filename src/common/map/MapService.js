@@ -5,8 +5,6 @@
   var serverService_ = null;
   var geogigService_ = null;
   var httpService_ = null;
-  var cookieStoreService_ = null;
-  var cookiesService_ = null;
   var configService_ = null;
   var dialogService_ = null;
   var pulldownService_ = null;
@@ -54,6 +52,26 @@
           zIndex: 1
         })];
       }
+    });
+  };
+
+  var createSpatialFilterLayer = function() {
+    return new ol.layer.Vector({
+      metadata: {
+        spatialFilterLayer: true,
+        editable: true,
+        title: 'Spatial Filters'
+      },
+      source: new ol.source.Vector(),
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 160, 0, 0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: 'rgba(255, 160, 0, 1.0)',
+          width: 2
+        })
+      })
     });
   };
 
@@ -120,23 +138,63 @@
     };
   })();
 
+  function createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, fromProjection, toProjection) {
+    if (!coordinates) {
+      return [[]];
+    }
+    return [[
+      ol.proj.transform([coordinates[0], coordinates[1]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[0], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[3]], fromProjection, toProjection),
+      ol.proj.transform([coordinates[2], coordinates[1]], fromProjection, toProjection)
+    ]];
+  }
+
+  function angleNormalize(angle) {
+    if (angle < -180) {
+      return 360 + angle;
+    }else if (angle > 180) {
+      return -360 + angle;
+    }
+    return angle;
+  }
+
+  function createGeoJSONLayerFromCoordinatesWithProjection(coordinates, projection) {
+    var geojsonObject = {
+      'type': 'Feature',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': projection
+        }
+      },
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': createBBoxFromCoordinatesFromProjectionIntoProjection(coordinates, projection, 'EPSG:900913')
+      }
+    };
+    return new ol.layer.Vector({
+      source: new ol.source.Vector({
+        features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+      })
+    });
+  }
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
-                         $cookieStore, $cookies, configService, dialogService, tableViewService, $rootScope, $q) {
+                         $cookieStore, $cookies, $location, $browser, configService, dialogService, tableViewService, $rootScope, $q) {
       service_ = this;
       httpService_ = $http;
-      cookieStoreService_ = $cookieStore;
-      cookiesService_ = $cookies;
       configService_ = configService;
-      console.log(cookiesService_, cookieStoreService_);
       serverService_ = serverService;
       geogigService_ = geogigService;
       dialogService_ = dialogService;
       translate_ = $translate;
+      locationService_ = $location;
       rootScope_ = $rootScope;
       pulldownService_ = pulldownService;
       tableViewService_ = tableViewService;
+      browserService_ = $browser;
       q_ = $q;
 
       // create map on init so that other components can use map on their init
@@ -155,10 +213,38 @@
 
       this.map = this.createMap();
 
+      this.map.on('moveend', this.trackInHash.bind(this));
+
+      // This needed to go old school because the Angular and jQuery
+      //  mechanisms for reading a parent window's hash do not exist,
+      //  at the time of writing (or at least not in the versions
+      //  used in the application at the time of writing)
+      //
+      var win = getRealWindow();
+      var hash_listener = this.trackWindowHash.bind(this);
+      if (win.addEventListener) {
+        win.addEventListener('hashchange', hash_listener);
+      } else if (win.attachEvent) {
+        win.attachEvent('onhashchange', hash_listener);
+      }
+
       // now that we have a map, lets try to add layers and servers
       service_.loadLayers();
 
       this.editLayer = createVectorEditLayer();
+      this.spatialFilterLayer = createSpatialFilterLayer();
+
+      this.spatialFilterLayer.getSource().on(['addfeature', 'changefeature', 'clear', 'removefeature'], function(event) {
+        var spatialFilterGML = [];
+        service_.getSpatialFilterLayer().getSource().getFeatures().forEach(function(feature) {
+          spatialFilterGML.push(service_.getGeometryGML3FromFeature(feature));
+        });
+        tableViewService_.setSpatialFilter(spatialFilterGML);
+      });
+
+      this.createGeoJSONLayerFromCoordinatesWithProjection = createGeoJSONLayerFromCoordinatesWithProjection;
+      this.createBBoxFromCoordinatesFromProjectionIntoProjection = createBBoxFromCoordinatesFromProjectionIntoProjection;
+      this.angleNormalize = angleNormalize;
 
       $rootScope.$on('conflict_mode', function() {
         editableLayers_ = service_.getLayers(true);
@@ -196,7 +282,7 @@
     };
 
     this.dumpTileCache = function(layerToDump) {
-      var layers = this.getLayers(); //Note: does not get hidden or imagery layers
+      var layers = this.getLayers(true, true);
       forEachArrayish(layers, function(layer) {
         if (goog.isDefAndNotNull(layer.getSource)) {
           var metadata = layer.get('metadata');
@@ -213,6 +299,12 @@
           }
         }
       });
+    };
+
+    this.zoomToExtentForProjection = function(extent, projection) {
+      var transform = ol.proj.getTransformFromProjections(projection,
+          this.map.getView().getProjection());
+      service_.zoomToExtent(ol.extent.applyTransform(extent, transform));
     };
 
     this.zoomToExtent = function(extent, animate, map, scale) {
@@ -246,7 +338,6 @@
           }
         }
       }
-      console.log('---- MapService.zoomToExtent. extent: ', extent);
 
       if (animate) {
         var zoom = ol.animation.zoom({resolution: map.getView().getResolution()});
@@ -255,6 +346,29 @@
       }
 
       view.fit(extent, map.getSize());
+    };
+
+    this.updateStyle = function(layer) {
+      var style = layer.get('style') || layer.get('metadata').style || '';
+      var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
+      if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
+        var layerSource = layer.getSource();
+        if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams)) {
+          var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
+          var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
+          httpService_({
+            url: '/geoserver/rest/styles/' + layer.get('metadata').styles[0] + '.xml',
+            method: 'PUT',
+            data: xml,
+            headers: {'Content-Type': 'application/vnd.ogc.sld+xml'}
+          }).then(function(result) {
+            if (goog.isDefAndNotNull(layerSource.updateParams)) {
+              layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
+            }
+          });
+        }
+      }
+
     };
 
     this.zoomToLayerFeatures = function(layer) {
@@ -302,12 +416,10 @@
             '</wps:Execute>';
 
         httpService_.post(url, wpsPostData).success(function(data, status, headers, config) {
-          //console.log('----[ mapService.zoomToLayerExtent.success', data, status, headers, config);
           var x2js = new X2JS();
           var json = x2js.xml_str2json(data);
           if (goog.isDefAndNotNull(json.ExecuteResponse) && goog.isDefAndNotNull(json.ExecuteResponse.Status) &&
               goog.isDefAndNotNull(json.ExecuteResponse.Status.ProcessFailed)) {
-            console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
             service_.zoomToLayerExtent(layer);
             deferredResponse.resolve();
             return;
@@ -318,14 +430,12 @@
                         JSON.parse(lower[1], 10),
                         JSON.parse(upper[0], 10),
                         JSON.parse(upper[1], 10)];
-          //console.log('------- [[ bounds: ', bounds);
           var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer.get('metadata').projection),
               ol.proj.get(service_.map.getView().getProjection()));
           var extent900913 = ol.extent.applyTransform(bounds, transform);
           service_.zoomToExtent(extent900913, null, null, 0.1);
           deferredResponse.resolve();
         }).error(function(data, status, headers, config) {
-          console.log('----[ Warning: wps gs:bounds failed, zooming to layer bounds ', data, status, headers, config);
           service_.zoomToLayerExtent(layer);
           deferredResponse.resolve();
         });
@@ -340,7 +450,6 @@
 
     this.zoomToLayerExtent = function(layer) {
       var metadata = layer.get('metadata');
-
       var shrinkExtent = function(extent, shrink) {
         var newExtent = extent;
 
@@ -391,11 +500,18 @@
       var layers = [];
 
       this.map.getLayers().forEach(function(layer) {
+        var searchLayer = false;
+        if (goog.isDefAndNotNull(layer.get('metadata')) && layer.get('metadata').internalLayer) {
+          if (layer.get('metadata').searchLayer || layer.get('metadata').searchResults) {
+            searchLayer = true;
+          }
+        }
 
         // if not an internal layer and not difference layer
         if (goog.isDefAndNotNull(layer.get('metadata')) && // skip the internal layer that ol3 adds for vector editing
             !(layer.get('metadata').vectorEditLayer) &&
-            !(layer.get('metadata').internalLayer)) {
+            (searchLayer || !(layer.get('metadata').internalLayer)) &&
+            !(layer.get('metadata').spatialFilterLayer)) {
 
           // if it is imagery
           if (!service_.layerIsEditable(layer)) {
@@ -443,7 +559,7 @@
           //TODO: translate
           deferredResponse.reject('epsgCode could not be converted to valid number');
         } else {
-          var url = 'http://epsg.io/' + epsgCodeAsNumber + '.js';
+          var url = '//epsg.io/' + epsgCodeAsNumber + '.js';
           httpService_.get(url).then(function(response) {
             if (goog.isDefAndNotNull(response) && goog.isDefAndNotNull(response.data) && response.data.indexOf('proj4.defs(') === 0) {
               try {
@@ -470,6 +586,15 @@
       return deferredResponse.promise;
     };
 
+    this.createLayerWithFullConfig = function(fullConfig, serverId) {
+      var server = serverService_.getServerById(serverId);
+      var minimalConfig = {
+        name: fullConfig.name,
+        source: serverId
+      };
+      return service_.createLayerFull(minimalConfig, fullConfig, server);
+    };
+
     /**
      *  {Object} minimalConfig
      *  {Number} opt_layerOrder is optional and indicates the spot in the layers array it should try to go to.
@@ -477,25 +602,30 @@
      *        is added when later another layer with layerOrder 3 is added, it will be inserted below the previous one.
      *        Similarly a 3rd layer with order 4 will be inserted between 3 and 5.
      */
-    this.addLayer = function(minimalConfig, opt_layerOrder) {
+    this.createLayer = function(minimalConfig, opt_layerOrder) {
       var server = serverService_.getServerById(minimalConfig.source);
-      if (server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
+      if (goog.isDefAndNotNull(server) && server.ptype === 'gxp_mapquestsource' && minimalConfig.name === 'naip') {
         minimalConfig.name = 'sat';
       }
 
       var fullConfig = null;
       if (goog.isDefAndNotNull(server)) {
-        fullConfig = serverService_.getLayerConfig(server.id, minimalConfig.name);
+        fullConfig = serverService_.getLayerConfig(server.id, minimalConfig);
       }
 
-      console.log('-- MapService.addLayer. minimalConfig: ', minimalConfig, ', fullConfig: ', fullConfig, ', server: ',
-          server, ', opt_layerOrder: ', opt_layerOrder);
+      if (goog.isDefAndNotNull(minimalConfig.registryConfig)) {
+        fullConfig = minimalConfig.registryConfig;
+      }
+
+      return service_.createLayerFull(minimalConfig, fullConfig, server, opt_layerOrder);
+    };
+
+    this.createLayerFull = function(minimalConfig, fullConfig, server, opt_layerOrder) {
 
       // download missing projection projection if we don't have it
       if (goog.isDefAndNotNull(fullConfig)) {
         var projcode = service_.getCRSCode(fullConfig.CRS);
         if (goog.isDefAndNotNull(projcode)) {
-          console.log('----[ addLayer, looking up projection: ', projcode);
           // do we have the projection from definition in src/app/Proj4jDefs.js,  if not, try to download
           // it if we have internet connectivity. When working in disconnected mode, you can only use projections
           // that have been defined by maploom in Proj4jDefs
@@ -549,7 +679,28 @@
           })
         });
       } else {
-        if (server.ptype === 'gxp_osmsource') {
+        if (fullConfig.type && fullConfig.type == 'mapproxy_tms') {
+          layer = new ol.layer.Tile({
+            metadata: {
+              name: minimalConfig.name,
+              url: goog.isDefAndNotNull(mostSpecificUrl) ? mostSpecificUrl : undefined,
+              title: fullConfig.title,
+              extent: fullConfig['extent'],
+              abstract: fullConfig.abstract,
+              readOnly: false,
+              editable: false,
+              projection: service_.getCRSCode(fullConfig.CRS),
+              bbox: {
+                extent: fullConfig['extent'],
+                crs: service_.getCRSCode(fullConfig.CRS)
+              }
+            },
+            visible: true,
+            source: new ol.source.XYZ({
+              url: fullConfig.detail_url
+            })
+          });
+        } else if (server.ptype === 'gxp_osmsource') {
           var osmLocal = {
             attributions: [
               new ol.Attribution({
@@ -573,15 +724,13 @@
         } else if (server.ptype === 'gxp_bingsource') {
 
           var sourceParams = {
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: '',
             imagerySet: 'Aerial'
           };
 
           if (goog.isDefAndNotNull(fullConfig.sourceParams)) {
             goog.object.extend(sourceParams, fullConfig.sourceParams);
           }
-
-          // console.log(sourceParams, config.sourceParams, {});
 
           layer = new ol.layer.Tile({
             metadata: {
@@ -599,7 +748,7 @@
 
           var parms = {
             //url: 'http://api.tiles.mapbox.com/v3/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
-            url: 'http://api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
+            url: '//api.tiles.mapbox.com/v4/mapbox.' + fullConfig.sourceParams.layer + '.json?access_token=pk.eyJ1IjoiYmVja2VyciIsImEiOiJjaWtzcHVyeTYwMDA3dWdsenB5aHUxMzl1In0.1FVjOTdhoXGXtnfApX8wVQ',
             crossOrigin: true
           };
           var mbsource = new ol.source.TileJSON(parms);
@@ -617,6 +766,48 @@
           } else {
             console.log('====[ Error: could not create base layer.');
           }
+        } else if (server.ptype === 'gxp_arcrestsource') {
+          var metadata = {
+            serverId: server.id,
+            name: minimalConfig.name,
+            title: fullConfig.Title
+          };
+          var attribution = new ol.Attribution({
+            html: 'Tiles &copy; <a href="' + server.url + '">ArcGIS</a>'
+          });
+          var serviceUrl = server.url + 'tile/{z}/{y}/{x}';
+          var serviceSource = null;
+          if (server.proj === 'EPSG:4326') {
+            var projection = ol.proj.get('EPSG:4326');
+            var tileSize = 512;
+            serviceSource = new ol.source.XYZ({
+              attributions: [attribution],
+              maxZoom: 16,
+              projection: projection,
+              tileSize: tileSize,
+              metadata: metadata,
+              tileUrlFunction: function(tileCoord) {
+                return serviceUrl.replace('{z}', (tileCoord[0] - 1).toString())
+                                  .replace('{x}', tileCoord[1].toString())
+                                  .replace('{y}', (-tileCoord[2] - 1).toString());
+              },
+              wrapX: true
+            });
+          } else {
+            serviceSource = new ol.source.XYZ({
+              attributions: [attribution],
+              maxZoom: 19,
+              metadata: metadata,
+              url: serviceUrl
+            });
+          }
+
+          layer = new ol.layer.Tile({
+            metadata: metadata,
+            visible: minimalConfig.visibility,
+            source: serviceSource
+          });
+
         } else if (server.ptype === 'gxp_tilejsonsource') {
           //currently we assume only one layer per 'server'
           var jsontile_source = server.layersConfig[0].TileJSONSource;
@@ -671,8 +862,16 @@
             }
           }
 
-          console.log('config crs', fullConfig.CRS);
-          console.log('getCode', service_.getCRSCode(fullConfig.CRS));
+          var bbox;
+          if (goog.isArray(fullConfig.BoundingBox)) {
+            bbox = {extent: fullConfig.BoundingBox[0]};
+          } else if (goog.isArray(fullConfig.extent)) {
+            bbox = {
+              extent: fullConfig.extent,
+              crs: fullConfig.CRS[0]
+            };
+          }
+
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -684,7 +883,7 @@
               workspace: nameSplit.length > 1 ? nameSplit[0] : '',
               readOnly: false,
               editable: false,
-              bbox: (goog.isArray(fullConfig.BoundingBox) ? fullConfig.BoundingBox[0] : fullConfig.BoundingBox),
+              bbox: bbox,
               projection: service_.getCRSCode(fullConfig.CRS),
               savedSchema: minimalConfig.schema,
               dimensions: fullConfig.Dimension
@@ -715,8 +914,10 @@
                   '</ogc:Filter></wfs:Update>' +
                   '</wfs:Transaction>';
 
-              var wfsurl = mostSpecificUrl + '/wfs/WfsDispatcher';
-              httpService_.post(wfsurl, wfsRequestData).success(function(data, status, headers, config) {
+              var serverUrl = serverService_.getMostSpecificUrl(server);
+              var wfsurl = serverService_.getWfsRequestUrl(serverUrl);
+
+              function _handlePostResponse(data, status, headers, config) {
                 var x2js = new X2JS();
                 var json = x2js.xml_str2json(data);
                 if (goog.isDefAndNotNull(json.ServiceExceptionReport) &&
@@ -725,14 +926,44 @@
                 } else {
                   layer.get('metadata').readOnly = false;
                 }
-              }).error(function(data, status, headers, config) {
-              });
+              }
+
+              var wfsReqConfig = {
+                withCredentials: true
+              };
+              wfsReqConfig.headers = serverService_.getWfsRequestHeaders(server);
+
+              return httpService_.post(wfsurl, wfsRequestData, wfsReqConfig)
+              .success(_handlePostResponse);
+
             };
-            geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
-              testReadOnly();
+            var geogigPromise = geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
+              return testReadOnly();
             }, function() {
-              testReadOnly();
+              return testReadOnly();
             });
+
+            var layerName = layer.getSource().getParams()['LAYERS'] || layer.getSource().getParams()['layers'];
+
+            // Fetch the Exchange layer metadata
+            var exchangePromise = httpService_.get('/layers/' + layerName + '/get').success(function(response) {
+              response.attributes = _.sortBy(response.attributes, 'display_order');
+              layer.get('metadata').styles = response.styles;
+              layer.set('exchangeMetadata', response);
+            });
+
+            q_.all([geogigPromise, exchangePromise]).then(function(data) {
+              _.each(layer.get('metadata').schema, function(schemaAttribute) {
+                var exchangeMetadata = layer.get('exchangeMetadata');
+                if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
+                  var exchangeAttribute = _.find(exchangeMetadata.attributes, { attribute: schemaAttribute._name });
+                  if (goog.isDefAndNotNull(exchangeAttribute)) {
+                    schemaAttribute.visible = exchangeAttribute.visible;
+                  }
+                }
+              });
+            });
+
           }
         } else if (server.ptype === 'gxp_tmssource') {
           nameSplit = fullConfig.Name.split(':');
@@ -775,7 +1006,20 @@
               {type: 'gxp_olsource'}));
         }
       }
+      return layer;
+    };
 
+    this.addVirtualLayer = function(minimalConfig, layerConfig, server) {
+      var layer = service_.createLayerFull(minimalConfig, layerConfig, server);
+      service_.addLayerCore(minimalConfig, layer);
+    };
+
+    this.addLayer = function(minimalConfig, opt_layerOrder) {
+      var layer = service_.createLayer(minimalConfig, opt_layerOrder);
+      return service_.addLayerCore(minimalConfig, layer, opt_layerOrder);
+    };
+
+    this.addLayerCore = function(minimalConfig, layer, opt_layerOrder) {
       if (goog.isDefAndNotNull(layer)) {
         // convert source id to a number. even though geonode gives it as a string, it wants it back as number
         minimalConfig.source = parseInt(minimalConfig.source, 10);
@@ -784,12 +1028,23 @@
         //      being defined. If it is not defined, we should add an empty one here.
         var meta = layer.get('metadata');
 
+        if (minimalConfig['registry']) {
+          meta['registry'] = minimalConfig['registry'];
+          meta['registryConfig'] = minimalConfig['registryConfig'];
+        }
+
         meta.config = minimalConfig;
         // hash the server id + the layer name and hash it to create a unqiue, html-safe id.
         meta.uniqueID = sha1('server' + meta.serverId + '_' + meta.name);
 
         var mapLayers = this.map.getLayerGroup().getLayers().getArray();
         meta.layerOrder = goog.isDefAndNotNull(opt_layerOrder) ? opt_layerOrder : mapLayers.length;
+
+        // the first registry layer gets added beneath the base map.
+        // this prevents that.
+        if (meta.registry && meta.layerOrder === 1) {
+          meta.layerOrder++;
+        }
 
         var insertIndex = -1;
 
@@ -809,8 +1064,6 @@
         }
         if (goog.isDefAndNotNull(meta.projection)) {
           // ping proj4js to pre-download projection if we don't have it
-          var layerPrjObject = ol.proj.get(meta.projection);
-          console.log('==== layerPrjObject', layerPrjObject);
           ol.proj.getTransform(meta.projection, 'EPSG:4326');
         }
         rootScope_.$broadcast('layer-added');
@@ -818,7 +1071,6 @@
         console.log('====[Error: could not load layer: ', minimalConfig);
       }
 
-      console.log('-- MapService.addLayer, added: ', layer);
       pulldownService_.showLayerPanel();
       return layer;
     };
@@ -837,10 +1089,19 @@
     this.getMapViewParams = function() {
       var params = {
         projection: configService_.configuration.map.projection,
-        center: configService_.configuration.map.center,
-        zoom: configService_.configuration.map.zoom,
         maxZoom: 17
       };
+
+      var default_view = {
+        center: configService_.configuration.map.center,
+        zoom: configService_.configuration.map.zoom
+      };
+
+      // check the window's hash for a default view and use tha
+      //  unless the map already has one defined.
+      var hash_view = getHashView(getRealWindow().location.hash, default_view);
+      goog.object.extend(params, hash_view);
+
       if (configService_.configuration.map.projection === 'EPSG:4326') {
         params['minZoom'] = 3;
       } else {
@@ -901,8 +1162,6 @@
       };
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
-        console.log('saving server: ', server);
-
         // Remove the MapLoom-specific virtual service flag and attribute.  These are re-created when the
         // layer is added.
         if (server.config.isVirtualService === true && goog.isDefAndNotNull(server.config.virtualServiceUrl)) {
@@ -942,13 +1201,9 @@
         } else if (goog.isDefAndNotNull(layer.get('metadata').savedSchema)) {
           config.schema = layer.get('metadata').savedSchema;
         }
-        console.log('saving layer: ', layer);
-        console.log('metadata: ', layer.get('metadata'));
-        console.log('config: ', layer.get('metadata').config);
+
         cfg.map.layers.push(config);
       });
-
-      console.log('--- save.cfg: ', cfg);
 
       httpService_({
         url: service_.getSaveURL(),
@@ -959,7 +1214,6 @@
         }
       }).success(function(data, status, headers, config) {
         service_.updateMap(data);
-        console.log('----[ map.save success. ', data, status, headers, config);
       }).error(function(data, status, headers, config) {
         if (status == 403 || status == 401) {
           dialogService_.error(translate_.instant('save_failed'), translate_.instant('map_save_permission'));
@@ -970,9 +1224,89 @@
       });
     };
 
+    /* Angular's utility methods were not sophisticated enough
+     * to do a 'parent window' URL parsing so this utility
+     * function is needed to parse an arbitrary query string.
+     */
+    this.parseQueryString = function(qstring) {
+      var working_str = '' + qstring;
+      if (working_str.indexOf('?') >= 0) {
+        working_str = working_str.split('?')[1];
+      }
+      if (working_str.indexOf('#') >= 0) {
+        working_str = working_str.split('#')[0];
+      }
+
+      var params = {};
+      var opts = working_str.split('&');
+      for (var i = 0, ii = opts.length; i < ii; i++) {
+        var kvp = opts[i].split('=');
+        var v = decodeURIComponent(kvp[1]);
+        // handle it when there are multiple values.
+        if (goog.isDefAndNotNull(params[kvp[0]])) {
+          params[kvp[0]].push(v);
+        } else {
+          params[kvp[0]] = [v];
+        }
+      }
+
+      return params;
+    };
+
+    /* Parse the URL and see if the user entered
+     * any of registry layers in.
+     *
+     * All registry layers will be pulled from registry
+     * then configure them.
+     */
+    this.loadRegistryLayersFromUrl = function() {
+      // angular's "location" was not working
+      // to parse the appropriate frame.  So this code gets
+      // a little old-school and uses window.location.search.
+      var params = this.parseQueryString(window.location.search);
+      var registry_server = serverService_.getRegistryLayerConfig();
+
+      // this function handles adding registry layers
+      var got_registry_layer = function(response) {
+        // check to see the layer returned.
+        if (response.data['a.matchDocs'] >= 1) {
+          // since this was caled using a UUID search,
+          // the first response should be the object we need.
+          var layer_defn = response.data['d.docs'][0];
+          //service_.addLayer(layer_defn);
+          var layer_objs = serverService_.createHyperSearchLayerObjects([layer_defn], registry_server.id);
+          if (layer_objs.length > 0) {
+            var layer_conf = {};
+            goog.object.extend(layer_conf, layer_objs[0]);
+            goog.object.extend(layer_conf, {
+              registry: true,
+              registryConfig: layer_objs[0],
+              name: layer_conf.title,
+              source: registry_server.id
+            });
+            service_.addVirtualLayer(layer_conf, layer_objs[0], registry_server);
+            layer_conf.add = false;
+          }
+        }
+      };
+
+      // check if there are any layers requested by the user
+      //  and then configure them if they are registry layers.
+      if (goog.isDefAndNotNull(params.layer)) {
+        for (var i = 0, ii = params.layer.length; i < ii; i++) {
+          var layer = params.layer[i].split(':');
+          if (layer[0] == 'registry') {
+            // add the registry layer!
+            var registry_url = '/registry';
+            var layer_url = registry_url + '/api?q.uuid=' + layer[1];
+            httpService_.get(layer_url).then(got_registry_layer);
+          }
+        }
+      }
+    };
+
     this.loadLayers = function() {
       console.log('=======[[ using configService_.configuration: ', configService_.configuration);
-
       if (goog.isDefAndNotNull(configService_.configuration) &&
           goog.isDefAndNotNull(configService_.configuration.sources) &&
           goog.isDefAndNotNull(configService_.configuration.map) &&
@@ -982,12 +1316,11 @@
         // the server. http://ip/geoserver/workspace/name/wms will become http://ip/geoserver/wms
         goog.object.forEach(configService_.configuration.sources, function(serverInfo, key, obj) {
           if (goog.isDefAndNotNull(serverInfo.url)) {
-            serverService_.replaceVirtualServiceUrl(serverInfo);
+            configService_.configuration.sources[key] = serverService_.replaceVirtualServiceUrl(serverInfo);
           }
         });
 
         var ordered = new Array(configService_.configuration.sources.length);
-        console.log('configService_.configuration.sources: ', configService_.configuration.sources);
         goog.object.forEach(configService_.configuration.sources, function(serverInfo, key, obj) {
           ordered[key] = serverInfo;
         });
@@ -1128,7 +1461,6 @@
                   }
                   dialogService_.error(translate_.instant('server'), translate_.instant('load_server_failed',
                       {'server': serverInfo.name, 'value': reject}), [translate_.instant('btn_ok')], false);
-                  console.log('====[ Error: Add server failed. ', reject);
                 });
           } else {
             orderedUniqueLength--;
@@ -1141,6 +1473,9 @@
             }
           }
         });
+
+
+        this.loadRegistryLayersFromUrl();
 
         //TODO: once all servers were added, async, then add any missing ones.
       } else {
@@ -1204,6 +1539,127 @@
       }
     };
 
+    /** As maploom is commonly embedded in an iframe,
+     *  this normalizes access to the actual window.
+     *
+     * Inspired by:
+     *  http://stackoverflow.com/questions/935127/how-to-access-parent-iframe-from-javascript
+     *
+     * @return {window} The real container window.
+     */
+    var getRealWindow = function() {
+      if (window.frameElement) {
+        return window.parent;
+      }
+      return window;
+    };
+
+    /** Return a hash string for storing map information.
+     *
+     * @param {ol.Map} The map.
+     *
+     * @return {String} String to set as the hash, cookie, etc.
+     */
+    var getHashString = function(map) {
+      var map_view = map.getView();
+
+      // format map_view into a string
+      var center = map_view.getCenter();
+      // assemble a useful string
+      return 'l=' + center[0] + ',' + center[1] + ',' + map_view.getResolution();
+    };
+
+    /** Update the window's hash with current information about
+     *  the map.
+     *
+     *  Currently, only the map's location (as cx,cy,scale) is tracked.
+     *
+     */
+    this.trackInHash = function() {
+      // get the real parent window
+      var real_window = getRealWindow();
+      // get the new hash setting.
+      var hash_string = getHashString(this.map);
+
+      // the key to this working is to use the 'real window',
+      //  it avoids issues with both angular and WebKit quirks.
+      real_window.location.hash = hash_string;
+    };
+
+    /** Normalize clean up of the hash string.
+     *  there can be odd leading characters from how Angular
+     *  operates.
+     *
+     *  @param {String} hash The hash string to be parsed.
+     *
+     * @return {String} a cleaned version.
+     */
+    var cleanHashString = function(hash) {
+      var new_hash = '' + hash;
+      var first = new_hash.substring(0, 1);
+      if (new_hash.substring(0, 2) == '#/') {
+        new_hash = new_hash.substring(2);
+      } else if (first == '/' || first == '#') {
+        new_hash = new_hash.substring(1);
+      }
+      return new_hash;
+    };
+
+    /** Converts the current #hash string to a ol.View
+     *
+     *  @param {String} hashString   "#" string from a window.
+     *  @param {ol.View} defaultView View that will be used when no hash
+     *                               location can be found.
+     *
+     * @return {Object} With new Center and Resolution elements.
+     */
+    var getHashView = function(hashString, defaultView) {
+      // split the hash into individual components
+      var components = cleanHashString(hashString).split(';');
+
+      for (var i = 0, ii = components.length; i < ii; i++) {
+        // location starts with 'l='
+        if (components[i].substring(0, 2) === 'l=') {
+          var loc = components[i].substring(2).split(',');
+          return {
+            center: [parseFloat(loc[0]), parseFloat(loc[1])],
+            resolution: parseFloat(loc[2])
+          };
+        }
+      }
+
+      return defaultView;
+    };
+
+    /** Check the hash for a change in map state.
+     *
+     */
+    this.trackWindowHash = function(defaultView) {
+      // get the new hash
+      var window_hash = cleanHashString(getRealWindow().location.hash);
+
+      // compare to the new hash.
+      var current_hash = getHashString(this.map);
+
+      // if the hash are different, then do something...
+      if (window_hash != current_hash) {
+        // update the view
+        var map_view = this.map.getView();
+
+        var default_view = {
+          center: map_view.getCenter(),
+          resolution: map_view.getZoom()
+        };
+
+
+        var view = getHashView(window_hash, default_view);
+        if (view.resolution > 0) {
+          map_view.setCenter(view.center);
+          map_view.setResolution(view.resolution);
+        }
+      }
+    };
+
     this.createMap = function() {
       var coordDisplay;
       if (settings.coordinateDisplay === coordinateDisplays.DMS) {
@@ -1217,9 +1673,6 @@
         projection: 'EPSG:4326',
         coordinateFormat: coordDisplay
       });
-
-      console.log('====[[ loading config: ', configService_.configuration);
-
       var map = new ol.Map({
         //layers: do not add any layers to the map as they will be added once server is created and getcapabilities
         //        equivalent functions respond if relevant.
@@ -1324,19 +1777,25 @@
         heatmapLayerTitle = meta.title;
       }
 
-      var source = new ol.source.ServerVector({
-        format: new ol.format.GeoJSON(),
+      var source = new ol.source.Vector({
         loader: function(extent, resolution, projection) {
           tableViewService_.getFeaturesWfs(layer, filters, extent).then(function(response) {
-            source.addFeatures(source.readFeatures(response));
+            try {
+              var features = new ol.format.GeoJSON().readFeatures(response);
+              source.addFeatures(features);
+            } catch (err) {
+              console.log('Error parsing heat map features', err);
+            }
           }, function(reject) {
-            dialogService_.open(translate_.instant('error'), translate_.instant('error'));
+            console.error('Error loading heat map tile');
+            //dialogService_.open(translate_.instant('error'), translate_.instant('error'));
           });
         },
-        strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
-          maxZoom: 19
-        })),
-        projection: 'EPSG:3857'
+        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({ maxZoom: 19 })) //,
+      });
+
+      source.on('addfeature', function(event) {
+        event.feature.set('weight', 5);
       });
 
       var vector = new ol.layer.Heatmap({
@@ -1345,15 +1804,11 @@
           title: 'heatmap:' + heatmapLayerTitle,
           heatmapLayer: true,
           uniqueID: sha1(heatmapLayerName),
+          bbox: {crs: 'EPSG:3857'},
           editable: false
         },
-        source: source,
-        style: new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: 'rgba(0, 0, 255, 1.0)',
-            width: 2
-          })
-        })
+        projection: 'EPSG:3857',
+        source: source
       });
 
       this.map.addLayer(vector);
@@ -1412,6 +1867,127 @@
         }
       });
       return code;
+    };
+
+    this.addToSpatialFilterLayer = function(feature) {
+      this.map.removeLayer(this.spatialFilterLayer);
+
+      // Handle using the same feature multiple times
+      if (this.spatialFilterLayer.getSource().getFeatureById(feature.getId()) !== null) {
+        var num = 1;
+        while (this.spatialFilterLayer.getSource().getFeatureById(feature.getId() + '-' + num) !== null) {
+          num++;
+        }
+        feature.setId(feature.getId() + '-' + num);
+      }
+
+      this.spatialFilterLayer.getSource().addFeature(feature);
+      this.map.addLayer(this.spatialFilterLayer);
+    };
+
+    this.getSpatialFilterLayer = function() {
+      return this.spatialFilterLayer;
+    };
+
+    this.getGeometryGML3FromFeature = function(feature) {
+      // TODO: Copied from FeatureManagerService#getGeometryGMLFromFeature changing Polygon to Surface.
+      // Only used by the spatial filter. Didn't know what else is using the above method.
+      // At some point in the future should figure out what needs Surface and what needs Polygon.
+      var featureGML = '';
+      var index = 0;
+      var length = 1;
+      var geometries = [feature.getGeometry()];
+      var buildCoordString = function(coords) {
+        var counter = 0;
+        return String(coords).replace(/,/g, function(all, match) {
+          if (counter === 1) {
+            counter = 0;
+            return ' ';
+          }
+          counter++;
+          return ',';
+        });
+      };
+      var isGeometryCollection = false;
+      if (feature.getGeometry().getType().toLowerCase() == 'geometrycollection') {
+        geometries = feature.getGeometry().getGeometries();
+        length = geometries.length;
+        featureGML += '<gml:MultiGeometry xmlns:gml="http://www.opengis.net/gml" srsName="' +
+            service_.map.getView().getProjection().getCode() + '">';
+        isGeometryCollection = true;
+      }
+      for (var geometryIndex = 0; geometryIndex < length; geometryIndex++) {
+        var geometry = geometries[geometryIndex];
+        var geometryType = geometry.getType().toLowerCase();
+        if (isGeometryCollection) {
+          featureGML += '<gml:geometryMember>';
+        }
+        if (geometryType == 'point') {
+          featureGML += '<gml:Point xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:coordinates decimal="." cs="," ts=" ">' +
+              geometry.getCoordinates().toString() +
+              '</gml:coordinates></gml:Point>';
+        } else if (geometryType == 'linestring') {
+          featureGML += '<gml:LineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:coordinates decimal="." cs="," ts=" ">' + buildCoordString(geometry.getCoordinates().toString()) +
+              '</gml:coordinates></gml:LineString>';
+        } else if (geometryType == 'polygon') {
+          featureGML += '<gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">' +
+              '<gml:exterior><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+              buildCoordString(geometry.getCoordinates()[0].toString()) + '</gml:coordinates>' +
+              '</gml:LinearRing></gml:exterior>';
+          for (index = 1; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:exterior><gml:LinearRing><gml:coordinates decimal="." cs="," ts=" ">' +
+                buildCoordString(geometry.getCoordinates()[index].toString()) + '</gml:coordinates>' +
+                '</gml:LinearRing></gml:exterior>';
+          }
+          featureGML += '</gml:Polygon>';
+        } else if (geometryType == 'multipoint') {
+          featureGML += '<gml:MultiPoint xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:pointMember><gml:Point><gml:coordinates decimal="." cs="," ts=" ">' +
+                geometry.getCoordinates()[index].toString() +
+                '</gml:coordinates></gml:Point></gml:pointMember>';
+          }
+          featureGML += '</gml:MultiPoint>';
+        } else if (geometryType == 'multilinestring') {
+          featureGML += '<gml:MultiLineString xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:lineMember><gml:LineString><gml:coordinates decimal="." cs="," ts=" ">' +
+                buildCoordString(geometry.getCoordinates()[index].toString()) +
+                '</gml:coordinates></gml:LineString></gml:lineMember>';
+          }
+          featureGML += '</gml:MultiLineString>';
+        } else if (geometryType == 'multipolygon') {
+          featureGML += '<gml:MultiSurface xmlns:gml="http://www.opengis.net/gml" srsName="' +
+              service_.map.getView().getProjection().getCode() + '">';
+          for (index = 0; index < geometry.getCoordinates().length; index++) {
+            featureGML += '<gml:surfaceMember><gml:Polygon>' +
+                '<gml:exterior><gml:LinearRing><gml:posList>' +
+                geometry.getCoordinates()[index][0].toString().replace(/,/g, ' ') + '</gml:posList>' +
+                '</gml:LinearRing></gml:exterior>';
+            for (var innerIndex = 1; innerIndex < geometry.getCoordinates()[index].length; innerIndex++) {
+              featureGML += '<gml:interior><gml:LinearRing><gml:posList>' +
+                  geometry.getCoordinates()[index][innerIndex].toString().replace(/,/g, ' ') + '</gml:posList>' +
+                  '</gml:LinearRing></gml:interior>';
+            }
+            featureGML += '</gml:Polygon></gml:surfaceMember>';
+          }
+          featureGML += '</gml:MultiSurface>';
+        }
+        if (isGeometryCollection) {
+          featureGML += '</gml:geometryMember>';
+        }
+      }
+      if (isGeometryCollection) {
+        featureGML += '</gml:MultiGeometry>';
+      }
+      return featureGML;
     };
   });
 
