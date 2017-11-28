@@ -411,7 +411,7 @@
                   xml += '<wfs:Property>' +
                       '<wfs:Name>' + property + '</wfs:Name>';
                   if (goog.isDefAndNotNull(value)) {
-                    xml += '<wfs:Value>' + value + '</wfs:Value>';
+                    xml += '<wfs:Value>' + escapeXml(value) + '</wfs:Value>';
                   } else {
                     xml += '<wfs:Value></wfs:Value>';
                   }
