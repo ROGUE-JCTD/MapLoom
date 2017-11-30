@@ -270,6 +270,10 @@ describe('FeatureManagerService', function() {
           httpBackend.flush();
           httpBackend.expectPOST();
 
+          // test escapeXml under more situations.
+          expect(escapeXml(2)).toBe(2);
+          expect(escapeXml(undefined)).toBe(undefined);
+          expect(escapeXml(null)).toBe(null);
           expect(escapeXml('X&Y')).toBe('X&amp;Y');
 
           expect(wfsURL.indexOf('wfs')).not.toBe(-1);

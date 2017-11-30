@@ -309,5 +309,9 @@ var mgrsToXYFormat = function(string) {
  * @return {string} A string which is "safe" for XML.
  */
 var escapeXml = function(str) {
-  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // duck-types str as a string when the replace function is available.
+  if (str !== undefined && str !== null && typeof str.replace === 'function') {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  return str;
 };
