@@ -420,7 +420,6 @@
       // This should always be the last thing that gets done.
       var getFeatureType = function() {
         service_.getFeatureType(layer).then(function() {
-          ol.proj.getTransform(metadata.projection, 'EPSG:4326');
           rootScope.$broadcast('featuretype-added', layer);
           deferredResponse.resolve();
         }, function(rejected) {
