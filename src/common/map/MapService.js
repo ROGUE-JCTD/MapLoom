@@ -18,6 +18,7 @@
   var mousePositionControl_ = null;
   var showTimeline_ = false;
   var layerStyleTimeStamps = {};
+  var thumbnail_map = {};
 
   var select = null;
   var draw = null;
@@ -156,6 +157,37 @@
     };
   })();
 
+  var createMapThumbnail = function(obj_id, map) {
+    map.once('postcompose', function(evt) {
+      var canvas = evt.context.canvas;
+      canvas.toBlob(function(blob) {
+        var url = window.location.pathname.replace('/story', '/maps');
+
+        if (typeof obj_id != 'undefined' && url.indexOf('new')) {
+          url = url.replace('new', obj_id);
+        }
+        url += '/thumbnail';
+        var reader = new window.FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function() {
+          fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'X-CSRFToken': configService_.csrfToken
+            },
+            body: JSON.stringify({
+              image: reader.result
+            })
+          });
+        };
+      });
+    });
+    map.renderSync();
+  };
+
 
   module.provider('mapService', function() {
     this.$get = function($translate, serverService, geogigService, $http, pulldownService,
@@ -190,6 +222,7 @@
       }
 
       this.map = this.createMap();
+      thumbnail_map = this.map;
 
       this.chapterLayers = [];
       this.styleStorageService = storytools.edit.styleStorageService.styleStorageService();
@@ -1189,6 +1222,8 @@
         viewer_playbackmode: map_config.viewer_playbackmode || null,
         stylestore: (window.config.stylestore || null)
       };
+
+      createMapThumbnail(map_config.map.id, thumbnail_map);
 
       goog.array.forEach(serverService_.getServers(), function(server, key, obj) {
         console.log('saving server: ', server);
