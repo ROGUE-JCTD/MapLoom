@@ -42,7 +42,7 @@
               if (goog.isDefAndNotNull(metadata.abstract)) {
                 scope.abstract = metadata.abstract;
               }
-              if (goog.isDefAndNotNull(metadata.styles[0])) {
+              if (goog.isDefAndNotNull(metadata.styles)) {
                 scope.style = metadata.styles[0];
               }
               if (goog.isDefAndNotNull(metadata.projection)) {
