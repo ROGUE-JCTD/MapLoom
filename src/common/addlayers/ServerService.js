@@ -981,9 +981,54 @@ var SERVER_SERVICE_USE_PROXY = true;
     };
 
     this.populateLayersConfigInelastic = function(server, force, deferredResponse) {
-      // this function does not really do anything any more...
-      server.populatingLayersConfig = false;
-      deferredResponse.resolve(server);
+      // prevent getCapabilities request until ran by the user.
+      if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
+        var parser = new ol.format.WMSCapabilities();
+        var url = server.url;
+
+        // If this is a virtual service, use the virtual service url for getCapabilties
+        if (server.isVirtualService === true) {
+          url = server.virtualServiceUrl;
+        }
+
+        var iqm = url.indexOf('?');
+        var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities&version=1.1.1';
+
+        server.populatingLayersConfig = true;
+        var config = {};
+        config.headers = {};
+        if (goog.isDefAndNotNull(server.authentication)) {
+          config.headers['Authorization'] = 'Basic ' + server.authentication;
+        } else {
+          config.headers['Authorization'] = '';
+        }
+        // server hasn't been added yet, so specify the auth headers here
+        http_.get(url_getcaps, config).then(function(xhr) {
+          if (xhr.status === 200) {
+            var response = parser.read(xhr.data);
+            if (goog.isDefAndNotNull(response.Capability) &&
+                goog.isDefAndNotNull(response.Capability.Layer)) {
+              server.layersConfig = response.Capability.Layer.Layer;
+              console.log('---- populateLayersConfig.populateLayersConfig server', server);
+              rootScope_.$broadcast('layers-loaded', server.id);
+              deferredResponse.resolve(server);
+            } else {
+              deferredResponse.resolve(server);
+            }
+            server.populatingLayersConfig = false;
+          } else {
+            deferredResponse.resolve(server);
+            server.populatingLayersConfig = false;
+          }
+        }, function(xhr) {
+          deferredResponse.resolve(server);
+          server.populatingLayersConfig = false;
+        });
+      } else {
+        deferredResponse.resolve(server);
+        server.populatingLayersConfig = false;
+      }
+
       return deferredResponse;
     };
 
