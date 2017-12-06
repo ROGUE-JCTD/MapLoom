@@ -365,6 +365,8 @@
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
               layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
             }
+
+            rootScope_.$broadcast('layers-styled');
           });
         }
       }

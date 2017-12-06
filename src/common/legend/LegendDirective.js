@@ -13,6 +13,7 @@
           link: function(scope, element) {
             scope.mapService = mapService;
             scope.serverService = serverService;
+            scope.legendTime = (new Date()).getTime();
 
             var openLegend = function() {
               angular.element('#legend-container')[0].style.visibility = 'visible';
@@ -121,6 +122,8 @@
                 layer: layer.get('metadata').name
               };
 
+              params['_dc'] = scope.legendTime;
+
               // parse the server url
               var uri = new goog.Uri(domain);
               // mix in the paramters
@@ -142,6 +145,11 @@
               if (legendOpen === true && angular.element('.legend-item').length == 1) {
                 closeLegend();
               }
+            });
+
+            scope.$on('layers-styled', function() {
+              // update the last-refresh legend time to freshen the legends
+              scope.legendTime = (new Date()).getTime();
             });
           }
         };
