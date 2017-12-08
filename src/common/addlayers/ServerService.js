@@ -541,7 +541,7 @@ var SERVER_SERVICE_USE_PROXY = true;
       var namespace = layerName.split(':')[0];
       var name = layerName.split(':')[1];
       url = url.substring(0, url.lastIndexOf('/')) + '/' + namespace;
-      url += '/' + name + '/wms?request=GetCapabilities&version=1.1.1';
+      url += '/' + name + '/wms?request=GetCapabilities';
       server.populatingLayersConfig = true;
       var config = {};
       config.headers = {};
@@ -992,7 +992,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         }
 
         var iqm = url.indexOf('?');
-        var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities&version=1.1.1';
+        var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
 
         server.populatingLayersConfig = true;
         var config = {};

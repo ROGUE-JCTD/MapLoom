@@ -452,12 +452,16 @@
 
     this.zoomToLayerExtent = function(layer) {
       var metadata = layer.get('metadata');
+      // determine the CRS based on the metadata available.
+      var layer_crs = metadata.bbox.crs ? metadata.bbox.crs : metadata.bbox.extent.crs;
+
       var shrinkExtent = function(extent, shrink) {
-        var newExtent = extent;
+        // differences between GeoServer 2.11 / 2.12
+        var newExtent = Array.isArray(extent) ? extent : extent.extent;
 
         // If the extent is null, make a new one while shrinking based on factor
         if (!goog.isDefAndNotNull(extent) && goog.isDefAndNotNull(metadata) &&
-            goog.isDefAndNotNull(metadata.bbox.crs)) {
+            goog.isDefAndNotNull(layer_crs)) {
           newExtent = goog.array.clone(metadata.bbox.extent);
           var yDelta = (newExtent[3] - newExtent[1]) * shrink;
           var xDelta = (newExtent[2] - newExtent[0]) * shrink;
@@ -468,8 +472,9 @@
         }
 
         // Create transform and project to current map
-        var transform = ol.proj.getTransformFromProjections(ol.proj.get(metadata.bbox.crs),
+        var transform = ol.proj.getTransformFromProjections(ol.proj.get(layer_crs),
             service_.map.getView().getProjection());
+
         newExtent = ol.extent.applyTransform(newExtent, transform);
 
         return newExtent;
@@ -873,7 +878,6 @@
               crs: fullConfig.CRS[0]
             };
           }
-
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
