@@ -1090,7 +1090,25 @@
 
           httpService_.get(url).then(function(response) {
             var layerInfo = {};
-            layerInfo.features = response.data.features;
+
+            var crs = response.data.crs;
+            var features = response.data.features;
+            if (crs !== undefined && crs.type === 'name' && crs.properties.name.indexOf('EPSG') >= 0) {
+              var proj = ol.proj.get('EPSG:' + crs.properties.name.split('::')[1]);
+              // reproject the features
+              if (proj) {
+                var parser = new ol.format.GeoJSON();
+                // consume the features and convert them to the map projection.
+                var ol_features = parser.readFeatures(response.data, {
+                  dataProjection: proj,
+                  featureProjection: mapService_.map.getView().getProjection()
+                });
+                // emit the features as an object.
+                features = (parser.writeFeaturesObject(ol_features)).features;
+              }
+            }
+
+            layerInfo.features = features;
 
             if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
               layerInfo.layer = layers[index];
