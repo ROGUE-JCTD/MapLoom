@@ -7,8 +7,8 @@
                     ng-if="filterType === 'date'" default-date="false" time="false" seperate-time="false"></datetimepicker>
     <datetimepicker id="start-date" class="no-radius" style="padding-top: 15px" date-object="attribute.filter.text" ng-disabled="attribute.filter.searchType === 'numRange'"
                     ng-if="filterType === 'time'" default-date="false" date="false" seperate-time="false"></datetimepicker>
-    <div class="input-group-btn">
-        <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': dirty}">
+    <div class="input-group-btn dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle" ng-class="{'dirty-filter': dirty}" data-toggle="toggle">
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
