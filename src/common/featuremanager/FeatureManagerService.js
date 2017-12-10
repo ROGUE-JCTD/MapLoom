@@ -1093,10 +1093,10 @@
 
             var crs = response.data.crs;
             var features = response.data.features;
-            if (crs !== undefined && crs.type === 'name' && crs.properties.name.indexOf('EPSG') >= 0) {
+            if (crs !== undefined && crs !== null && crs.type === 'name' && crs.properties.name.indexOf('EPSG') >= 0) {
               var proj = ol.proj.get('EPSG:' + crs.properties.name.split('::')[1]);
               // reproject the features
-              if (proj) {
+              if (proj && proj.code_ !== mapService_.map.getView().getProjection().code_) {
                 var parser = new ol.format.GeoJSON();
                 // consume the features and convert them to the map projection.
                 var ol_features = parser.readFeatures(response.data, {
