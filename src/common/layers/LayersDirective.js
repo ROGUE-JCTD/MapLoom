@@ -74,18 +74,30 @@
               return goog.isDefAndNotNull(loadingStyle) && loadingStyle === true;
             };
 
-            scope.getLayerStyle = function(layer) {
-              var loading = layer.get('metadata').loadingStyle || true;
-              if (goog.isDefAndNotNull(loading) && loading) {
-                layer.get('metadata').loadingStyle = true;
-                $rootScope.$broadcast('getLayerStyle', layer);
+            scope.toggleStyleControl = function(layer) {
+              var showStylePanel = layer.get('metadata').showStylePanel;
+              if (!goog.isDefAndNotNull(showStylePanel)) {
+                layer.get('metadata').showStylePanel = true;
+              } else {
+                layer.get('metadata').showStylePanel = !showStylePanel;
               }
             };
 
             scope.saveLayerStyle = function(layer) {
               if (configService.configuration.stylingEnabled) {
-                if (goog.isDefAndNotNull(layer.get('metadata').styles)) {
-                  mapService.updateStyle(layer);
+                if (goog.isDefAndNotNull(layer.get('metadata').defaultStyle)) {
+                  var loading = layer.get('metadata').loadingStyle || true;
+                  if (goog.isDefAndNotNull(loading) && loading) {
+                    layer.get('metadata').loadingStyle = true;
+                    mapService.updateStyle(layer).then(function() {
+                      layer.get('metadata').loadingStyle = false;
+                    }, function() {
+                      layer.get('metadata').loadingStyle = false;
+                      dialogService.error($translate.instant('save_layer_style'),
+                          $translate.instant('style_layer_failed',
+                              { 'style_name': layer.get('metadata').defaultStyle.name}));
+                    });
+                  }
                 }
               }
             };
@@ -102,7 +114,8 @@
                 $('#table-view-window').modal('show');
               }, function() {
                 layer.get('metadata').loadingTable = false;
-                dialogService.error($translate.instant('show_table'), $translate.instant('show_table_failed'));
+                dialogService.error($translate.instant('show_table'),
+                    $translate.instant('show_table_failed'));
               });
             };
 

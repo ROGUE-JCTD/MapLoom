@@ -43,9 +43,10 @@
               <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingTable(layer)"></div>
               <i class="glyphicon glyphicon-list"></i>
             </a>
-              <a type="button" ng-click="layer.get('metadata').active_btn = 'style_layer';" ng-show="stylingEnabled && layer.get('metadata').editable"
+              <a type="button" ng-click="toggleStyleControl(layer)"
+                 ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').defaultStyle"
                 class="btn btn-sm btn-default" tooltip-append-to-body="true"
-                tooltip-placement="top" tooltip="{{'style_layer' | translate}}">
+                tooltip-placement="top" tooltip="{{'show_style_editor' | translate}}">
                <div class="loom-loading" spinner-radius="16" spinner-hidden="!isLoadingStyle(layer)"></div>
                <i class="glyphicon glyphicon-tint"></i>
              </a>
@@ -80,9 +81,9 @@
             </a>
           </div>
         </div>
-          <div class="container" ng-show="layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
+          <div class="container" ng-show="layer.get('metadata').editable && layer.get('metadata').showStylePanel">
           <label id="style-label" class="ellipsis" for="styleRow">
-              {{ layer.get('metadata').styles.0 }}
+              {{ layer.get('metadata').defaultStyle.name }}.sld
           </label>
           <a type="button" ng-click="saveLayerStyle(layer)" id="save-style-button"
                class="btn btn-sm btn-default pull-right" tooltip-append-to-body="true"
@@ -90,7 +91,7 @@
               <i class="glyphicon glyphicon-floppy-save"></i>
           </a>
           </div>
-          <div id="styleRow" class="container" ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').active_btn == 'style_layer'">
+          <div id="styleRow" class="container" ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').showStylePanel">
               <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="layer.get('metadata').editable"></style-editor>
           </div>
       </div>

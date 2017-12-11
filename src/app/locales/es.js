@@ -360,7 +360,9 @@
     'too_many_filters' : 'Es posible que tenga demasiados filtros seleccionados. Prueba a eliminar una de las siguientes:',
     'style_layer': 'Style Layer',
     'style_name': 'Style Name',
-    'save_layer_style': 'Save Layer Style'
+    'style_layer_failed': 'Se ha producido un error desconocido al sincronizar {{ style_name }}.sld. Por favor, inténtelo de nuevo.',
+    'save_layer_style': 'Save Layer Style',
+    'show_style_editor': 'Show Style Editor'
   };
 
   var module = angular.module('loom_translations_es', ['pascalprecht.translate']);

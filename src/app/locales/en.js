@@ -368,6 +368,8 @@
     'unpin_feature' : 'Unpin Feature',
     'pinned_search' : 'Pinned Search',
     'style_layer': 'Style Layer',
+    'style_layer_failed': 'There was an error trying to update {{ style_name }}.sld, please try again later.',
+    'show_style_editor': 'Show Style Editor',
     'style_name': 'Style Name',
     'save_layer_style': 'Save Layer Style'
   };

@@ -349,15 +349,16 @@
     };
 
     this.updateStyle = function(layer) {
+      var deferredResponse = q_.defer();
       var style = layer.get('style') || layer.get('metadata').style || '';
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
-      if (isComplete && goog.isDefAndNotNull(layer.getSource)) {
+      if (isComplete && goog.isDefAndNotNull(layer.getSource) && layer.get('metadata').defaultStyle) {
         var layerSource = layer.getSource();
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams)) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
           httpService_({
-            url: '/geoserver/rest/styles/' + layer.get('metadata').styles[0] + '.xml',
+            url: '/geoserver/rest/styles/' + layer.get('metadata').defaultStyle.name + '.xml',
             method: 'PUT',
             data: xml,
             headers: {'Content-Type': 'application/vnd.ogc.sld+xml'}
@@ -365,12 +366,16 @@
             if (goog.isDefAndNotNull(layerSource.updateParams)) {
               layerSource.updateParams({'_dc': new Date().getTime(), '_olSalt': Math.random()});
             }
-
             rootScope_.$broadcast('layers-styled');
+            deferredResponse.resolve();
+          }, function(data, status, headers, config) {
+            deferredResponse.reject(status);
           });
         }
+      } else {
+        deferredResponse.reject('style information is incomplete.');
       }
-
+      return deferredResponse.promise;
     };
 
     this.zoomToLayerFeatures = function(layer) {
@@ -954,11 +959,19 @@
             // Fetch the Exchange layer metadata
             var exchangePromise = httpService_.get('/layers/' + layerName + '/get').success(function(response) {
               response.attributes = _.sortBy(response.attributes, 'display_order');
-              layer.get('metadata').styles = response.styles;
               layer.set('exchangeMetadata', response);
             });
 
-            q_.all([geogigPromise, exchangePromise]).then(function(data) {
+            var gsStylePromise = httpService_.get('/geoserver/rest/layers/' + layerName + '.json').success(function(response) {
+              if (goog.isDefAndNotNull(response.layer) && goog.isDefAndNotNull(response.layer.defaultStyle)) {
+                layer.get('metadata').defaultStyle = response.layer.defaultStyle;
+              }
+              if (goog.isDefAndNotNull(response.layer) && goog.isDefAndNotNull(response.layer.styles)) {
+                layer.get('metadata').styles = response.layer.styles;
+              }
+            });
+
+            q_.all([geogigPromise, exchangePromise, gsStylePromise]).then(function(data) {
               _.each(layer.get('metadata').schema, function(schemaAttribute) {
                 var exchangeMetadata = layer.get('exchangeMetadata');
                 if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
