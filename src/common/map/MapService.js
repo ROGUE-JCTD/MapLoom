@@ -349,6 +349,36 @@
     };
 
     this.updateStyle = function(layer) {
+      var maybe_rename_style = function(layer, xml) {
+        var name = layer.get('metadata').defaultStyle.name;
+        if (['generic', 'polygon', 'point', 'line', 'raster'].includes(name)) {
+          var new_name = layer.get('metadata').name + '_' + name;
+          console.log('Creating the style so that is it unique ', new_name);
+          httpService_({
+            url: '/geoserver/rest/styles?name=' + new_name,
+            method: 'POST',
+            data: xml,
+            headers: { 'Content-Type': 'application/vnd.ogc.sld+xml' }
+          }).then(function(response) {
+            var default_req_body = '<layer><defaultStyle><name>' + new_name + '</name></defaultStyle></layer>';
+            httpService_({
+              url: '/geoserver/rest/layers/' + layer.get('metadata').name,
+              method: 'PUT',
+              data: default_req_body,
+              headers: { 'Content-Type': 'text/xml' }
+            }).then(function(response) {
+              console.log('Style has been set as the default, ', new_name);
+              layer.get('metadata').defaultStyle.name = new_name;
+            }, function errorCallback(response) {
+              console.log('Setting Default Style Error Response ', response);
+            });
+
+          }, function errorCallback(response) {
+            console.log('Style Create Error Response ', response);
+          });
+        }
+      };
+
       var deferredResponse = q_.defer();
       var style = layer.get('style') || layer.get('metadata').style || '';
       var isComplete = new storytools.edit.StyleComplete.StyleComplete().isComplete(style);
@@ -357,6 +387,9 @@
         if (goog.isDefAndNotNull(layerSource) && goog.isDefAndNotNull(layerSource.getParams)) {
           var sld = new storytools.edit.SLDStyleConverter.SLDStyleConverter();
           var xml = sld.generateStyle(style, layer.getSource().getParams().LAYERS, true);
+
+          maybe_rename_style(layer, xml);
+
           httpService_({
             url: '/geoserver/rest/styles/' + layer.get('metadata').defaultStyle.name + '.xml',
             method: 'PUT',
