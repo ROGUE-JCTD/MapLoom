@@ -1110,7 +1110,7 @@
 
             // ESRI will return XML if an unknown mime-type is given to it,
             // and it does not understand application/json.
-            if (response.data.indexOf('http://www.esri.com/wms') >= 0) {
+            if (typeof response.data === 'string' && response.data.indexOf('http://www.esri.com/wms') >= 0) {
               var xml_parser = new DOMParser();
               var xml_doc = xml_parser.parseFromString(response.data, 'text/xml');
 
