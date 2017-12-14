@@ -452,7 +452,7 @@
             scope.handleSearchResults = function(response) {
               // check to ensure the data.objects exists
               var layers_by_index = {
-                'exchange': [],
+                'layer-index': [],
                 'registry': []
               };
 
@@ -471,19 +471,19 @@
                 var layers = response.data.objects;
                 for (var i = 0, ii = layers.length; i < ii; i++) {
                   var layer = layers[i];
-                  var index_name = 'exchange';
+                  var index_name = 'layer-index';
                   if (goog.isDefAndNotNull(layer.registry_url)) {
                     index_name = 'registry';
                   }
                   // ensure that maps and documents are excluded from the search results.
-                  if (index_name == 'registry' || layer.type_exact == 'layer') {
+                  if (index_name == 'registry' || layer.type == 'layer') {
                     layers_by_index[index_name].push(layer);
                   }
                 }
 
                 // convert the results from the search using the appropriate
                 //  utilty functions.
-                servers.geoserver.layersConfig = serverService.createGeonodeSearchLayerObjects(layers_by_index['exchange'], servers.geoserver.id);
+                servers.geoserver.layersConfig = serverService.createGeonodeSearchLayerObjects(layers_by_index['layer-index'], servers.geoserver.id);
                 servers.registry.layersConfig = serverService.createHyperSearchLayerObjects(layers_by_index['registry'], servers.registry.id);
 
               }
