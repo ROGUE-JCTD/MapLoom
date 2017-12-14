@@ -347,11 +347,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         // is initially created.  This attribute will prevent MapLoom from running logic (ie a getCapabilties request)
         // until the user specifically tells MapLoom to make the request.  The user tells MapLoom to run the logic
         // from the 'Add Layers' dialog.
-        lazy: false
+        lazy: true
       };
 
       if (window.location.search.indexOf('layer=') >= 0) {
-        server.lazy = true;
+        server.lazy = false;
       }
 
       goog.object.extend(server, serverInfo, {});
