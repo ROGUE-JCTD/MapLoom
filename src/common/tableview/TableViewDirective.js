@@ -402,10 +402,17 @@
                   continue;
                 }
                 var feature = scope.rows[index].feature;
+                var metadata = tableViewService.selectedLayer.get('metadata');
+                var typeName = metadata.name;
+
+                if (!typeName.startsWith(metadata.workspace + ':')) {
+                  typeName = metadata.workspace + ':' + metadata.name;
+                }
+
                 xml += '' +
                     '<wfs:Update' +
-                    ' xmlns:feature="' + tableViewService.selectedLayer.get('metadata').workspaceURL + '" ' +
-                    'typeName="' + tableViewService.selectedLayer.get('metadata').name + '">';
+                    ' xmlns:feature="' + metadata.workspaceURL + '" ' +
+                    'typeName="' + typeName + '">';
                 for (var property in feature.properties) {
                   var value = feature.properties[property];
                   xml += '<wfs:Property>' +

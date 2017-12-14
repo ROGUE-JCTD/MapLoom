@@ -273,6 +273,11 @@
         }
       }
 
+      var typeName = metadata.name;
+      if (!typeName.startsWith(metadata.workspace + ':')) {
+        typeName = metadata.workspace + ':' + metadata.name;
+      }
+
       var xml = '';
       if (!goog.isDefAndNotNull(exclude_header) || exclude_header === false) {
         xml += '<?xml version="1.0" encoding="UTF-8"?>';
@@ -286,7 +291,7 @@
           ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
           ' xsi:schemaLocation="http://www.opengis.net/wfs' +
           ' http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">' +
-          '<wfs:Query typeName="' + metadata.name + '"' +
+          '<wfs:Query typeName="' + typeName + '"' +
           ' srsName="' + 'EPSG:3857' + '"' +
           //' srsName="' + metadata.projection + '"' +
           '>';
