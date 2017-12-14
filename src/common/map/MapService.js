@@ -725,6 +725,65 @@
         });
       } else {
         if (fullConfig.type && fullConfig.type == 'mapproxy_tms') {
+          var src = new ol.source.XYZ({
+            url: fullConfig.detail_url
+          });
+
+          src.getGetFeatureInfoUrl = function(coordinate, resolution, projection, params) {
+            var legend_split = fullConfig.legend_url.split('?');
+            // pull the root-service URL from the legend url
+            var wms_url = legend_split[0];
+
+            // pull the layer name from the legend request
+            var layer_name = null;
+            var unparsed_params = legend_split[1].split('&');
+            for (var i = 0, ii = unparsed_params.length; i < ii && layer_name === null; i++) {
+              var param = unparsed_params[i].split('=');
+              if (param[0] === 'LAYER') {
+                layer_name = param[1];
+              }
+            }
+
+            if (layer_name === null) {
+              layer_name = fullConfig.Title;
+            }
+
+            var extent = ol.extent.getForViewAndSize(
+                coordinate, resolution, 0,
+                ol.source.ImageWMS.GETFEATUREINFO_IMAGE_SIZE_);
+
+            var srs = projection.getCode();
+            if (srs === 'EPSG:900913') {
+              srs = 'EPSG:3857';
+            }
+
+            var baseParams = {
+              'SERVICE': 'WMS',
+              'VERSION': '1.1.1',
+              'REQUEST': 'GetFeatureInfo',
+              'TRANSPARENT': true,
+              'LAYERS' : layer_name,
+              'QUERY_LAYERS': layer_name,
+              'BBOX' : extent.join(','),
+              'WIDTH': ol.source.ImageWMS.GETFEATUREINFO_IMAGE_SIZE_[0],
+              'HEIGHT': ol.source.ImageWMS.GETFEATUREINFO_IMAGE_SIZE_[1],
+              'SRS': srs
+            };
+            goog.object.extend(baseParams, params);
+
+            var x = Math.floor((coordinate[0] - extent[0]) / resolution);
+            var y = Math.floor((extent[3] - coordinate[1]) / resolution);
+            baseParams['X'] = x;
+            baseParams['Y'] = y;
+
+            var join_char = '?';
+            for (var key in baseParams) {
+              wms_url += join_char + key + '=' + encodeURIComponent(baseParams[key]);
+              join_char = '&';
+            }
+            return wms_url;
+          };
+
           layer = new ol.layer.Tile({
             metadata: {
               name: minimalConfig.name,
@@ -741,9 +800,7 @@
               }
             },
             visible: true,
-            source: new ol.source.XYZ({
-              url: fullConfig.detail_url
-            })
+            source: src
           });
         } else if (server.ptype === 'gxp_osmsource') {
           var osmLocal = {

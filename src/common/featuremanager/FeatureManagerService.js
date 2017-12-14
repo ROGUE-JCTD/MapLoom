@@ -1108,6 +1108,30 @@
               }
             }
 
+            // ESRI will return XML if an unknown mime-type is given to it,
+            // and it does not understand application/json.
+            if (response.data.indexOf('http://www.esri.com/wms') >= 0) {
+              var xml_parser = new DOMParser();
+              var xml_doc = xml_parser.parseFromString(response.data, 'text/xml');
+
+              features = [];
+              var fields = xml_doc.getElementsByTagName('FIELDS');
+              for (var i = 0, ii = fields.length; i < ii; i++) {
+                var props = {};
+                for (var p = 0, pp = fields[i].attributes.length; p < pp; p++) {
+                  var attr = fields[i].attributes[p].name;
+                  var value = fields[i].getAttribute(attr);
+                  props[attr] = value;
+                }
+
+                features.push({
+                  type: 'Feature',
+                  geometry: null,
+                  properties: props
+                });
+              }
+            }
+
             layerInfo.features = features;
 
             if (layerInfo.features && layerInfo.features.length > 0 && goog.isDefAndNotNull(layers[index])) {
