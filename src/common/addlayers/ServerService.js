@@ -350,7 +350,7 @@ var SERVER_SERVICE_USE_PROXY = true;
         lazy: true
       };
 
-      if (window.location.search.indexOf('layer=') >= 0) {
+      if (window.location.search.indexOf('layer=') >= 0 || window.location.pathname.indexOf('/view') >= 0) {
         server.lazy = false;
       }
 
