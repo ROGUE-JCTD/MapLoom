@@ -803,7 +803,7 @@
                 crs: service_.getCRSCode(fullConfig.CRS)
               }
             },
-            visible: true,
+            visible: minimalConfig.visibility,
             source: src
           });
         } else if (server.ptype === 'gxp_osmsource') {
