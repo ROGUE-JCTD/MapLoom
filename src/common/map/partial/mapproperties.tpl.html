@@ -18,16 +18,6 @@
                     <p class="help-block">high-level geographic data thematic classification to assist in the grouping and search of available geographic data sets.</p>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="mapKeywords">Tags</label><textarea id="mapKeywords" ng-model="storyService.keywords" class="form-control" value="{{storyService.keywords}}"></textarea>
-                <p class="help-block">commonly used word(s) or formalised word(s) or phrase(s) used to describe the subject (space or comma-separated).</p>
-            </div>
-            <div class="form-group">
-                <label for="mapRegions">Location</label>
-                <select class="form-control" id="mapRegions" name = "location" ng-model="storyService.regions">
-                        <option ng-repeat="location in locations">{{ location.name }}</option>
-                </select>
-            </div>
         </div>
     </form>
 </div>
