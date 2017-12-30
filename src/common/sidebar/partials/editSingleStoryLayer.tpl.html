@@ -7,4 +7,14 @@
 <button class="btn-storylayer" ng-disabled="storyService.hasNoHistory()" ng-click="storyService.getHistory();updateMenuSection('viewSingleLayerHistory' + layerName)"><i class="fa fa-hourglass"></i>View History</button>
 <button class="btn-storylayer" ng-click="openLink('/layers/' + storyService.active_layer.get('metadata').name, '_self')"><i class="fa fa-sign-out"></i>Exit</button></a>
 
+<div id="baseMaps" class="menuItem">
+    <label for="baseMapList">Choose Your Viewing Basemap</label>
+    <select class="form-control" name="baseMapList" id="baseMapList"
+            ng-init="baseMap=initBasemap()"
+            ng-options="baseMap.get('metadata').config.title for baseMap in baseMaps = mapService.getBaseMaps()"
+            ng-model="baseMap"
+            ng-change="mapService.selectedBaseMap(baseMap)">
+    </select>
+</div>
+
 <h5 class="text-right"><a href="http://wiki.mapstory.org/wiki/Versioned_Editing" target="_blank">Editing Help</a></h5>
