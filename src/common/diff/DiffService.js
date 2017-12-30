@@ -141,19 +141,12 @@
       }
     };
 
+    // missing layers is an array of layerIDs with change.CONFLICT
+    // this notifies the user if there is a discrepancy 
     this.activateMissingLayerWarningDialogue = function() {
-      var layerString = '';
-      var first = true;
-      for (var layer in missingLayers) {
-        if (first) {
-          first = false;
-        } else {
-          layerString += ', ';
-        }
-        layerString += layer;
-      }
+      missingLayersString = missingLayers.join(', ');
       dialogService_.warn(translate_.instant('warning'), translate_.instant('missing_layers_merge',
-          {count: numOutside}) + layerString, [translate_.instant('btn_ok')], false);
+        { count: numOutside }) + missingLayersString, [translate_.instant('btn_ok')], false);
     };
 
     this.createOlFeatureBasedOnChange = function(change, repo) {
