@@ -12,9 +12,8 @@
                     Category
                 </label>
                 <div class="">
-                    <select class="form-control" id="id_category" name="category" ng-model="storyService.category">
-                        <option value="" selected="selected">---------</option>
-                        <option ng-repeat="category in categories" value="{{category.id}}">{{category.gn_description}}</option>
+                    <select class="form-control" id="id_category" name="category" ng-model="storyService.category" ng-options="category.id as category.gn_description for category in categories">
+                        <option value="">---------</option>
                     </select>
                     <p class="help-block">high-level geographic data thematic classification to assist in the grouping and search of available geographic data sets.</p>
                 </div>

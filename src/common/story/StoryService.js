@@ -42,7 +42,7 @@
       this.title = this.copy_config.about.title || '';
       this.username = this.copy_config.username;
       this.abstract = this.copy_config.about.abstract || '';
-      this.category = null;
+      this.category = this.copy_config.about.categoryID || '';
       this.is_published = false;
       //Stores the list of chapter (map) configuration objects and uses mapService to save map based on config
       this.configurations = [];
@@ -358,7 +358,7 @@
         title: this.title,
         abstract: this.abstract,
         is_published: this.is_published,
-        category: this.category,
+        category: this.category || '',
         removed_chapters: this.removedChapterIDs
       };
 
