@@ -63,9 +63,11 @@
               }
 
               var properties = featureManagerService.getSelectedItemProperties();
-              for (var index = 0; index < properties.length; index++) {
-                if (goog.isDefAndNotNull(schema[properties[index][0]]) && schema[properties[index][0]].visible) {
-                  return true;
+              if (Array.isArray(properties)) {
+                for (var index = 0; index < properties.length; index++) {
+                  if (goog.isDefAndNotNull(schema[properties[index][0]]) && schema[properties[index][0]].visible) {
+                    return true;
+                  }
                 }
               }
               return false;
