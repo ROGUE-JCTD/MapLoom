@@ -27,7 +27,7 @@
                 <div ng-if="commit.author.name != null">
                     <h2 class="commit-author">{{ commit.author.name }}</h2>
                 </div>
-                <h2 class="commit-date">{{ commit.committer.timestamp | date:'MMM d, yyyy' }}</h2>
+                <h2 class="commit-date">{{ commit.committer.timestamp | date:'medium' }}</h2>
             </div>
             <div>
                 <div>
