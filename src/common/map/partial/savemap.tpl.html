@@ -26,9 +26,9 @@
       <button type="button" class="btn btn-default" data-dismiss="modal">
         <i class="glyphicon glyphicon-remove"></i> {{'close_btn' | translate }}
       </button>
-      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username || (mapService.title === '')"
           ng-click="mapService.save(true)" ng-show="mapService.id" >{{'save_copy_btn' | translate}}</button>
-      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username"
+      <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!configService.username || (mapService.title === '')"
           ng-click="mapService.save()"><i class="glyphicon glyphicon-floppy-save"></i> {{'save_btn' | translate}}</button>
     </div>
   </div>
