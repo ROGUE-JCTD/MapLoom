@@ -142,11 +142,11 @@
     };
 
     // missing layers is an array of layerIDs with change.CONFLICT
-    // this notifies the user if there is a discrepancy 
+    // this notifies the user if there is a discrepancy
     this.activateMissingLayerWarningDialogue = function() {
       missingLayersString = missingLayers.join(', ');
       dialogService_.warn(translate_.instant('warning'), translate_.instant('missing_layers_merge',
-        { count: numOutside }) + missingLayersString, [translate_.instant('btn_ok')], false);
+          { count: numOutside }) + missingLayersString, [translate_.instant('btn_ok')], false);
     };
 
     this.createOlFeatureBasedOnChange = function(change, repo) {
