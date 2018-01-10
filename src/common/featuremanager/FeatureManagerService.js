@@ -1097,6 +1097,7 @@
               var proj = ol.proj.get('EPSG:' + crs.properties.name.split('::')[1]);
               // reproject the features
               if (proj && proj.code_ !== mapService_.map.getView().getProjection().code_) {
+                var default_geometry_name = response.data.features[0].geometry_name;
                 var parser = new ol.format.GeoJSON();
                 // consume the features and convert them to the map projection.
                 var ol_features = parser.readFeatures(response.data, {
@@ -1105,6 +1106,13 @@
                 });
                 // emit the features as an object.
                 features = (parser.writeFeaturesObject(ol_features)).features;
+
+                // OL will drop the geometry_name property, make sure we add it back.
+                features.forEach(function(f) {
+                  if (f.geometry_name === null || f.geometry_name === undefined) {
+                    f.geometry_name = default_geometry_name;
+                  }
+                });
               }
             }
 
