@@ -27,7 +27,7 @@
     "components-font-awesome": "4.6.3",
     "angular-file-saver": "1.0.1",
     "lodash": "4.17.4",
-    "story-tools": "https://github.com/MapStory/story-tools.git#v1.0.3",
+    "story-tools": "https://github.com/boundlessgeo/story-tools.git#style-edit-updates",
     "angular-bootstrap-colorpicker": "~3.0.8"
   },
   "resolutions": {
