@@ -168,6 +168,14 @@
             scope.getLayerAttributeVisibility = function(layer) {
               $rootScope.$broadcast('getLayerAttributeVisibility', layer);
             };
+
+            scope.updateStyleChoices = function(styleChoices) {
+              var overrides = {
+                fontFamily: ['serif', 'sans-serif']
+              };
+
+              return Object.assign({}, styleChoices, overrides);
+            };
           }
         };
       }

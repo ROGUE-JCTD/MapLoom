@@ -92,7 +92,13 @@
           </a>
           </div>
           <div id="styleRow" class="container" ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').showStylePanel">
-              <style-editor class="minheight" control="{carousel:true, default:false}" layer="layer" ng-show="layer.get('metadata').editable"></style-editor>
+              <style-editor
+                class="minheight"
+                control="{carousel:true, default:false}"
+                layer="layer"
+                update-style-choices="updateStyleChoices"
+                ng-show="layer.get('metadata').editable">
+            </style-editor>
           </div>
       </div>
     </div>
