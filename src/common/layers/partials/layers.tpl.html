@@ -96,9 +96,10 @@
                 class="minheight"
                 control="{carousel:true, default:false}"
                 layer="layer"
+                ng-show="layer.get('metadata').editable"
+                layerstyles="['simple-point', 'unique-point', 'simple-line', 'unique-line', 'simple-polygon', 'unique-polygon']"
                 update-style-choices="updateStyleChoices"
-                ng-show="layer.get('metadata').editable">
-            </style-editor>
+              </style-editor>
           </div>
       </div>
     </div>
