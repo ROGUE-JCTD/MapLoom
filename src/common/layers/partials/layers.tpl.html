@@ -88,7 +88,7 @@
           <a type="button" ng-click="saveLayerStyle(layer)" id="save-style-button"
                class="btn btn-sm btn-default pull-right" tooltip-append-to-body="true"
                tooltip-placement="top" tooltip="{{'save_layer_style' | translate}}" style="margin-top: 4px;">
-              <i class="glyphicon glyphicon-floppy-save"></i>
+              <i class="glyphicon glyphicon-floppy-saved"></i>
           </a>
           </div>
           <div id="styleRow" class="container" ng-show="stylingEnabled && layer.get('metadata').editable && layer.get('metadata').showStylePanel">
@@ -97,7 +97,8 @@
                 control="{carousel:true, default:false}"
                 layer="layer"
                 ng-show="layer.get('metadata').editable"
-                layerstyles="['simple-point', 'unique-point', 'simple-line', 'unique-line', 'simple-polygon', 'unique-polygon']">
+                layerstyles="['simple-point', 'unique-point', 'simple-line', 'unique-line', 'simple-polygon', 'unique-polygon']"
+                update-style-choices="updateStyleChoices"
               </style-editor>
           </div>
       </div>
