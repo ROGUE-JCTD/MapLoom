@@ -316,7 +316,7 @@
             schema[obj._name].visible = true;
             if (obj._type.indexOf('gml:') != -1) {
               var lp = obj._type.substring(4);
-              if (lp.indexOf('Polygon') !== -1 || lp.indexOf('MultiSurfacePropertyType') !== -1) {
+              if (lp.indexOf('Polygon') !== -1 || lp.indexOf('SurfacePropertyType') !== -1) {
                 geometryType = 'polygon';
               } else if (lp.indexOf('LineString') !== -1) {
                 geometryType = 'line';
