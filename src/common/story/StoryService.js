@@ -186,6 +186,15 @@
             }
           }
         }
+        //catches the zoomToCommit on initial import commit
+        //if no prior commits, the parents.id & lastCommitId will be an empty string
+        if (lastCommitId === undefined) {
+          //zoom to the extent of the layer and break out of this function
+          mapService_.zoomToLayerExtent(historyService_.layer);
+          //if a previous diff was selected or highlighted, remove it from the ol featureset
+          diffService_.clearDiff();
+          return;
+        }
         var diffOptions = new GeoGigDiffOptions();
         diffOptions.oldRefSpec = lastCommitId;
         diffOptions.newRefSpec = commit.id;
@@ -200,8 +209,8 @@
             } else {
               diffService_.setTitle(translate_.instant('summary_of_changes'));
             }
-            commit.feature = response.Feature.metadata;
-            mapService_.zoomToExtent(response.Feature.metadata.extent, null, null, 0.5);
+            commit.feature = response.Feature[0].metadata;
+            mapService_.zoomToExtent(response.Feature[0].metadata.extent, null, null, 0.5);
           } else {
             dialogService_.open(translate_.instant('history'),
                 translate_.instant('no_changes_in_commit'), [translate_.instant('btn_ok')]);
