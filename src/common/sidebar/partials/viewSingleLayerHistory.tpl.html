@@ -1,4 +1,3 @@
-<h2>{{ storyService.active_chapter.about.title }}</h2>
 <h2>{{ storyService.active_layer.get('metadata').title }} History</h2>
 <div class="menuItem">
     <i class="fa fa-angle-left pull-left"></i>
@@ -31,12 +30,9 @@
             </div>
             <div>
                 <div>
-                    <!--<i class="fa fa-user" ng-href="/storyteller/{{ commit.author.username }}" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_view_author_tooltip' | translate }}"></i>-->
                     <i class="fa fa-exchange" ng-click="storyService.historyClicked(commit)" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_show_difference_tooltip' | translate }}"></i>
                     <i class="fa fa-globe" ng-click="storyService.zoomToCommit(commit)" tooltip-append-to-body="true" tooltip-placement="right" tooltip="{{ 'storylayer_view_feature_tooltip' | translate }}"></i>
                 </div>
             </div>
         </div>
     </div>
-
-<!-- <h5 class="text-right"><a href="http://wiki.mapstory.org/wiki/Versioned_Editing" target="_blank">History Help</a></h5> -->
