@@ -127,7 +127,9 @@
     for (var src_key in config.sources) {
         if (goog.isDefAndNotNull(config.sources[src_key].url)) {
             if (config.sources[src_key].ptype != 'gxp_arcrestsource') {
-                config.sources[src_key].url = trimUrl(config.sources[src_key].url);
+                if (config.sources[src_key].remote !== true) {
+                    config.sources[src_key].url = trimUrl(config.sources[src_key].url);
+                }
             }
         }
     }

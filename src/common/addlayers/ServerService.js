@@ -998,6 +998,11 @@ var SERVER_SERVICE_USE_PROXY = true;
         var iqm = url.indexOf('?');
         var url_getcaps = url + (iqm >= 0 ? (iqm - 1 == url.length ? '' : '&') : '?') + 'SERVICE=WMS&REQUEST=GetCapabilities';
 
+        // if the service is remote, setup a proxy for the get caps URL
+        if (server.remote === true) {
+          url_getcaps = configService_.configuration.proxy + encodeURIComponent(url_getcaps);
+        }
+
         server.populatingLayersConfig = true;
         var config = {};
         config.headers = {};
@@ -1013,6 +1018,30 @@ var SERVER_SERVICE_USE_PROXY = true;
             if (goog.isDefAndNotNull(response.Capability) &&
                 goog.isDefAndNotNull(response.Capability.Layer)) {
               server.layersConfig = response.Capability.Layer.Layer;
+              // handle WMS version differences.
+              server.version = response.version;
+
+              // get the collection of SRS's supported by the server.
+              // WARNING! This can be bug prone as the SRS support CAN be
+              //  different on a per-layer basis
+              // CRS is used for 1.3.0 and SRS is used for < 1.1.0,
+              //  so both are compiled in to the regex.
+              var supported_srs = {};
+              var srs_regex = new RegExp('<[CS]RS>(EPSG:[0-9]+)</[CS]RS>', 'g');
+              var parsed_srs = srs_regex.exec(xhr.data);
+              while (parsed_srs !== null) {
+                // pull out the parsed SRS group.
+                supported_srs[parsed_srs[1]] = true;
+                parsed_srs = srs_regex.exec(xhr.data);
+              }
+
+              // handle the unique case in which the map is using 900913
+              //  but the service only recognizes 3857.
+              var map_srs = configService_.configuration.map.projection;
+              if (supported_srs[map_srs] !== true && map_srs === 'EPSG:900913' && supported_srs['EPSG:3857']) {
+                server.override_crs = 'EPSG:3857';
+              }
+
               console.log('---- populateLayersConfig.populateLayersConfig server', server);
               rootScope_.$broadcast('layers-loaded', server.id);
               deferredResponse.resolve(server);

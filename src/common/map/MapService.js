@@ -977,6 +977,52 @@
               crs: fullConfig.CRS[0]
             };
           }
+
+          var source_params = {
+            'LAYERS': minimalConfig.name,
+            'tiled': 'true'
+          };
+
+          if (server.version !== undefined) {
+            source_params['VERSION'] = server.version;
+          }
+
+          var tilewms_source = new ol.source.TileWMS({
+            url: mostSpecificUrlWms,
+            params: source_params
+          });
+
+
+          if (server.override_crs !== undefined) {
+            // make a projection for the override crs
+            tilewms_source._projection = new ol.proj.Projection({
+              code: server.override_crs
+            });
+          }
+
+          if (server.remote === true) {
+            tilewms_source._isRemote = true;
+          }
+
+          // WARNING! this is a monkey-patch for the ancient verison
+          //  of openlayers which MapLoom required as of 18 Jan 2018
+
+          // Store the original function
+          tilewms_source._getRequestUrl_ = tilewms_source.getRequestUrl_;
+
+          tilewms_source.getRequestUrl_ = function(tileCoord, tileSize, tileExtent, pixelRatio, projection, params) {
+            // manually override the projection
+            var proj = this._projection !== undefined ? this._projection : projection;
+
+            var url = this._getRequestUrl_(tileCoord, tileSize, tileExtent, pixelRatio, proj, params);
+
+            if (this._isRemote === true) {
+              url = configService_.configuration.proxy + encodeURIComponent(url);
+            }
+
+            return url;
+          };
+
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
@@ -993,14 +1039,9 @@
               savedSchema: minimalConfig.schema,
               dimensions: fullConfig.Dimension
             },
+            projection: server.override_crs,
             visible: minimalConfig.visibility,
-            source: new ol.source.TileWMS({
-              url: mostSpecificUrlWms,
-              params: {
-                'LAYERS': minimalConfig.name,
-                'tiled': 'true'
-              }
-            })
+            source: tilewms_source
           });
 
           // Test if layer is read-only
