@@ -73,7 +73,11 @@
               }
 
               try {
-                serverService.getServerById(layer.get('metadata').serverId);
+                var server = serverService.getServerById(layer.get('metadata').serverId);
+                // WMS only.
+                if (server.ptype.indexOf('wms') < 0) {
+                  return false;
+                }
               } catch (err) {
                 // if the server id throws an error, there's no legend to be had.
                 return false;
@@ -118,6 +122,8 @@
                 format: 'image/png',
                 width: '20', height: '20',
                 transparent: 'true',
+                // if the server has a sepcified version, use it, otherwise default to 1.3.0
+                version: server.version !== undefined ? server.version : '1.3.0',
                 legend_options: 'fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;',
                 layer: layer.get('metadata').name
               };

@@ -402,7 +402,7 @@ var SERVER_SERVICE_USE_PROXY = true;
 
       if (goog.isDefAndNotNull(server.url)) {
         if (server.url.indexOf(location_.host()) === -1) {
-          if (server.config.alwaysAnonymous) {
+          if (server.config.requireLogin !== true) {
             server.username = translate_.instant('anonymous');
             server.authentication = undefined;
             doWork();
@@ -984,6 +984,30 @@ var SERVER_SERVICE_USE_PROXY = true;
       return addSearchResults(searchUrl, searchParams, server, service_.reformatLayerConfigs);
     };
 
+    /**
+     * Remote services will occasionally use a nested-set of layers.
+     * both the "parent" and "child" layers are considered valid but
+     * the internal config lookups are "flat" and do not honor that
+     * arrangement.  This code flattens the WMS groups.
+     */
+    var flattenLayersConfig = function(layersConf) {
+      var layers = [];
+      for (var i = 0, ii = layersConf.length; i < ii; i++) {
+        var layer_conf = layersConf[i];
+        var layer = Object.assign({}, layer_conf);
+
+        if (layer_conf.Layer && layer_conf.Layer.length > 0) {
+          // remove the child layers.
+          delete layer.Layer;
+
+          layers = layers.concat(flattenLayersConfig(layer_conf.Layer));
+        }
+        layers.push(layer);
+      }
+
+      return layers;
+    };
+
     this.populateLayersConfigInelastic = function(server, force, deferredResponse) {
       // prevent getCapabilities request until ran by the user.
       if (server.lazy !== true || force === true || server.mapLayerRequiresServer === true) {
@@ -1017,7 +1041,8 @@ var SERVER_SERVICE_USE_PROXY = true;
             var response = parser.read(xhr.data);
             if (goog.isDefAndNotNull(response.Capability) &&
                 goog.isDefAndNotNull(response.Capability.Layer)) {
-              server.layersConfig = response.Capability.Layer.Layer;
+
+              server.layersConfig = flattenLayersConfig(response.Capability.Layer.Layer);
               // handle WMS version differences.
               server.version = response.version;
 
@@ -1034,6 +1059,7 @@ var SERVER_SERVICE_USE_PROXY = true;
                 supported_srs[parsed_srs[1]] = true;
                 parsed_srs = srs_regex.exec(xhr.data);
               }
+
 
               // handle the unique case in which the map is using 900913
               //  but the service only recognizes 3857.
