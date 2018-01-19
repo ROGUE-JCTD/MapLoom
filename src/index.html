@@ -149,9 +149,6 @@
                                 <ng-include src="'sidebar/partials/editStoryLayerStyle.tpl.html'"></ng-include>
                             </div>
 
-                            <div id="viewLayerHistory" ng-show="menuSection=='viewLayerHistory' + chapter.id + storyLayers.id">
-                                <ng-include src="'sidebar/partials/viewLayerHistory.tpl.html'"></ng-include>
-                            </div>
 
                             <div id="editSingleStoryLayer" ng-show="menuSection=='editSingleStoryLayer' + layerName">
                                 <ng-include src="'sidebar/partials/editSingleStoryLayer.tpl.html'"></ng-include>
@@ -167,10 +164,6 @@
 
                             <div id="viewLayerHistory" ng-show="menuSection=='viewSingleLayerHistory' + layerName">
                                 <ng-include src="'sidebar/partials/viewSingleLayerHistory.tpl.html'"></ng-include>
-                            </div>
-
-                            <div id="viewCommitHistory" ng-show="menuSection=='viewCommitHistory' + chapter.id + storyLayers.id + commit">
-                                <ng-include src="'sidebar/partials/viewCommitHistory.tpl.html'"></ng-include>
                             </div>
 
                             <div id="storyBoxes" ng-show="menuSection=='storyBoxes' + chapter.id">
