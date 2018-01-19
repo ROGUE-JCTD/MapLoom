@@ -13,7 +13,6 @@
               scope.authorsLoaded = false;
               scope.authorsShown = false;
               scope.isLoading = false;
-              scope.undoEnabled = true;
               scope.featureDiffService = featureDiffService;
               scope.editable = false;
               scope.readOnly = false;
@@ -23,6 +22,19 @@
                    !featureDiffService.layer.get('metadata').editable)) {
                 scope.readOnly = true;
               }
+
+              var old_commit;
+              var new_commit;
+              if (featureDiffService.change === 'MERGED') {
+                old_commit = featureDiffService.getOursId();
+                new_commit = featureDiffService.getMergedId();
+              } else {
+                old_commit = featureDiffService.getAncestorId();
+                new_commit = featureDiffService.getTheirsId();
+              }
+
+              scope.undoEnabled = (old_commit !== undefined && old_commit !== null && new_commit !== undefined && old_commit !== null && new_commit !== old_commit);
+
               switch (featureDiffService.change) {
                 case 'ADDED':
                   scope.rightTitle = $translate.instant('new_feature');
