@@ -14,7 +14,7 @@
     this.log = [];
     this.title = 'History';
     this.nextPage = false;
-    this.entriesPerPage = 10;
+    this.entriesPerPage = 100; //up the entries per page until pagination is functional
     this.layer = null;
     this.repoId = null;
     this.pathFilter = null;
