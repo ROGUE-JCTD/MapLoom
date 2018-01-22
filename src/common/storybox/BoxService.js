@@ -43,7 +43,7 @@
             boxes_.push([]);
           }
           httpService_({
-            url: '/maps/' + config.id + '/boxes',
+            url: '/maps/' + config.id + '/storyframes',
             method: 'GET'
           }).then(function(result) {
             console.log(result);
@@ -91,7 +91,7 @@
           }
           clones.push(clone);
         });
-        httpService_.post('/maps/' + config.map.id + '/boxes', new ol.format.GeoJSON().writeFeatures(clones, {
+        httpService_.post('/maps/' + config.map.id + '/storyframes', new ol.format.GeoJSON().writeFeatures(clones, {
           dataProjection: 'EPSG:4326',
           featureProjection: 'EPSG:3857'
         })).success(function(data) {
@@ -115,7 +115,7 @@
         if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.id)) {
           console.log('----[ boxService, map created. initializing', config);
           httpService_({
-            url: '/maps/' + config.map.id + '/boxes',
+            url: '/maps/' + config.map.id + '/storyframes',
             method: 'GET'
           }).then(function(result) {
             console.log(result);

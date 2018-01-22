@@ -52,7 +52,7 @@
             pins_.push([]);
           }
           httpService_({
-            url: '/maps/' + config.id + '/annotations',
+            url: '/maps/' + config.id + '/storypins',
             method: 'GET'
           }).then(function(result) {
             console.log(result);
@@ -84,9 +84,9 @@
       // when a map is saved, save the boxes.
       $rootScope.$on('map-saved', function(event, config) {
         console.log('----[ pinService, notified that the map was saved', config);
-        var annotations = pins_[config.chapter_index];
+        var storypins = pins_[config.chapter_index];
         var clones = [];
-        annotations.forEach(function(a) {
+        storypins.forEach(function(a) {
           var clone = a.clone();
           if (a.get('start_time') !== undefined) {
             a.set('start_time', getTime(a.get('start_time')));
@@ -102,7 +102,7 @@
           }
           clones.push(clone);
         });
-        httpService_.post('/maps/' + config.map.id + '/annotations', new ol.format.GeoJSON().writeFeatures(clones, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
+        httpService_.post('/maps/' + config.map.id + '/storypins', new ol.format.GeoJSON().writeFeatures(clones, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'})).success(function(data) {
           console.log('----[ pinService, saved. ', data);
           function noId(pin) {
             return !goog.isDefAndNotNull(pin.getId());
@@ -124,7 +124,7 @@
         if (goog.isDefAndNotNull(config) && goog.isDefAndNotNull(config.id)) {
           console.log('----[ pinService, map created. initializing', config);
           httpService_({
-            url: '/maps/' + config.map.id + '/annotations',
+            url: '/maps/' + config.map.id + '/storypins',
             method: 'GET'
           }).then(function(result) {
             console.log(result);
