@@ -1088,11 +1088,18 @@
               .success(_handlePostResponse);
 
             };
-            var geogigPromise = geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
-              return testReadOnly();
-            }, function() {
-              return testReadOnly();
-            });
+            var geogigPromise;
+            // Skip the WFS feature check for remote services.
+            if (server.remote === true) {
+              geogigPromise = q_.defer();
+              geogigPromise.resolve(true);
+            } else {
+              geogigPromise = geogigService_.isGeoGig(layer, server, fullConfig).then(function() {
+                return testReadOnly();
+              }, function() {
+                return testReadOnly();
+              });
+            }
 
             var layerName = layer.getSource().getParams()['LAYERS'] || layer.getSource().getParams()['layers'];
 

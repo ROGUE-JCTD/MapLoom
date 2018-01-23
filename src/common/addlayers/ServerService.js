@@ -368,33 +368,14 @@ var SERVER_SERVICE_USE_PROXY = true;
       var doWork = function() {
         service_.populateLayersConfig(server)
             .then(function(response) {
-              // set the id. it should always resolve to the length
-              if (goog.isDefAndNotNull(server.layersConfig) && server.layersConfig.length === 0 && !loaded &&
-                  server.lazy !== true) {
-                dialogService_.warn(translate_.instant('add_server'), translate_.instant('server_connect_failed'),
-                    [translate_.instant('yes_btn'), translate_.instant('no_btn')], false).then(function(button) {
-                  switch (button) {
-                    case 0:
-                      server.id = serverCount++;
-                      servers.push(server);
-                      rootScope_.$broadcast('server-added', server.id);
-                      deferredResponse.resolve(server);
-                      break;
-                    case 1:
-                      deferredResponse.reject(server);
-                      break;
-                  }
-                });
-              } else {
-                // If there are no layers on the server, layersConfig will be undefined.
-                if (!goog.isDefAndNotNull(server.layersConfig)) {
-                  server.layersConfig = [];
-                }
-                server.id = serverCount++;
-                servers.push(server);
-                rootScope_.$broadcast('server-added', server.id);
-                deferredResponse.resolve(server);
+              // add the server when the config is loaded.
+              if (!goog.isDefAndNotNull(server.layersConfig)) {
+                server.layersConfig = [];
               }
+              server.id = serverCount++;
+              servers.push(server);
+              rootScope_.$broadcast('server-added', server.id);
+              deferredResponse.resolve(server);
             }, function(reject) {
               deferredResponse.reject(reject);
             });

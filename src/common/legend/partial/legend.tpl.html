@@ -16,7 +16,7 @@
                     data-target="{{'#' + layer.get('metadata').uniqueID + 'legend'}}">{{layer.get('metadata').title}}
                 </div>
                 <div class="panel-collapse legend-item in legend-panel-body" id="{{layer.get('metadata').uniqueID + 'legend'}}">
-                    <img ng-src="{{getLegendUrl(layer)}}">
+                    <img onError="this.style.display = 'none';" ng-src="{{getLegendUrl(layer)}}">
                 </div>
             </div>
         </div>
