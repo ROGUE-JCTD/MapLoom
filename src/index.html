@@ -130,6 +130,12 @@
                 if (config.sources[src_key].remote !== true) {
                     config.sources[src_key].url = trimUrl(config.sources[src_key].url);
                 }
+            } else {
+                // this is an arcgis rest source...
+                var url = config.sources[src_key].url;
+                if (url.substring(url.length - 1) !== '/') {
+                    config.sources[src_key].url = url + '/';
+                }
             }
         }
     }
