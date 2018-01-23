@@ -976,6 +976,11 @@
               extent: fullConfig.extent,
               crs: fullConfig.CRS[0]
             };
+          } else if (goog.isArray(minimalConfig.bbox)) {
+            bbox = {
+              extent: minimalConfig.bbox,
+              crs: 'EPSG:900913'
+            };
           }
 
           var source_params = {

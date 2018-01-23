@@ -991,6 +991,11 @@ var SERVER_SERVICE_USE_PROXY = true;
      * arrangement.  This code flattens the WMS groups.
      */
     var flattenLayersConfig = function(layersConf) {
+      // bail if layersConf is undefined.
+      if (layersConf === undefined) {
+        return [];
+
+      }
       var layers = [];
       for (var i = 0, ii = layersConf.length; i < ii; i++) {
         var layer_conf = layersConf[i];
