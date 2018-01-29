@@ -123,7 +123,7 @@
           interval_.cancel(intervalPromise_);
           intervalPromise_ = null;
         }
-      }, 1000);
+      }, 5000);
     };
 
     this.stop = function() {
