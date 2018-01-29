@@ -548,6 +548,59 @@ var SERVER_SERVICE_USE_PROXY = true;
       return result.promise;
     };
 
+    /**
+     * Read the configuration for a server.
+     */
+    this.populateLayersConfigRest = function(server, force, deferredResponse) {
+      var meta_url = server.url + '?f=pjson';
+      var url = configService_.configuration.proxy + encodeURIComponent(meta_url);
+
+      // convert the ESRI spatial reference to an EPSG code.
+      var sr_to_crs = function(sr) {
+        return 'EPSG:' + sr.latestWkid;
+      };
+
+      http_.get(url, {}).then(function(xhr) {
+        if (xhr.status === 200) {
+          var conf = xhr.data;
+          server.populatingLayersConfig = false;
+          server.restConfig = conf;
+
+          // set the layers config.
+          var layers_config = [];
+          for (var i = 0, ii = xhr.data.layers.length; i < ii; i++) {
+            var layer_conf = xhr.data.layers[i];
+            var extent = xhr.data.fullExtent;
+
+            // this transformation is done to match what Exchange appears
+            //  to be doing to the layer names.
+            var name = layer_conf.name.replace(/\./g, '').replace(/ /g, '-');
+            layers_config.push(Object.assign(xhr.data.layers[i], {
+              name: server.name + '_' + name.toLowerCase() + ':' + layer_conf.id,
+              srs: sr_to_crs(xhr.data.spatialReference),
+              extent: {
+                crs: sr_to_crs(extent.spatialReference),
+                extent: [
+                  extent.xmin,
+                  extent.ymin,
+                  extent.xmax,
+                  extent.ymax
+                ]
+              }
+            }));
+
+          }
+          server.CRS = sr_to_crs(xhr.data.spatialReference);
+          server.layersConfig = layers_config;
+
+          rootScope_.$broadcast('layers-loaded', server.id);
+          deferredResponse.resolve(server);
+        }
+      });
+
+      return deferredResponse;
+    };
+
     this.getLayerConfig = function(serverId, layerConf) {
       var layersConfig = service_.getLayersConfig(serverId);
       var layerConfig = null;
@@ -1161,6 +1214,8 @@ var SERVER_SERVICE_USE_PROXY = true;
           ];
           deferredResponse.resolve(server);
         } else if (server.ptype === 'gxp_arcrestsource') {
+          deferredResponse = service_.populateLayersConfigRest(server, force, deferredResponse);
+          /*
           server.defaultServer = true;
           if (!goog.isDefAndNotNull(server.name)) {
             server.name = 'Esri';
@@ -1205,7 +1260,10 @@ var SERVER_SERVICE_USE_PROXY = true;
             ];
           }
 
-          deferredResponse.resolve(server);
+          this.getRestLayerConfig(server).then(function(config) {
+            deferredResponse.resolve(server);
+          });
+          */
         } else if (server.ptype === 'gxp_osmsource') {
           server.defaultServer = true;
           if (!goog.isDefAndNotNull(server.name)) {

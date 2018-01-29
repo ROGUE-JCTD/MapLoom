@@ -187,7 +187,7 @@ describe('addLayers/ServerService', function() {
         layers['d.docs'][0].tile_url = '/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png';
 
         expect(serverService.reformatLayerHyperConfigs(layers, '', 0)[0]).toEqual(jasmine.objectContaining({
-          detail_url: '/registry/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png' 
+          detail_url: '/registry/layers/aaaaaaaa-bbbb-cccc-ddd/${x}/${y}/${z}.png'
         }));
       });
 
@@ -205,13 +205,15 @@ describe('addLayers/ServerService', function() {
     describe('server is available and returns results', function() {
       it('reformats the Layer configs based on the server data', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        serverService.populateLayersConfigElastic({}, null);
+        serverService.populateLayersConfigElastic({}, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalled();
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatLayerConfigs');
-        var geoserver_config = serverService.getServerByUrl('//server/geoserver/wms');
+        var geoserver_config = {
+          ptype: 'gxp_wmscsource'
+        };
         serverService.populateLayersConfigElastic(geoserver_config, {});
         $httpBackend.flush();
         expect(serverService.reformatLayerConfigs).toHaveBeenCalledWith([], geoserver_config.id);
@@ -329,7 +331,9 @@ describe('addLayers/ServerService', function() {
       });
       it('calls reformatLayerConfigs with a geoserver URL', function() {
         spyOn(serverService, 'reformatConfigForFavorites');
-        var geoserver_config = serverService.getServerByUrl('//server/geoserver/wms');
+        var geoserver_config = {
+          ptype: 'gxp_wmscsource'
+        };
         serverService.addSearchResultsForFavorites(geoserver_config, {});
         $httpBackend.flush();
         // The GeoServer server is usually configured in server id 1 or 2.
@@ -535,7 +539,30 @@ describe('addLayers/ServerService', function() {
 
   describe('getServerById', function() {
     it('should return a server with the matching ID', function() {
-      expect(serverService.getServerById(serverService.getServers()[0].id)).toBe(serverService.getServers()[0]);
+      var servers = [
+        {
+          type: 'gxp_wmscsource',
+          id: 'gs0'
+        },
+        {
+          type: 'gxp_wmscsource',
+          id: 'gs1'
+        },
+        {
+          type: 'gxp_arcrestsource',
+          id: 'arc0'
+        }
+      ];
+
+      for (var i = 0, ii = servers.length; i < ii; i++) {
+        serverService.addServer(servers[i], true);
+      }
+      serverService.addServer(servers[0]).then(function() {
+        expect(serverService.getServerById(serverService.getServers()[0].id)).toBe(serverService.getServers()[0]);
+      }, function() {
+        throw ('error with add');
+      });
+
     });
   });
 

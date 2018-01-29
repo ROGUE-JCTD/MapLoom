@@ -40,6 +40,11 @@
              */
             scope.searchState = 'no-search';
 
+            /**
+             * Results from a search.
+             */
+            scope.searchResults = [];
+
             /** List of owners. */
             scope.owners = [];
 
@@ -421,45 +426,29 @@
               return params;
             };
 
-            /** Get the local geoserver configuration */
-            var servers = {
-              registry: null,
-              geoserver: null
-            };
-
-            /** Setup the search servers.
-             */
-            scope.configureServers = function() {
-
-              // init the server configs before searching them.
-              if (servers.geoserver == null) {
-                // get the local GeoServer configuration.
-                servers.geoserver = serverService.getServerByName('Local Geoserver');
-                servers.geoserver.layersConfig = [];
-              }
-
-              // ensure the service is enabled.
-              if (servers.registry == null) {
-                // configure registry
-                servers.registry = serverService.getRegistryLayerConfig();
-              }
-            };
-
             /** Get the search results and process them into
              *  the registry configuration and the geoserver
              *  configuration as appropriate.
              */
             scope.handleSearchResults = function(response) {
-              // check to ensure the data.objects exists
-              var layers_by_index = {
-                'layer-index': [],
-                'registry': []
-              };
-
               // change the scope to finished, even if partially finished.
               scope.searchState = 'finished';
 
               if (response.data && response.data.objects) {
+
+                var layers = response.data.objects;
+                var results = [];
+
+                for (var i = 0, ii = layers.length; i < ii; i++) {
+                  var layer = layers[i];
+                  // filter out maps, documents, etc.
+                  if (layer.type === 'layer') {
+                    results.push(layer);
+                  }
+                }
+                scope.searchResults = results;
+
+                /*
                 // reset the current layers list for both servers.
                 servers.geoserver.layersConfig = [];
                 servers.registry.layersConfig = [];
@@ -485,6 +474,7 @@
                 //  utilty functions.
                 servers.geoserver.layersConfig = serverService.createGeonodeSearchLayerObjects(layers_by_index['layer-index'], servers.geoserver.id);
                 servers.registry.layersConfig = serverService.createHyperSearchLayerObjects(layers_by_index['registry'], servers.registry.id);
+                */
 
               }
             };
@@ -532,8 +522,6 @@
               // indicate to the user that a search has started.
               scope.searchState = 'started';
 
-              // init the server configs as necessary.
-              scope.configureServers();
               // reset the results list to the first 'page'.
               scope.currentPage = 0;
 
@@ -558,7 +546,9 @@
             };
 
             scope.filterAddedLayers = function(layerConfig, serverId) {
-              return LayersService.filterAddedLayers(layerConfig, serverId, layerConfig.name);
+              // TODO: Make sure this is actually checked.
+              return true;
+              // return LayersService.filterAddedLayers(layerConfig, serverId, layerConfig.name);
             };
 
             /** Sort a list of layer configurations based on the current
@@ -578,18 +568,20 @@
               }
               // title is the default sort.
               var sort_fn = function(a, b) {
-                return (a.Title < b.Title) ? asc : dsc;
+                return (a.title < b.title) ? asc : dsc;
               };
 
               // sorting by date is also supported.
               if (scope.sortBy[0] == 'Date') {
                 sort_fn = function(a, b) {
-                  if (!goog.isDefAndNotNull(a.layerDate)) {
+                  var date_a = a.date ? new Date(a.date) : undefined;
+                  var date_b = b.date ? new Date(a.date) : undefined;
+                  if (!goog.isDefAndNotNull(date_a)) {
                     return asc;
-                  } else if (!goog.isDefAndNotNull(b.layerDate)) {
+                  } else if (!goog.isDefAndNotNull(date_b)) {
                     return dsc;
                   }
-                  return (a.layerDate < b.layerDate) ? asc : dsc;
+                  return (date_a < date_b) ? asc : dsc;
                 };
               }
 
@@ -613,19 +605,11 @@
              */
             scope.getResults = function() {
               var all_results = [];
-              for (var server_name in servers) {
-                var server = servers[server_name];
-                if (server && server.layersConfig) {
-                  var layers = [];
-                  for (var i = 0, ii = server.layersConfig.length; i < ii; i++) {
-                    var layer = server.layersConfig[i];
-                    if (scope.filterAddedLayers(layer, server.serverId)) {
-                      layer._server = server_name;
-                      layers.push(layer);
-                    }
-                  }
 
-                  all_results = all_results.concat(layers);
+              for (var i = 0, ii = scope.searchResults.length; i < ii; i++) {
+                var layer = scope.searchResults[i];
+                if (scope.filterAddedLayers(layer)) {
+                  all_results.push(layer);
                 }
               }
 
@@ -711,16 +695,59 @@
               }
             };
 
+            /**
+             * Add a layer from a remote resource
+             */
+            var addRemoteLayer = function(layer) {
+              // if the server for the remote layer doesn't exist,
+              // then fetch the detailed information.
+              return $http.get(layer.detail_url + '/get').then(function(response) {
+                var layer_def = response.data;
+                var servers = serverService.getServers();
+
+                var server_exists = false;
+                for (var i = 0, ii = servers.length; i < ii; i++) {
+                  if (servers[i].url === layer_def.url) {
+                    server_exists = true;
+                  }
+                }
+
+                if (!server_exists) {
+                  // this may not be the most stable method for getting
+                  //  the server name.
+                  var server_name = layer.detail_url.split('/layers/')[1].split(':')[0];
+
+                  serverService.addServer({
+                    url: layer_def.url,
+                    ptype: layer_def.ptype,
+                    isVirtualService: false,
+                    remote: true,
+                    name: server_name
+                  }).then(function(server) {
+                    layer.add = true;
+                    layer.name = layer.typename;
+                    LayersService.addLayer(layer, server.id, server);
+                  });
+                }
+              });
+            };
+
+            scope.addRemoteLayer = addRemoteLayer;
+
             /** Add the selected layers to the map
              */
             scope.addLayers = function() {
               for (var uuid in scope.selectedLayers) {
                 var layer = scope.selectedLayers[uuid];
-                var server = servers[layer._server];
-                if (layer._server == 'registry') {
-                  layer.registry = true;
+
+                // check to see if the layer is remote
+                if (layer.subtype === 'remote') {
+                  addRemoteLayer(layer);
+                } else {
+                  var server = serverService.getServerByName('Local Geoserver');
+                  var search_layer = serverService.createGeonodeSearchLayerObjects([layer], server.id)[0];
+                  LayersService.addLayer(search_layer, server.id, server);
                 }
-                LayersService.addLayer(layer, server.id, server);
               }
               scope.close();
             };

@@ -73,13 +73,15 @@ describe('unifiedSearchDirective', function() {
   describe('#addLayers', function() {
     var layerConfig, minimalConfig, addLayerSpy, zoomToExtentForProjectionSpy, server;
     beforeEach(function() {
-      layerConfig = { 
-        uuid: 'abcdef', 
-        _server: 'registry', 
-        add: true, 
-        name: 'Test', 
-        title: 'TestTitle', 
-        extent: [], CRS: ['EPSG:4326'] 
+      layerConfig = {
+        uuid: 'abcdef',
+        subtype: 'remote',
+        type: 'layer',
+        add: true,
+        name: 'Test',
+        title: 'TestTitle',
+        typeName: 'test',
+        extent: [], CRS: ['EPSG:4326']
       };
       scope.$digest();
       server = serverService.getRegistryLayerConfig();
@@ -94,22 +96,28 @@ describe('unifiedSearchDirective', function() {
         'abcdef' : layerConfig
       };
 
-      compiledElement.scope().configureServers();
+      // compiledElement.scope().configureServers();
 
       addLayerSpy = spyOn(mapService, 'addVirtualLayer');
       zoomToExtentForProjectionSpy = spyOn(mapService, 'zoomToExtentForProjection');
     });
     it('adds the layer via mapService addVirtualLayer', function() {
-      compiledElement.scope().addLayers();
-      expect(addLayerSpy).toHaveBeenCalledWith(minimalConfig, layerConfig, server);
+      // compiledElement.scope().addLayers();
+      compiledElement.scope().addRemoteLayer(layerConfig).then(function() {
+        expect(addLayerSpy).toHaveBeenCalledWith(minimalConfig, layerConfig, server);
+      });
     });
     it('zooms to extent via mapService zoomToExtentForProjection', function() {
-      compiledElement.scope().addLayers();
-      expect(zoomToExtentForProjectionSpy).toHaveBeenCalled();
+      // compiledElement.scope().addLayers();
+      compiledElement.scope().addRemoteLayer(layerConfig).then(function() {
+        expect(zoomToExtentForProjectionSpy).toHaveBeenCalled();
+      });
     });
     it('layer should have extent and CRS', function() {
-      compiledElement.scope().addLayers(layerConfig);
-      expect(zoomToExtentForProjectionSpy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
+      // compiledElement.scope().addLayers(layerConfig);
+      compiledElement.scope().addRemoteLayer(layerConfig).then(function() {
+        expect(zoomToExtentForProjectionSpy).toHaveBeenCalledWith([], ol.proj.get('EPSG:4326'));
+      });
     });
     it('clears the cart', function() {
       compiledElement.scope().clearSelectedLayers();
@@ -164,7 +172,7 @@ describe('unifiedSearchDirective', function() {
   });
   describe('#clearCart', function() {
     it('clears the cart', function() {
-      // select a layer 
+      // select a layer
       compiledElement.scope().selectedLayers = {
         'abcdef' : {}
       };

@@ -46,15 +46,10 @@
         //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
         //       has already been resolved so you can used that info to append values to the layer.
         var minimalConfig = {
-          name: layerConfig.name || layerConfig.Name,
+          name: layerConfig.name || layerConfig.Name || layerConfig.title,
           source: currentServerId,
-          registry: layerConfig['registry']
+          remote: layerConfig.remote === true
         };
-
-        if (layerConfig['registry'] === true) {
-          minimalConfig['name'] = layerConfig.title;
-          minimalConfig['registryConfig'] = layerConfig;
-        }
 
         if (virtualServer) {
           mapService_.addVirtualLayer(minimalConfig, layerConfig, virtualServer);
