@@ -1,16 +1,19 @@
 .feature-info-box-popup {
   display: block;
-  position: fixed;
-  background-color: @featureInfoBoxColor;
-  .box-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 0 10px 10px 10px;
-  border-radius: 10px;
+  position: absolute;
+  background: @accentWhite;
+  padding: 0 10px 10px;
   border: 1px solid darken(@featureInfoBoxColor, 10%);
+  border-radius: 4px;  
   top: 50px;
-  left: 500px;
-  white-space:nowrap;
+  left: -50px;
+  bottom: 12px;
+  white-space: nowrap;
   text-overflow: ellipsis;
-  min-width: 250px;
+  min-width: 180px;
+  color: @baseGray;
+  font-size: 10px;
+  .box-shadow(0 1px 4px rgba(0,0,0,0.2));
   &:after, &:before {
     top: 100%;
     border: solid transparent;
@@ -32,30 +35,6 @@
     left: 48px;
     margin-left: -11px;
   }
-}
-
-/* Feature Info Box StoryPin Styles */
-
-.feature-info-box-popup {
-  background: @accentWhite;
-  border-radius: 4px;
-  bottom: 12px;
-  color: @baseGray;
-  display: block;
-  font-size: 10px;
-  left: -50px;
-  min-width: 180px;
-  padding: 0 10px 10px;
-  position: absolute;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.feature-info-box-popup:after {
-  border-top-color: @accentWhite;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
 }
 
 #feature-info-box-button-group {
@@ -107,35 +86,18 @@
 }
 
 .info-box-title {
-  width: 75%;
-  font: @featureInfoBoxLabelFont;
-  color: @featureInfoBoxLabelFontColor;
-  word-wrap: break-word;
-  text-align: center;
-  display: inline-block;
-}
-
-.info-box-title {
   color: @baseGray;
   display: inline-block;
   font: bold 13px 'Open Sans', sans-serif;
   padding: 5px 0;
   text-transform: uppercase;
+  text-align: center;
   width: 75%;
   word-wrap: break-word;
 }
 
 .info-box-attribute {
-  display: block;
   width: 190px;
-  margin: 0;
-  padding: 0;
-  font: @featureInfoBoxLabelFont;
-  color: @featureInfoBoxLabelFontColor;
-  word-wrap: break-word;
-}
-
-.info-box-attribute {
   border-bottom: 1px solid @baseGray;
   color: @baseGray;
   display: block;
@@ -143,17 +105,6 @@
   margin: 0;
   padding: 0;
   text-transform: lowercase;
-  word-wrap: break-word;
-}
-
-.info-box-attribute-value {
-  display: block;
-  width: 190px;
-  max-width: 190px;
-  margin: 0;
-  padding: 0 0 7px;
-  font: @featureInfoBoxValueFont;
-  white-space: normal;
   word-wrap: break-word;
 }
 
@@ -167,6 +118,8 @@
   text-transform: capitalize;
   white-space: normal;
   word-wrap: break-word;
+  width: 190px;
+  max-width: 190px;
 }
 
 #feature-info-box-bottom {
