@@ -706,6 +706,7 @@
       var layer = null;
       var nameSplit = null;
       var url = null;
+      var bbox;
       if (!goog.isDefAndNotNull(fullConfig)) {
         //dialogService_.error(translate_.instant('map_layers'), translate_.instant('load_layer_failed',
         //    {'layer': minimalConfig.name}), [translate_.instant('btn_ok')], false);
@@ -887,21 +888,49 @@
             return this.fixedTileUrlFunction(tileCoord, pixelRatio, rest_proj);
           };
 
+          if (fullConfig.bbox_left) {
+            bbox = {
+              crs: server.CRS,
+              extent: [
+                fullConfig.bbox_left,
+                fullConfig.bbox_bottom,
+                fullConfig.bbox_right,
+                fullConfig.bbox_top
+              ]
+            };
+          } else {
+            bbox = fullConfig.extent;
+          }
+
           layer = new ol.layer.Tile({
             metadata: {
               serverId: server.id,
               name: minimalConfig.name,
-              bbox: fullConfig.extent,
+              bbox: bbox,
               title: fullConfig.title
             },
             visible: minimalConfig.visibility,
             source: serviceSource
           });
         } else if (server.ptype === 'gxp_arcrestsource') {
+          if (fullConfig.bbox_left) {
+            bbox = {
+              crs: server.CRS,
+              extent: [
+                fullConfig.bbox_left,
+                fullConfig.bbox_bottom,
+                fullConfig.bbox_right,
+                fullConfig.bbox_top
+              ]
+            };
+          } else {
+            bbox = fullConfig.extent;
+          }
+
           var metadata = {
             serverId: server.id,
             name: minimalConfig.name,
-            bbox: fullConfig.extent,
+            bbox: bbox,
             title: fullConfig.Title
           };
           var attribution = new ol.Attribution({
@@ -993,7 +1022,6 @@
             }
           }
 
-          var bbox;
           if (goog.isArray(fullConfig.BoundingBox)) {
             bbox = {extent: fullConfig.BoundingBox[0]};
           } else if (goog.isArray(fullConfig.extent)) {
@@ -1201,7 +1229,6 @@
     };
 
     this.addVirtualLayer = function(minimalConfig, layerConfig, server) {
-      console.error('MINIMAL', JSON.stringify([minimalConfig, layerConfig, server]));
       var layer = service_.createLayerFull(minimalConfig, layerConfig, server);
       service_.addLayerCore(minimalConfig, layer);
     };
