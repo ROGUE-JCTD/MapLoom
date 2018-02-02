@@ -309,7 +309,7 @@
 
     this.zoomToExtent = function(extent, animate, map, scale) {
       if (!goog.isDefAndNotNull(animate)) {
-        animate = true;
+        animate = false;
       }
       if (!goog.isDefAndNotNull(map)) {
         map = this.map;
