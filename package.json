@@ -15,8 +15,8 @@
   "scripts": {
     "test": "grunt karma"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@boundlessgeo/storytools": "^1.0.0-alpha3",
     "closure-linter-wrapper": "~0.2.8",
     "grunt": "~0.4.1",
     "grunt-bump": "0.0.7",
