@@ -3,7 +3,7 @@
   var module = angular.module('loom_addlayers_directive', []);
 
   module.directive('loomAddlayers',
-      function($rootScope, serverService, mapService, geogigService, $translate, dialogService) {
+      function($rootScope, serverService, mapService, geogigService, $translate, dialogService, LayersService) {
         return {
           templateUrl: 'addlayers/partials/addlayers.tpl.html',
           link: function(scope, element) {
@@ -25,9 +25,7 @@
               return $translate.instant('connected_as', {value: scope.currentServer.username});
             };
 
-            // default to the Local Geoserver. Note that when a map is saved and loaded again,
-            // the order of the servers might be different and MapLoom should be able to handle it accordingly
-            var server = serverService.getServerLocalGeoserver();
+            var server = serverService.getRegistryLayerConfig();
             if (goog.isDefAndNotNull(server)) {
               scope.setCurrentServerId(server.id);
             }
@@ -43,26 +41,9 @@
 
             scope.addLayers = function(layersConfig) {
               // if the server is not a typical server and instead the hardcoded ones
-              var length = layersConfig.length;
-              for (var index = 0; index < length; index += 1) {
-                var config = layersConfig[index];
-                if (config.add) {
-                  // NOTE: minimal config is the absolute bare minimum info that will be send to webapp containing
-                  //       maploom such as geonode. At this point, only source (server id), and name are used. If you
-                  //       find the need to add more parameters here, you need to put them in MapService.addLayer
-                  //       instead. that's because MapService.addLayer may be invoked from here, when a saved
-                  //       map is opened, or when a map is created from a layer in which case the logic here will be
-                  //       skipped! note, when MapService.addLayer is called, server's getcapabilities (if applicable)
-                  //       has already been resolved so you can used that info to append values to the layer.
-                  var minimalConfig = {
-                    name: config.Name,
-                    source: scope.currentServerId
-                  };
-                  mapService.addLayer(minimalConfig);
-
-                  config.add = false;
-                }
-              }
+              layersConfig.forEach(function(config) {
+                LayersService.addLayer(config, scope.currentServerId);
+              });
             };
 
             scope.changeCredentials = function() {
@@ -70,22 +51,7 @@
             };
 
             scope.filterAddedLayers = function(layerConfig) {
-              var show = true;
-              var layers = mapService.getLayers(true, true);
-              for (var index = 0; index < layers.length; index++) {
-                var layer = layers[index];
-                if (goog.isDefAndNotNull(layer.get('metadata')) &&
-                    goog.isDefAndNotNull(layer.get('metadata').config)) {
-                  var conf = layer.get('metadata').config;
-                  if (conf.source === scope.currentServerId) {
-                    if (conf.name === layerConfig.Name) {
-                      show = false;
-                      break;
-                    }
-                  }
-                }
-              }
-              return show;
+              return LayersService.filterAddedLayers(layerConfig, scope.currentServerId, layerConfig.Name);
             };
 
             var parentModal = element.closest('.modal');
@@ -110,7 +76,7 @@
             // is added, make it the selected server
             scope.$on('server-added', function(event, id) {
               var server = serverService.getServerById(id);
-              if (server === serverService.getServerLocalGeoserver()) {
+              if (server.isLocal) {
                 scope.setCurrentServerId(id);
               } else if (scope.currentServerId == -1 && server === serverService.getServerByName('OpenStreetMap')) {
                 scope.setCurrentServerId(id);
@@ -136,13 +102,19 @@
               });
             };
 
+            scope.populateLayersList = function() {
+              console.log('populateLayerList', scope.currentServerId);
+              console.log('by server id', serverService.getServerById(scope.currentServerId));
+              serverService.populateLayersConfig(serverService.getServerById(scope.currentServerId), true);
+            };
+
             scope.editServer = function(server) {
               $rootScope.$broadcast('server-edit', server);
             };
 
             scope.$on('server-removed', function(event, server) {
               if (scope.currentServerId == server.id) {
-                scope.setCurrentServerId(serverService.getServerLocalGeoserver().id);
+                scope.setCurrentServerId(serverService.getRegistryLayerConfig().id);
               }
             });
 

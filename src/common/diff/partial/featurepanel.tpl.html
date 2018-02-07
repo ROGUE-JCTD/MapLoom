@@ -52,27 +52,20 @@
                                 seperate-time="false" date-object="attribute" date="false"></datetimepicker>
               </div>
               -->
-              <div ng-switch-when="simpleType" class="merge-select" ng-class="{'input-group': attribute.editable, 'has-error': !attribute.valid}">
-                <div ng-if="attribute.editable" class="input-group-btn">
-                  <button ng-disabled="!isConflictPanel" type="button" class="btn btn-default dropdown-toggle attr-none"
-                          data-toggle="dropdown">
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a ng-click="selectValue(attribute, null)">&nbsp;</a>
-                    </li>
-                    <li ng-repeat="enum in attribute.enum">
-                      <a ng-click="selectValue(attribute, $index)">{{enum._value}}</a>
-                    </li>
-                  </ul>
-                </div>
-                <input ng-model="attribute.newvalue" type="text" class="form-control attr-none" disabled ng-class="{
-                      'attr-added': attribute.changetype == 'ADDED',
-                      'attr-modified': attribute.changetype == 'MODIFIED',
-                      'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED',
-                      'form-control' : attribute.editable
-                    }"/>
+              <div ng-switch-when="simpleType" class="merge-select" ng-class="{'has-error': !attribute.valid}">
+                <select ng-model="attribute.newvalue"
+                  ng-options="enum._value as (enum._label) ? enum._label : enum._value for enum in attribute.enum"
+                  ng-change="validateField(attribute, 'newvalue')"
+                  ng-disabled="!attribute.editable || !isConflictPanel"
+                  class="form-control attr-none"
+                  ng-class="{
+                    'attr-added': attribute.changetype == 'ADDED',
+                    'attr-modified': attribute.changetype == 'MODIFIED',
+                    'attr-removed' : attribute.changetype == 'REMOVED' || panel.geometry.changetype == 'REMOVED',
+                    'form-control' : attribute.editable
+                  }">
+                  <option></option>
+                </select>
               </div>
               <div ng-switch-when="xsd:boolean" class="merge-select" ng-class="{'input-group': attribute.editable, 'has-error': !attribute.valid}">
                 <div ng-if="attribute.editable" class="input-group-btn">

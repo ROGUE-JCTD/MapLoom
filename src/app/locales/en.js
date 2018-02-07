@@ -5,6 +5,11 @@
     'projection_not_supported': 'Projection not supported',
     'notifications_tab': 'Notifications',
     'no_notifications': 'No notifications',
+    'registry': 'Registry',
+    'registry_layers': 'Registry of layers',
+    'registry_layer_btn': 'Registry of layer',
+    'search_layers_btn': 'Search for Layers',
+    'search_layers' : 'Search for Layers',
     'map_layers': 'Layers',
     'add_layer_btn': 'Add Layer',
     'add_layers': 'Add Layers',
@@ -222,6 +227,8 @@
     'mgrs': 'MGRS',
     'other': 'Other',
     'search': 'Search',
+    'searching': 'Searching...',
+    'search_prompt': 'Please use any of the settings on the left to start a search.',
     'search_locations': 'Search Locations',
     'search_table': 'Search All Fields',
     'search_results': 'Search Results',
@@ -320,7 +327,51 @@
     'unique_values': 'Unique Values',
     'fetch_layers_from_server': 'Fetch Layers from Server',
     'set_spatial_filter': 'Use this feature in a spatial filter',
-    'spatial_filter': 'Spatial Filter'
+    'spatial_filter': 'Spatial Filter',
+    'enter_spatial_filter_radius': 'Enter the spatial filter\'s radius, in meters',
+    'add_spatial_filter': 'Add Spatial Filter',
+    'enter_radius': 'Enter Radius',
+
+    'paging_subtitle' : 'Showing {{ firstRecord }} - {{ lastRecord }} of {{ totalRecords }} matching records',
+    'sorted_by' : 'Sorted by ',
+    'ascending' : 'Ascending',
+    'descending' : 'Descending',
+    'date' : 'Date',
+    'category' : 'Category',
+    'date_created' : 'Date Created',
+    'next' : 'Next',
+    'previous' : 'Previous',
+    'clear' : 'Clear',
+    'clear_all' : 'Clear all',
+
+    'refine_layers_subtitle' : 'Refine layer list',
+
+    'layers_to_be_added' : '{{ value }} layers will be added to the map',
+
+    'map_help' : 'Zoom to limit the search to data that includes features in the displayed area.  Hover over layers in the list to preview them on the map above.',
+    'keyword_help' : 'Keywords will search titles and descriptions for matches.',
+    'date_help' : 'Filter layers by their creation date.',
+    'owner_help' : 'Filter layers by the user who owns it.',
+    'category_help' : 'Filter the layer by its metadata category.',
+    'download_csv': 'Download CSV',
+
+    'measure' : 'Measure',
+    'measure_tools' : 'Measure tools',
+    'measure_area' : 'Area',
+    'measure_line' : 'Length',
+    'measure_stop' : 'Stop measuring',
+    'measure_units' : 'Units',
+    'bounding_box' : 'Bounding Box',
+
+    'too_many_filters' : 'You may have too many filters selected.  Try removing one of the following:',
+    'pin_feature' : 'Pin Feature',
+    'unpin_feature' : 'Unpin Feature',
+    'pinned_search' : 'Pinned Search',
+    'style_layer': 'Style Layer',
+    'style_layer_failed': 'There was an error trying to update {{ style_name }}.sld, please try again later.',
+    'show_style_editor': 'Show Style Editor',
+    'style_name': 'Style Name',
+    'save_layer_style': 'Save Layer Style'
   };
 
   var module = angular.module('loom_translations_en', ['pascalprecht.translate']);

@@ -285,7 +285,7 @@
           typeName: split[1]
         };
       }
-      return null;
+      return '';
     };
 
     this.getFeatureType = function(layer) {
@@ -297,15 +297,33 @@
           '&request=DescribeFeatureType&typeName=' + workspaceRoute.typeName;
 
       http.get(url).then(function(response) {
+        if (response.data == null || response.data.indexOf('ows:ExceptionReport') >= 0) {
+          layer.get('metadata').wmsOnly = true;
+          deferredResponse.reject(response);
+          return;
+        }
         // TODO: Use the OpenLayers parser once it is done
         var x2js = new X2JS();
         var json = x2js.xml_str2json(response.data);
-        var schema = [];
+        var wps = new storytools.edit.WFSDescribeFeatureType.WFSDescribeFeatureType();
+        var layerInfo = wps.parseResult(response.data);
+        var schema = {};
+        var geometryType;
         if (goog.isDefAndNotNull(json.schema)) {
           var savedSchema = layer.get('metadata').savedSchema;
           forEachArrayish(json.schema.complexType.complexContent.extension.sequence.element, function(obj) {
             schema[obj._name] = obj;
             schema[obj._name].visible = true;
+            if (obj._type.indexOf('gml:') != -1) {
+              var lp = obj._type.substring(4);
+              if (lp.indexOf('Polygon') !== -1 || lp.indexOf('SurfacePropertyType') !== -1) {
+                geometryType = 'polygon';
+              } else if (lp.indexOf('LineString') !== -1) {
+                geometryType = 'line';
+              } else if (lp.indexOf('Point') !== -1) {
+                geometryType = 'point';
+              }
+            }
             if (goog.isDefAndNotNull(savedSchema)) {
               for (var index = 0; index < savedSchema.length; index++) {
                 if (obj._name == savedSchema[index].name) {
@@ -317,10 +335,15 @@
               schema[obj._name]._type = 'simpleType';
             }
           });
-
+          layer.get('metadata').geomType = geometryType;
           layer.get('metadata').schema = schema;
           layer.get('metadata').editable = true;
           layer.get('metadata').workspaceURL = json.schema._targetNamespace;
+          layer.get('metadata').attributes = layerInfo.attributes;
+          layer.set('attributes', layerInfo.attributes);
+          layer.set('featureNS', layerInfo.featureNS);
+          layer.set('typeName', layer.get('metadata').name);
+          layer.set('path', '/geoserver/');
         }
         deferredResponse.resolve();
       }, function(reject) {
@@ -397,8 +420,7 @@
       // This should always be the last thing that gets done.
       var getFeatureType = function() {
         service_.getFeatureType(layer).then(function() {
-          ol.proj.getTransform(metadata.projection, 'EPSG:4326');
-          rootScope.$broadcast('layerInfoLoaded', layer);
+          rootScope.$broadcast('featuretype-added', layer);
           deferredResponse.resolve();
         }, function(rejected) {
           console.log('====[ ', translate_.instant('error'), ': ', translate_.instant('unable_to_get_feature_type'),
@@ -415,8 +437,15 @@
       if (goog.isDefAndNotNull(layer)) {
         var metadata = layer.get('metadata');
         if (!goog.isDefAndNotNull(metadata.isGeoGig)) {
+          var splitGeogig = null;
           if (goog.isDefAndNotNull(fullConfig.Identifier) && goog.isDefAndNotNull(fullConfig.Identifier[0])) {
-            var splitGeogig = fullConfig.Identifier[0].replace('geoserver://', '').split(':');
+            splitGeogig = fullConfig.Identifier[0].replace('geoserver://', '').split(':');
+          } else if (goog.isDefAndNotNull(fullConfig.geogig_link)) {
+            var repo_name = fullConfig.geogig_link.split('/').pop();
+            var native_name = fullConfig.name.split(':').pop();
+            splitGeogig = [repo_name, native_name];
+          }
+          if (splitGeogig !== null) {
             if (goog.isArray(splitGeogig) && (splitGeogig.length === 2 || splitGeogig.length === 3)) {
               var repoName = splitGeogig[0];
               var nativeName = splitGeogig[1];

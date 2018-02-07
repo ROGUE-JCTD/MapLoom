@@ -14,6 +14,7 @@
               scope.featureType = null;
               scope.abstract = null;
               scope.srs = null;
+              scope.style = null;
               scope.serverName = null;
               scope.keywords = null;
               scope.repoName = null;
@@ -41,6 +42,9 @@
               if (goog.isDefAndNotNull(metadata.abstract)) {
                 scope.abstract = metadata.abstract;
               }
+              if (goog.isDefAndNotNull(metadata.defaultStyle)) {
+                scope.style = metadata.defaultStyle.name;
+              }
               if (goog.isDefAndNotNull(metadata.projection)) {
                 scope.srs = metadata.projection;
               }
@@ -53,9 +57,14 @@
                 scope.repoName = repo.name;
                 scope.repoUUID = repo.uuid;
               }
-              var server = serverService.getServerById(scope.layer.get('metadata').serverId);
-              scope.serverName = server.name;
-              scope.serverURL = server.url;
+              if (!scope.layer.get('metadata').registry) {
+                var server = serverService.getServerById(scope.layer.get('metadata').serverId);
+                scope.serverName = server.name;
+                scope.serverURL = server.url;
+              } else {
+                scope.serverURL = scope.layer.get('metadata').domain;
+                scope.serverName = scope.layer.get('metadata').domain;
+              }
               element.closest('.modal').modal('toggle');
             });
             function onResize() {

@@ -16,12 +16,36 @@
       </form>
     </em>
   </div>
-  <div id="search-results-panel" class="search-content panel-collapse collapse">
+  <div id="search-results-panel" class="search-content panel-collapse" ng-class="getClassSearchExpanded">
     <div id="search-collapse-group" class="panel-group">
-      <ul class="list-group">
+      <ul class="list-group" ng-if="config.nominatimSearchEnabled">
         <li class="list-group-item" ng-click="resultClicked(result)"
             ng-repeat="result in searchResults" tooltip-popup-delay="500" tooltip-placement="right" tooltip-append-to-body="true" tooltip="{{result.name}}">
           <span class="ellipsis search-result-name">{{result.name}}</span>
+        </li>
+      </ul>
+      <ul class="list-group" ng-if="config.geoquerySearchEnabled">
+        <li class="list-group-item" ng-click="resultClicked(result)"
+            ng-repeat="result in searchResults" tooltip-popup-delay="500" tooltip-placement="right" tooltip-append-to-body="true" tooltip="{{result.name}}">
+          <div ng-if="result.classification">
+            <span class="ellipsis search-result-name" style="width: 85%">{{result.name}}</span><button ng-click="toggleOpen(result)" class="btn btn-default btn-xs pull-right"><i class="glyphicon glyphicon-chevron-down" ng-if="!isExpanded(result)"></i><i class="glyphicon glyphicon-chevron-up" ng-if="isExpanded(result)"></i></button>
+            <div ng-class="isExpanded(result)">
+              <span><b>Source</b>: {{result.source}}</span><br>
+              <span><b>CC</b>: {{result.cc}}</span><br>
+              <span><b>Record Status</b>: {{result.record_status}}</span><br>
+              <span><b>Classification</b>: {{result.classification}}</span><br>
+              <span><b>BE</b>: {{result.be}}</span><br>
+              <span><b>Suffix</b>: {{result.suffix}}</span>
+            </div>
+          </div>
+          <div ng-if="result.featureDesignationCode">
+            <span class="ellipsis search-result-name" style="width: 85%">{{result.name}}, {{result.cc}}</span><button ng-click="toggleOpen(result)" class="btn btn-default btn-xs pull-right"><i class="glyphicon glyphicon-chevron-down" ng-if="!isExpanded(result)"></i><i class="glyphicon glyphicon-chevron-up" ng-if="isExpanded(result)"></i></button>
+            <div ng-class="isExpanded(result)">
+              <span><b>Source</b>: {{result.source}}</span><br>
+              <span><b>CC</b>: {{result.cc}}</span><br>
+              <span><b>Feature Designation Name</b>: {{result.featureDesignationName}} ({{result.featureDesignationCode}})</span>
+            </div>
+          </div>
         </li>
       </ul>
     </div>

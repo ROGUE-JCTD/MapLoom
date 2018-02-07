@@ -1,6 +1,6 @@
 module.exports = function ( karma ) {
   karma.set({
-    /** 
+    /**
      * From where to look for files, starting with the location of this file.
      */
     basePath: '../',
@@ -34,7 +34,7 @@ module.exports = function ( karma ) {
     runnerPort: 9100,
     urlRoot: '/',
 
-    /** 
+    /**
      * Disable file watching by default.
      */
     autoWatch: false,
@@ -52,6 +52,13 @@ module.exports = function ( karma ) {
      * open and the tests will automatically occur there during the build. This has
      * the aesthetic advantage of not launching a browser every time you save.
      */
+    coverageReporter: {
+      dir: 'reports',
+      reporters:[
+        {type: 'html', subdir: 'html/'},
+        {type: 'lcovonly', subdir: 'coverage/', file: 'lcov.info'},
+      ]
+    },
     browsers: [
       'PhantomJS'
     ]

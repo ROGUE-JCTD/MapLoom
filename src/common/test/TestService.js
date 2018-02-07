@@ -176,12 +176,10 @@
         config.frequency = frequency;
       }
 
-      console.log('====[ startTest. frequency: ', config.frequency, ', config: ', config);
       run();
     };
 
     this.stop = function() {
-      console.log('====[ stopTest');
       clearTimeout(timeout);
     };
   });
@@ -264,7 +262,6 @@
     } else {
       // when in only move map mode, set timer again.
       setTimer();
-      console.log('---- move map @ ' + dateLastRun + '. runCounter: ' + runCounter + ', view: ', view);
     }
   }
 

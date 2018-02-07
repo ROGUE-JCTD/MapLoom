@@ -1,0 +1,223 @@
+<div class="modal-body unified-search-modal">
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-6 unified-split-view">
+                <div class="row">
+                    <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-9 filter-heading">
+                                    {{ 'keywords' | translate | uppercase }} 
+                                    <span loom-helpicon help="keyword_help"></span>
+                                </div>
+                                <div class="col-xs-3 text-right">
+                                    <button class="btn btn-link clear-filter" ng-class="isSet('keyword') ? '' : 'disabled'" ng-click="clear('keyword')">{{ 'clear' | translate }}</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group`">
+                                <div class="input-group">
+                                    <input ng-model="keyword" ng-keyup="searchOnEnter($event)" type="text" class="form-control" />
+                                    <span ng-click="search()" class="input-group-addon"><i class="glyphicon glyphicon-search"></i> <b>{{ 'search' | translate }}</b></span>
+                                </div>
+                            </div>
+
+                            <br>
+                    
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                {{ 'bounding_box' | translate | uppercase }} 
+                                <span loom-helpicon help="map_help"></span>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="filter-map loom-map" style="mapStyle" zoom="previewZoom" center="previewCenter" loom-map map-id="unified-layer-map-preview" modal-id="unified-layer-dialog" layers="previewLayers"></div>
+                    </div>
+                </div> <!-- end of map section -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h4>{{ 'refine_layers_subtitle' | translate }}<button class="btn btn-link clear-filter" ng-click="clear('all')">{{ 'clear_all' | translate }}</button></h4>
+                    </div>
+                </div>
+
+                <div class="row row-filter">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                {{ 'date_created' | translate | uppercase }} <span loom-helpicon help='date_help'></span>
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('date') ? '' : 'disabled'" ng-click="clear('date')">{{ 'clear' | translate }}</button>
+                            </div>
+                        </div>
+                        <div class="date-container">
+                          <rzslider  rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options"></rzslider>
+                          <div class="row">
+                            <div class="col-xs-6" ng-bind="sliderValues[slider.minValue]"></div>
+                            <div class="col-xs-6 text-right" ng-bind="sliderValues[slider.maxValue]"></div>
+                          </div>
+                          <!--
+                          <div class="year-range">{{ sliderMinValue }}</div>
+                          <div class="year-range text-right">{{ sliderMaxValue }}</div>
+                          -->
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-filter">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                {{ 'owner' | translate | uppercase }} <span loom-helpicon help='owner_help'></span>
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('owner') ? '' : 'disabled'" ng-click="clear('owner')">{{ 'clear' | translate }}</button>
+                            </div>
+                        </div>
+                        <div class="filter-list">
+                            <span ng-repeat="owner in owners" class="filter-item" ng-click="toggleFilter(owner)">
+                                <i ng-hide="owner._checked" class="glyphicon glyphicon-unchecked"></i>
+                                <i ng-show="owner._checked" class="glyphicon glyphicon-check"></i>
+                                {{ owner.username }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 category-filter">
+                        <div class="row">
+                            <div class="col-xs-9 filter-heading">
+                                {{ 'category' | translate | uppercase }} <span loom-helpicon help="category_help">
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <button class="btn btn-link clear-filter" ng-class="isSet('category') ? '' : 'disabled'" ng-click="clear('category')">{{ 'clear' | translate }}</button>
+                            </div>
+                        </div>
+                        <div class="filter-list">
+                            <span ng-repeat="category in categories" class="filter-item" ng-click="toggleFilter(category)">
+                                <i ng-hide="category._checked" class="glyphicon glyphicon-unchecked"></i>
+                                <i ng-show="category._checked" class="glyphicon glyphicon-check"></i>
+                                {{ category.gn_description }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- end of filters -->
+
+            <div class="col-md-6 unified-split-view">
+                <div class="row" ng-show="searchState == 'no-search'">
+                    <div class="col-xs-12">
+                        <span loom-helpicon help=""></span> Please use any of the settings on the left to start a search.
+
+                    </div>
+                </div>
+                <div class="row" ng-show="searchState == 'started'">
+                    <div class="col-xs-12">
+                        <div class="loom-loading" text="{{ 'searching' | translate }}"></div>
+                    </div>
+                </div>
+                <div class="row" ng-show="searchState == 'finished' && resultsCount == 0">
+                    <div class="col-xs-12 no-results">
+                        <i>{{ 'search_no_results' | translate }}</i><br><br>
+
+                        {{ 'too_many_filters' | translate }}
+                        <ul>
+                            <li ng-repeat="filter_name in allFilters" ng-if="isSet(filter_name)">
+                                <button class="btn btn-link" 
+                                        ng-click="clear(filter_name)">
+                                          {{ 'clear' | translate }} {{ getFilterLabel(filter_name) | translate | lowercase }}
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row" ng-show="searchState == 'finished' && resultsCount > 0">
+                    <div class="col-xs-8">
+                        <div class="layers-count">
+                          {{ pagingTitle }}
+                        </div>
+                        <div class="sort-by">
+                            {{ 'sorted_by' | translate }} {{ sortField | translate }}, {{ sortAscending | translate}}
+                        </div>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle"><i class="glyphicon glyphicon-sort-by-alphabet"></i> <span class="caret"></span> </button>
+                            <ul class="dropdown-menu pull-right">
+                                <li ng-repeat="sort in availableSorts">
+                                  <a ng-click="changeSort(sort[0], sort[1])">by {{ sort[0] | translate }}, {{ (sort[1] ? 'Ascending' : 'Descending') | translate }}</a></li>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- start of layers list -->
+                <div class="layers-list">
+                    <div class="search-status" ng-repeat="search in searches | filter:(search.state != 'finished')">
+                        {{ search.description }} 
+                    </div>
+                    <div class="layer" ng-class="isLayerSelected(layer) ? 'selected' : ''" 
+                      ng-repeat="layer in layersConfig = getResults()" ng-click="toggleLayer(layer)"
+                      ng-mouseenter="previewBbox(layer)" ng-mouseleave="clearBbox()">
+                        <div class="layer-description">
+                            <label>{{ layer.title }}</label><br>
+                            {{ layer.abstract }}
+                        </div>
+                        <div class="layer-info">
+                            <div class="layer-date">{{ layer.date | date:'dd/MM/yyyy'}}</div>
+                            <!--
+                            <div class="layer-source">{{ layer.source }}</div>
+                            -->
+                        </div>
+                    </div>
+                </div>
+                <div class="layers-pager" ng-show="maxPages > 0">
+                    <ul class="pagination">
+                        <li><a href="#" ng-click="changePage(currentPage - 1)">{{ 'previous' | translate }}</a></li>
+                        <li ng-repeat="page in pages" ng-class="(page == currentPage) ? 'active' : ''">
+                          <a href='#' ng-click="changePage(page)">
+                            {{ page + 1}}
+                          </a>
+                        </li>
+                        <li><a href="#" ng-click="changePage(currentPage + 1)">{{ 'next' | translate }}</a></li>
+                    </ul>
+                </div>
+            </div> <!-- end of layer list -->
+        </div> <!-- end of the filters / layers list -->
+
+
+    </div>
+
+</div>
+<div class="modal-footer">
+    <!-- this is the list of layers to be added -->
+    <div class="container-fluid text-left"><!-- text-left is required to offset the standard r-justify footer -->
+        <div class="row" style="vertical-align:middle">
+            <div class="col-md-7">
+                    <h4>{{ addLayersText }}</h4>
+            </div>
+            <div class="col-md-5 text-right">
+                <button class="btn btn-link" ng-click="clearSelectedLayers()">{{ 'clear' | translate }}</button>
+                <button class="btn btn-default" ng-click="close()">{{ 'close_btn' | translate }}</button>
+                <button class="btn btn-primary" ng-click="addLayers()">{{ 'add_layers' | translate }}</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="selected-layer" ng-repeat="(hashcode, layer) in selectedLayers"><span>{{ layer.title }}</span><i ng-click="removeLayer(layer)" class="glyphicon glyphicon-remove"></i></div>
+            </div>
+        </div>
+    </div>
+
+</div>

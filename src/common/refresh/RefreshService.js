@@ -39,7 +39,7 @@
       if (service_.autoRefresh) {
         var refreshed = {};
         var notRefreshed = {};
-        var layers = mapService.getLayers();
+        var layers = mapService.getLayers(true, true);
         var refreshTimeout = 60000;
 
         if (!goog.isDefAndNotNull(layers)) {
@@ -216,8 +216,11 @@
                 nextLayer(nextIndex);
               });
             } else {
+              mapService_.dumpTileCache(metadata.uniqueID);
               nextLayer(nextIndex);
             }
+          } else {
+            nextLayer(nextIndex);
           }
         };
         processLayer(layers[0], 1);

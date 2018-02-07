@@ -4,7 +4,7 @@
 
   module.directive('loomLayers',
       function($rootScope, mapService, serverService, historyService, featureManagerService,
-               dialogService, $translate, tableViewService) {
+               dialogService, $translate, tableViewService, configService) {
         return {
           restrict: 'C',
           replace: true,
@@ -52,7 +52,9 @@
             scope.filterInternalLayers = function(layer) {
               return !(!goog.isDefAndNotNull(layer.get('metadata')) ||
                   (goog.isDefAndNotNull(layer.get('metadata').vectorEditLayer) &&
-                      layer.get('metadata').vectorEditLayer));
+                      layer.get('metadata').vectorEditLayer) ||
+                  (goog.isDefAndNotNull(layer.get('metadata').spatialFilterLayer) &&
+                      layer.get('metadata').spatialFilterLayer));
             };
 
             scope.isGeogig = function(layer) {
@@ -67,6 +69,39 @@
               return false;
             };
 
+            scope.isLoadingStyle = function(layer) {
+              var loadingStyle = layer.get('metadata').loadingStyle;
+              return goog.isDefAndNotNull(loadingStyle) && loadingStyle === true;
+            };
+
+            scope.toggleStyleControl = function(layer) {
+              var showStylePanel = layer.get('metadata').showStylePanel;
+              if (!goog.isDefAndNotNull(showStylePanel)) {
+                layer.get('metadata').showStylePanel = true;
+              } else {
+                layer.get('metadata').showStylePanel = !showStylePanel;
+              }
+            };
+
+            scope.saveLayerStyle = function(layer) {
+              if (configService.configuration.stylingEnabled) {
+                if (goog.isDefAndNotNull(layer.get('metadata').defaultStyle)) {
+                  var loading = layer.get('metadata').loadingStyle || true;
+                  if (goog.isDefAndNotNull(loading) && loading) {
+                    layer.get('metadata').loadingStyle = true;
+                    mapService.updateStyle(layer).then(function() {
+                      layer.get('metadata').loadingStyle = false;
+                    }, function() {
+                      layer.get('metadata').loadingStyle = false;
+                      dialogService.error($translate.instant('save_layer_style'),
+                          $translate.instant('style_layer_failed',
+                              { 'style_name': layer.get('metadata').defaultStyle.name}));
+                    });
+                  }
+                }
+              }
+            };
+
             scope.isLoadingTable = function(layer) {
               var loadingTable = layer.get('metadata').loadingTable;
               return goog.isDefAndNotNull(loadingTable) && loadingTable === true;
@@ -79,7 +114,8 @@
                 $('#table-view-window').modal('show');
               }, function() {
                 layer.get('metadata').loadingTable = false;
-                dialogService.error($translate.instant('show_table'), $translate.instant('show_table_failed'));
+                dialogService.error($translate.instant('show_table'),
+                    $translate.instant('show_table_failed'));
               });
             };
 
@@ -131,6 +167,14 @@
 
             scope.getLayerAttributeVisibility = function(layer) {
               $rootScope.$broadcast('getLayerAttributeVisibility', layer);
+            };
+
+            scope.updateStyleChoices = function(styleChoices) {
+              var overrides = {
+                fontFamily: ['serif', 'sans-serif']
+              };
+
+              return Object.assign({}, styleChoices, overrides);
             };
           }
         };

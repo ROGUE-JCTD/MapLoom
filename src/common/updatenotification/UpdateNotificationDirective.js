@@ -29,24 +29,8 @@
             //this function has to be defined outside of the loop, otherwise the linter gets angry
             var featureHandler = function(repoFeature) {
               var splitFeature = repoFeature.id.split('/');
-              var crs = goog.isDefAndNotNull(repoFeature.crs) ? repoFeature.crs : null;
-              mapService.map.getLayers().forEach(function(layer) {
-                var metadata = layer.get('metadata');
-                if (goog.isDefAndNotNull(metadata)) {
-                  if (goog.isDefAndNotNull(metadata.geogigStore) && metadata.geogigStore === repos[i].name) {
-                    if (goog.isDefAndNotNull(metadata.nativeName) && metadata.nativeName === splitFeature[0]) {
-                      if (goog.isDefAndNotNull(metadata.projection)) {
-                        crs = metadata.projection;
-                      }
-                    }
-                  }
-                }
-              });
+              var geom = WKT.read(repoFeature.geometry[0]);
 
-              var geom = WKT.read(repoFeature.geometry);
-              if (goog.isDefAndNotNull(crs)) {
-                geom.transform(crs, mapService.map.getView().getProjection());
-              }
               var feature = {
                 repo: repos[i].name,
                 layer: splitFeature[0],

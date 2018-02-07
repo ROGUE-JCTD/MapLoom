@@ -85,6 +85,15 @@ module.exports = {
       'vendor/d3/d3.min.js',
       'vendor/proj4/dist/proj4-src.js',
       'vendor/mgrs/dist/mgrs.js',
+      'vendor/angular-file-saver/dist/angular-file-saver.bundle.min.js',
+      'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-core.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-core-tpls.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-core-ng.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-edit.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-edit-ng.js',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-edit-tpls.js',
+      'node_modules/@boundlessgeo/storytools/dist/ows.js',
 
       //-- files for image gallery
       //'vendor/blueimp-gallery/js/blueimp-gallery.js',
@@ -97,7 +106,9 @@ module.exports = {
       'vendor/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js',
 
       'vendor/bootstrap-sortable/Scripts/bootstrap-sortable.js',
-      'vendor/angular-xeditable/dist/js/xeditable.min.js'
+      'vendor/angular-xeditable/dist/js/xeditable.min.js',
+      'vendor/angularjs-slider/dist/rzslider.min.js',
+      'vendor/lodash/dist/lodash.min.js'
     ],
     css: [
       'vendor/ol3/ol.css',
@@ -109,10 +120,14 @@ module.exports = {
       //'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.css',
       'vendor/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css',
       'vendor/blueimp-gallery/css/blueimp-gallery.min.css',
+      'node_modules/@boundlessgeo/storytools/dist/story-tools-edit.css',
+      'vendor/angular-bootstrap-colorpicker/css/colorpicker.min.css',
 
       'vendor/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
       'vendor/bootstrap-sortable/Contents/bootstrap-sortable.css',
-      'vendor/angular-xeditable/dist/css/xeditable.css'
+      'vendor/angular-xeditable/dist/css/xeditable.css',
+      'vendor/angularjs-slider/dist/rzslider.min.css',
+      'vendor/components-font-awesome/css/font-awesome.min.css'
     ],
     assets: [
       'src/assets/*',
@@ -120,7 +135,8 @@ module.exports = {
       'vendor/blueimp-bootstrap-image-gallery/img/*'
     ],
     fonts: [
-      'vendor/bootstrap/fonts/*'
+      'vendor/bootstrap/fonts/*',
+      'vendor/components-font-awesome/fonts/*',
     ]
   }
 };

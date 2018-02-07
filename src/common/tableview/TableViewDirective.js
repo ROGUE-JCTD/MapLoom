@@ -214,16 +214,12 @@
             };
 
             scope.goToMap = function() {
-              var projectedgeom = transformGeometry(scope.selectedRow.feature.geometry,
-                  tableViewService.selectedLayer.get('metadata').projection,
-                  mapService.map.getView().getProjection());
-
-              mapService.zoomToExtent(projectedgeom.getExtent());
+              var geom = transformGeometry(scope.selectedRow.feature.geometry, null, null);
+              mapService.zoomToExtent(geom.getExtent());
 
               var item = {layer: tableViewService.selectedLayer, features: [scope.selectedRow.feature]};
               $('#table-view-window').modal('hide');
               featureManagerService.show(item);
-
             };
 
             scope.showHeatmap = function() {
@@ -345,6 +341,8 @@
               for (var row in scope.rows) {
                 var feature = scope.rows[row].feature;
                 scope.rows[row].modified = false;
+                scope.rows[row].valid = true;
+                scope.rows[row].errors = {};
                 for (var prop in feature.properties) {
                   // allow editing of photos
                   //if (prop === 'photos' || prop === 'fotos') {
@@ -354,17 +352,25 @@
                     scope.rows[row].modified = true;
                   }
                   if (feature.properties[prop] !== '' && feature.properties[prop] !== null) {
-                    if (scope.restrictions[prop].type === 'int') {
-                      if (!validateInteger(feature.properties[prop])) {
-                        numErrors++;
-                      }
-                    } else if (scope.restrictions[prop].type === 'double') {
-                      if (!validateDouble(feature.properties[prop])) {
-                        numErrors++;
+                    if (!_.isNil(scope.restrictions[prop])) {
+                      if (scope.restrictions[prop].type === 'int') {
+                        if (!validateInteger(feature.properties[prop])) {
+                          numErrors++;
+                          addError(scope.rows[row], prop, 'int');
+                        }
+                      } else if (scope.restrictions[prop].type === 'double') {
+                        if (!validateDouble(feature.properties[prop])) {
+                          numErrors++;
+                          addError(scope.rows[row], prop, 'double');
+                        }
                       }
                     }
-                  } else if (scope.restrictions[prop].nillable === 'false') {
-                    numErrors++;
+                  } else {
+                    var exchangeMetadataAttribute = getExchangeMetadataAttribute(prop);
+                    if (scope.restrictions[prop].nillable === 'false' || (goog.isDefAndNotNull(exchangeMetadataAttribute) && exchangeMetadataAttribute.required)) {
+                      numErrors++;
+                      addError(scope.rows[row], prop, 'required');
+                    }
                   }
                 }
                 if (scope.rows[row].modified) {
@@ -381,6 +387,14 @@
               }
             }
 
+            function addError(row, prop, error) {
+              row.valid = false;
+              if (_.isNil(row.errors[prop]) || !_.isArray(row.errors[prop])) {
+                row.errors[prop] = [];
+              }
+              row.errors[prop].push(error);
+            }
+
             function getWfsFeaturesXml() {
               var xml = '';
               for (var index in scope.rows) {
@@ -388,16 +402,23 @@
                   continue;
                 }
                 var feature = scope.rows[index].feature;
+                var metadata = tableViewService.selectedLayer.get('metadata');
+                var typeName = metadata.name;
+
+                if (!typeName.startsWith(metadata.workspace + ':')) {
+                  typeName = metadata.workspace + ':' + metadata.name;
+                }
+
                 xml += '' +
                     '<wfs:Update' +
-                    ' xmlns:feature="' + tableViewService.selectedLayer.get('metadata').workspaceURL + '" ' +
-                    'typeName="' + tableViewService.selectedLayer.get('metadata').name + '">';
+                    ' xmlns:feature="' + metadata.workspaceURL + '" ' +
+                    'typeName="' + typeName + '">';
                 for (var property in feature.properties) {
                   var value = feature.properties[property];
                   xml += '<wfs:Property>' +
                       '<wfs:Name>' + property + '</wfs:Name>';
                   if (goog.isDefAndNotNull(value)) {
-                    xml += '<wfs:Value>' + value + '</wfs:Value>';
+                    xml += '<wfs:Value>' + escapeXml(value) + '</wfs:Value>';
                   } else {
                     xml += '<wfs:Value></wfs:Value>';
                   }
@@ -421,7 +442,6 @@
                 commitMessage = $translate.instant('modified_x_features',
                     {'num': featuresModified, 'layer': tableViewService.selectedLayer.get('metadata').nativeName});
               }
-              console.log('commit message: ', commitMessage);
               var xml = '' +
                   '<?xml version="1.0" encoding="UTF-8"?>' +
                   '<wfs:Transaction xmlns:wfs="http://www.opengis.net/wfs"' +
@@ -482,7 +502,6 @@
             };
 
             scope.searchTable = function() {
-              console.log('scope.searchTable', scope.search.isSearching, scope.search.text);
               scope.search.isSearching = !scope.search.isSearching;
               scope.isSaving = true;
               if (scope.search.isSearching) {
@@ -500,6 +519,76 @@
                 });
               }
             };
+
+            scope.downloadCSV = function() {
+              tableViewService.selectedLayer.get('metadata').isLoadingCSV = true;
+              tableViewService.getCSV().then(function(data) {
+                tableViewService.selectedLayer.get('metadata').isLoadingCSV = false;
+              }, function(reject) {
+                tableViewService.selectedLayer.get('metadata').isLoadingCSV = false;
+              });
+            };
+
+            scope.isLoadingCSV = function() {
+              if (!goog.isDefAndNotNull(tableViewService.selectedLayer)) {
+                return false;
+              }
+
+              var loading = tableViewService.selectedLayer.get('metadata').isLoadingCSV;
+              return goog.isDefAndNotNull(loading) && loading === true;
+            };
+
+            scope.getAttributeLabel = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute) &&
+                  goog.isDefAndNotNull(exchangeMetadataAttribute.attribute_label) &&
+                  exchangeMetadataAttribute.attribute_label.length > 0) {
+                return exchangeMetadataAttribute.attribute_label;
+              }
+
+              return property;
+            };
+
+            scope.isAttributeReadonly = function(property) {
+              var exchangeMetadataAttribute = getExchangeMetadataAttribute(property);
+
+              if (goog.isDefAndNotNull(exchangeMetadataAttribute)) {
+                return exchangeMetadataAttribute.readonly;
+              }
+
+              return false;
+            };
+
+            scope.attributeHasErrors = function(row, property) {
+              return !_.isNil(row.errors) && !_.isEmpty(row.errors[property]);
+            };
+
+            scope.getAttributeValue = function(property, value) {
+              if (_.isArray(scope.restrictions[property].type)) {
+                var option = _.find(scope.restrictions[property].type, { _value: value });
+                if (option && option._label) {
+                  return option._label;
+                }
+              }
+
+              return value;
+            };
+
+            function getExchangeMetadataAttribute(property) {
+              var exchangeMetadata = tableViewService.selectedLayer.get('exchangeMetadata');
+
+              if (goog.isDefAndNotNull(exchangeMetadata) && goog.isDefAndNotNull(exchangeMetadata.attributes)) {
+                for (var index in exchangeMetadata.attributes) {
+                  if (goog.isDefAndNotNull(exchangeMetadata.attributes[index]) &&
+                      exchangeMetadata.attributes[index].attribute === property) {
+                    return exchangeMetadata.attributes[index];
+                  }
+                }
+              }
+
+              return null;
+            }
           }
         };
       });

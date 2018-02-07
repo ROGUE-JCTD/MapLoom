@@ -4,8 +4,8 @@
   module.directive('loomHistoryPanel',
       function($rootScope, $timeout, $translate, diffService, dialogService, historyService, pulldownService) {
         return {
-          restrict: 'C',
-          replace: true,
+          //restrict: 'C',
+          //replace: true,
           templateUrl: 'history/partial/historypanel.tpl.html',
           link: function(scope, element, attrs) {
             scope.loadingDiff = false;
@@ -47,7 +47,10 @@
             }
 
             scope.getCommitAuthor = function(commit) {
-              return commit.author['name'].length > 0 ? commit.author['name'] : $translate.instant('anonymous');
+              if (goog.isDefAndNotNull(commit.author) && goog.isDefAndNotNull(commit.author['name'])) {
+                return commit.author['name'].length > 0 ? commit.author['name'] : $translate.instant('anonymous');
+              }
+              return $translate.instant('anonymous');
             };
 
             scope.getCommitTime = function(commit) {
@@ -57,7 +60,8 @@
             };
 
             scope.historyClicked = function(commit) {
-              if (scope.loadingDiff !== false) {
+              if (scope.loadingDiff !== false ||
+                  (commit.adds + commit.removes + commit.modifies) === 0) {
                 return;
               }
               commit.loading = true;
@@ -66,7 +70,7 @@
               var lastCommitId = '0000000000000000000000000000000000000000';
               if (goog.isDefAndNotNull(commit.parents) && goog.isObject(commit.parents)) {
                 if (goog.isDefAndNotNull(commit.parents.id)) {
-                  if (goog.isArray(commit.parents.id)) {
+                  if (goog.isArray(commit.parents.id) && goog.isDefAndNotNull(commit.parents.id[0])) {
                     lastCommitId = commit.parents.id[0];
                   } else {
                     lastCommitId = commit.parents.id;

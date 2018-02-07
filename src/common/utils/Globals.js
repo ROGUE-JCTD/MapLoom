@@ -300,3 +300,18 @@ var xyToMGRSFormat = function(coordinate) {
 var mgrsToXYFormat = function(string) {
   return mgrs.toPoint(string, settings.DDPrecision);
 };
+
+
+/** Ensure a string is XML-safe
+ *
+ * @param {string} str The string to escape.
+ *
+ * @return {string} A string which is "safe" for XML.
+ */
+var escapeXml = function(str) {
+  // duck-types str as a string when the replace function is available.
+  if (str !== undefined && str !== null && typeof str.replace === 'function') {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  return str;
+};

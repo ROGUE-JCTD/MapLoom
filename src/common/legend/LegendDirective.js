@@ -13,6 +13,7 @@
           link: function(scope, element) {
             scope.mapService = mapService;
             scope.serverService = serverService;
+            scope.legendTime = (new Date()).getTime();
 
             var openLegend = function() {
               angular.element('#legend-container')[0].style.visibility = 'visible';
@@ -39,18 +40,104 @@
               }
             };
 
+            /** Registry layers may or may not have a legend available
+             *  when there is one, return the URL, otherwise return null.
+             */
+            var getRegistryLegend = function(layer) {
+              var legend = null;
+              if (layer.get('metadata').registry) {
+                var conf = layer.get('metadata').registryConfig;
+                if (goog.isDefAndNotNull(conf.legend_url)) {
+                  return conf.legend_url;
+                }
+              }
+
+              return legend;
+            };
+
+            /** Test whether the layer *should* have a legend available.
+             *
+             *  @param {Object} layer The configuration for the layer from
+             *                        mapService.getLayers()
+             */
+            scope.hasLegend = function(layer) {
+              // handle the special case of registry layers.
+              if (layer.get('metadata').registry) {
+                return goog.isDefAndNotNull(getRegistryLegend(layer));
+              }
+
+              // ignore background layers, such as OSM.
+              var conf = layer.get('metadata').config;
+              if (conf && conf.group == 'background') {
+                return false;
+              }
+
+              try {
+                var server = serverService.getServerById(layer.get('metadata').serverId);
+                // WMS only.
+                if (server.ptype.indexOf('wms') < 0) {
+                  return false;
+                }
+              } catch (err) {
+                // if the server id throws an error, there's no legend to be had.
+                return false;
+              }
+
+              return true;
+            };
+
+            /** Launder the available layers for legending.
+             */
+            scope.getLayers = function() {
+              var map_layers = mapService.getLayers(true, true);
+              var legend_layers = [];
+
+              for (var i = 0, ii = map_layers.length; i < ii; i++) {
+                if (scope.hasLegend(map_layers[i])) {
+                  legend_layers.push(map_layers[i]);
+                }
+              }
+
+              return legend_layers;
+            };
+
             scope.getLegendUrl = function(layer) {
-              var url = null;
+              // don't bother with the rest if the layer has no legend.
+              if (!scope.hasLegend(layer)) {
+                return '';
+              } else if (layer.get('metadata').registry) {
+                return getRegistryLegend(layer);
+              }
+
               var server = serverService.getServerById(layer.get('metadata').serverId);
+              var domain = '';
               if (goog.isDefAndNotNull(server.virtualServiceUrl)) {
                 domain = server.virtualServiceUrl;
               } else {
                 domain = server.url;
               }
-              url = domain + '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=' +
-                  layer.get('metadata').name + '&transparent=true&legend_options=fontColor:0xFFFFFF;' +
-                  'fontAntiAliasing:true;fontSize:14;fontStyle:bold;';
-              return url;
+
+              var params = {
+                request: 'GetLegendGraphic',
+                format: 'image/png',
+                width: '20', height: '20',
+                transparent: 'true',
+                // if the server has a sepcified version, use it, otherwise default to 1.3.0
+                version: server.version !== undefined ? server.version : '1.3.0',
+                legend_options: 'fontColor:0xFFFFFF;fontAntiAliasing:true;fontSize:14;fontStyle:bold;',
+                layer: layer.get('metadata').name
+              };
+
+              params['_dc'] = scope.legendTime;
+
+              // parse the server url
+              var uri = new goog.Uri(domain);
+              // mix in the paramters
+              for (var key in params) {
+                uri.setParameterValue(key, params[key]);
+              }
+              // kick back the URL as a formatted string.
+              return uri.toString();
             };
 
             scope.$on('layer-added', function() {
@@ -64,6 +151,11 @@
               if (legendOpen === true && angular.element('.legend-item').length == 1) {
                 closeLegend();
               }
+            });
+
+            scope.$on('layers-styled', function() {
+              // update the last-refresh legend time to freshen the legends
+              scope.legendTime = (new Date()).getTime();
             });
           }
         };

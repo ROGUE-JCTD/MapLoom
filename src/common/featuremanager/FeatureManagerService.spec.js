@@ -263,17 +263,26 @@ describe('FeatureManagerService', function() {
             return {'status': 200};
           });
 
-          var props = [{0: 'evento'}, {0: 'situacion_crit'}];
+          var props = [['attr', '0']];
           featureMgrService.setSelectedItemProperties(props);
+          props = [['attr', 'X&Y']];
           featureMgrService.endFeatureInsert(true, props, [55, 55]);
           httpBackend.flush();
           httpBackend.expectPOST();
+
+          // test escapeXml under more situations.
+          expect(escapeXml(2)).toBe(2);
+          expect(escapeXml(undefined)).toBe(undefined);
+          expect(escapeXml(null)).toBe(null);
+          expect(escapeXml('X&Y')).toBe('X&amp;Y');
 
           expect(wfsURL.indexOf('wfs')).not.toBe(-1);
           expect(wfsData.indexOf('wfs')).not.toBe(-1);
           expect(wfsData.indexOf('Insert')).not.toBe(-1);
           expect(wfsData.indexOf('sixpoint')).not.toBe(-1);
           expect(wfsData.indexOf('freedom')).not.toBe(-1);
+          // check to ensure the & was escaped.
+          expect(wfsData.indexOf('X&Y')).toBe(-1);
         });
       });
 
@@ -606,6 +615,20 @@ describe('FeatureManagerService', function() {
 
       it('should NOT issue a WFS post message', function() {
         httpBackend.verifyNoOutstandingRequest();
+      });
+    });
+
+    describe('coordinatesWithinRange', function() {
+      it('should determine if a set of coordinates is within a range of another set of coordinates', function() {
+        // mock coordinates that are at max 7 apart
+        var mock_coords1 = [50, 50];
+        var mock_coords2 = [45, 57];
+
+        // With range > 7, expect it to be true
+        expect(featureMgrService.coordinatesWithinRange(mock_coords1, mock_coords2, 8)).toBe(true);
+
+        // With range < 7, expect it to be false
+        expect(featureMgrService.coordinatesWithinRange(mock_coords1, mock_coords2, 6)).toBe(false);
       });
     });
   });

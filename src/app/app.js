@@ -2,13 +2,16 @@
   var module = angular.module('MapLoom', [
     'templates-app',
     'templates-common',
+    'storytools.edit.style',
     'loom',
+    'colorpicker.module',
     'ui.bootstrap',
     'ui.router',
     'pascalprecht.translate',
     'loom_translations_en',
     'loom_translations_es',
-    'xeditable'
+    'xeditable',
+    'ngFileSaver'
   ]);
 
   module.run(function run(editableOptions) {
@@ -44,7 +47,6 @@
             return;
           }
           errorDialogShowing = true;
-          console.log('==== onErrorCallback, error msg:', msg);
           var msg_string = msg;
           if (typeof msg != 'string') {
             msg_string = 'message not string. view console for object detail';
@@ -94,4 +96,3 @@
     $translateProvider.preferredLanguage('en');
   });
 }());
-
