@@ -261,8 +261,7 @@
           // checking to make sure it had a geometry before making assumptions about edit layer etc
           if (goog.isDefAndNotNull(selectedItem_.geometry)) {
             mapService_.addToEditLayer(selectedItem_.geometry, selectedLayer_.get('metadata').projection);
-            position = getNewPositionFromGeometry(mapService_.editLayer.getSource().getFeatures()[0].getGeometry(),
-                clickPosition_);
+            position = clickPosition_;
           }
         } else {
           mapService_.clearEditLayer();
@@ -343,7 +342,6 @@
       }
 
       if (goog.isDefAndNotNull(position)) {
-        position_ = position;
         mapService_.map.getOverlays().array_[0].setPosition(position);
       }
     };
