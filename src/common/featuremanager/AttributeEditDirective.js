@@ -43,9 +43,21 @@
 
                 for (var propName in attributeTypes) {
                   if (tempProperties.hasOwnProperty(propName)) {
-                    scope.properties.push(tempProperties[propName]);
+                    var renameFields = ['begindate_xd', 'enddate_xd'];
+                    var hiddenFields = ['begindate_parsed', 'enddate_parsed', 'begindate', 'enddate', 'start_parsed'];
+                    if (!hiddenFields.includes(tempProperties[propName][0])) {
+                      scope.properties.push(tempProperties[propName]);
+                      if (renameFields.includes(tempProperties[propName][0])) {
+                        var pattern = /_xd/i;
+                        tempProperties[propName][0] = tempProperties[propName][0].replace(pattern, '');
+                        if (!scope.properties.includes(tempProperties[propName])) {
+                          scope.properties.push(tempProperties[propName]);
+                        }
+                      }
+                    }
                   }
                 }
+                console.log('!!!PROPS:!!!', scope.properties);
               }
 
               if (geometry.type.toLowerCase() == 'point') {

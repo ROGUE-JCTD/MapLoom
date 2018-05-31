@@ -285,15 +285,17 @@
           // remove old tick marks if changes to the feature doesn't leave any feature for that time slice.
           var foundOldTick = false;
           for (i = 0; i < changedAttributesOld.length; i++) {
-            attributeType = metadata.schema[changedAttributesOld[i][0]]._type.toLowerCase();
-            if (attributeType.indexOf('date') !== -1 || attributeType.indexOf('time') !== -1) {
-              if (changedAttributesOld[i][1] in timelineTicksMap_) {
-                foundOldTick = true;
-                if (timelineTicksMap_[changedAttributesOld[i][1]] > 1) {
-                  timelineTicksMap_[changedAttributesOld[i][1]] -= 1;
-                } else {
-                  ticksChanged = true;
-                  delete timelineTicksMap_[changedAttributesOld[i][1]];
+            if (metadata.schema[changedAttributesOld[i][0]]) {
+              attributeType = metadata.schema[changedAttributesOld[i][0]]._type.toLowerCase();
+              if (attributeType.indexOf('date') !== -1 || attributeType.indexOf('time') !== -1) {
+                if (changedAttributesOld[i][1] in timelineTicksMap_) {
+                  foundOldTick = true;
+                  if (timelineTicksMap_[changedAttributesOld[i][1]] > 1) {
+                    timelineTicksMap_[changedAttributesOld[i][1]] -= 1;
+                  } else {
+                    ticksChanged = true;
+                    delete timelineTicksMap_[changedAttributesOld[i][1]];
+                  }
                 }
               }
             }
