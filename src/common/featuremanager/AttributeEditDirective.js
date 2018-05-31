@@ -57,7 +57,6 @@
                     }
                   }
                 }
-                console.log('!!!PROPS:!!!', scope.properties);
               }
 
               if (geometry.type.toLowerCase() == 'point') {
